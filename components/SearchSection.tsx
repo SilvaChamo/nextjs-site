@@ -1,22 +1,30 @@
 "use client";
 
 import React, { useState } from "react";
-import { Search, Sparkles, Building2, ShoppingBag, Users, FileText, LandPlot } from "lucide-react";
+import { Search, Building2, ShoppingBag, Users, FileText, LandPlot, ChevronDown, Check } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { SEARCH_DATA } from "@/lib/constants";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
 
 export function SearchSection() {
     const [searchQuery, setSearchQuery] = useState("");
     const [activeCategory, setActiveCategory] = useState<string>("all");
+    const [isCategoryOpen, setIsCategoryOpen] = useState(false);
 
     const categories = [
-        { id: "all", label: "Tudo", icon: Search },
+        { id: "all", label: "Todas categorias", icon: Search },
         { id: "empresas", label: "Empresas", icon: Building2 },
         { id: "produtos", label: "Produtos", icon: ShoppingBag },
         { id: "profissionais", label: "Profissionais", icon: Users },
         { id: "propriedades", label: "Propriedades", icon: LandPlot },
         { id: "artigos", label: "Artigos", icon: FileText },
     ];
+
+    const currentCat = categories.find(c => c.id === activeCategory) || categories[0];
 
     const filteredResults = React.useMemo(() => {
         if (!searchQuery) return null;
@@ -40,55 +48,66 @@ export function SearchSection() {
     }, [searchQuery, activeCategory]);
 
     return (
-        <section className="w-full bg-white relative pb-0">
-            {/* Search Bar Container - Google Style */}
-            <div className="w-full px-6 md:px-12 pt-0 pb-12 bg-white">
-                <div className="max-w-3xl mx-auto -mt-10 relative z-20 space-y-4">
+        <section className="w-full bg-white relative min-h-[160px] flex flex-col justify-center py-[20px]">
+            {/* Search Bar Container - Google Style Refined */}
+            <div className="w-full px-6 md:px-12">
+                <div className="max-w-3xl mx-auto relative z-20">
                     <div className="relative group">
                         <div className="absolute inset-0 bg-gray-200 rounded-full blur-md opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
-                        <div className="relative bg-white rounded-full shadow-lg h-12 flex items-center border border-gray-200 hover:shadow-xl transition-all duration-300">
-                            <div className="pl-5 text-gray-400">
+                        <div className="relative bg-white rounded-full shadow-lg h-14 flex items-center border border-gray-200 hover:shadow-xl transition-all duration-300">
+
+                            <div className="pl-6 text-gray-400">
                                 <Search className="h-5 w-5" />
                             </div>
+
                             <Input
-                                className="border-none shadow-none focus-visible:ring-0 text-base h-full bg-transparent placeholder:text-gray-400 flex-1"
-                                placeholder="Pesquise por IA ou por categorias..."
+                                className="border-none shadow-none focus-visible:ring-0 text-base h-full bg-transparent placeholder:text-gray-400 flex-1 px-4"
+                                placeholder="O que procura hoje?"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
-                            <div className="pr-2 flex items-center gap-1">
-                                <button
-                                    className="flex items-center gap-1.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 h-8 px-4 rounded-full font-bold text-[10px] uppercase tracking-wider transition-all border border-emerald-100"
-                                    title="Busca com Inteligência Artificial"
-                                >
-                                    <Sparkles className="h-3 w-3" />
-                                    <span>IA Search</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
 
-                    {/* Category Pills */}
-                    <div className="flex flex-wrap justify-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                        {categories.map((cat) => (
-                            <button
-                                key={cat.id}
-                                onClick={() => setActiveCategory(cat.id)}
-                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all border ${activeCategory === cat.id
-                                        ? "bg-gray-900 text-white border-gray-900 shadow-md"
-                                        : "bg-white text-gray-500 border-gray-200 hover:border-gray-400"
-                                    }`}
-                            >
-                                <cat.icon className="h-3 w-3" />
-                                {cat.label}
-                            </button>
-                        ))}
+                            {/* Category Selector inside Search Bar (RIGHT SIDE) */}
+                            <Popover open={isCategoryOpen} onOpenChange={setIsCategoryOpen}>
+                                <PopoverTrigger asChild>
+                                    <button className="flex items-center gap-2 px-6 h-full border-l border-gray-100 hover:bg-gray-50 transition-colors rounded-r-full group">
+                                        <span className="text-xs font-bold text-gray-400 uppercase tracking-wider hidden sm:block whitespace-nowrap">
+                                            {currentCat.label}
+                                        </span>
+                                        <ChevronDown className="h-4 w-4 text-gray-400 group-hover:text-emerald-600 transition-colors" />
+                                    </button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-56 p-2 rounded-2xl shadow-2xl border-gray-100" align="end">
+                                    <div className="space-y-1">
+                                        {categories.map((cat) => (
+                                            <button
+                                                key={cat.id}
+                                                onClick={() => {
+                                                    setActiveCategory(cat.id);
+                                                    setIsCategoryOpen(false);
+                                                }}
+                                                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${activeCategory === cat.id
+                                                        ? "bg-emerald-50 text-emerald-700"
+                                                        : "text-gray-500 hover:bg-gray-50"
+                                                    }`}
+                                            >
+                                                <div className="flex items-center gap-2">
+                                                    <cat.icon className="h-4 w-4" />
+                                                    {cat.label}
+                                                </div>
+                                                {activeCategory === cat.id && <Check className="h-3 w-3" />}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
+                        </div>
                     </div>
                 </div>
             </div>
 
             {searchQuery && (
-                <div className="max-w-7xl mx-auto animate-in slide-in-from-bottom-4 duration-700 px-6 md:px-12 pb-24">
+                <div className="max-w-7xl mx-auto animate-in slide-in-from-bottom-4 duration-700 px-6 md:px-12 pb-24 mt-16">
                     <div className="flex items-center gap-4 mb-12">
                         <h2 className="text-3xl font-heading font-bold text-gray-900 uppercase">Motor do Acervo</h2>
                         <span className="text-gray-300 text-3xl">/</span>

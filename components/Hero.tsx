@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 export function Hero() {
     return (
-        <section className="relative w-full h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
+        <section className="relative w-full h-[calc(100vh-30px)] min-h-[670px] flex items-center justify-center overflow-hidden">
             {/* Background Image */}
             <div className="absolute inset-0 z-0">
                 <Image

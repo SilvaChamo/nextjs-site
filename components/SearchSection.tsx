@@ -5,8 +5,6 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { FEATURED_COMPANIES, SEARCH_DATA } from "@/lib/constants";
 import Image from "next/image";
-import { FeaturedCompanies } from "./FeaturedCompanies";
-import { Categories } from "./Categories";
 
 export function SearchSection() {
     const [searchQuery, setSearchQuery] = useState("");
@@ -57,7 +55,7 @@ export function SearchSection() {
                 </div>
             </div>
 
-            {searchQuery ? (
+            {searchQuery && (
                 <div className="max-w-7xl mx-auto animate-in slide-in-from-bottom-4 duration-700 px-6 md:px-12 pb-24">
                     <div className="flex items-center gap-4 mb-12">
                         <h2 className="text-3xl font-heading font-bold text-gray-900 uppercase">Resultados da Busca</h2>
@@ -104,11 +102,6 @@ export function SearchSection() {
                         </div>
                     )}
                 </div>
-            ) : (
-                <>
-                    <FeaturedCompanies />
-                    <Categories />
-                </>
             )}
         </section>
     );

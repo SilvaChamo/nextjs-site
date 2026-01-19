@@ -18,7 +18,7 @@ export const FEATURED_COMPANIES: Company[] = [
         description: 'Gestão governamental e normas.',
         logoUrl: 'https://placehold.co/100x60/054a29/fff?text=MINAG',
         type: 'Empresa pública',
-        image: 'https://images.unsplash.com/photo-1625246333195-58f21a416327?q=80&w=2000&auto=format&fit=crop'
+        image: 'https://placehold.co/600x400/054a29/white?text=Agricultura'
     },
     {
         id: '2',
@@ -27,7 +27,7 @@ export const FEATURED_COMPANIES: Company[] = [
         description: 'Biotecnologia para cultivos.',
         logoUrl: 'https://placehold.co/100x60/054a29/fff?text=TEKAP',
         type: 'Empresa privada',
-        image: 'https://images.unsplash.com/photo-1595839054700-d88686a63412?q=80&w=2000&auto=format&fit=crop'
+        image: 'https://placehold.co/600x400/054a29/white?text=Sementes'
     },
     {
         id: '3',
@@ -36,7 +36,7 @@ export const FEATURED_COMPANIES: Company[] = [
         description: 'Nutrição vegetal de performance.',
         logoUrl: 'https://placehold.co/100x60/054a29/fff?text=Mutiana',
         type: 'Instituição privada',
-        image: 'https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?q=80&w=2000&auto=format&fit=crop'
+        image: 'https://placehold.co/600x400/054a29/white?text=Insumos'
     },
     {
         id: '4',
@@ -45,7 +45,7 @@ export const FEATURED_COMPANIES: Company[] = [
         description: 'Crédito para produtores.',
         logoUrl: 'https://placehold.co/100x60/054a29/fff?text=BIM',
         type: 'Financiamento',
-        image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=2000&auto=format&fit=crop'
+        image: 'https://placehold.co/600x400/054a29/white?text=Financas'
     }
 ];
 

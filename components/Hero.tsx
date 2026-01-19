@@ -26,10 +26,10 @@ export function Hero() {
                 {/* Left Column: Text & Actions */}
                 <div className="space-y-8 animate-in slide-in-from-left-6 duration-700">
                     <div className="space-y-4">
-                        <h1 className="text-4xl md:text-6xl lg:text-7xl font-heading font-extrabold text-white leading-tight">
-                            Cultivando um futuro <br />
-                            melhor para <br />
-                            <span className="text-[#22c55e]">Moçambique</span>
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-black text-white leading-tight tracking-tight">
+                            <span className="block">Cultivando um futuro</span>
+                            <span className="block">melhor para</span>
+                            <span className="block text-[#22c55e]">Moçambique</span>
                         </h1>
                         <p className="text-base md:text-lg text-gray-200 max-w-xl font-sans leading-relaxed">
                             Onde a terra fértil encontra inovação e prosperidade. Promovemos o crescimento sustentável facilitando investimentos agrários.

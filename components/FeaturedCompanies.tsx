@@ -142,13 +142,13 @@ export function FeaturedCompanies() {
                         <div className="flex space-x-4">
                             <button
                                 onClick={prevSlide}
-                                className="w-14 h-14 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-orange-500 hover:border-orange-500 hover:bg-orange-50 transition-all duration-500 bg-white shadow-xl active:scale-90"
+                                className="w-14 h-14 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-[#f97316] hover:border-[#f97316] hover:bg-orange-50 transition-all duration-500 bg-white shadow-xl active:scale-90"
                             >
                                 <ChevronLeft className="w-5 h-5" />
                             </button>
                             <button
                                 onClick={nextSlide}
-                                className="w-14 h-14 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-orange-500 hover:border-orange-500 hover:bg-orange-50 transition-all duration-500 bg-white shadow-xl active:scale-90"
+                                className="w-14 h-14 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-[#f97316] hover:border-[#f97316] hover:bg-orange-50 transition-all duration-500 bg-white shadow-xl active:scale-90"
                             >
                                 <ChevronRight className="w-5 h-5" />
                             </button>

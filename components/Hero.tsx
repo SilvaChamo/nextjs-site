@@ -1,10 +1,15 @@
 "use client";
 
-import React from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { Search, X } from "lucide-react";
 
-export function Hero() {
+interface HeroProps {
+    onToggleSearch: () => void;
+    isSearchOpen: boolean;
+}
+
+export function Hero({ onToggleSearch, isSearchOpen }: HeroProps) {
     return (
         <section className="relative w-full h-[calc(100vh-30px)] min-h-[670px] flex items-center justify-center overflow-hidden">
             {/* Background Image */}
@@ -37,10 +42,10 @@ export function Hero() {
                     </div>
 
                     <div className="flex flex-wrap gap-4">
-                        <Button className="bg-[#22c55e] hover:bg-[#16a34a] text-white px-8 py-6 rounded-md text-base font-bold uppercase tracking-wider shadow-[0_0_20px_rgba(34,197,94,0.4)]">
+                        <Button className="bg-[#22c55e] hover:bg-[#16a34a] text-white px-8 py-6 rounded-[10px] text-base font-bold uppercase tracking-wider shadow-md">
                             Cadastre sua empresa
                         </Button>
-                        <Button variant="outline" className="border-white/30 bg-white/5 text-white hover:bg-white hover:text-green-900 px-8 py-6 rounded-md text-base font-bold uppercase tracking-wider backdrop-blur-sm">
+                        <Button variant="outline" className="border-white/30 bg-white/5 text-white hover:bg-white hover:text-green-900 px-8 py-6 rounded-[10px] text-base font-bold uppercase tracking-wider backdrop-blur-sm">
                             Saiba mais
                         </Button>
                     </div>
@@ -49,7 +54,7 @@ export function Hero() {
                 {/* Right Column: Stats Cards Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 animate-in slide-in-from-right-6 duration-700 delay-200">
                     {/* Card 1: Prices */}
-                    <div className="bg-white/10 backdrop-blur-md border border-white/10 p-6 rounded-xl shadow-lg hover:bg-white/15 transition-all group">
+                    <div className="bg-white/10 backdrop-blur-md border border-white/10 p-6 rounded-[10px] shadow-lg hover:bg-white/15 transition-all group">
                         <div className="flex items-center gap-2 mb-2">
                             <span className="text-[10px] font-black uppercase tracking-widest text-gray-300">Preços</span>
                             <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
@@ -60,7 +65,7 @@ export function Hero() {
                     </div>
 
                     {/* Card 2: Data Usage */}
-                    <div className="bg-white/10 backdrop-blur-md border border-white/10 p-6 rounded-xl shadow-lg hover:bg-white/15 transition-all group">
+                    <div className="bg-white/10 backdrop-blur-md border border-white/10 p-6 rounded-[10px] shadow-lg hover:bg-white/15 transition-all group">
                         <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-300 mb-4">Dados</h4>
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
@@ -75,16 +80,16 @@ export function Hero() {
                     </div>
 
                     {/* Card 3: Active Companies */}
-                    <div className="bg-orange-500/10 backdrop-blur-md border border-orange-500/20 p-6 rounded-xl shadow-lg hover:bg-orange-500/20 transition-all group md:col-span-2 lg:col-span-1">
-                        <h4 className="text-[10px] font-black uppercase tracking-widest text-orange-200 mb-2">Ativas</h4>
-                        <h3 className="text-4xl font-heading font-black text-white mb-4">547</h3>
-                        <div className="w-full h-1.5 bg-gray-600/50 rounded-full overflow-hidden">
-                            <div className="h-full bg-orange-500 w-[85%] shadow-[0_0_10px_rgba(249,115,22,0.8)]"></div>
+                    <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-5 rounded-[10px] shadow-sm hover:bg-white/10 transition-all group md:col-span-2 lg:col-span-1">
+                        <h4 className="text-[10px] font-black uppercase tracking-widest text-[#f97316] mb-2">Ativas</h4>
+                        <h3 className="text-4xl font-heading font-black text-white mb-2">547</h3>
+                        <div className="w-full h-1 bg-gray-600/30 rounded-full overflow-hidden">
+                            <div className="h-full bg-[#f97316] w-[85%]"></div>
                         </div>
                     </div>
 
                     {/* Card 4: Provisions Coverage */}
-                    <div className="bg-white/10 backdrop-blur-md border border-white/10 p-6 rounded-xl shadow-lg hover:bg-white/15 transition-all group md:col-span-2 lg:col-span-1">
+                    <div className="bg-white/10 backdrop-blur-md border border-white/10 p-6 rounded-[10px] shadow-lg hover:bg-white/15 transition-all group md:col-span-2 lg:col-span-1">
                         <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-300 mb-2">Províncias</h4>
                         <div className="flex items-end gap-2">
                             <h3 className="text-4xl font-heading font-black text-white leading-none">11</h3>
@@ -93,6 +98,19 @@ export function Hero() {
                     </div>
                 </div>
 
+            </div>
+
+            {/* Floating Search Button - Bottom Right */}
+            <div className="absolute bottom-12 right-12 z-20 animate-in fade-in slide-in-from-bottom-8 duration-700">
+                <button
+                    onClick={onToggleSearch}
+                    className={`w-16 h-16 rounded-[10px] flex items-center justify-center transition-all duration-300 shadow-2xl ${isSearchOpen
+                        ? "bg-slate-900 text-white rotate-90"
+                        : "bg-[#22c55e] text-white hover:bg-[#f97316] hover:scale-110"
+                        }`}
+                >
+                    {isSearchOpen ? <X className="w-8 h-8" /> : <Search className="w-8 h-8" />}
+                </button>
             </div>
         </section>
     );

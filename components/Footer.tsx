@@ -11,7 +11,7 @@ export function Footer() {
                         <Link
                             key={i}
                             href="#"
-                            className="hover:text-orange-500 transition-all duration-300 hover:tracking-[0.4em]"
+                            className="hover:text-[#f97316] transition-all duration-300 hover:tracking-[0.4em]"
                         >
                             {link}
                         </Link>

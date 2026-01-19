@@ -1,4 +1,4 @@
-import { Building2, ShoppingBag, Users, FileText, Tractor, Sprout, FlaskConical, Droplets, Bug, Truck, Cpu, Warehouse, Plane, Snowflake, Stethoscope, Briefcase, User, UserCog, Leaf, Globe, Bolt, Flower2, Landmark, Coins, Factory, Ship, FileLineChart, CloudSun, BookOpen, FileDigit } from "lucide-react";
+import { Building2, ShoppingBag, Users, FileText, Tractor, Sprout, FlaskConical, Droplets, Bug, Truck, Cpu, Warehouse, Plane, Snowflake, Stethoscope, Briefcase, User, UserCog, Leaf, Globe, Bolt, Flower2, Landmark, Coins, Factory, Ship, FileLineChart, CloudSun, BookOpen, FileDigit, Home, Map, LandPlot } from "lucide-react";
 
 export type Company = {
     id: string;
@@ -89,5 +89,11 @@ export const SEARCH_DATA = {
         { title: 'Impacto das Alterações Climáticas no Chokwé', sub: 'Revista Científica de Agronomia', icon: CloudSun },
         { title: 'Novas Técnicas de Conservação de Tomate', sub: 'Guia Prático para Agricultores', icon: BookOpen },
         { title: 'Manual de Mecanização para Pequenas Áreas', sub: 'Documento Técnico da FAO', icon: FileDigit }
+    ],
+    propriedades: [
+        { title: 'Fazenda Vale do Limpopo', sub: '500 Hectares - Produção de Cereais', icon: LandPlot },
+        { title: 'Quinta das Oliveiras', sub: 'Área de Regadio - Horticultura Intensiva', icon: Home },
+        { title: 'Herdade do Sol', sub: 'Pecuária e Pastagens - Província de Gaza', icon: Warehouse },
+        { title: 'Terras Altas de Manica', sub: 'Ideal para Fruticultura de Exportação', icon: Map }
     ]
 };

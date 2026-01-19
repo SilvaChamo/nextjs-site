@@ -23,10 +23,11 @@ export function SearchSection() {
             produtos: filterData(SEARCH_DATA.produtos),
             profissionais: filterData(SEARCH_DATA.profissionais),
             empresas: filterData(SEARCH_DATA.empresas),
-            artigos: filterData(SEARCH_DATA.artigos)
+            artigos: filterData(SEARCH_DATA.artigos),
+            propriedades: filterData((SEARCH_DATA as any).propriedades || [])
         };
 
-        const totalCount = result.produtos.length + result.profissionais.length + result.empresas.length + result.artigos.length;
+        const totalCount = result.produtos.length + result.profissionais.length + result.empresas.length + result.artigos.length + result.propriedades.length;
         return totalCount > 0 ? result : null;
     }, [searchQuery]);
 
@@ -43,13 +44,13 @@ export function SearchSection() {
                             </div>
                             <Input
                                 className="border-none shadow-none focus-visible:ring-0 text-lg h-14 bg-transparent placeholder:text-gray-300"
-                                placeholder="O que procura hoje? (Ex: Tratores, Sementes...)"
+                                placeholder="Explore o acervo: Empresas, Produtos, Propriedades..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
-                            <button className="bg-orange-500 hover:bg-orange-600 text-white h-12 px-8 rounded-full font-bold uppercase text-sm tracking-wider transition-colors">
-                                Pesquisar
-                            </button>
+                            <div className="pr-6 text-[10px] font-black uppercase tracking-widest text-emerald-600/50 animate-pulse hidden md:block">
+                                Busca Inteligente
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -58,20 +59,20 @@ export function SearchSection() {
             {searchQuery && (
                 <div className="max-w-7xl mx-auto animate-in slide-in-from-bottom-4 duration-700 px-6 md:px-12 pb-24">
                     <div className="flex items-center gap-4 mb-12">
-                        <h2 className="text-3xl font-heading font-bold text-gray-900 uppercase">Resultados da Busca</h2>
+                        <h2 className="text-3xl font-heading font-bold text-gray-900 uppercase">Motor do Acervo</h2>
                         <span className="text-gray-300 text-3xl">/</span>
                         <span className="text-orange-500 text-xl font-bold uppercase">"{searchQuery}"</span>
                     </div>
 
                     {!filteredResults ? (
                         <div className="text-center py-20 text-gray-400">
-                            <p className="text-xl">Nenhum resultado encontrado.</p>
+                            <p className="text-xl">Nenhum resultado encontrado no centro de dados.</p>
                         </div>
                     ) : (
                         <div className="space-y-16">
                             {filteredResults.empresas.length > 0 && (
                                 <div className="space-y-6">
-                                    <h3 className="text-sm font-black text-emerald-900/40 uppercase tracking-[0.3em] border-l-4 border-emerald-500 pl-4">Empresas</h3>
+                                    <h3 className="text-sm font-black text-emerald-900/40 uppercase tracking-[0.3em] border-l-4 border-emerald-500 pl-4">Centro de Empresas</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                         {filteredResults.empresas.map((item, i) => (
                                             <SearchResultCard key={i} item={item} colorClass="bg-emerald-50 text-emerald-600" />
@@ -79,9 +80,19 @@ export function SearchSection() {
                                     </div>
                                 </div>
                             )}
+                            {filteredResults.propriedades.length > 0 && (
+                                <div className="space-y-6">
+                                    <h3 className="text-sm font-black text-amber-900/40 uppercase tracking-[0.3em] border-l-4 border-amber-500 pl-4">Acervo de Propriedades</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                        {filteredResults.propriedades.map((item, i) => (
+                                            <SearchResultCard key={i} item={item} colorClass="bg-amber-50 text-amber-600" />
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                             {filteredResults.produtos.length > 0 && (
                                 <div className="space-y-6">
-                                    <h3 className="text-sm font-black text-orange-900/40 uppercase tracking-[0.3em] border-l-4 border-orange-500 pl-4">Produtos</h3>
+                                    <h3 className="text-sm font-black text-orange-900/40 uppercase tracking-[0.3em] border-l-4 border-orange-500 pl-4">Catálogo de Produtos</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                         {filteredResults.produtos.map((item, i) => (
                                             <SearchResultCard key={i} item={item} colorClass="bg-orange-50 text-orange-600" />
@@ -91,7 +102,7 @@ export function SearchSection() {
                             )}
                             {filteredResults.profissionais.length > 0 && (
                                 <div className="space-y-6">
-                                    <h3 className="text-sm font-black text-blue-900/40 uppercase tracking-[0.3em] border-l-4 border-blue-500 pl-4">Profissionais</h3>
+                                    <h3 className="text-sm font-black text-blue-900/40 uppercase tracking-[0.3em] border-l-4 border-blue-500 pl-4">Base de Profissionais</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                         {filteredResults.profissionais.map((item, i) => (
                                             <SearchResultCard key={i} item={item} colorClass="bg-blue-50 text-blue-600" />

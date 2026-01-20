@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
-import { PageHeader } from "@/components/PageHeader";
+import { supabase } from "../../../lib/supabaseClient";
+import { PageHeader } from "../../../components/PageHeader";
 import { Building2, ShoppingCart, Briefcase, GraduationCap, ArrowRight, User, LogOut } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "../../../components/ui/button";
 
 export default function DashboardPage() {
     const router = useRouter();

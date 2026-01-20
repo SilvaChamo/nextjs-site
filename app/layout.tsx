@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat, Maven_Pro } from "next/font/google";
 import "./globals.css";
-import NavFooterToggle from "@/app/components/NavFooterToggle";
+import NavFooterToggle from "./components/NavFooterToggle";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -26,9 +26,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${montserrat.variable} ${mavenPro.variable} font-sans antialiased bg-background`}
+        className={`${montserrat.variable} ${mavenPro.variable} font-sans antialiased bg-background min-h-screen flex flex-col`}
         suppressHydrationWarning
       >
+        <div className="bg-yellow-400 text-black p-2 font-bold text-center z-[9999]">SISTEMA ATUALIZADO 19:08</div>
         <NavFooterToggle>{children}</NavFooterToggle>
       </body>
     </html>

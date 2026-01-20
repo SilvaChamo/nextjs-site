@@ -5,7 +5,7 @@ import Link from "next/link";
 export function WhyChooseUs() {
     return (
 
-        <section className="bg-white py-[100px] overflow-hidden">
+        <section className="bg-transparent py-[100px] overflow-hidden">
             <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] grid lg:grid-cols-2 gap-12 items-start">
                 {/* Left Column: Text Content */}
                 <div className="space-y-8 animate-in fade-in slide-in-from-left-8 duration-700 sticky top-24">
@@ -85,17 +85,17 @@ export function WhyChooseUs() {
                         {/* Card 3: Professionals - Moved to Col 1 */}
                         <Link
                             href="/pesquisa?cat=profissionais"
-                            className="bg-white p-6 rounded-[16px] shadow-md border border-slate-100 hover:border-emerald-500/30 transition-all duration-300 hover:-translate-y-1 group cursor-pointer flex flex-col gap-2 min-h-[180px]"
+                            className="bg-white p-6 rounded-[16px] shadow-md border border-slate-100 hover:border-[#f97316]/30 transition-all duration-300 hover:-translate-y-1 group cursor-pointer flex flex-col gap-2 min-h-[180px]"
                         >
                             <div className="relative z-10 flex flex-col items-start gap-3">
-                                <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center mb-3 transition-transform group-hover:rotate-12">
-                                    <Users className="w-5 h-5 text-blue-600" />
+                                <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center mb-3 transition-transform group-hover:rotate-12">
+                                    <Users className="w-5 h-5 text-[#f97316]" />
                                 </div>
                                 <div className="space-y-1">
                                     <h4 className="font-bold text-slate-700 text-lg leading-tight">
                                         Profissionais<br />Cadastrados
                                     </h4>
-                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider group-hover:text-blue-600 transition-colors flex items-center gap-2">
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider group-hover:text-[#f97316] transition-colors flex items-center gap-2">
                                         Explorar <ArrowRight className="w-3 h-3" />
                                     </p>
                                 </div>

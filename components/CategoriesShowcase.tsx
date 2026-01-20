@@ -109,8 +109,16 @@ export function CategoriesShowcase() {
                                             {/* Header: Logo Left - Category/Location Right */}
                                             <div className="flex justify-between items-start mb-6">
                                                 {/* Logo Left */}
-                                                <div className="w-12 h-12 rounded-[10px] flex items-center justify-center bg-emerald-50 text-emerald-600 group-hover:bg-[#f97316] group-hover:text-white transition-all duration-500 shrink-0">
-                                                    <Icon className="w-6 h-6" />
+                                                <div className="shrink-0">
+                                                    {company.logo ? (
+                                                        <div className="w-12 h-12 rounded-[10px] overflow-hidden border border-gray-100 bg-white flex items-center justify-center">
+                                                            <img src={company.logo} alt={company.title} className="w-full h-full object-contain p-1" />
+                                                        </div>
+                                                    ) : (
+                                                        <div className="w-12 h-12 rounded-[10px] flex items-center justify-center bg-emerald-50 text-emerald-600 group-hover:bg-[#f97316] group-hover:text-white transition-all duration-500">
+                                                            <Icon className="w-6 h-6" />
+                                                        </div>
+                                                    )}
                                                 </div>
 
                                                 {/* Category & Location Right */}

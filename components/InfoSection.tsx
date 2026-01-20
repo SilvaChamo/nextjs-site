@@ -94,7 +94,7 @@ export function InfoSection() {
     ];
 
     return (
-        <section className="w-full bg-slate-50 relative" id="informacao">
+        <section className="w-full bg-transparent relative" id="informacao">
             {/* Top Banner Area - Dark Background */}
             <div className="w-full bg-[#111827] relative pt-20 pb-32 overflow-hidden">
                 {/* Background Image - Seedlings - Parallax Enabled */}

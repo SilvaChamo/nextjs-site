@@ -49,7 +49,7 @@
 
 :root {
   --radius: 0.625rem;
-  --background: #F8F8F8;
+  --background: #EFF2F6;
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.141 0.005 285.823);
@@ -83,6 +83,7 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.48 0.18 145);
+  --site-max-width: 1350px;
 }
 
 .dark {
@@ -122,6 +123,13 @@
   --sidebar-ring: oklch(0.48 0.18 145);
 }
 
+@layer components {
+  .container-site {
+    @apply w-full max-w-[1350px] mx-auto px-4 md:px-[60px];
+    max-width: var(--site-max-width);
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -139,4 +147,26 @@
   h6 {
     @apply font-heading text-slate-600;
   }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float 6s ease-in-out 3s infinite;
 }

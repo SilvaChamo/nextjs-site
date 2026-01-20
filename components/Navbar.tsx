@@ -33,7 +33,7 @@ export function Navbar() {
 
     return (
         <header className="w-full fixed top-0 left-0 z-50 bg-white shadow-md">
-            <div className="max-w-[1350px] mx-auto py-3 px-4 md:px-[60px] flex items-center justify-between">
+            <div className="container-site py-3 flex items-center justify-between">
                 {/* Logo Section */}
                 <div className="flex items-center">
                     <Link href="/">

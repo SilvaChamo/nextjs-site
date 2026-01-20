@@ -10,10 +10,10 @@ import { CommunityBanner } from "@/components/CommunityBanner";
 import { WhyChooseUs } from "@/components/WhyChooseUs";
 
 export default function Home() {
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(true);
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-transparent">
       <Hero onToggleSearch={() => setIsSearchOpen(!isSearchOpen)} isSearchOpen={isSearchOpen} />
       <StickyDivider />
       <SearchSection isOpen={isSearchOpen} />

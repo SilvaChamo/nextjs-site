@@ -53,20 +53,20 @@ export function SearchSection({ isOpen }: SearchSectionProps) {
     }, [searchQuery, activeCategory]);
 
     return (
-        <section className={`w-full bg-white relative overflow-hidden transition-all duration-700 ease-in-out ${isOpen ? "max-h-[2000px] opacity-100 py-[20px]" : "max-h-0 opacity-0 py-0"}`}>
+        <section className={`w-full bg-white relative overflow-hidden transition-all duration-700 ease-in-out ${isOpen ? "max-h-[2000px] opacity-100 py-[30px]" : "max-h-0 opacity-0 py-0"}`}>
             <div className={`transition-all duration-700 delay-100 ${isOpen ? "translate-y-0 opacity-100" : "-translate-y-10 opacity-0"}`}>
                 {/* Search Bar Container - Google Style Refined */}
                 <div className="w-full px-4 md:px-[60px]">
                     <div className="max-w-3xl mx-auto relative z-20">
                         <div className="relative">
-                            <div className="relative bg-white rounded-[10px] shadow-sm h-14 flex items-center border border-gray-200 transition-all duration-300">
+                            <div className="relative bg-white rounded-[10px] shadow-sm h-14 flex items-center border border-gray-200 transition-all duration-300 overflow-hidden">
 
                                 <div className="pl-6 text-gray-400">
                                     <Search className="h-5 w-5" />
                                 </div>
 
                                 <Input
-                                    className="border-none shadow-none focus-visible:ring-0 text-base h-full bg-transparent placeholder:text-gray-400 flex-1 px-4"
+                                    className="border-none shadow-none focus-visible:ring-0 text-base h-full bg-transparent placeholder:text-gray-400 flex-1 px-4 my-1 ml-2 rounded-[4px]"
                                     placeholder="O que procura hoje?"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -75,7 +75,7 @@ export function SearchSection({ isOpen }: SearchSectionProps) {
                                 {/* Category Selector inside Search Bar (RIGHT SIDE) */}
                                 <Popover open={isCategoryOpen} onOpenChange={setIsCategoryOpen}>
                                     <PopoverTrigger asChild>
-                                        <button className="flex items-center gap-2 px-6 h-full border-l border-gray-100 hover:bg-gray-50 transition-colors rounded-r-full group">
+                                        <button className="flex items-center gap-2 px-6 h-full border-l border-gray-100 bg-gray-100 hover:bg-gray-200 transition-colors rounded-r-[10px] group">
                                             <span className="text-xs font-bold text-gray-400 uppercase tracking-wider hidden sm:block whitespace-nowrap">
                                                 {currentCat.label}
                                             </span>
@@ -113,11 +113,7 @@ export function SearchSection({ isOpen }: SearchSectionProps) {
 
                 {searchQuery && (
                     <div className="max-w-[1350px] mx-auto animate-in slide-in-from-bottom-4 duration-700 px-[60px] pb-24 mt-16">
-                        <div className="flex items-center gap-4 mb-12">
-                            <h2 className="text-3xl font-heading font-bold text-slate-600 uppercase">Motor do Acervo</h2>
-                            <span className="text-gray-300 text-3xl">/</span>
-                            <span className="text-[#f97316] text-xl font-bold uppercase">"{searchQuery}"</span>
-                        </div>
+
 
                         {!filteredResults ? (
                             <div className="text-center py-20 text-gray-400">
@@ -127,7 +123,6 @@ export function SearchSection({ isOpen }: SearchSectionProps) {
                             <div className="space-y-16">
                                 {filteredResults.empresas.length > 0 && (
                                     <div className="space-y-6">
-                                        <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.3em] border-l-4 border-slate-200 pl-4">Centro de Empresas</h3>
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                             {filteredResults.empresas.map((item: any, i: number) => (
                                                 <SearchResultCard key={i} item={item} colorClass="bg-emerald-50 text-emerald-600" />
@@ -137,17 +132,15 @@ export function SearchSection({ isOpen }: SearchSectionProps) {
                                 )}
                                 {filteredResults.propriedades.length > 0 && (
                                     <div className="space-y-6">
-                                        <h3 className="text-sm font-black text-amber-900/40 uppercase tracking-[0.3em] border-l-4 border-amber-500 pl-4">Acervo de Propriedades</h3>
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                             {filteredResults.propriedades.map((item: any, i: number) => (
-                                                <SearchResultCard key={i} item={item} colorClass="bg-amber-50 text-amber-600" />
+                                                <SearchResultCard key={i} item={item} colorClass="bg-emerald-50 text-emerald-600" />
                                             ))}
                                         </div>
                                     </div>
                                 )}
                                 {filteredResults.produtos.length > 0 && (
                                     <div className="space-y-6">
-                                        <h3 className="text-sm font-black text-orange-900/40 uppercase tracking-[0.3em] border-l-4 border-[#f97316] pl-4">Catálogo de Produtos</h3>
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                             {filteredResults.produtos.map((item: any, i: number) => (
                                                 <SearchResultCard key={i} item={item} colorClass="bg-orange-50 text-[#f97316]" />
@@ -157,20 +150,18 @@ export function SearchSection({ isOpen }: SearchSectionProps) {
                                 )}
                                 {filteredResults.profissionais.length > 0 && (
                                     <div className="space-y-6">
-                                        <h3 className="text-sm font-black text-blue-900/40 uppercase tracking-[0.3em] border-l-4 border-blue-500 pl-4">Base de Profissionais</h3>
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                             {filteredResults.profissionais.map((item: any, i: number) => (
-                                                <SearchResultCard key={i} item={item} colorClass="bg-blue-50 text-blue-600" />
+                                                <SearchResultCard key={i} item={item} colorClass="bg-orange-50 text-[#f97316]" isRound={true} />
                                             ))}
                                         </div>
                                     </div>
                                 )}
                                 {filteredResults.artigos.length > 0 && (
                                     <div className="space-y-6">
-                                        <h3 className="text-sm font-black text-gray-900/40 uppercase tracking-[0.3em] border-l-4 border-gray-500 pl-4">Artigos Diversos</h3>
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                             {filteredResults.artigos.map((item: any, i: number) => (
-                                                <SearchResultCard key={i} item={item} colorClass="bg-gray-50 text-gray-600" />
+                                                <SearchResultCard key={i} item={item} colorClass="bg-emerald-50 text-emerald-600" />
                                             ))}
                                         </div>
                                     </div>
@@ -184,20 +175,34 @@ export function SearchSection({ isOpen }: SearchSectionProps) {
     );
 }
 
-function SearchResultCard({ item, colorClass }: { item: any, colorClass: string }) {
+function SearchResultCard({ item, colorClass, isRound = false }: { item: any, colorClass: string, isRound?: boolean }) {
     const Icon = item.icon;
     // Determine the link based on category or item type
     const href = item.id ? `/detalhes/${item.id}` : "#";
 
     return (
         <Link href={href} className="block">
-            <div className="bg-white border border-gray-100 p-4 rounded-[10px] shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center gap-3 group">
-                <div className={`w-10 h-10 rounded-[10px] flex items-center justify-center flex-shrink-0 transition-colors duration-300 ${colorClass} group-hover:bg-gray-900 group-hover:text-white`}>
-                    <Icon className="w-5 h-5" />
+            <div className="bg-white border border-gray-100 p-4 rounded-[10px] shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center gap-4 group">
+                {/* Image or Icon Container */}
+                <div className="shrink-0">
+                    {item.logo ? (
+                        <div className="w-12 h-12 rounded-[10px] overflow-hidden border border-gray-100 relative bg-white">
+                            <img src={item.logo} alt={item.title} className="w-full h-full object-contain p-1" />
+                        </div>
+                    ) : item.image ? (
+                        <div className={`w-12 h-12 overflow-hidden border border-gray-100 relative ${isRound ? 'rounded-full' : 'rounded-[10px]'}`}>
+                            <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                        </div>
+                    ) : (
+                        <div className={`w-12 h-12 rounded-[10px] flex items-center justify-center transition-colors duration-300 ${colorClass} group-hover:bg-gray-900 group-hover:text-white`}>
+                            <Icon className="w-6 h-6" />
+                        </div>
+                    )}
                 </div>
-                <div>
-                    <h4 className="font-bold text-slate-600 text-base leading-tight group-hover:text-[#f97316] transition-colors">{item.title}</h4>
-                    <p className="text-[9px] text-gray-400 uppercase tracking-wider font-bold mt-0.5">{item.sub}</p>
+
+                <div className="flex-1 min-w-0">
+                    <h4 className="font-bold text-slate-600 text-sm md:text-base leading-tight group-hover:text-[#f97316] transition-colors truncate">{item.title}</h4>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-bold mt-1 truncate">{item.sub}</p>
                 </div>
             </div>
         </Link>

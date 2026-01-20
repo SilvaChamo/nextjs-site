@@ -15,7 +15,7 @@ export default function SearchResultsPage() {
     return (
         <div className="min-h-screen bg-white text-slate-900 font-sans">
 
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
+            <main className="max-w-[1300px] mx-auto px-4 md:px-[60px] pt-24 pb-12">
                 <div className="flex flex-col lg:flex-row gap-12">
 
                     {/* Sidebar Filter */}

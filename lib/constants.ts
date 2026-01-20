@@ -65,16 +65,16 @@ export const SEARCH_DATA = {
         { title: 'Téc. Helena Vilanculos', sub: 'Especialista em Floricultura Exportação', icon: Flower2 }
     ],
     empresas: [
-        { title: 'AgroMoçambique Lda', sub: 'Empresa Privada - Produção de Frutas', icon: Building2 },
-        { title: 'Cooperativa Boa Esperança', sub: 'Cooperativa de Pequenos Produtores', icon: Users },
-        { title: 'Instituto de Investigação Agrária', sub: 'Empresa Pública - Ciência e Tecnologia', icon: Landmark },
-        { title: 'Fundação Rural Crescer', sub: 'Instituição de Fomento ao Microcrédito', icon: Coins },
-        { title: 'Grains Moz Holding', sub: 'Consórcio de Cereais e Oleaginosas', icon: Factory },
-        { title: 'Centro Logístico da Beira', sub: 'Gestão de Terminais de Carga Agrária', icon: Ship },
-        { title: 'MozFertil S.A.', sub: 'Produção Local de Fertilizantes', icon: FlaskConical },
-        { title: 'Logística do Niassa', sub: 'Transporte e Escoamento de Milho', icon: Truck },
-        { title: 'BioSeeds Moçambique', sub: 'Pesquisa de Sementes Nativas', icon: Sprout },
-        { title: 'Mecanização de Gaza', sub: 'Aluguer de Equipamento Agrícola', icon: Tractor }
+        { title: 'AgroMoçambique Lda', sub: 'Agro-negócio - Produção de Frutas', icon: Building2, location: 'Maputo' },
+        { title: 'Cooperativa Boa Esperança', sub: 'Agro-negócio - Pequenos Produtores', icon: Users, location: 'Gaza' },
+        { title: 'Instituto de Investigação Agrária', sub: 'Tecnologia - Ciência Agrária', icon: Landmark, location: 'Maputo' },
+        { title: 'Fundação Rural Crescer', sub: 'Agro-negócio - Microcrédito Rural', icon: Coins, location: 'Nampula' },
+        { title: 'Grains Moz Holding', sub: 'Indústria - Processamento de Cereais', icon: Factory, location: 'Manica' },
+        { title: 'Centro Logístico da Beira', sub: 'Indústria - Terminais de Carga', icon: Ship, location: 'Sofala' },
+        { title: 'MozFertil S.A.', sub: 'Fertilizantes - Produção Local', icon: FlaskConical, location: 'Tete' },
+        { title: 'Logística do Niassa', sub: 'Indústria - Transporte de Milho', icon: Truck, location: 'Niassa' },
+        { title: 'BioSeeds Moçambique', sub: 'Insumos - Sementes Nativas', icon: Sprout, location: 'Inhambane' },
+        { title: 'Mecanização de Gaza', sub: 'Máquinas - Aluguer de Equipamento', icon: Tractor, location: 'Gaza' }
     ],
     artigos: [
         { title: 'Estudo sobre Variedades de Arroz', sub: 'Publicado por IIAM - 2023', icon: FileLineChart },

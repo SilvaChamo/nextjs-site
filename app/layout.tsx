@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${montserrat.variable} ${mavenPro.variable} font-sans antialiased`}
+        className={`${montserrat.variable} ${mavenPro.variable} font-sans antialiased bg-[#333333]`}
         suppressHydrationWarning
       >
         <Navbar />

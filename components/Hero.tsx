@@ -26,7 +26,7 @@ export function Hero({ onToggleSearch, isSearchOpen }: HeroProps) {
             </div>
 
             {/* Content Container */}
-            <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center h-full pt-20">
+            <div className="relative z-10 w-full max-w-[1350px] mx-auto px-4 md:px-[60px] grid grid-cols-1 lg:grid-cols-2 gap-12 items-center h-full pt-20">
 
                 {/* Left Column: Text & Actions */}
                 <div className="space-y-8 animate-in slide-in-from-left-6 duration-700">
@@ -43,9 +43,9 @@ export function Hero({ onToggleSearch, isSearchOpen }: HeroProps) {
 
                     <div className="flex flex-wrap gap-4">
                         <Button className="bg-[#22c55e] hover:bg-[#16a34a] text-white px-8 py-6 rounded-[10px] text-base font-bold uppercase tracking-wider shadow-md">
-                            Cadastre sua empresa
+                            Seja nosso parceiro
                         </Button>
-                        <Button variant="outline" className="border-white/30 bg-white/5 text-white hover:bg-white hover:text-green-900 px-8 py-6 rounded-[10px] text-base font-bold uppercase tracking-wider backdrop-blur-sm">
+                        <Button variant="outline" className="bg-[#f97316]/20 border-[#f97316] text-white hover:bg-[#f97316]/20 hover:border-[#f97316] hover:text-[#f97316] px-8 py-6 rounded-[10px] text-base font-bold uppercase tracking-wider backdrop-blur-sm transition-all duration-300">
                             Saiba mais
                         </Button>
                     </div>

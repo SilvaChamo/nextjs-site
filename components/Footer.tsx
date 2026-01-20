@@ -4,8 +4,8 @@ export function Footer() {
     const links = ["Institucional", "Termos de uso", "Privacidade"];
 
     return (
-        <footer className="w-full bg-white border-t border-gray-100 py-8 px-6 md:px-12 z-50">
-            <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center w-full gap-4">
+        <footer className="w-full bg-white border-t border-gray-100 py-8 px-[60px] z-50">
+            <div className="max-w-[1350px] mx-auto flex flex-col md:flex-row justify-between items-center w-full gap-4">
                 <nav className="flex flex-row gap-8 text-[10px] md:text-xs font-black text-gray-400 uppercase tracking-[0.2em] md:tracking-[0.3em]">
                     {links.map((link, i) => (
                         <Link

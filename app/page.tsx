@@ -6,6 +6,8 @@ import { SearchSection } from "@/components/SearchSection";
 import { InfoSection } from "@/components/InfoSection";
 import { StickyDivider } from "@/components/StickyDivider";
 import { CategoriesShowcase } from "@/components/CategoriesShowcase";
+import { CommunityBanner } from "@/components/CommunityBanner";
+import { WhyChooseUs } from "@/components/WhyChooseUs";
 
 export default function Home() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -16,6 +18,8 @@ export default function Home() {
       <StickyDivider />
       <SearchSection isOpen={isSearchOpen} />
       <CategoriesShowcase />
+      <CommunityBanner />
+      <WhyChooseUs />
       <InfoSection />
     </main>
   );

@@ -1,13 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
-    Tractor, Cpu, Landmark, Leaf, Wallet, Book,
-    BarChart3, Newspaper, TrendingUp, PieChart, FileText,
-    ArrowRight,
-    Scale,
-    Warehouse
+    Cpu, Leaf, Book,
+    BarChart3, TrendingUp, ArrowRight,
+    Scale, TreePalm, Sprout, Coins, FileText
 } from "lucide-react";
 
 type CategoryCard = {
@@ -20,21 +18,39 @@ type CategoryCard = {
     href: string;
 };
 
+// Section labeled as "Informação" for easier identification
 export function InfoSection() {
     const [activeTab, setActiveTab] = useState("categorias");
+    const bgRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (bgRef.current) {
+                const scrolled = window.scrollY;
+                // Parallax speed 0.4: Moves slower than the scroll
+                bgRef.current.style.transform = `translateY(${scrolled * 0.4}px)`;
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        // Trigger once on mount to set initial position
+        handleScroll();
+
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
 
     const categoryCards: CategoryCard[] = [
         {
             title: "Turismo rural",
-            description: "Encontre aqui locais de turismo rural, fazendas turísticas, pousadas, estabelecimentos de alojamento e locais históricos.",
-            icon: Tractor,
-            iconBg: "bg-red-50",
-            iconColor: "text-red-500",
+            description: "Encontre aqui locais de turismo rural, fazendas turísticas, pousadas, estabelecimentos de alojamento, locais históricos e turísticos das zonas rurais",
+            icon: TreePalm,
+            iconBg: "bg-pink-50",
+            iconColor: "text-pink-500",
             href: "/pesquisa?cat=turismo"
         },
         {
             title: "Tecnologias Agrárias",
-            description: "Tecnologia agrária, equipamentos agrícolas, máquinas e informações agrícolas sobre inovações e práticas modernas.",
+            description: "Tecnologia agrária, equipamentos agrícolas, Máquinas e informações agrícolas sobre inovações e práticas modernas na agricultura.",
             icon: Cpu,
             dark: true,
             iconBg: "bg-white/10",
@@ -43,15 +59,15 @@ export function InfoSection() {
         },
         {
             title: "Políticas Agrárias",
-            description: "Acesse aqui informações essenciais sobre o quadro legal e regulamentação, incluindo política agrária em Moçambique.",
-            icon: Scale,
-            iconBg: "bg-blue-50",
-            iconColor: "text-blue-500",
+            description: "Acesse aqui informações essenciais sobre o quadro legal e regulamentação, incluíndo política que rege o sector agrícola em Moçambique",
+            icon: Book,
+            iconBg: "bg-slate-100",
+            iconColor: "text-slate-500",
             href: "/pesquisa?cat=politicas"
         },
         {
             title: "Insumos Agrários",
-            description: "Soluções agrícolas, pesticidas, fertilizantes, soluções para doenças de plantas e agro-pecuária.",
+            description: "Soluções agrícolas, pesticidas, fertilizantes, soluções para doenças de plantas e agro-pecuária, métodos de controlo de pragas e gestão de recursos.",
             icon: Leaf,
             dark: true,
             iconBg: "bg-white/10",
@@ -60,16 +76,16 @@ export function InfoSection() {
         },
         {
             title: "Financiamento agrário",
-            description: "Descubra as melhores opções de apoio financeiro agrícola e soluções de financiamento para impulsionar sua produção.",
-            icon: Wallet,
-            iconBg: "bg-yellow-50",
-            iconColor: "text-yellow-600",
+            description: "Descubra as melhores opções de apoio financeiro agrícola e soluções de financiamento para impulsionar sua produção e produtividade",
+            icon: Coins,
+            iconBg: "bg-pink-50",
+            iconColor: "text-pink-500",
             href: "/pesquisa?cat=financa"
         },
         {
             title: "Artigos Científicos",
-            description: "Resultados de pesquisa agrícola, estudos de campo, experimentos e projetos técnicos científicos sobre o sector.",
-            icon: Book,
+            description: "Resultados de pesquisa agrícola, estudos de campo, experimentos, projectos e artigos científicos sobre o secrtor agrário moçambicano",
+            icon: FileText,
             dark: true,
             iconBg: "bg-white/10",
             iconColor: "text-white",
@@ -78,71 +94,85 @@ export function InfoSection() {
     ];
 
     return (
-        <section className="w-full bg-[#f8fafc] py-24 px-6 md:px-12">
-            <div className="max-w-7xl mx-auto text-center space-y-6">
-                {/* Header */}
-                <div className="space-y-4 max-w-3xl mx-auto">
-                    <h2 className="text-4xl md:text-5xl font-black text-slate-600 tracking-tight">
-                        Mantenha-se informado
-                    </h2>
-                    <p className="text-slate-500 text-base md:text-lg leading-relaxed">
-                        Oferecemos serviços dinâmicos para facilitar suas actividades com vista a melhorar a produção. Explore as categorias disponíveis abaixo
-                    </p>
-                </div>
+        <section className="w-full bg-slate-50 relative" id="informacao">
+            {/* Top Banner Area - Dark Background */}
+            <div className="w-full bg-[#111827] relative pt-20 pb-32 overflow-hidden">
+                {/* Background Image - Seedlings - Parallax Enabled */}
+                <div
+                    ref={bgRef}
+                    className="absolute -top-[25%] left-0 w-full h-[150%] bg-[url('/info-banner-bg.jpg')] bg-cover bg-center opacity-60 pointer-events-none will-change-transform"
+                />
+                <div className="absolute inset-0 bg-black/50" />
 
-                {/* Custom Tabs Refined */}
-                <div className="inline-flex bg-white p-1.5 rounded-[10px] shadow-sm border border-slate-100 gap-2">
-                    <button
-                        onClick={() => setActiveTab("categorias")}
-                        className={`px-8 py-3 rounded-[10px] text-sm font-bold uppercase tracking-wider transition-all ${activeTab === "categorias"
-                            ? "text-[#f97316]"
-                            : "text-slate-600 hover:bg-slate-50"
-                            }`}
-                    >
-                        Categorias
-                    </button>
-                    <button
-                        onClick={() => setActiveTab("estatisticas")}
-                        className={`px-8 py-3 rounded-[10px] text-sm font-bold uppercase tracking-wider transition-all ${activeTab === "estatisticas"
-                            ? "text-[#f97316]"
-                            : "text-slate-600 hover:bg-slate-50"
-                            }`}
-                    >
-                        Estatísticas
-                    </button>
-                    <button
-                        onClick={() => setActiveTab("informacoes")}
-                        className={`px-8 py-3 rounded-[10px] text-sm font-bold uppercase tracking-wider transition-all ${activeTab === "informacoes"
-                            ? "text-[#f97316]"
-                            : "text-slate-600 hover:bg-slate-50"
-                            }`}
-                    >
-                        Informações
-                    </button>
-                </div>
+                <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] text-center space-y-8 relative z-10">
+                    {/* Header Restored - White Text */}
+                    <div className="space-y-4 max-w-4xl mx-auto">
+                        <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight">
+                            Mantenha-se informado
+                        </h2>
+                        <p className="text-slate-200 text-base md:text-lg leading-relaxed max-w-3xl mx-auto font-medium">
+                            Oferecemos serviços dinâmicos para facilitar suas actividades com vista a melhorar a produção. Fornecemos auxílio na busca por soluções assertivas de forma eficiente. Explore as categorias disponíveis abaixo
+                        </p>
+                    </div>
 
-                {/* Tabs Content */}
-                <div className="mt-16 animate-in fade-in duration-700">
+                    {/* Custom Tabs - Pill Style - Clean, no background container */}
+                    <div className="inline-flex items-center gap-4">
+                        <button
+                            onClick={() => setActiveTab("categorias")}
+                            className={`px-8 py-2 rounded-md text-base font-bold transition-all shadow-lg hover:bg-[#f97316] hover:text-white ${activeTab === "categorias"
+                                ? "bg-[#f97316] text-white"
+                                : "bg-white text-slate-700"
+                                }`}
+                        >
+                            Categorias
+                        </button>
+                        <button
+                            onClick={() => setActiveTab("estatisticas")}
+                            className={`px-8 py-2 rounded-md text-base font-bold transition-all shadow-lg hover:bg-[#f97316] hover:text-white ${activeTab === "estatisticas"
+                                ? "bg-[#f97316] text-white"
+                                : "bg-white text-slate-700"
+                                }`}
+                        >
+                            Estatísticas
+                        </button>
+                        <button
+                            onClick={() => setActiveTab("informacoes")}
+                            className={`px-8 py-2 rounded-md text-base font-bold transition-all shadow-lg hover:bg-[#f97316] hover:text-white ${activeTab === "informacoes"
+                                ? "bg-[#f97316] text-white"
+                                : "bg-white text-slate-700"
+                                }`}
+                        >
+                            Informações
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Overlapping Content Container */}
+            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20 -mt-20 pb-24">
+                <div className="animate-in fade-in duration-700 slide-in-from-bottom-8">
                     {activeTab === "categorias" && (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {categoryCards.map((card, idx) => (
                                 <Link
                                     key={idx}
                                     href={card.href}
-                                    className={`p-8 rounded-[10px] text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col gap-6 group cursor-pointer ${card.dark
-                                        ? "bg-[#334155] text-white shadow-blue-900/10"
-                                        : "bg-white text-slate-900 shadow-xl shadow-slate-200/50"
+                                    className={`p-6 md:p-8 rounded-[12px] text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col gap-4 group cursor-pointer border h-full ${card.dark
+                                        ? "bg-[#374151] text-white border-slate-600 shadow-xl shadow-slate-900/20"
+                                        : "bg-white text-slate-900 border-slate-200 shadow-lg shadow-slate-200/50"
                                         }`}
                                 >
-                                    <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${card.iconBg}`}>
-                                        <card.icon className={`h-6 w-6 ${card.iconColor}`} />
+                                    <div className="flex items-start gap-4">
+                                        <div className={`w-12 h-12 rounded-[10px] flex items-center justify-center shrink-0 ${card.iconBg}`}>
+                                            <card.icon className={`h-6 w-6 ${card.iconColor}`} />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <h3 className="text-xl font-bold leading-tight">{card.title}</h3>
+                                        </div>
                                     </div>
-                                    <div className="space-y-3">
-                                        <h3 className="text-lg font-bold group-hover:text-[#f97316] transition-colors text-slate-600">{card.title}</h3>
-                                        <p className={`text-sm leading-relaxed ${card.dark ? "text-slate-300" : "text-slate-500"}`}>
-                                            {card.description}
-                                        </p>
-                                    </div>
+                                    <p className={`text-sm leading-relaxed ${card.dark ? "text-slate-300" : "text-slate-500"} line-clamp-4`}>
+                                        {card.description}
+                                    </p>
                                 </Link>
                             ))}
                         </div>
@@ -150,7 +180,7 @@ export function InfoSection() {
 
                     {activeTab === "estatisticas" && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
-                            <div className="bg-white p-8 rounded-[10px] shadow-xl shadow-slate-200 border border-slate-50 space-y-6">
+                            <div className="bg-white p-8 rounded-[12px] shadow-xl shadow-slate-200 border border-slate-100 space-y-6">
                                 <div className="flex items-center gap-4">
                                     <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center">
                                         <BarChart3 className="text-[#f97316] h-6 w-6" />
@@ -171,7 +201,7 @@ export function InfoSection() {
                                     ))}
                                 </div>
                             </div>
-                            <div className="bg-[#334155] p-8 rounded-[10px] shadow-2xl text-white space-y-6">
+                            <div className="bg-[#374151] p-8 rounded-[12px] shadow-2xl text-white space-y-6 border border-slate-600">
                                 <div className="flex items-center gap-4">
                                     <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
                                         <TrendingUp className="text-white h-6 w-6" />
@@ -189,7 +219,7 @@ export function InfoSection() {
                     )}
 
                     {activeTab === "informacoes" && (
-                        <div className="max-w-4xl mx-auto space-y-4 text-left">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {[
                                 { title: "Boas Práticas: Irrigação", sub: "Reduza o desperdício de água com técnicas de gota-a-gota.", date: "15 Jan 2024", type: "Técnico", slug: "irrigacao" },
                                 { title: "Novo Fundo de Fomento", sub: "Governo anuncia 500M Meticais para pequenos produtores.", date: "12 Jan 2024", type: "Notícia", slug: "fundo" },
@@ -198,18 +228,18 @@ export function InfoSection() {
                                 <Link
                                     key={i}
                                     href={`/artigos/${news.slug}`}
-                                    className="bg-white p-6 rounded-[10px] shadow-md border border-slate-100 flex flex-col md:flex-row md:items-center justify-between group cursor-pointer hover:border-[#f97316] transition-all gap-6"
+                                    className="bg-white p-6 rounded-[12px] shadow-lg border border-slate-100 flex flex-col justify-between group cursor-pointer hover:border-[#f97316] transition-all gap-4 h-full"
                                 >
-                                    <div className="flex-1 space-y-2">
+                                    <div className="space-y-3">
                                         <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-[#f97316]">
                                             <span>{news.type}</span>
                                             <span className="text-slate-300">•</span>
                                             <span className="text-slate-400">{news.date}</span>
                                         </div>
                                         <h3 className="text-lg font-bold text-slate-600 group-hover:text-[#f97316] transition-colors">{news.title}</h3>
-                                        <p className="text-sm text-slate-500 leading-relaxed line-clamp-1">{news.sub}</p>
+                                        <p className="text-sm text-slate-500 leading-relaxed line-clamp-3">{news.sub}</p>
                                     </div>
-                                    <div className="shrink-0 flex items-center gap-2 text-xs font-bold text-slate-400 group-hover:text-slate-900 transition-colors whitespace-nowrap">
+                                    <div className="flex items-center gap-2 text-xs font-bold text-slate-400 group-hover:text-slate-900 transition-colors mt-auto pt-4">
                                         Explorar <ArrowRight className="h-3 w-3" />
                                     </div>
                                 </Link>

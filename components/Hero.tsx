@@ -48,6 +48,9 @@ export function Hero({ onToggleSearch, isSearchOpen }: HeroProps) {
                 />
                 {/* Sobreposição escura para legibilidade do texto */}
                 <div className="absolute inset-0 bg-black/60 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]" />
+
+                {/* Efeito Visual (Blob) */}
+                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-emerald-500/20 rounded-full blur-[100px] -mr-40 -mt-40 pointer-events-none z-10 animate-pulse-slow"></div>
             </div>
 
             {/* Contentor de Conteúdo */}

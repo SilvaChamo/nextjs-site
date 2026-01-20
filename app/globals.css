@@ -83,7 +83,10 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.48 0.18 145);
+  --sidebar-ring: oklch(0.48 0.18 145);
   --site-max-width: 1350px;
+  --dashboard-dark: #022c22;
+  --dashboard-orange: #f97316;
 }
 
 .dark {
@@ -170,13 +173,16 @@
 .animate-float-delayed {
   animation: float 6s ease-in-out 3s infinite;
 }
+
 @keyframes ken-burns {
   0% {
     transform: scale(1) translate(0, 0);
   }
+
   50% {
     transform: scale(1.1) translate(-2%, -2%);
   }
+
   100% {
     transform: scale(1) translate(0, 0);
   }

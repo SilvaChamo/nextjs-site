@@ -221,7 +221,7 @@ export function Navbar() {
                                                         <Button
                                                             onClick={handleContactSubmit}
                                                             disabled={loading.contact}
-                                                            className="w-full rounded-[10px] bg-slate-900 text-white hover:bg-[#f97316] transition-all font-bold h-8 text-[10px] shadow-sm self-start uppercase tracking-wider"
+                                                            className="w-full rounded-[10px] bg-emerald-950 text-white hover:bg-[#f97316] transition-all font-bold h-8 text-[10px] shadow-sm self-start uppercase tracking-wider"
                                                         >
                                                             {loading.contact ? <Loader2 className="w-3 h-3 animate-spin" /> : "Enviar"}
                                                         </Button>

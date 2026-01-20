@@ -9,8 +9,8 @@ export function Footer() {
                 <div className="w-full h-[6px] bg-[#f97316] shadow-[0_0_15px_rgba(249,115,22,0.6)]" />
             </div>
 
-            {/* Main Content - Dark Charcoal Background */}
-            <div className="bg-[#383D43] text-white pt-10 pb-4">
+            {/* Main Content - Dark Dashboard Theme */}
+            <div className="bg-emerald-950 text-white pt-10 pb-4">
                 <div className="container-site">
                     {/* RE-RENDERING GRID STRUCTURE FOR ACCURACY */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 mb-8">
@@ -115,7 +115,7 @@ export function Footer() {
             </div>
 
             {/* Copyright Bar - Ultra Dark */}
-            <div className="bg-[#0f0f0f] py-3 border-t border-gray-800">
+            <div className="bg-[#021a14] py-3 border-t border-emerald-900">
                 <div className="container-site text-center">
                     <p className="text-[10px] text-gray-500">
                         Copyright © 2023 Base de dados agrícola | Powered by <a href="https://visualdesigne.com" target="_blank" rel="noopener noreferrer" className="text-[#08ED19] font-bold hover:underline">VisualDESIGN</a> Services, Lda.

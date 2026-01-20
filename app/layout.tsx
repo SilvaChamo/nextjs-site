@@ -29,7 +29,7 @@ export default function RootLayout({
         className={`${montserrat.variable} ${mavenPro.variable} font-sans antialiased bg-background min-h-screen flex flex-col`}
         suppressHydrationWarning
       >
-        <div className="bg-yellow-400 text-black p-2 font-bold text-center z-[9999]">SISTEMA ATUALIZADO 19:08</div>
+
         <NavFooterToggle>{children}</NavFooterToggle>
       </body>
     </html>

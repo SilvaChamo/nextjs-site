@@ -1,21 +1,53 @@
+"use client";
+
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { ChevronRight, LucideIcon } from "lucide-react";
+import { ChevronRight, LucideIcon, ArrowLeft } from "lucide-react";
+import { ReactNode } from "react";
 
 interface BreadcrumbItem {
     label: string;
     href?: string;
 }
 
+interface BackButton {
+    label: string;
+    href: string;
+}
+
 interface PageHeaderProps {
-    title: string;
+    title: string | ReactNode;
     breadcrumbs: BreadcrumbItem[];
     backgroundImage?: string;
     icon?: LucideIcon;
+    backButton?: BackButton;
 }
 
-export function PageHeader({ title, breadcrumbs, backgroundImage, icon: Icon }: PageHeaderProps) {
+export function PageHeader({ title, breadcrumbs, backgroundImage, icon: Icon, backButton }: PageHeaderProps) {
+    const [isSticky, setIsSticky] = useState(false);
+    const headerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (!headerRef.current) return;
+            const rect = headerRef.current.getBoundingClientRect();
+            // 72px is roughly the fixed Navbar height
+            if (rect.bottom <= 72) {
+                setIsSticky(true);
+            } else {
+                setIsSticky(false);
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll, { passive: true });
+        // Run once on mount to check initial position
+        handleScroll();
+
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
     return (
-        <div className="w-full bg-gradient-to-r from-emerald-950 via-green-900 via-teal-900 to-emerald-950 text-white pt-28 pb-10 relative overflow-hidden">
+        <div ref={headerRef} className="w-full bg-gradient-to-r from-emerald-950 via-green-900 via-teal-900 to-emerald-950 text-white pt-28 pb-10 relative overflow-visible">
             {/* Optional Background Image Overlay */}
             {backgroundImage && (
                 <div
@@ -33,10 +65,10 @@ export function PageHeader({ title, breadcrumbs, backgroundImage, icon: Icon }: 
 
             <div className="container-site relative z-10">
                 <h1 className="text-2xl md:text-[40px] font-heading font-black mb-3 tracking-tight text-white leading-[1.2]">{title}</h1>
-                <nav className="flex items-center text-[10px] md:text-xs text-gray-400 font-medium">
+                <nav className="flex items-center text-xs md:text-sm text-white font-medium">
                     {breadcrumbs.map((item, index) => (
                         <div key={index} className="flex items-center">
-                            {index > 0 && <ChevronRight className="w-3 h-3 mx-2 text-[#f97316]" />}
+                            {index > 0 && <ChevronRight className="w-4 h-4 mx-2 text-[#f97316]" />}
                             {item.href ? (
                                 <Link href={item.href} className="hover:text-[#f97316] transition-colors">
                                     {item.label}
@@ -47,6 +79,30 @@ export function PageHeader({ title, breadcrumbs, backgroundImage, icon: Icon }: 
                         </div>
                     ))}
                 </nav>
+
+                {/* Back Button */}
+                {backButton && (
+                    <Link
+                        href={backButton.href}
+                        className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-md border border-white/20 bg-transparent text-white text-sm font-semibold hover:bg-white/10 hover:border-white/40 transition-all group"
+                    >
+                        <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+                        {backButton.label}
+                    </Link>
+                )}
+            </div>
+
+            {/* ORANGE LINE - Single Element Switching Mode */}
+            <div
+                key={isSticky ? 'sticky' : 'static'}
+                className={`w-full left-0 z-[9999] pointer-events-none ${isSticky
+                    ? "fixed top-[64px] md:top-[72px]"
+                    : "absolute -bottom-[6px]"
+                    }`}
+            >
+                <div className="container-site">
+                    <div className={`w-full h-[6px] bg-[#f97316] ${isSticky ? '' : 'shadow-[0_0_15px_rgba(249,115,22,0.6)]'}`} />
+                </div>
             </div>
         </div>
     );

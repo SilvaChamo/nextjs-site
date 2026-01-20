@@ -104,7 +104,7 @@ export function InfoSection() {
 
                 <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] text-center space-y-8 relative z-10">
                     {/* Header Restored - White Text */}
-                    <div className="space-y-4 max-w-4xl mx-auto">
+                    <div className="space-y-2 max-w-4xl mx-auto">
                         <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight">
                             Mantenha-se informado
                         </h2>

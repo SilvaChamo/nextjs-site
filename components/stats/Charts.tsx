@@ -12,12 +12,14 @@ import {
     Area,
     PieChart,
     Pie,
-    Cell
+    Cell,
+    LineChart,
+    Line
 } from 'recharts';
 
 interface ChartProps {
     data: any[];
-    type: 'bar' | 'area' | 'pie';
+    type: 'bar' | 'area' | 'pie' | 'line';
     dataKey: string;
     categoryKey?: string;
     color?: string;
@@ -62,6 +64,23 @@ export function Charts({ data, type, dataKey, categoryKey = "name", color = "#f9
                     />
                     <Area type="monotone" dataKey={dataKey} stroke={color} fillOpacity={1} fill="url(#colorValue)" />
                 </AreaChart>
+            </ResponsiveContainer>
+        );
+    }
+
+    if (type === 'line') {
+        return (
+            <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={data}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                    <XAxis dataKey={categoryKey} fontSize={12} tickLine={false} axisLine={false} />
+                    <YAxis fontSize={12} tickLine={false} axisLine={false} />
+                    <Tooltip
+                        contentStyle={{ backgroundColor: 'white', borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                        itemStyle={{ color: '#374151' }}
+                    />
+                    <Line type="monotone" dataKey={dataKey} stroke={color} strokeWidth={3} dot={{ r: 4, fill: color }} activeDot={{ r: 6 }} />
+                </LineChart>
             </ResponsiveContainer>
         );
     }

@@ -6,7 +6,7 @@ export function Footer() {
         <footer className="w-full font-sans">
             {/* Orange Top Border */}
             <div className="container-site">
-                <div className="w-full h-[10px] bg-[#f97316]" />
+                <div className="w-full h-[6px] bg-[#f97316] shadow-[0_0_15px_rgba(249,115,22,0.6)]" />
             </div>
 
             {/* Main Content - Dark Charcoal Background */}
@@ -39,7 +39,7 @@ export function Footer() {
                                 <li><Link href="#" className="hover:text-[#f97316] transition-colors">Actividades</Link></li>
                                 <li><Link href="#" className="hover:text-[#f97316] transition-colors">Nossos parceiros</Link></li>
                                 <li><Link href="#" className="hover:text-[#f97316] transition-colors">Repositório</Link></li>
-                                <li><Link href="#" className="hover:text-[#f97316] transition-colors">Dashboard</Link></li>
+                                <li><Link href="/admin" className="hover:text-[#f97316] transition-colors">Dashboard</Link></li>
                             </ul>
                         </div>
 
@@ -56,16 +56,20 @@ export function Footer() {
                             </ul>
                         </div>
 
-                        {/* 4. O que fazemos */}
+                        {/* 4. Nossos Serviços */}
                         <div className="col-span-1 space-y-4">
-                            <h3 className="text-lg font-bold text-gray-200">O que fazemos?</h3>
+                            <h3 className="text-lg font-bold text-gray-200">Nossos Serviços</h3>
                             <ul className="space-y-2 text-sm text-gray-400">
-                                <li><Link href="#" className="hover:text-[#f97316] transition-colors">Fornecedores</Link></li>
-                                <li><Link href="#" className="hover:text-[#f97316] transition-colors">Transporte</Link></li>
-                                <li><Link href="#" className="hover:text-[#f97316] transition-colors">Lojas</Link></li>
-                                <li><Link href="#" className="hover:text-[#f97316] transition-colors">Insumos</Link></li>
-                                <li><Link href="#" className="hover:text-[#f97316] transition-colors">Mercado</Link></li>
-                                <li><Link href="#" className="hover:text-[#f97316] transition-colors">Produtos diversos</Link></li>
+                                <li><Link href="/servicos/transporte" className="hover:text-[#f97316] transition-colors">Logística & Transporte</Link></li>
+                                <li><Link href="/servicos/insumos" className="hover:text-[#f97316] transition-colors">Lojas de Insumos</Link></li>
+                                <li><Link href="/servicos/mercado" className="hover:text-[#f97316] transition-colors">Compra & Venda</Link></li>
+                                <li><Link href="/servicos/emprego" className="hover:text-[#f97316] transition-colors">Vagas de Emprego</Link></li>
+                                <li className="pt-2">
+                                    <p className="text-[10px] text-gray-500 italic leading-tight">
+                                        Encontre mais serviços no menu principal do cabeçalho.
+                                    </p>
+                                </li>
+                                <li className="pt-1"><Link href="/servicos" className="text-emerald-400 font-black uppercase text-[10px] tracking-widest hover:text-white transition-colors">→ Ver Todos os Serviços</Link></li>
                             </ul>
                         </div>
 

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Menu, ChevronLeft, Facebook, Instagram, Linkedin, Twitter, Loader2, CheckCircle } from "lucide-react";
+import { Menu, ChevronLeft, Facebook, Instagram, Linkedin, Twitter, Loader2, CheckCircle, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     Sheet,
@@ -72,7 +72,7 @@ export function Navbar() {
 
     const menuItems = [
         { label: "Sobre nós", link: "/sobre" },
-        { label: "Serviços", link: "#servicos" },
+        { label: "Serviços", link: "/servicos" },
         { label: "Repositório", link: "/pesquisa" },
         { label: "Parceria", link: "#parceria" },
         { label: "Mercado", link: "/pesquisa?cat=produtos" },
@@ -88,9 +88,9 @@ export function Navbar() {
                             <Image
                                 src="https://baseagrodata.com/wp-content/uploads/2026/01/Logo2-01.png"
                                 alt="Base Agro Data Logo"
-                                width={140}
-                                height={50}
-                                className="h-8 md:h-10 w-auto object-contain"
+                                width={160}
+                                height={60}
+                                className="h-10 md:h-12 w-auto object-contain"
                             />
                         </div>
                     </Link>
@@ -128,13 +128,14 @@ export function Navbar() {
                                     <ChevronLeft className="h-5 w-5" />
                                     MENU
                                 </SheetClose>
-                                <Button
-                                    variant="outline"
-                                    onClick={() => setView("auth")}
-                                    className={`rounded-full border-gray-400 text-gray-600 hover:bg-white hover:text-[#f97316] hover:border-[#f97316] text-[10px] font-bold px-5 h-7 uppercase tracking-wider bg-transparent transition-all ${view === 'auth' ? 'opacity-50 cursor-default' : ''}`}
-                                >
-                                    Entrar
-                                </Button>
+                                <Link href="/login">
+                                    <Button
+                                        variant="outline"
+                                        className="rounded-full border-gray-400 text-gray-600 hover:bg-white hover:text-[#f97316] hover:border-[#f97316] text-[10px] font-bold px-5 h-7 uppercase tracking-wider bg-transparent transition-all"
+                                    >
+                                        Entrar
+                                    </Button>
+                                </Link>
                             </div>
 
                             {/* 2. Main Content (Flexible - No Scroll ideally) */}
@@ -203,81 +204,27 @@ export function Navbar() {
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="flex flex-col h-full animate-in slide-in-from-right-8 duration-300">
-                                        {/* Voltar Link */}
-                                        <div
-                                            className="flex items-center gap-2 text-gray-500 hover:text-gray-900 transition-colors uppercase font-bold tracking-widest text-[10px] cursor-pointer mb-2 shrink-0"
-                                            onClick={() => setView("menu")}
-                                        >
-                                            <ChevronLeft className="h-4 w-4" />
-                                            Voltar ao Menu
+                                    <div className="flex flex-col h-full bg-slate-50/50 p-6 rounded-2xl border border-dashed border-slate-200 items-center justify-center text-center space-y-4">
+                                        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm">
+                                            <Building2 className="w-8 h-8 text-[#f97316]" />
                                         </div>
-
-                                        <div className="flex-1 flex flex-col min-h-0 gap-4 mt-2">
-                                            {/* Login Section */}
-                                            <div className="shrink-0 opacity-50 pointer-events-none">
-                                                <div className="flex items-center gap-2 mb-1.5 shrink-0">
-                                                    <div className="w-0.5 h-3 bg-[#f97316]"></div>
-                                                    <h3 className="text-gray-600 text-[11px] font-bold uppercase tracking-wider">Entrar (Em Breve)</h3>
-                                                </div>
-                                                <div className="bg-[#f9fafb] rounded-[10px] p-3 space-y-2 shadow-inner border border-gray-100">
-                                                    <Input placeholder="E-mail" disabled className="rounded-[10px] bg-white border-none h-8 px-3 text-xs shadow-sm" />
-                                                    <Input type="password" placeholder="Senha" disabled className="rounded-[10px] bg-white border-none h-8 px-3 text-xs shadow-sm" />
-                                                    <Button disabled className="w-full rounded-[10px] h-8 bg-slate-900 text-white font-bold text-[10px] uppercase tracking-widest transition-all shadow-sm">Entrar</Button>
-                                                </div>
-                                            </div>
-
-                                            {/* Register Section */}
-                                            <div className="shrink-0">
-                                                <div className="flex items-center gap-2 mb-1.5 shrink-0">
-                                                    <div className="w-0.5 h-3 bg-[#f97316]"></div>
-                                                    <h3 className="text-gray-600 text-[11px] font-bold uppercase tracking-wider">Registar Empresa</h3>
-                                                </div>
-                                                <div className="bg-[#f9fafb] rounded-[10px] p-3 space-y-2 shadow-inner border border-gray-100">
-                                                    {success.register ? (
-                                                        <div className="flex flex-col items-center justify-center py-4 text-emerald-600">
-                                                            <CheckCircle className="w-8 h-8 mb-2" />
-                                                            <span className="text-xs font-bold uppercase">Empresa Registada!</span>
-                                                        </div>
-                                                    ) : (
-                                                        <>
-                                                            <Input
-                                                                placeholder="Nome da Empresa"
-                                                                value={registerForm.name}
-                                                                onChange={(e) => setRegisterForm({ ...registerForm, name: e.target.value })}
-                                                                className="rounded-[10px] bg-white border-none h-8 px-3 text-xs shadow-sm"
-                                                            />
-                                                            <Input
-                                                                placeholder="Categoria (ex: Produção)"
-                                                                value={registerForm.category}
-                                                                onChange={(e) => setRegisterForm({ ...registerForm, category: e.target.value })}
-                                                                className="rounded-[10px] bg-white border-none h-8 px-3 text-xs shadow-sm"
-                                                            />
-                                                            <Input
-                                                                placeholder="E-mail de Contacto"
-                                                                value={registerForm.email}
-                                                                onChange={(e) => setRegisterForm({ ...registerForm, email: e.target.value })}
-                                                                className="rounded-[10px] bg-white border-none h-8 px-3 text-xs shadow-sm"
-                                                            />
-                                                            <Button
-                                                                onClick={handleRegisterSubmit}
-                                                                disabled={loading.register}
-                                                                className="w-full rounded-[10px] h-8 bg-slate-900 text-white hover:bg-[#f97316] font-bold text-[10px] uppercase tracking-widest transition-all shadow-sm"
-                                                            >
-                                                                {loading.register ? <Loader2 className="w-3 h-3 animate-spin" /> : "Registar"}
-                                                            </Button>
-                                                        </>
-                                                    )}
-                                                </div>
-                                            </div>
+                                        <div>
+                                            <h3 className="font-black text-slate-800 uppercase tracking-tighter">Área de Parceiros</h3>
+                                            <p className="text-xs text-slate-500 font-medium leading-tight mt-1">
+                                                Crie sua conta para gerir sua empresa e aceder a dados exclusivos.
+                                            </p>
                                         </div>
+                                        <Link href="/login" className="w-full">
+                                            <Button className="w-full bg-[#f97316] hover:bg-[#ea580c] text-white font-black py-6 rounded-xl shadow-lg shadow-orange-500/20 transition-all uppercase tracking-widest text-[10px]">
+                                                Começar Agora
+                                            </Button>
+                                        </Link>
                                     </div>
                                 )}
                             </div>
 
                             {/* 3. Footer (Fixed) */}
                             <div className="bg-[#e5e7eb] shrink-0 border-t border-gray-300 flex flex-col">
-                                {/* Address Info... (Same as before) */}
                                 {view === "menu" && (
                                     <div className="px-5 py-3 space-y-1 border-b border-gray-300/50 text-[10px] text-gray-600">
                                         <p className="font-bold">Av. karl Marx nº 177, Maputo - Moçambique</p>
@@ -290,7 +237,6 @@ export function Navbar() {
                                     </div>
                                 )}
 
-                                {/* Branding & Socials */}
                                 <div className="px-5 py-3 flex items-center justify-between">
                                     <div className="text-[10px] font-bold text-gray-500 leading-none flex flex-col gap-0.5">
                                         <span>© 2024</span>

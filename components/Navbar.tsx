@@ -95,7 +95,7 @@ export function Navbar() {
 
     return (
         <header className="w-full fixed top-0 left-0 z-50 bg-white shadow-md">
-            <div className="w-full max-w-[1350px] mx-auto px-2 md:px-4 py-3 flex items-center justify-between overflow-hidden flex-nowrap">
+            <div className="container-site py-3 flex items-center justify-between overflow-hidden flex-nowrap">
                 {/* Logo Section */}
                 <div className="flex items-center flex-shrink-0">
                     <Link href="/">

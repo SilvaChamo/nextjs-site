@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Menu, ChevronLeft, Facebook, Instagram, Linkedin, Twitter, Loader2, CheckCircle, Building2 } from "lucide-react";
+import { Menu, ChevronLeft, Facebook, Instagram, Linkedin, Twitter, Loader2, CheckCircle, Building2, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     Sheet,
@@ -27,9 +27,24 @@ export function Navbar() {
     const [loading, setLoading] = useState<{ contact: boolean; register: boolean }>({ contact: false, register: false });
     const [success, setSuccess] = useState<{ contact: boolean; register: boolean }>({ contact: false, register: false });
 
+    const [user, setUser] = useState<any>(null);
+
+    useEffect(() => {
+        // Verificar usuário inicial
+        supabase.auth.getUser().then(({ data: { user } }) => setUser(user));
+
+        // Escutar mudanças de auth
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setUser(session?.user ?? null);
+        });
+
+        return () => subscription.unsubscribe();
+    }, []);
+
     const toggleLanguage = () => {
         setLanguage((prev) => (prev === "PT" ? "EN" : "PT"));
     };
+
 
     const handleContactSubmit = async () => {
         if (!contactForm.name || !contactForm.message) return;
@@ -80,9 +95,9 @@ export function Navbar() {
 
     return (
         <header className="w-full fixed top-0 left-0 z-50 bg-white shadow-md">
-            <div className="container-site py-3 flex items-center justify-between">
+            <div className="w-full max-w-[1350px] mx-auto px-2 md:px-4 py-3 flex items-center justify-between overflow-hidden flex-nowrap">
                 {/* Logo Section */}
-                <div className="flex items-center">
+                <div className="flex items-center flex-shrink-0">
                     <Link href="/">
                         <div className="hover:opacity-80 transition-opacity duration-300">
                             <Image
@@ -97,7 +112,7 @@ export function Navbar() {
                 </div>
 
                 {/* Right Actions Section */}
-                <div className="flex items-center gap-3 md:gap-4">
+                <div className="flex items-center gap-3 md:gap-4 flex-shrink-0">
                     {/* Language Toggle */}
                     <button
                         onClick={toggleLanguage}
@@ -115,7 +130,7 @@ export function Navbar() {
                         </SheetTrigger>
                         <SheetContent
                             side="right"
-                            className="w-full sm:w-[300px] p-0 bg-white text-gray-800 flex flex-col h-full border-l-0 [&>button]:hidden"
+                            className="max-w-[1350px] mx-auto w-full overflow-x-hidden overflow-y-auto p-0 bg-white text-gray-800 flex flex-col h-full border-l-0 [&>button]:hidden text-left"
                         >
                             {/* Accessibility: Title */}
                             <div className="hidden">
@@ -128,14 +143,26 @@ export function Navbar() {
                                     <ChevronLeft className="h-5 w-5" />
                                     MENU
                                 </SheetClose>
-                                <Link href="/login">
-                                    <Button
-                                        variant="outline"
-                                        className="rounded-full border-gray-400 text-gray-600 hover:bg-white hover:text-[#f97316] hover:border-[#f97316] text-[10px] font-bold px-5 h-7 uppercase tracking-wider bg-transparent transition-all"
-                                    >
-                                        Entrar
-                                    </Button>
-                                </Link>
+                                {user ? (
+                                    <Link href="/usuario/dashboard">
+                                        <Button
+                                            variant="outline"
+                                            className="rounded-full border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800 hover:border-emerald-300 text-[10px] font-bold px-4 h-7 uppercase tracking-wider transition-all flex items-center gap-2"
+                                        >
+                                            <User className="w-3 h-3" />
+                                            Minha Conta
+                                        </Button>
+                                    </Link>
+                                ) : (
+                                    <Link href="/login">
+                                        <Button
+                                            variant="outline"
+                                            className="rounded-full border-gray-400 text-gray-600 hover:bg-white hover:text-[#f97316] hover:border-[#f97316] text-[10px] font-bold px-5 h-7 uppercase tracking-wider bg-transparent transition-all"
+                                        >
+                                            Entrar
+                                        </Button>
+                                    </Link>
+                                )}
                             </div>
 
                             {/* 2. Main Content (Flexible - No Scroll ideally) */}

@@ -8,9 +8,13 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-export default function LoginPage() {
+interface LoginPageProps {
+    initialMode?: "login" | "register";
+}
+
+export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
     const router = useRouter();
-    const [isLogin, setIsLogin] = useState(true);
+    const [isLogin, setIsLogin] = useState(initialMode === "login");
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 

@@ -135,7 +135,7 @@ export function FeaturedCompanies() {
 
     return (
         <div className="w-full bg-[#fdfdfd] overflow-hidden">
-            <div className="max-w-[1300px] mx-auto px-4 md:px-[60px] py-24 flex flex-col justify-center animate-in fade-in duration-[1200ms] w-full">
+            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] py-24 flex flex-col justify-center animate-in fade-in duration-[1200ms] w-full">
                 <div className="mb-16 w-full">
                     <div className="flex justify-between items-center mb-10">
                         <h2 className="text-gray-400 font-bold text-[11px] md:text-[13px] tracking-[0.7em] uppercase">Empresas em Destaque</h2>

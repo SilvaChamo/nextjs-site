@@ -7,4 +7,8 @@ if (!supabaseUrl || !supabaseKey) {
     console.warn('Missing Supabase environment variables')
 }
 
-export const supabase = createClient(supabaseUrl || '', supabaseKey || '')
+// Fallback to dummy values to prevent build errors ("SupabaseInvalidUrl")
+export const supabase = createClient(
+    supabaseUrl || 'https://placeholder.supabase.co',
+    supabaseKey || 'placeholder-key'
+)

@@ -1,22 +1,26 @@
 import { StatsDashboard } from "@/components/stats/StatsDashboard";
+import { notFound } from "next/navigation";
+
+// Define valid slugs explicitly
+const validSlugs = ["producao", "economia", "empresas", "emprego"];
 
 export async function generateStaticParams() {
-    return [
-        { slug: 'empresas' },
-        { slug: 'producao' },
-        { slug: 'economia' },
-        { slug: 'emprego' },
-    ];
+    return validSlugs.map((slug) => ({ slug }));
 }
 
-export default async function Page({
-    params,
-}: {
-    params: Promise<{ slug: string }>
-}) {
-    const slug = (await params).slug
+interface PageProps {
+    params: Promise<{ slug: string }>;
+}
+
+export default async function StatisticsPage({ params }: PageProps) {
+    const { slug } = await params;
+
+    if (!validSlugs.includes(slug)) {
+        notFound();
+    }
+
     return (
-        <main className="min-h-screen bg-[#F8F8F8] pb-20">
+        <main className="min-h-screen bg-[#EFF2F6] pb-20">
             <StatsDashboard slug={slug} />
         </main>
     );

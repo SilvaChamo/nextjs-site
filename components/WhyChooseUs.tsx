@@ -1,8 +1,37 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import { TrendingUp, MapPin, Users, Target, Eye, Globe, Building2, Tractor, Briefcase, ShoppingBag, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { supabase } from "@/lib/supabaseClient";
 
 export function WhyChooseUs() {
+    const [counts, setCounts] = useState({
+        empresas: 0,
+        profissionais: 0,
+        propriedades: 0,
+        produtos: 0
+    });
+
+    useEffect(() => {
+        const fetchCounts = async () => {
+            const [c, p, prop, prod] = await Promise.all([
+                supabase.from('companies').select('*', { count: 'exact', head: true }),
+                supabase.from('professionals').select('*', { count: 'exact', head: true }),
+                supabase.from('properties').select('*', { count: 'exact', head: true }),
+                supabase.from('products').select('*', { count: 'exact', head: true })
+            ]);
+
+            setCounts({
+                empresas: c.count || 0,
+                profissionais: p.count || 0,
+                propriedades: prop.count || 0,
+                produtos: prod.count || 0
+            });
+        };
+        fetchCounts();
+    }, []);
+
     return (
 
         <section className="bg-transparent py-[100px] overflow-hidden">
@@ -70,7 +99,7 @@ export function WhyChooseUs() {
                                 </div>
                                 <div className="space-y-1">
                                     <h4 className="font-bold text-lg leading-tight text-white">
-                                        Empresas<br />Registadas
+                                        {counts.empresas > 0 ? `${counts.empresas} ` : ''}Empresas<br />Registadas
                                     </h4>
                                     <p className="text-emerald-50 text-[10px] uppercase font-bold tracking-wider flex items-center gap-2 group-hover:gap-3 transition-all">
                                         Ver arquivo <ArrowRight className="w-3 h-3" />
@@ -93,7 +122,7 @@ export function WhyChooseUs() {
                                 </div>
                                 <div className="space-y-1">
                                     <h4 className="font-bold text-slate-700 text-lg leading-tight">
-                                        Profissionais<br />Cadastrados
+                                        {counts.profissionais > 0 ? `${counts.profissionais} ` : ''}Profissionais<br />Cadastrados
                                     </h4>
                                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider group-hover:text-[#f97316] transition-colors flex items-center gap-2">
                                         Explorar <ArrowRight className="w-3 h-3" />
@@ -116,7 +145,7 @@ export function WhyChooseUs() {
                                 </div>
                                 <div className="space-y-1">
                                     <h4 className="font-bold text-slate-700 text-lg leading-tight">
-                                        Propriedades<br />Cadastrados
+                                        {counts.propriedades > 0 ? `${counts.propriedades} ` : ''}Propriedades<br />Cadastrados
                                     </h4>
                                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider group-hover:text-[#f97316] transition-colors flex items-center gap-2">
                                         Explorar <ArrowRight className="w-3 h-3" />
@@ -136,7 +165,7 @@ export function WhyChooseUs() {
                                 </div>
                                 <div className="space-y-1">
                                     <h4 className="font-bold text-lg leading-tight text-white">
-                                        Produtos<br />Cadastrados
+                                        {counts.produtos > 0 ? `${counts.produtos} ` : ''}Produtos<br />Cadastrados
                                     </h4>
                                     <p className="text-orange-50 text-[10px] uppercase font-bold tracking-wider flex items-center gap-2 group-hover:gap-3 transition-all">
                                         Ver arquivo <ArrowRight className="w-3 h-3" />

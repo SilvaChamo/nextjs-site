@@ -1,13 +1,5 @@
-"use client";
-
-import React from "react";
-
 export function StickyDivider() {
     return (
-        <div className="sticky top-16 z-40 bg-transparent">
-            <div className="container-site">
-                <div className="h-[10px] bg-[#f97316] w-full" />
-            </div>
-        </div>
+        <div className="sticky top-0 z-50 w-full h-[6px] bg-[#f97316] shadow-[0_0_15px_rgba(249,115,22,0.6)]" />
     );
 }

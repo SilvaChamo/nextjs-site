@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Search, Building2, ShoppingBag, Users, FileText, LandPlot, ChevronDown, Check } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { SEARCH_DATA } from "@/lib/constants";
+import { supabase } from "@/lib/supabaseClient";
 import {
     Popover,
     PopoverContent,
@@ -19,6 +19,43 @@ export function SearchSection({ isOpen }: SearchSectionProps) {
     const [searchQuery, setSearchQuery] = useState("");
     const [activeCategory, setActiveCategory] = useState<string>("all");
     const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+
+    // Estado para guardar os dados da BD
+    const [dbData, setDbData] = useState<{
+        empresas: any[];
+        produtos: any[];
+        profissionais: any[];
+        propriedades: any[];
+        artigos: any[];
+    }>({
+        empresas: [],
+        produtos: [],
+        profissionais: [],
+        propriedades: [],
+        artigos: []
+    });
+
+    // Buscar todos os dados no início
+    useEffect(() => {
+        const fetchAll = async () => {
+            const [companies, products, pros, props, arts] = await Promise.all([
+                supabase.from('companies').select('*'),
+                supabase.from('products').select('*'),
+                supabase.from('professionals').select('*'),
+                supabase.from('properties').select('*'),
+                supabase.from('articles').select('*')
+            ]);
+
+            setDbData({
+                empresas: (companies.data || []).map(c => ({ ...c, title: c.name, sub: c.category || c.description, logo: c.logo_url, icon: Building2 })),
+                produtos: (products.data || []).map(p => ({ ...p, title: p.name, sub: p.category, image: p.image_url, icon: ShoppingBag })),
+                profissionais: (pros.data || []).map(p => ({ ...p, title: p.name, sub: p.role, image: p.image_url, icon: Users })),
+                propriedades: (props.data || []).map(p => ({ ...p, title: p.name, sub: p.description, image: p.image_url, icon: LandPlot })),
+                artigos: (arts.data || []).map(a => ({ ...a, sub: a.subtitle || a.type, image: a.image_url, icon: FileText }))
+            });
+        };
+        fetchAll();
+    }, []);
 
     const categories = [
         { id: "all", label: "Todas categorias", icon: Search },
@@ -36,21 +73,21 @@ export function SearchSection({ isOpen }: SearchSectionProps) {
         const query = searchQuery.toLowerCase();
 
         const filterData = (data: any[]) => data ? data.filter(item =>
-            item.title.toLowerCase().includes(query) ||
-            item.sub.toLowerCase().includes(query)
+            (item.title && item.title.toLowerCase().includes(query)) ||
+            (item.sub && item.sub.toLowerCase().includes(query))
         ) : [];
 
         const result: any = {
-            produtos: activeCategory === "all" || activeCategory === "produtos" ? filterData(SEARCH_DATA.produtos) : [],
-            profissionais: activeCategory === "all" || activeCategory === "profissionais" ? filterData(SEARCH_DATA.profissionais) : [],
-            empresas: activeCategory === "all" || activeCategory === "empresas" ? filterData(SEARCH_DATA.empresas) : [],
-            artigos: activeCategory === "all" || activeCategory === "artigos" ? filterData(SEARCH_DATA.artigos) : [],
-            propriedades: activeCategory === "all" || activeCategory === "propriedades" ? filterData((SEARCH_DATA as any).propriedades || []) : []
+            produtos: activeCategory === "all" || activeCategory === "produtos" ? filterData(dbData.produtos) : [],
+            profissionais: activeCategory === "all" || activeCategory === "profissionais" ? filterData(dbData.profissionais) : [],
+            empresas: activeCategory === "all" || activeCategory === "empresas" ? filterData(dbData.empresas) : [],
+            artigos: activeCategory === "all" || activeCategory === "artigos" ? filterData(dbData.artigos) : [],
+            propriedades: activeCategory === "all" || activeCategory === "propriedades" ? filterData(dbData.propriedades) : []
         };
 
         const totalCount = result.produtos.length + result.profissionais.length + result.empresas.length + result.artigos.length + result.propriedades.length;
         return totalCount > 0 ? result : null;
-    }, [searchQuery, activeCategory]);
+    }, [searchQuery, activeCategory, dbData]);
 
     return (
         <section className={`w-full bg-white relative overflow-hidden transition-all duration-700 ease-in-out ${isOpen ? "max-h-[2000px] opacity-100 py-[30px]" : "max-h-0 opacity-0 py-0"}`}>
@@ -176,7 +213,7 @@ export function SearchSection({ isOpen }: SearchSectionProps) {
 }
 
 function SearchResultCard({ item, colorClass, isRound = false }: { item: any, colorClass: string, isRound?: boolean }) {
-    const Icon = item.icon;
+    const Icon = item.icon || Search; // Fallback
     // Determine the link based on category or item type
     const href = item.id ? `/detalhes/${item.id}` : "#";
 

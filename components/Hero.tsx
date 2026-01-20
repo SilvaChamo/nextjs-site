@@ -31,13 +31,13 @@ export function Hero({ onToggleSearch, isSearchOpen }: HeroProps) {
         fetchStats();
     }, []);
 
-    // Helper to safely get value
+    // Função auxiliar para obter o valor com segurança
     const getVal = (slug: string, fallback: string) => stats[slug]?.value || fallback;
     const getTrend = (slug: string, fallback: string) => stats[slug]?.trend || fallback;
 
     return (
         <section className="relative w-full h-[calc(100vh-30px)] min-h-[670px] flex items-center justify-center overflow-hidden">
-            {/* Background Image */}
+            {/* Imagem de Fundo */}
             <div className="absolute inset-0 z-0">
                 <Image
                     src="/assets/hero-bg-new.jpg"
@@ -46,14 +46,14 @@ export function Hero({ onToggleSearch, isSearchOpen }: HeroProps) {
                     className="object-cover"
                     priority
                 />
-                {/* Dark Overlay for text readability */}
+                {/* Sobreposição escura para legibilidade do texto */}
                 <div className="absolute inset-0 bg-black/60 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]" />
             </div>
 
-            {/* Content Container */}
+            {/* Contentor de Conteúdo */}
             <div className="relative z-10 container-site grid grid-cols-1 lg:grid-cols-2 gap-12 items-center h-full pt-20">
 
-                {/* Left Column: Text & Actions */}
+                {/* Coluna Esquerda: Texto e Ações */}
                 <div className="space-y-8 animate-in slide-in-from-left-6 duration-700">
                     <div className="space-y-4">
                         <h1 className="text-[50px] font-heading font-black text-white leading-[1.2] tracking-tight">
@@ -76,9 +76,9 @@ export function Hero({ onToggleSearch, isSearchOpen }: HeroProps) {
                     </div>
                 </div>
 
-                {/* Right Column: Stats Cards Grid */}
+                {/* Coluna Direita: Grelha de Cartões de Estatísticas */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-[15px] animate-in slide-in-from-right-6 duration-700 delay-200">
-                    {/* Card 1: Empresas Agrárias */}
+                    {/* Cartão 1: Empresas Agrárias */}
                     <Link href="/estatisticas/empresas" className="block h-full animate-float">
                         <div className="bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-2xl border border-white/40 p-6 rounded-[10px] shadow-2xl hover:from-white/40 hover:to-white/20 transition-all group relative overflow-hidden h-full">
                             <div className="absolute top-0 right-0 p-2 opacity-50">
@@ -93,7 +93,7 @@ export function Hero({ onToggleSearch, isSearchOpen }: HeroProps) {
                         </div>
                     </Link>
 
-                    {/* Card 2: Produção Agrária 2025 */}
+                    {/* Cartão 2: Produção Agrária 2025 */}
                     <Link href="/estatisticas/producao" className="block h-full animate-float-delayed">
                         <div className="bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-2xl border border-white/40 p-6 rounded-[10px] shadow-2xl hover:from-white/40 hover:to-white/20 transition-all group relative h-full">
                             <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-100 mb-2 truncate drop-shadow-md">Produção Agrária 2025</h4>
@@ -107,7 +107,7 @@ export function Hero({ onToggleSearch, isSearchOpen }: HeroProps) {
                         </div>
                     </Link>
 
-                    {/* Card 3: Economia Agrária 2025 */}
+                    {/* Cartão 3: Economia Agrária 2025 */}
                     <Link href="/estatisticas/economia" className="block h-full md:col-span-2 lg:col-span-1 animate-float">
                         <div className="bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-2xl border border-white/40 p-6 rounded-[10px] shadow-2xl hover:from-white/40 hover:to-white/20 transition-all group relative h-full">
                             <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-100 mb-2 truncate drop-shadow-md">Economia Agrária 2025</h4>
@@ -122,7 +122,7 @@ export function Hero({ onToggleSearch, isSearchOpen }: HeroProps) {
                         </div>
                     </Link>
 
-                    {/* Card 4: Empregos na Agricultura */}
+                    {/* Cartão 4: Empregos na Agricultura */}
                     <Link href="/estatisticas/emprego" className="block h-full md:col-span-2 lg:col-span-1 animate-float-delayed">
                         <div className="bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-2xl border border-white/40 p-6 rounded-[10px] shadow-2xl hover:from-white/40 hover:to-white/20 transition-all group md:col-span-2 lg:col-span-1 h-full">
                             <h4 className="text-[10px] font-black uppercase tracking-widest text-[#22c55e] mb-2 truncate drop-shadow-md">Emprego Agrícola</h4>
@@ -139,7 +139,7 @@ export function Hero({ onToggleSearch, isSearchOpen }: HeroProps) {
 
             </div>
 
-            {/* Floating Search Button - Bottom Right */}
+            {/* Botão de Pesquisa Flutuante - Canto Inferior Direito */}
             <div className="absolute bottom-12 right-12 z-20 animate-in fade-in slide-in-from-bottom-8 duration-700">
                 <button
                     onClick={onToggleSearch}

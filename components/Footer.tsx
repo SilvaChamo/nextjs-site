@@ -39,7 +39,7 @@ export function Footer() {
                                 <li><Link href="#" className="hover:text-[#f97316] transition-colors">Actividades</Link></li>
                                 <li><Link href="#" className="hover:text-[#f97316] transition-colors">Nossos parceiros</Link></li>
                                 <li><Link href="#" className="hover:text-[#f97316] transition-colors">Repositório</Link></li>
-                                <li><Link href="/admin" className="hover:text-[#f97316] transition-colors">Dashboard</Link></li>
+                                <li><Link href="/usuario/dashboard" className="hover:text-[#f97316] transition-colors">Dashboard</Link></li>
                             </ul>
                         </div>
 

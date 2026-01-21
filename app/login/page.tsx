@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/utils/supabase/client";
 import { Mail, Lock, User, CheckCircle, AlertCircle, Loader2, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,9 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
     const [showPassword, setShowPassword] = useState(false);
+
+    // Create Supabase client for browser
+    const supabase = createClient();
 
     const [formData, setFormData] = useState({
         email: "",
@@ -38,6 +41,7 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                 });
                 if (error) throw error;
                 router.push("/usuario/dashboard");
+                router.refresh(); // Force refresh to update middleware state
             } else {
                 const { error } = await supabase.auth.signUp({
                     email: formData.email,

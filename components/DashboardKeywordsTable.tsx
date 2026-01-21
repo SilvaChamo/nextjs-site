@@ -34,7 +34,7 @@ const keywords = [
 
 export function DashboardKeywordsTable() {
     return (
-        <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden mt-8">
+        <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden mt-0">
             <div className="p-6 border-b border-slate-100">
                 <h3 className="text-xl font-bold text-slate-800">Palavras-chave que levaram ao seu Perfil</h3>
             </div>
@@ -66,8 +66,8 @@ export function DashboardKeywordsTable() {
                                 </td>
                                 <td className="px-6 py-4">
                                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold ${item.conversionStatus === 'good'
-                                            ? 'bg-emerald-50 text-emerald-600'
-                                            : 'bg-orange-50 text-orange-600'
+                                        ? 'bg-emerald-50 text-emerald-600'
+                                        : 'bg-orange-50 text-orange-600'
                                         }`}>
                                         {item.conversion}
                                     </span>

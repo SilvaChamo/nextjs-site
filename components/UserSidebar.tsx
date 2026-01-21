@@ -14,7 +14,7 @@ import {
     Settings,
     HelpCircle
 } from "lucide-react";
-import { supabase } from "../lib/supabaseClient";
+import { createClient } from "@/utils/supabase/client";
 import { Button } from "./ui/button";
 
 // Exact items requested by user
@@ -31,6 +31,9 @@ export function UserSidebar() {
     const [plan] = useState<"basic" | "ouro" | "premium">("basic");
     const [user, setUser] = useState<any>(null);
 
+    // Create Supabase client
+    const supabase = createClient();
+
     useEffect(() => {
         const getUser = async () => {
             const { data: { user } } = await supabase.auth.getUser();
@@ -42,10 +45,11 @@ export function UserSidebar() {
     const handleLogout = async () => {
         await supabase.auth.signOut();
         router.push("/login"); // Redirect to login after logout
+        router.refresh(); // Refresh to update middleware state
     };
 
     return (
-        <aside className="w-64 bg-emerald-950 min-h-screen flex flex-col text-slate-300 border-r border-emerald-900 shrink-0">
+        <aside className="w-full h-full bg-emerald-950 flex flex-col text-slate-300 shrink-0">
             {/* 1. Header Area with Dashboard Title */}
             {/* 1. Header Area with Dashboard Title */}
             <div className="h-16 flex items-center px-6 border-b border-emerald-900">
@@ -98,14 +102,14 @@ export function UserSidebar() {
 
                 <div className="mt-8 pt-6 border-t border-emerald-900/50">
                     <p className="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Sistema</p>
-                    <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-all text-left">
+                    <Link href="/usuario/dashboard/configuracoes" className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-all text-left">
                         <Settings className="w-5 h-5 text-slate-500" />
                         Configurações
-                    </button>
-                    <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-all text-left">
+                    </Link>
+                    <Link href="/usuario/dashboard/ajuda" className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-all text-left">
                         <HelpCircle className="w-5 h-5 text-slate-500" />
                         Ajuda & Suporte
-                    </button>
+                    </Link>
                 </div>
             </nav>
 

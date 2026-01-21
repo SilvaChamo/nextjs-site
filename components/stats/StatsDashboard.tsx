@@ -178,7 +178,7 @@ export function StatsDashboard({ slug }: StatsDashboardProps) {
 
 
             <div className="container-site py-[40px] flex flex-col lg:flex-row gap-5">
-                <aside className="w-full lg:w-64 space-y-6 shrink-0 sticky top-[85px] self-start h-fit">
+                <aside className="w-full lg:w-64 space-y-6 shrink-0 lg:sticky lg:top-[85px] self-start h-fit">
                     <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
                         <h3 className="font-bold text-gray-900 mb-4 text-sm uppercase tracking-wider">Outros Indicadores</h3>
                         <div className="space-y-4">

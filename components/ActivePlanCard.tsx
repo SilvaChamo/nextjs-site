@@ -14,13 +14,13 @@ export function ActivePlanCard() {
                         </div>
                         <span className="text-xs font-bold text-orange-400 uppercase tracking-widest">Plano Atual</span>
                     </div>
-                    <h3 className="text-2xl font-black mb-1">Standard</h3>
+                    <h3 className="text-2xl font-black mb-1 text-white">Standard</h3>
                     <p className="text-emerald-400 text-sm font-medium">Renova em: 25 Set, 2026</p>
                 </div>
 
                 {/* Capabilities */}
                 <div className="flex-1 w-full md:w-auto bg-emerald-900/30 rounded-lg p-4 border border-emerald-800">
-                    <h4 className="text-sm font-bold text-slate-200 mb-3 uppercase tracking-wide flex items-center gap-2">
+                    <h4 className="text-sm font-bold text-white mb-3 uppercase tracking-wide flex items-center gap-2">
                         <Zap className="w-4 h-4 text-yellow-400" />
                         Suas Capacidades
                     </h4>

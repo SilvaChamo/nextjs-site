@@ -6,6 +6,7 @@ import { supabase } from "../../../lib/supabaseClient";
 import { PageHeader } from "../../../components/PageHeader";
 import { DashboardStats } from "../../../components/DashboardStats";
 import { DashboardKeywordsTable } from "../../../components/DashboardKeywordsTable";
+import { GrowthTipCard } from "../../../components/GrowthTipCard";
 import { Building2, ShoppingCart, Briefcase, GraduationCap, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../../../components/ui/button";
@@ -96,6 +97,9 @@ export default function DashboardPage() {
                                 <ArrowRight className="w-5 h-5 text-slate-300 ml-auto group-hover:text-amber-500 transition-colors" />
                             </div>
                         </Link>
+
+                        {/* Growth Tip - Moved here */}
+                        <GrowthTipCard />
                     </div>
 
                 </div>

@@ -5,11 +5,13 @@ import { PageHeader } from "@/components/PageHeader";
 import { SearchSection } from "@/components/SearchSection";
 import { ShoppingBag, Search, X } from "lucide-react";
 
+import { MarketPriceTable } from "@/components/MarketPriceTable";
+
 export default function MercadoPage() {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
 
     return (
-        <div className="min-h-screen bg-white text-slate-900 font-sans relative">
+        <div className="min-h-screen bg-slate-50 text-slate-900 font-sans relative">
             <div className="relative">
                 <PageHeader
                     title={<>Mercado <span className="text-[#f97316]">Agro</span></>}
@@ -39,15 +41,20 @@ export default function MercadoPage() {
 
             <SearchSection isOpen={isSearchOpen} withBottomBorder={true} />
 
-            <main className="max-w-[1350px] mx-auto px-4 md:px-[60px] py-12">
-                <div className="text-center py-20 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+            <main className="max-w-[1350px] mx-auto px-4 md:px-[60px] py-12 space-y-12">
+                {/* 1. Tabela de Preços (SIMA) */}
+                <section>
+                    <MarketPriceTable />
+                </section>
+
+                {/* 2. Mercado Digital Banner */}
+                <div className="text-center py-20 bg-white rounded-[16px] shadow-sm border border-slate-100">
                     <ShoppingBag className="w-16 h-16 mx-auto mb-4 text-emerald-200" />
                     <h2 className="text-2xl font-black text-slate-800 mb-2">Mercado Digital</h2>
                     <p className="text-slate-500 max-w-md mx-auto mb-8">
                         Explore produtos e insumos agrícolas disponíveis para compra e venda.
                         Filtre por categorias usando o botão de pesquisa acima.
                     </p>
-                    {/* Placeholder content - can be expanded with specific product grid */}
                 </div>
             </main>
         </div>

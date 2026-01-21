@@ -12,9 +12,28 @@ interface CategoriesShowcaseProps {
 export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
     // items is now derived from props
     const items = companies || [];
-    const itemsPerPage = 4;
-    const [currentIndex, setCurrentIndex] = useState(itemsPerPage);
+    const [itemsPerPage, setItemsPerPage] = useState(4);
+    const [currentIndex, setCurrentIndex] = useState(4); // Will sync with itemsPerPage effect
     const [isTransitioning, setIsTransitioning] = useState(false);
+
+    // Responsive itemsPerPage
+    useEffect(() => {
+        const handleResize = () => {
+            const newCount = window.innerWidth < 768 ? 1 : 4;
+            setItemsPerPage(newCount);
+        };
+
+        // Set initial
+        handleResize();
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    // Sync currentIndex when itemsPerPage changes to avoid glitches
+    useEffect(() => {
+        setCurrentIndex(itemsPerPage);
+    }, [itemsPerPage]);
 
     // Removed internal fetching
 
@@ -78,26 +97,26 @@ export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
             <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10">
 
                 {/* Cabeçalho: Título à Esquerda + Setas à Direita */}
-                <div className="flex justify-between items-center mb-10">
-                    <div className="flex items-center gap-4">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-10 gap-4">
+                    <div className="flex items-center gap-4 order-1">
                         <div className="w-1 h-8 bg-[#f97316]"></div> {/* Linha Vertical Laranja */}
-                        <h2 className="text-[25px] font-heading font-extrabold text-slate-600 uppercase tracking-tight">
+                        <h2 className="text-[20px] md:text-[25px] font-heading font-extrabold text-slate-600 uppercase tracking-tight">
                             Empresas em destaque
                         </h2>
                     </div>
 
-                    <div className="flex space-x-4">
+                    <div className="flex space-x-4 order-2 md:order-2 self-end md:self-auto">
                         <button
                             onClick={prevSlide}
-                            className="w-12 h-12 flex items-center justify-center bg-white border border-gray-200 text-gray-400 hover:text-[#f97316] hover:border-[#f97316] transition-all rounded-full"
+                            className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white border border-gray-200 text-gray-400 hover:text-[#f97316] hover:border-[#f97316] transition-all rounded-full"
                         >
-                            <ChevronLeft className="w-6 h-6" />
+                            <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
                         </button>
                         <button
                             onClick={nextSlide}
-                            className="w-12 h-12 flex items-center justify-center bg-white border border-gray-200 text-gray-400 hover:text-[#f97316] hover:border-[#f97316] transition-all rounded-full"
+                            className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white border border-gray-200 text-gray-400 hover:text-[#f97316] hover:border-[#f97316] transition-all rounded-full"
                         >
-                            <ChevronRight className="w-6 h-6" />
+                            <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
                         </button>
                     </div>
                 </div>

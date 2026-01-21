@@ -17,7 +17,7 @@ export function Hero({ onToggleSearch, isSearchOpen, stats }: HeroProps) {
     const getTrend = (slug: string, fallback: string) => stats[slug]?.trend || fallback;
 
     return (
-        <section className="relative w-full h-[calc(100vh-30px)] min-h-[670px] flex items-center justify-center overflow-hidden">
+        <section className="relative w-full min-h-[110vh] md:h-[calc(100vh-30px)] md:min-h-[670px] flex items-center justify-center overflow-hidden">
             {/* Imagem de Fundo */}
             <div className="absolute inset-0 z-0">
                 <Image
@@ -40,7 +40,7 @@ export function Hero({ onToggleSearch, isSearchOpen, stats }: HeroProps) {
                 {/* Coluna Esquerda: Texto e Ações */}
                 <div className="space-y-8 animate-in slide-in-from-left-6 duration-700">
                     <div className="space-y-4">
-                        <h1 className="text-[50px] font-heading font-black text-white leading-[1.2] tracking-tight">
+                        <h1 className="text-[32px] md:text-[50px] font-heading font-black text-white leading-[1.2] tracking-tight">
                             <span className="block">Cultivando um futuro</span>
                             <span className="block">melhor para</span>
                             <span className="block text-[#22c55e]">Moçambique</span>

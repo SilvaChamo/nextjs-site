@@ -21,9 +21,10 @@ interface PageHeaderProps {
     backgroundImage?: string;
     icon?: LucideIcon;
     backButton?: BackButton;
+    overlayOpacity?: string;
 }
 
-export function PageHeader({ title, breadcrumbs, backgroundImage, icon: Icon, backButton }: PageHeaderProps) {
+export function PageHeader({ title, breadcrumbs, backgroundImage, icon: Icon, backButton, overlayOpacity = "opacity-80" }: PageHeaderProps) {
     const [isSticky, setIsSticky] = useState(false);
     const headerRef = useRef<HTMLDivElement>(null);
 
@@ -49,11 +50,15 @@ export function PageHeader({ title, breadcrumbs, backgroundImage, icon: Icon, ba
     return (
         <div ref={headerRef} className="w-full bg-gradient-to-r from-emerald-950 via-green-900 via-teal-900 to-emerald-950 text-white pt-28 pb-10 relative overflow-visible">
             {/* Optional Background Image Overlay */}
+            {/* Optional Background Image Overlay */}
             {backgroundImage && (
-                <div
-                    className="absolute inset-0 z-0 opacity-40 bg-cover bg-center blur-sm"
-                    style={{ backgroundImage: `url(${backgroundImage})` }}
-                />
+                <>
+                    <div
+                        className="absolute inset-0 z-0 bg-cover bg-center"
+                        style={{ backgroundImage: `url(${backgroundImage})` }}
+                    />
+                    <div className={`absolute inset-0 z-0 bg-emerald-950 ${overlayOpacity}`} />
+                </>
             )}
 
             {/* Decorative Icon */}

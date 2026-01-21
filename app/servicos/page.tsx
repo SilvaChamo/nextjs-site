@@ -107,19 +107,7 @@ export default function ServicesIndexPage() {
 
             <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20 mt-[50px] pb-24">
 
-                {/* Intro Section - White Box */}
-                <div className="bg-white rounded-[15px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] border border-slate-100 px-8 md:px-10 lg:px-12 py-10 md:py-12 mb-12">
-                    <div className="grid grid-cols-1 lg:grid-cols-[6fr_4fr] gap-12">
-                        <div className="space-y-6">
-                            <h2 className="text-2xl md:text-[40px] font-heading font-black text-slate-600 tracking-tight leading-[1.2]">
-                                Soluções integradas para o sucesso da <span className="text-[#f97316]">agricultura moçambicana</span>
-                            </h2>
-                            <p className="text-sm text-slate-500 font-medium leading-relaxed">
-                                A Base Agro Data oferece um ecossistema completo de serviços pensados para modernizar, conectar e impulsionar o sector em Moçambique através de soluções assertivas e eficientes.
-                            </p>
-                        </div>
-                    </div>
-                </div>
+
 
                 {/* Services Grid - On Background */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

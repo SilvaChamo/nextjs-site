@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { User, Mail, Phone, MapPin, Camera, Save, X, Loader2, BadgeCheck, GraduationCap, Briefcase, Map } from "lucide-react";
+import Link from "next/link";
+import { User, Mail, Phone, MapPin, Camera, Save, X, Loader2, BadgeCheck, GraduationCap, Briefcase, Map, ShoppingBag, Building2, Facebook, Instagram, Linkedin, Globe, Eye, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DashboardPageHeader } from "@/components/DashboardPageHeader";
@@ -208,154 +209,229 @@ export default function MinhaContaPage() {
                 {/* CARD DIREITA: Dados do Usuário */}
                 <div className="bg-white rounded-xl border border-slate-100 shadow-sm relative overflow-hidden flex flex-col">
 
-                    <div className="p-8 flex-1">
-                        <h3 className="text-3xl font-black text-slate-800 mb-8 tracking-tight">Meus Dados</h3>
-                        <div className="space-y-8 w-full">
+                    {/* Cabeçalho do Card */}
+                    <div className="px-8 py-6 border-b border-slate-100">
+                        <h3 className="text-3xl font-black text-slate-800 tracking-tight">Meus Dados</h3>
+                    </div>
 
-                            {/* Email */}
-                            <div className="flex items-center gap-4 text-slate-700">
-                                <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
-                                    <Mail className="w-5 h-5 text-emerald-600" />
-                                </div>
-                                <div className="flex-1">
-                                    <p className="text-sm text-slate-500 font-medium">Email</p>
-                                    <p className="text-base font-semibold text-slate-800">{user?.email}</p>
+                    <div className="pl-8 py-8 pr-[50px] flex-1">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+
+                            {/* COLUNA 1 (50%): Formulário de Dados */}
+                            <div className="">
+                                <div className="space-y-8 w-full">
+                                    {/* Email */}
+                                    <div className="flex items-center gap-4 text-slate-700">
+                                        <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
+                                            <Mail className="w-5 h-5 text-emerald-600" />
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className="text-sm text-slate-500 font-medium">Email</p>
+                                            <p className="text-base font-semibold text-slate-800">{user?.email}</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Telefone */}
+                                    {isEditing ? (
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold uppercase text-slate-500 tracking-wider">Telefone de Contato</label>
+                                            <div className="relative">
+                                                <Phone className="absolute left-3 top-2.5 w-5 h-5 text-slate-400" />
+                                                <Input
+                                                    name="phone"
+                                                    value={formData.phone}
+                                                    onChange={handleInputChange}
+                                                    placeholder="+258..."
+                                                    className="pl-10 font-medium text-slate-800"
+                                                />
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-4 text-slate-700">
+                                            <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
+                                                <Phone className="w-5 h-5 text-emerald-600" />
+                                            </div>
+                                            <div className="flex-1">
+                                                <p className="text-sm text-slate-500 font-medium">Telefone</p>
+                                                <p className="text-base font-semibold text-slate-800">{formData.phone || "Não informado"}</p>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Província */}
+                                    {isEditing ? (
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold uppercase text-slate-500 tracking-wider">Província</label>
+                                            <div className="relative">
+                                                <Map className="absolute left-3 top-2.5 w-5 h-5 text-slate-400" />
+                                                <Input
+                                                    name="province"
+                                                    value={formData.province}
+                                                    onChange={handleInputChange}
+                                                    placeholder="Ex: Maputo"
+                                                    className="pl-10 font-medium text-slate-800"
+                                                />
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-4 text-slate-700">
+                                            <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
+                                                <Map className="w-5 h-5 text-emerald-600" />
+                                            </div>
+                                            <div className="flex-1">
+                                                <p className="text-sm text-slate-500 font-medium">Província</p>
+                                                <p className="text-base font-semibold text-slate-800">{formData.province || "Não informado"}</p>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Endereço */}
+                                    {isEditing ? (
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold uppercase text-slate-500 tracking-wider">Endereço Residencial</label>
+                                            <div className="relative">
+                                                <MapPin className="absolute left-3 top-2.5 w-5 h-5 text-slate-400" />
+                                                <Input
+                                                    name="address"
+                                                    value={formData.address}
+                                                    onChange={handleInputChange}
+                                                    className="pl-10 font-medium text-slate-800"
+                                                />
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-4 text-slate-700">
+                                            <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
+                                                <MapPin className="w-5 h-5 text-emerald-600" />
+                                            </div>
+                                            <div className="flex-1">
+                                                <p className="text-sm text-slate-500 font-medium">Endereço</p>
+                                                <p className="text-base font-semibold text-slate-800">{formData.address}</p>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Profissão */}
+                                    {isEditing ? (
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold uppercase text-slate-500 tracking-wider">Profissão</label>
+                                            <div className="relative">
+                                                <Briefcase className="absolute left-3 top-2.5 w-5 h-5 text-slate-400" />
+                                                <Input
+                                                    name="profession"
+                                                    value={formData.profession}
+                                                    onChange={handleInputChange}
+                                                    placeholder="Ex: Engenheiro Agrônomo"
+                                                    className="pl-10 font-medium text-slate-800"
+                                                />
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-4 text-slate-700">
+                                            <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
+                                                <Briefcase className="w-5 h-5 text-emerald-600" />
+                                            </div>
+                                            <div className="flex-1">
+                                                <p className="text-sm text-slate-500 font-medium">Profissão</p>
+                                                <p className="text-base font-semibold text-slate-800">{formData.profession || "Não informado"}</p>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Nível Acadêmico */}
+                                    {isEditing ? (
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold uppercase text-slate-500 tracking-wider">Nível Acadêmico</label>
+                                            <div className="relative">
+                                                <GraduationCap className="absolute left-3 top-2.5 w-5 h-5 text-slate-400" />
+                                                <Input
+                                                    name="academicLevel"
+                                                    value={formData.academicLevel}
+                                                    onChange={handleInputChange}
+                                                    placeholder="Ex: Licenciatura"
+                                                    className="pl-10 font-medium text-slate-800"
+                                                />
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-4 text-slate-700">
+                                            <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
+                                                <GraduationCap className="w-5 h-5 text-emerald-600" />
+                                            </div>
+                                            <div className="flex-1">
+                                                <p className="text-sm text-slate-500 font-medium">Nível Acadêmico</p>
+                                                <p className="text-base font-semibold text-slate-800">{formData.academicLevel || "Não informado"}</p>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
-                            {/* Telefone */}
-                            {isEditing ? (
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold uppercase text-slate-500 tracking-wider">Telefone de Contato</label>
-                                    <div className="relative">
-                                        <Phone className="absolute left-3 top-2.5 w-5 h-5 text-slate-400" />
-                                        <Input
-                                            name="phone"
-                                            value={formData.phone}
-                                            onChange={handleInputChange}
-                                            placeholder="+258..."
-                                            className="pl-10 font-medium text-slate-800"
-                                        />
+                            {/* COLUNA 2 (50%): Cards de Acesso Rápido */}
+                            <div className="border-l border-slate-200 pl-[50px] flex flex-col gap-6 justify-center">
+                                {/* Card Redes Sociais (Topo) */}
+                                <div className="bg-slate-50 border border-slate-200 rounded-xl p-[10px] shadow-sm flex flex-col justify-center h-48 relative overflow-hidden group">
+                                    <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+                                        <Globe className="w-16 h-16 text-slate-800" />
+                                    </div>
+                                    <div className="px-4 relative z-10">
+                                        <h4 className="text-sm font-black text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">Redes Sociais</h4>
+                                        <div className="space-y-3">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0 text-blue-600">
+                                                    <Facebook className="w-4 h-4" />
+                                                </div>
+                                                <p className="text-sm text-slate-600 font-medium hover:text-blue-600 cursor-pointer transition-colors truncate">facebook.com/usuario</p>
+                                            </div>
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center shrink-0 text-pink-600">
+                                                    <Instagram className="w-4 h-4" />
+                                                </div>
+                                                <p className="text-sm text-slate-600 font-medium hover:text-pink-600 cursor-pointer transition-colors truncate">@usuario.insta</p>
+                                            </div>
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-full bg-sky-100 flex items-center justify-center shrink-0 text-sky-600">
+                                                    <Linkedin className="w-4 h-4" />
+                                                </div>
+                                                <p className="text-sm text-slate-600 font-medium hover:text-sky-600 cursor-pointer transition-colors truncate">in/usuario-pro</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            ) : (
-                                <div className="flex items-center gap-4 text-slate-700">
-                                    <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
-                                        <Phone className="w-5 h-5 text-emerald-600" />
-                                    </div>
-                                    <div className="flex-1">
-                                        <p className="text-sm text-slate-500 font-medium">Telefone</p>
-                                        <p className="text-base font-semibold text-slate-800">{formData.phone || "Não informado"}</p>
-                                    </div>
-                                </div>
-                            )}
 
-                            {/* Província */}
-                            {isEditing ? (
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold uppercase text-slate-500 tracking-wider">Província</label>
-                                    <div className="relative">
-                                        <Map className="absolute left-3 top-2.5 w-5 h-5 text-slate-400" />
-                                        <Input
-                                            name="province"
-                                            value={formData.province}
-                                            onChange={handleInputChange}
-                                            placeholder="Ex: Maputo"
-                                            className="pl-10 font-medium text-slate-800"
-                                        />
+                                {/* Card Estatísticas (Baixo) */}
+                                <div className="bg-slate-50 border border-slate-200 rounded-xl p-[10px] shadow-sm flex flex-col justify-center h-48 relative overflow-hidden group">
+                                    <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+                                        <TrendingUp className="w-16 h-16 text-emerald-600" />
+                                    </div>
+                                    <div className="px-4 relative z-10">
+                                        <h4 className="text-sm font-black text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">Estatísticas</h4>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="bg-white p-3 rounded-lg border border-slate-100 shadow-sm">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <Eye className="w-4 h-4 text-slate-400" />
+                                                    <span className="text-xs font-bold text-slate-400 uppercase">Views</span>
+                                                </div>
+                                                <p className="text-2xl font-black text-slate-800">1,248</p>
+                                                <p className="text-[10px] text-emerald-600 font-bold flex items-center mt-1">
+                                                    <TrendingUp className="w-3 h-3 mr-1" /> +12%
+                                                </p>
+                                            </div>
+                                            <div className="bg-white p-3 rounded-lg border border-slate-100 shadow-sm">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <Building2 className="w-4 h-4 text-slate-400" />
+                                                    <span className="text-xs font-bold text-slate-400 uppercase">Visitas</span>
+                                                </div>
+                                                <p className="text-2xl font-black text-slate-800">85</p>
+                                                <p className="text-[10px] text-emerald-600 font-bold flex items-center mt-1">
+                                                    <TrendingUp className="w-3 h-3 mr-1" /> +5%
+                                                </p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            ) : (
-                                <div className="flex items-center gap-4 text-slate-700">
-                                    <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
-                                        <Map className="w-5 h-5 text-emerald-600" />
-                                    </div>
-                                    <div className="flex-1">
-                                        <p className="text-sm text-slate-500 font-medium">Província</p>
-                                        <p className="text-base font-semibold text-slate-800">{formData.province || "Não informado"}</p>
-                                    </div>
-                                </div>
-                            )}
 
-                            {/* Endereço */}
-                            {isEditing ? (
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold uppercase text-slate-500 tracking-wider">Endereço Residencial</label>
-                                    <div className="relative">
-                                        <MapPin className="absolute left-3 top-2.5 w-5 h-5 text-slate-400" />
-                                        <Input
-                                            name="address"
-                                            value={formData.address}
-                                            onChange={handleInputChange}
-                                            className="pl-10 font-medium text-slate-800"
-                                        />
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="flex items-center gap-4 text-slate-700">
-                                    <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
-                                        <MapPin className="w-5 h-5 text-emerald-600" />
-                                    </div>
-                                    <div className="flex-1">
-                                        <p className="text-sm text-slate-500 font-medium">Endereço</p>
-                                        <p className="text-base font-semibold text-slate-800">{formData.address}</p>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Profissão */}
-                            {isEditing ? (
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold uppercase text-slate-500 tracking-wider">Profissão</label>
-                                    <div className="relative">
-                                        <Briefcase className="absolute left-3 top-2.5 w-5 h-5 text-slate-400" />
-                                        <Input
-                                            name="profession"
-                                            value={formData.profession}
-                                            onChange={handleInputChange}
-                                            placeholder="Ex: Engenheiro Agrônomo"
-                                            className="pl-10 font-medium text-slate-800"
-                                        />
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="flex items-center gap-4 text-slate-700">
-                                    <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
-                                        <Briefcase className="w-5 h-5 text-emerald-600" />
-                                    </div>
-                                    <div className="flex-1">
-                                        <p className="text-sm text-slate-500 font-medium">Profissão</p>
-                                        <p className="text-base font-semibold text-slate-800">{formData.profession || "Não informado"}</p>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Nível Acadêmico */}
-                            {isEditing ? (
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold uppercase text-slate-500 tracking-wider">Nível Acadêmico</label>
-                                    <div className="relative">
-                                        <GraduationCap className="absolute left-3 top-2.5 w-5 h-5 text-slate-400" />
-                                        <Input
-                                            name="academicLevel"
-                                            value={formData.academicLevel}
-                                            onChange={handleInputChange}
-                                            placeholder="Ex: Licenciatura"
-                                            className="pl-10 font-medium text-slate-800"
-                                        />
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="flex items-center gap-4 text-slate-700">
-                                    <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
-                                        <GraduationCap className="w-5 h-5 text-emerald-600" />
-                                    </div>
-                                    <div className="flex-1">
-                                        <p className="text-sm text-slate-500 font-medium">Nível Acadêmico</p>
-                                        <p className="text-base font-semibold text-slate-800">{formData.academicLevel || "Não informado"}</p>
-                                    </div>
-                                </div>
-                            )}
+                            </div>
 
                         </div>
                     </div>

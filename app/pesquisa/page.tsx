@@ -3,20 +3,31 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { PageHeader } from "@/components/PageHeader";
 import {
     Search, Bell, Building2, CheckCircle,
     Star, MapPin, Maximize, Droplets,
     ChevronLeft, ChevronRight, Globe,
     Mail, Share2, Filter, Tractor,
-    User, HardHat, LandPlot
+    User, HardHat, LandPlot, ShoppingBag, ArrowRight,
+    FileText, BookOpen
 } from "lucide-react";
 
 export default function SearchResultsPage() {
     return (
         <div className="min-h-screen bg-white text-slate-900 font-sans">
+            <PageHeader
+                title="Repositório"
+                backgroundImage="https://images.unsplash.com/photo-1505664194779-8beaceb93744?q=80&w=2000&auto=format&fit=crop"
+                breadcrumbs={[
+                    { label: "Início", href: "/" },
+                    { label: "Repositório", href: undefined }
+                ]}
+            />
 
-            <main className="max-w-[1350px] mx-auto px-4 md:px-[60px] pt-24 pb-12">
+            <main className="max-w-[1350px] mx-auto px-4 md:px-[60px] py-12">
                 <div className="flex flex-col lg:flex-row gap-12">
+
 
                     {/* Sidebar Filter */}
                     <aside className="w-full lg:w-72 shrink-0">
@@ -74,115 +85,81 @@ export default function SearchResultsPage() {
                     </aside>
 
                     {/* Results Content Area */}
-                    <div className="flex-1 space-y-8">
-                        {/* Header Stats */}
-                        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 border-b border-slate-100 pb-8">
-                            <div>
-                                <h2 className="text-3xl font-black text-slate-600">Resultados para <span className="italic text-emerald-600 font-serif">"Fertilizante Orgânico"</span></h2>
-                                <p className="text-sm text-slate-400 mt-2">Mostrando 1-10 de 450 resultados em Moçambique.</p>
-                            </div>
-                        </div>
-
-                        {/* Results List */}
-                        <div className="grid grid-cols-1 gap-6">
-
-                            {/* Result Card: Product (Featured) */}
-                            <div className="bg-white border border-slate-100 rounded-[10px] p-5 flex flex-col md:flex-row gap-6 hover:shadow-xl hover:-translate-y-0.5 transition-all relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 bg-emerald-500 text-white text-[9px] font-black px-3 py-1 rounded-bl-[10px] uppercase tracking-widest">Destaque</div>
-                                <div className="w-full md:w-44 h-36 bg-slate-100 rounded-[10px] overflow-hidden shrink-0 relative">
-                                    <Image
-                                        src="https://images.unsplash.com/photo-1628352081506-83c43123ed6d?auto=format&fit=crop&q=80&w=400"
-                                        alt="Fertilizante"
-                                        fill
-                                        className="object-cover group-hover:scale-110 transition-transform duration-500"
-                                    />
-                                </div>
-                                <div className="flex-1 flex flex-col justify-between py-1">
-                                    <div>
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <span className="px-2 py-0.5 bg-emerald-50 text-emerald-600 text-[9px] font-black rounded-[10px] uppercase tracking-widest">Produto</span>
-                                            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">• Maputo, MZ</span>
-                                        </div>
-                                        <h3 className="text-xl font-black text-slate-600 mb-2 group-hover:text-emerald-600 transition-colors">Composto Bio-Ativo Premium</h3>
-                                        <p className="text-xs text-slate-500 leading-relaxed max-w-2xl line-clamp-2">Fertilizante orgânico de alto teor de nitrogénio fabricado a partir de matéria vegetal reciclada e estrume de aves.</p>
+                    <div className="flex-1 min-h-[400px]">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            {[
+                                {
+                                    title: "Artigos Científicos",
+                                    description: "Teses, dissertações, revistas científicas e pesquisas académicas sobre o agronegócio.",
+                                    count: "540 Arquivos",
+                                    icon: BookOpen,
+                                    bg: "bg-cyan-50",
+                                    color: "text-cyan-600",
+                                    border: "border-cyan-100"
+                                },
+                                {
+                                    title: "Documentos",
+                                    description: "Relatórios, legislação, políticas agrárias, manuais técnicos e estatísticas governamentais.",
+                                    count: "920 Arquivos",
+                                    icon: FileText,
+                                    bg: "bg-rose-50",
+                                    color: "text-rose-600",
+                                    border: "border-rose-100"
+                                },
+                                {
+                                    title: "Empresas",
+                                    description: "Fornecedores, distribuidores, instituições públicas e ONGs, associações e cooperativas agrícolas do país.",
+                                    count: "850 Arquivos",
+                                    icon: Building2,
+                                    bg: "bg-blue-50",
+                                    color: "text-blue-600",
+                                    border: "border-blue-100"
+                                },
+                                {
+                                    title: "Produtos",
+                                    description: "Insumos, maquinaria agrícolas, equipamentos e material de segurança disponível para venda imediata.",
+                                    count: "2,450 Arquivos",
+                                    icon: ShoppingBag,
+                                    bg: "bg-emerald-50",
+                                    color: "text-emerald-600",
+                                    border: "border-emerald-100"
+                                },
+                                {
+                                    title: "Profissionais",
+                                    description: "Agrónomos, veterinários, técnicos e especialistas, engenheiros e agricultores prontos para atender as suas necessidades.",
+                                    count: "1,200 Arquivos",
+                                    icon: User,
+                                    bg: "bg-purple-50",
+                                    color: "text-purple-600",
+                                    border: "border-purple-100"
+                                },
+                                {
+                                    title: "Propriedades",
+                                    description: "Terrenos, machambas, infra-estruturas rurais, campos arráveis e fazendas prontas para investimento.",
+                                    count: "320 Arquivos",
+                                    icon: LandPlot,
+                                    bg: "bg-orange-50",
+                                    color: "text-orange-600",
+                                    border: "border-orange-100"
+                                }
+                            ].map((item, i) => (
+                                <div key={i} className={`p-6 rounded-[15px] border ${item.border} ${item.bg} hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group flex flex-col items-center text-center gap-6`}>
+                                    <div className={`w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm ${item.color} group-hover:scale-110 transition-transform`}>
+                                        <item.icon className="w-8 h-8" />
                                     </div>
-                                    <div className="mt-4 flex items-center justify-between">
-                                        <div>
-                                            <span className="text-2xl font-black text-[#f97316] tracking-tight">2,500 <span className="text-xs">MTN</span></span>
-                                        </div>
-                                        <button className="px-5 py-2 bg-slate-900 text-white text-xs font-bold rounded-[10px] hover:bg-[#f97316] transition-all">Ver detalhes</button>
+                                    <div className="space-y-2 w-full">
+                                        <h3 className="text-xl font-black text-slate-800 group-hover:text-slate-900 transition-colors">{item.title}</h3>
+                                        <p className="text-sm text-slate-500 font-medium leading-relaxed">{item.description}</p>
                                     </div>
-                                </div>
-                            </div>
-
-                            {/* Result Card: Company */}
-                            <div className="bg-white border border-slate-100 rounded-[10px] p-5 flex flex-col md:flex-row gap-6 hover:shadow-xl hover:-translate-y-0.5 transition-all group">
-                                <div className="w-full md:w-44 h-36 bg-slate-50 rounded-[10px] flex items-center justify-center shrink-0 border border-slate-100">
-                                    <Building2 className="text-slate-200 w-12 h-12" />
-                                </div>
-                                <div className="flex-1 flex flex-col justify-between py-1">
-                                    <div>
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[9px] font-black rounded-[10px] uppercase tracking-widest">Empresa</span>
-                                            <CheckCircle className="text-emerald-500 w-3.5 h-3.5" />
+                                    <div className="mt-auto pt-2 flex items-center justify-between w-full">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-white px-3 py-1.5 rounded-full shadow-sm border border-slate-100">{item.count}</span>
+                                        <div className="flex items-center gap-1 text-xs font-bold text-slate-700 group-hover:text-[#f97316] hover:text-[#f97316] transition-colors">
+                                            Ver Detalhes
+                                            <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
                                         </div>
-                                        <h3 className="text-xl font-black text-slate-600 mb-2 group-hover:text-blue-600 transition-colors">Moçambique Soluções Orgânicas Lda</h3>
-                                        <p className="text-xs text-slate-500 leading-relaxed max-w-2xl line-clamp-2">Distribuidor líder de insumos agrícolas sustentáveis. Somos especializados no fornecimento a granel.</p>
-                                    </div>
-                                    <div className="mt-4 flex items-center gap-6">
-                                        <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700">
-                                            <Star className="text-[#f97316] w-3.5 h-3.5 fill-[#f97316]" />
-                                            <span>4.9 <span className="text-slate-400 font-medium">(124)</span></span>
-                                        </div>
-                                        <button className="ml-auto text-emerald-600 font-black text-[10px] uppercase tracking-widest hover:underline">Ver Perfil</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Result Card: Professional */}
-                            <div className="bg-white border border-slate-100 rounded-[10px] p-5 flex flex-col md:flex-row gap-6 hover:shadow-xl hover:-translate-y-0.5 transition-all group">
-                                <div className="w-full md:w-44 h-36 rounded-[10px] overflow-hidden shrink-0 relative">
-                                    <Image
-                                        src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400"
-                                        alt="Profissional"
-                                        fill
-                                        className="object-cover group-hover:scale-110 transition-transform duration-500"
-                                    />
-                                </div>
-                                <div className="flex-1 flex flex-col justify-between py-1">
-                                    <div>
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <span className="px-2 py-0.5 bg-purple-50 text-purple-600 text-[9px] font-black rounded-[10px] uppercase tracking-widest">Profissional</span>
-                                            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">• 8 anos exp.</span>
-                                        </div>
-                                        <h3 className="text-xl font-black text-slate-600 mb-2 group-hover:text-purple-600 transition-colors">Dr. Samuel Tembe</h3>
-                                        <p className="text-xs text-slate-500 leading-relaxed max-w-2xl line-clamp-2">Especialista em Enriquecimento Orgânico do Solo e Gestão de Culturas Tropicais.</p>
-                                    </div>
-                                    <div className="mt-4 flex items-center justify-between">
-                                        <div className="flex flex-wrap gap-2 text-[9px] font-bold text-slate-400">
-                                            <span className="uppercase tracking-tighter">#SaúdeDoSolo</span>
-                                        </div>
-                                        <button className="px-5 py-2 border border-emerald-600 text-emerald-600 text-xs font-bold rounded-[10px] hover:bg-emerald-600 hover:text-white transition-all">Consultar</button>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-
-                        {/* Pagination */}
-                        <div className="flex items-center justify-center gap-3 pt-12 pb-24">
-                            <button className="w-10 h-10 flex items-center justify-center rounded-[10px] border border-slate-100 hover:bg-emerald-50 hover:text-emerald-600 transition-all">
-                                <ChevronLeft className="w-5 h-5" />
-                            </button>
-                            {[1, 2, 3].map(n => (
-                                <button key={n} className={`w-10 h-10 flex items-center justify-center rounded-[10px] font-black text-sm transition-all ${n === 1 ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/20' : 'border border-slate-100 hover:bg-emerald-50 hover:text-emerald-600'}`}>
-                                    {n}
-                                </button>
                             ))}
-                            <span className="px-2 text-slate-300">...</span>
-                            <button className="w-10 h-10 flex items-center justify-center rounded-[10px] border border-slate-100 hover:bg-emerald-50 hover:text-emerald-600 transition-all font-black text-sm">23</button>
-                            <button className="w-10 h-10 flex items-center justify-center rounded-[10px] border border-slate-100 hover:bg-emerald-50 hover:text-emerald-600 transition-all">
-                                <ChevronRight className="w-5 h-5" />
-                            </button>
                         </div>
                     </div>
                 </div>

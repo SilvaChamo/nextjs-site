@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, ChevronLeft, Facebook, Instagram, Linkedin, Twitter, Loader2, CheckCircle, Building2, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,6 +18,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/lib/supabaseClient";
 
 export function Navbar() {
+    const pathname = usePathname();
     const [language, setLanguage] = useState<"PT" | "EN">("PT");
     const [view, setView] = useState<"menu" | "auth">("menu");
 
@@ -121,15 +123,22 @@ export function Navbar() {
 
                 {/* Desktop Navigation (Moved from Off-canvas) */}
                 <nav className="hidden lg:flex items-center gap-6 xl:gap-8 flex-1 justify-center">
-                    {menuItems.map((item, i) => (
-                        <Link
-                            key={i}
-                            href={item.link}
-                            className="text-[15px] font-medium text-gray-600 hover:text-[#f97316] transition-colors whitespace-nowrap tracking-tight font-sans"
-                        >
-                            {item.label}
-                        </Link>
-                    ))}
+                    {menuItems.map((item, i) => {
+                        const isActive = pathname === item.link || (item.link !== '/' && pathname.startsWith(item.link));
+
+                        return (
+                            <Link
+                                key={i}
+                                href={item.link}
+                                className={`text-[15px] font-medium transition-colors whitespace-nowrap tracking-tight font-sans ${isActive
+                                    ? "text-[#f97316]"
+                                    : "text-gray-600 hover:text-[#f97316]"
+                                    }`}
+                            >
+                                {item.label}
+                            </Link>
+                        );
+                    })}
                 </nav>
 
                 {/* Right Actions Section */}

@@ -10,7 +10,7 @@ export function DashboardPageHeader({ title, description, children }: DashboardP
     return (
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 mb-5">
             <div>
-                <h2 className="text-3xl font-extrabold text-[#3a3f47] tracking-tight">{title}</h2>
+                <h2 className="text-3xl font-black text-[#3a3f47] tracking-tight">{title}</h2>
                 {description && (
                     <p className="text-slate-500 text-sm mt-1 leading-relaxed">
                         {description}

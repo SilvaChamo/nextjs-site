@@ -61,7 +61,7 @@ export default function MeuConteudoPage() {
                 <button
                     onClick={() => setActiveTab("empresa")}
                     className={`px-6 py-2 text-sm font-bold rounded-t-md transition-all border-t border-l border-r relative -mb-px ${activeTab === "empresa"
-                        ? "text-orange-600 border-slate-300 border-b-transparent bg-slate-50"
+                        ? "text-orange-600 border-slate-300 border-b-transparent bg-white"
                         : "text-slate-500 border-transparent hover:text-orange-600"
                         }`}
                 >
@@ -70,7 +70,7 @@ export default function MeuConteudoPage() {
                 <button
                     onClick={() => setActiveTab("produtos")}
                     className={`px-6 py-2 text-sm font-bold rounded-t-md transition-all border-t border-l border-r relative -mb-px ${activeTab === "produtos"
-                        ? "text-orange-600 border-slate-300 border-b-transparent bg-slate-50"
+                        ? "text-orange-600 border-slate-300 border-b-transparent bg-white"
                         : "text-slate-500 border-transparent hover:text-orange-600"
                         }`}
                 >
@@ -79,7 +79,7 @@ export default function MeuConteudoPage() {
                 <button
                     onClick={() => setActiveTab("propriedades")}
                     className={`px-6 py-2 text-sm font-bold rounded-t-md transition-all border-t border-l border-r relative -mb-px ${activeTab === "propriedades"
-                        ? "text-orange-600 border-slate-300 border-b-transparent bg-slate-50"
+                        ? "text-orange-600 border-slate-300 border-b-transparent bg-white"
                         : "text-slate-500 border-transparent hover:text-orange-600"
                         }`}
                 >
@@ -88,7 +88,7 @@ export default function MeuConteudoPage() {
                 <button
                     onClick={() => setActiveTab("conexoes")}
                     className={`px-6 py-2 text-sm font-bold rounded-t-md transition-all border-t border-l border-r relative -mb-px ${activeTab === "conexoes"
-                        ? "text-orange-600 border-slate-300 border-b-transparent bg-slate-50"
+                        ? "text-orange-600 border-slate-300 border-b-transparent bg-white"
                         : "text-slate-500 border-transparent hover:text-orange-600"
                         }`}
                 >
@@ -103,51 +103,12 @@ export default function MeuConteudoPage() {
                 {activeTab === "empresa" && (
                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-8">
 
-                        {/* 0. Dados do Usuário (Horizontal) */}
-                        <div className="bg-white rounded-xl border border-slate-200 p-6 flex flex-col md:flex-row items-center gap-6 shadow-sm relative overflow-hidden">
-                            <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-orange-400 to-orange-600"></div>
 
-                            <div className="w-20 h-20 rounded-full bg-slate-100 border-2 border-white shadow-md flex items-center justify-center shrink-0 overflow-hidden relative">
-                                {getUserAvatar() ? (
-                                    // eslint-disable-next-line @next/next/no-img-element
-                                    <img
-                                        src={getUserAvatar()!}
-                                        alt="Foto de Perfil"
-                                        className="w-full h-full object-cover"
-                                    />
-                                ) : (
-                                    <Users className="w-8 h-8 text-slate-400" />
-                                )}
-                            </div>
-
-                            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 w-full divide-y md:divide-y-0 md:divide-x divide-slate-300">
-                                <div className="px-5 first:pl-0">
-                                    <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Nome Completo</p>
-                                    <p className="text-[#3a3f47] font-bold text-lg leading-tight">{getDisplayName()}</p>
-                                </div>
-                                <div className="px-5">
-                                    <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Email</p>
-                                    <p className="text-[#3a3f47] font-semibold text-sm truncate" title={getUserEmail()}>{getUserEmail()}</p>
-                                </div>
-                                <div className="px-5">
-                                    <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Telefone</p>
-                                    <p className="text-[#3a3f47] font-semibold">{getUserPhone()}</p>
-                                </div>
-                                <div className="px-5">
-                                    <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Endereço</p>
-                                    <p className="text-[#3a3f47] font-semibold text-sm">Maputo, Moçambique</p>
-                                </div>
-                            </div>
-
-                            <Button variant="ghost" size="sm" className="absolute top-4 right-4 text-slate-400 hover:text-orange-500">
-                                <Briefcase className="w-4 h-4" />
-                            </Button>
-                        </div>
 
                         {/* 1. Dados da Empresa (Apenas se Registrado) */}
                         {isRegistered && (
                             <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
-                                <div className="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                                <div className="bg-white px-6 py-4 border-b border-slate-200 flex justify-between items-center">
                                     <h3 className="font-bold text-slate-700 flex items-center gap-2">
                                         <Building2 className="w-5 h-5 text-emerald-600" />
                                         Dados da Empresa

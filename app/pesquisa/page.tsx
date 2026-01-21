@@ -13,17 +13,100 @@ import {
     FileText, BookOpen
 } from "lucide-react";
 
+
 export default function SearchResultsPage() {
+    const [searchQuery, setSearchQuery] = React.useState("");
+
+    const items = [
+        {
+            title: "Artigos Científicos",
+            description: "Teses, dissertações, revistas científicas e pesquisas académicas sobre o agronegócio.",
+            count: "540 Arquivos",
+            icon: BookOpen,
+            bg: "bg-cyan-50",
+            color: "text-cyan-600",
+            border: "border-cyan-100"
+        },
+        {
+            title: "Documentos",
+            description: "Relatórios, legislação, políticas agrárias, manuais técnicos e estatísticas governamentais.",
+            count: "920 Arquivos",
+            icon: FileText,
+            bg: "bg-rose-50",
+            color: "text-rose-600",
+            border: "border-rose-100"
+        },
+        {
+            title: "Empresas",
+            description: "Fornecedores, distribuidores, instituições públicas e ONGs, associações e cooperativas agrícolas do país.",
+            count: "850 Arquivos",
+            icon: Building2,
+            bg: "bg-blue-50",
+            color: "text-blue-600",
+            border: "border-blue-100"
+        },
+        {
+            title: "Produtos",
+            description: "Insumos, maquinaria agrícolas, equipamentos e material de segurança disponível para venda imediata.",
+            count: "2,450 Arquivos",
+            icon: ShoppingBag,
+            bg: "bg-emerald-50",
+            color: "text-emerald-600",
+            border: "border-emerald-100"
+        },
+        {
+            title: "Profissionais",
+            description: "Agrónomos, veterinários, técnicos e especialistas, engenheiros e agricultores prontos para atender as suas necessidades.",
+            count: "1,200 Arquivos",
+            icon: User,
+            bg: "bg-purple-50",
+            color: "text-purple-600",
+            border: "border-purple-100"
+        },
+        {
+            title: "Propriedades",
+            description: "Terrenos, machambas, infra-estruturas rurais, campos arráveis e fazendas prontas para investimento.",
+            count: "320 Arquivos",
+            icon: LandPlot,
+            bg: "bg-orange-50",
+            color: "text-orange-600",
+            border: "border-orange-100"
+        }
+    ];
+
+    const filteredItems = items.filter(item =>
+        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.description.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     return (
         <div className="min-h-screen bg-white text-slate-900 font-sans">
             <PageHeader
                 title="Repositório"
-                backgroundImage="https://images.unsplash.com/photo-1505664194779-8beaceb93744?q=80&w=2000&auto=format&fit=crop"
+                backgroundImage="https://images.unsplash.com/photo-1507842217121-9e871299ee18?q=80&w=2000&auto=format&fit=crop"
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Repositório", href: undefined }
                 ]}
-            />
+            >
+                <div className="max-w-2xl mx-auto">
+                    <div className="flex items-center gap-3 bg-white p-2 rounded-full shadow-lg">
+                        <div className="flex-1 flex items-center gap-2 pl-4">
+                            <Search className="w-5 h-5 text-gray-400" />
+                            <input
+                                type="text"
+                                placeholder="Pesquisar no repositório..."
+                                className="w-full outline-none text-slate-600 placeholder:text-gray-400"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
+                        <button className="bg-[#f97316] hover:bg-orange-600 text-white px-8 py-3 rounded-full font-bold transition-all shadow-md hover:shadow-lg">
+                            Pesquisar
+                        </button>
+                    </div>
+                </div>
+            </PageHeader>
 
             <main className="max-w-[1350px] mx-auto px-4 md:px-[60px] py-12">
                 <div className="flex flex-col lg:flex-row gap-12">
@@ -34,7 +117,7 @@ export default function SearchResultsPage() {
                         <div className="sticky top-24 space-y-8">
                             <div className="flex items-center justify-between">
                                 <h2 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Filtros</h2>
-                                <button className="text-xs font-bold text-[#f97316] hover:underline">Limpar tudo</button>
+                                <button className="text-xs font-bold text-[#f97316] hover:underline" onClick={() => setSearchQuery("")}>Limpar tudo</button>
                             </div>
 
                             {/* Categories */}
@@ -42,7 +125,7 @@ export default function SearchResultsPage() {
                                 <h3 className="text-sm font-bold text-slate-900">Categorias</h3>
                                 <div className="space-y-3">
                                     {[
-                                        { label: "Todos os resultados", checked: true },
+                                        { label: "Todos os resultados", checked: searchQuery === "" },
                                         { label: "Produtos", checked: false },
                                         { label: "Empresas", checked: false },
                                         { label: "Profissionais", checked: false },
@@ -87,62 +170,7 @@ export default function SearchResultsPage() {
                     {/* Results Content Area */}
                     <div className="flex-1 min-h-[400px]">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            {[
-                                {
-                                    title: "Artigos Científicos",
-                                    description: "Teses, dissertações, revistas científicas e pesquisas académicas sobre o agronegócio.",
-                                    count: "540 Arquivos",
-                                    icon: BookOpen,
-                                    bg: "bg-cyan-50",
-                                    color: "text-cyan-600",
-                                    border: "border-cyan-100"
-                                },
-                                {
-                                    title: "Documentos",
-                                    description: "Relatórios, legislação, políticas agrárias, manuais técnicos e estatísticas governamentais.",
-                                    count: "920 Arquivos",
-                                    icon: FileText,
-                                    bg: "bg-rose-50",
-                                    color: "text-rose-600",
-                                    border: "border-rose-100"
-                                },
-                                {
-                                    title: "Empresas",
-                                    description: "Fornecedores, distribuidores, instituições públicas e ONGs, associações e cooperativas agrícolas do país.",
-                                    count: "850 Arquivos",
-                                    icon: Building2,
-                                    bg: "bg-blue-50",
-                                    color: "text-blue-600",
-                                    border: "border-blue-100"
-                                },
-                                {
-                                    title: "Produtos",
-                                    description: "Insumos, maquinaria agrícolas, equipamentos e material de segurança disponível para venda imediata.",
-                                    count: "2,450 Arquivos",
-                                    icon: ShoppingBag,
-                                    bg: "bg-emerald-50",
-                                    color: "text-emerald-600",
-                                    border: "border-emerald-100"
-                                },
-                                {
-                                    title: "Profissionais",
-                                    description: "Agrónomos, veterinários, técnicos e especialistas, engenheiros e agricultores prontos para atender as suas necessidades.",
-                                    count: "1,200 Arquivos",
-                                    icon: User,
-                                    bg: "bg-purple-50",
-                                    color: "text-purple-600",
-                                    border: "border-purple-100"
-                                },
-                                {
-                                    title: "Propriedades",
-                                    description: "Terrenos, machambas, infra-estruturas rurais, campos arráveis e fazendas prontas para investimento.",
-                                    count: "320 Arquivos",
-                                    icon: LandPlot,
-                                    bg: "bg-orange-50",
-                                    color: "text-orange-600",
-                                    border: "border-orange-100"
-                                }
-                            ].map((item, i) => (
+                            {filteredItems.length > 0 ? filteredItems.map((item, i) => (
                                 <div key={i} className={`p-6 rounded-[15px] border ${item.border} ${item.bg} hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group flex flex-col items-center text-center gap-6`}>
                                     <div className={`w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm ${item.color} group-hover:scale-110 transition-transform`}>
                                         <item.icon className="w-8 h-8" />
@@ -159,7 +187,12 @@ export default function SearchResultsPage() {
                                         </div>
                                     </div>
                                 </div>
-                            ))}
+                            )) : (
+                                <div className="col-span-full py-20 text-center text-gray-400">
+                                    <Search className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                                    <p>Nenhum resultado encontrado para "{searchQuery}".</p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

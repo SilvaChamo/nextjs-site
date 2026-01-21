@@ -22,9 +22,10 @@ interface PageHeaderProps {
     icon?: LucideIcon;
     backButton?: BackButton;
     overlayOpacity?: string;
+    children?: ReactNode;
 }
 
-export function PageHeader({ title, breadcrumbs, backgroundImage, icon: Icon, backButton, overlayOpacity = "opacity-80" }: PageHeaderProps) {
+export function PageHeader({ title, breadcrumbs, backgroundImage, icon: Icon, backButton, overlayOpacity = "opacity-80", children }: PageHeaderProps) {
     const [isSticky, setIsSticky] = useState(false);
     const headerRef = useRef<HTMLDivElement>(null);
 
@@ -96,6 +97,13 @@ export function PageHeader({ title, breadcrumbs, backgroundImage, icon: Icon, ba
                     </Link>
                 )}
             </div>
+
+            {/* Custom Content (e.g. Search Bar) */}
+            {children && (
+                <div className="container-site relative z-10 mt-8 pb-4">
+                    {children}
+                </div>
+            )}
 
             {/* ORANGE LINE - Single Element Switching Mode */}
             <div

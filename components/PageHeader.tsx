@@ -49,7 +49,7 @@ export function PageHeader({ title, breadcrumbs, backgroundImage, icon: Icon, ba
     }, []);
 
     return (
-        <div ref={headerRef} className="w-full bg-gradient-to-r from-emerald-950 via-green-900 via-teal-900 to-emerald-950 text-white pt-36 pb-14 relative overflow-visible">
+        <div ref={headerRef} className="w-full bg-gradient-to-r from-emerald-950 via-green-900 via-teal-900 to-emerald-950 text-white pt-28 pb-10 relative overflow-visible">
             {/* Optional Background Image Overlay */}
             {/* Optional Background Image Overlay */}
             {backgroundImage && (
@@ -108,7 +108,7 @@ export function PageHeader({ title, breadcrumbs, backgroundImage, icon: Icon, ba
             {/* ORANGE LINE - Single Element Switching Mode */}
             <div
                 key={isSticky ? 'sticky' : 'static'}
-                className={`w-full left-0 z-[9999] pointer-events-none ${isSticky
+                className={`w-full left-0 z-30 pointer-events-none ${isSticky
                     ? "fixed top-[64px] md:top-[72px]"
                     : "absolute -bottom-[6px]"
                     }`}

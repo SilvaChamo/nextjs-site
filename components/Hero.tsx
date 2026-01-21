@@ -123,17 +123,19 @@ export function Hero({ onToggleSearch, isSearchOpen, stats }: HeroProps) {
 
             </div>
 
-            {/* Botão de Pesquisa Flutuante - Canto Inferior Direito */}
-            <div className="absolute bottom-12 right-12 z-20 animate-in fade-in slide-in-from-bottom-8 duration-700">
-                <button
-                    onClick={onToggleSearch}
-                    className={`w-16 h-16 rounded-[10px] flex items-center justify-center transition-all duration-300 shadow-2xl ${isSearchOpen
-                        ? "bg-transparent text-[#f97316] rotate-90"
-                        : "bg-[#22c55e] text-white hover:bg-[#f97316] hover:scale-110"
-                        }`}
-                >
-                    {isSearchOpen ? <X className="w-8 h-8" /> : <Search className="w-8 h-8" />}
-                </button>
+            {/* Botão de Pesquisa Flutuante - Alinhado à Direita do Conteúdo */}
+            <div className="absolute bottom-6 w-full z-20 pointer-events-none">
+                <div className="container-site mx-auto flex justify-end">
+                    <button
+                        onClick={onToggleSearch}
+                        className={`w-12 h-12 rounded-[7px] flex items-center justify-center transition-all duration-300 shadow-xl pointer-events-auto animate-in fade-in slide-in-from-bottom-8 duration-700 ${isSearchOpen
+                            ? "bg-transparent text-[#f97316] rotate-90 border-0 shadow-none"
+                            : "bg-[#22c55e] text-white hover:bg-[#f97316] hover:scale-110"
+                            }`}
+                    >
+                        {isSearchOpen ? <X className="w-6 h-6" /> : <Search className="w-6 h-6" />}
+                    </button>
+                </div>
             </div>
         </section>
     );

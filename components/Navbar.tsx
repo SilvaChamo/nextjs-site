@@ -88,11 +88,12 @@ export function Navbar() {
     };
 
     const menuItems = [
-        { label: "Sobre nós", link: "/sobre" },
+        { label: "Sobre nós", link: "/sobre-nos" },
         { label: "Serviços", link: "/servicos" },
-        { label: "Repositório", link: "/pesquisa" },
-        { label: "Parceria", link: "#parceria" },
-        { label: "Mercado", link: "/pesquisa?cat=produtos" },
+        { label: "Repositório", link: "/repositorio" },
+        { label: "Parceria", link: "/parceria" },
+        { label: "Mercado", link: "/mercado" },
+        { label: "Contactos", link: "/contactos" },
     ];
 
     const offCanvasItems = [

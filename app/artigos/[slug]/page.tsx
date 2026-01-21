@@ -20,7 +20,7 @@ export default function ArticleReadingPage({ params }: { params: { slug: string 
                     <article className="lg:col-span-8">
                         <div className="mb-10">
                             <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-[#f97316] mb-6">
-                                <Link href="/pesquisa" className="hover:underline">Agricultura Sustentável</Link>
+                                <Link href="/repositorio" className="hover:underline">Agricultura Sustentável</Link>
                                 <span className="text-slate-200">/</span>
                                 <span className="text-slate-400">Insights de Mercado</span>
                             </nav>

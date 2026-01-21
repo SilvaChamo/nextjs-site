@@ -90,7 +90,7 @@ export function WhyChooseUs() {
                     <div className="space-y-5 pt-[35px]">
                         {/* Card 1: Companies */}
                         <Link
-                            href="/pesquisa?cat=empresas"
+                            href="/repositorio?cat=empresas"
                             className="bg-emerald-600 text-white p-6 rounded-[16px] shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group cursor-pointer relative overflow-hidden flex flex-col gap-2 bg-[url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=1770&auto=format&fit=crop')] bg-cover bg-center before:absolute before:inset-0 before:bg-emerald-600/90 before:z-0 min-h-[180px]"
                         >
                             <div className="relative z-10 flex flex-col items-start gap-3">
@@ -113,7 +113,7 @@ export function WhyChooseUs() {
 
                         {/* Card 3: Professionals - Moved to Col 1 */}
                         <Link
-                            href="/pesquisa?cat=profissionais"
+                            href="/repositorio?cat=profissionais"
                             className="bg-white p-6 rounded-[16px] shadow-md border border-slate-100 hover:border-[#f97316]/30 transition-all duration-300 hover:-translate-y-1 group cursor-pointer flex flex-col gap-2 min-h-[180px]"
                         >
                             <div className="relative z-10 flex flex-col items-start gap-3">
@@ -136,7 +136,7 @@ export function WhyChooseUs() {
                     <div className="space-y-5">
                         {/* Card 2: Properties */}
                         <Link
-                            href="/pesquisa?cat=propriedades"
+                            href="/repositorio?cat=propriedades"
                             className="bg-white p-6 rounded-[16px] shadow-md border border-slate-100 hover:border-[#f97316]/30 transition-all duration-300 hover:-translate-y-1 group cursor-pointer flex flex-col gap-2 min-h-[180px]"
                         >
                             <div className="relative z-10 flex flex-col items-start gap-3">
@@ -156,7 +156,7 @@ export function WhyChooseUs() {
 
                         {/* Card 4: Products */}
                         <Link
-                            href="/pesquisa?cat=produtos"
+                            href="/repositorio?cat=produtos"
                             className="bg-[#f97316] text-white p-6 rounded-[16px] shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group cursor-pointer relative overflow-hidden flex flex-col gap-2 bg-[url('https://images.unsplash.com/photo-1625246333195-bf791369018e?q=80&w=1770&auto=format&fit=crop')] bg-cover bg-center before:absolute before:inset-0 before:bg-[#f97316]/90 before:z-0 min-h-[180px]"
                         >
                             <div className="relative z-10 flex flex-col items-start gap-3">

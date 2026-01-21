@@ -1,21 +1,22 @@
 "use client";
 
-import React from "react";
-import Image from "next/image";
+import React, { useState } from "react";
 import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
+import { SearchSection } from "@/components/SearchSection";
 import {
-    Search, Bell, Building2, CheckCircle,
-    Star, MapPin, Maximize, Droplets,
-    ChevronLeft, ChevronRight, Globe,
-    Mail, Share2, Filter, Tractor,
-    User, HardHat, LandPlot, ShoppingBag, ArrowRight,
+    Search, X, Building2,
+    User, LandPlot, ShoppingBag, ArrowRight,
     FileText, BookOpen
 } from "lucide-react";
 
-
 export default function SearchResultsPage() {
-    const [searchQuery, setSearchQuery] = React.useState("");
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+    // Local query state for the static items - kept for future use or if we add a local filter input back
+    // State for category filter
+    const [selectedCategory, setSelectedCategory] = useState("Todos os resultados");
+    // State for sorting
+    const [sortOption, setSortOption] = useState("Relevância");
 
     const items = [
         {
@@ -25,7 +26,11 @@ export default function SearchResultsPage() {
             icon: BookOpen,
             bg: "bg-cyan-50",
             color: "text-cyan-600",
-            border: "border-cyan-100"
+            border: "border-cyan-100",
+            category: "Artigos",
+            date: "2023-12-01",
+            price: 0,
+            relevance: 5
         },
         {
             title: "Documentos",
@@ -34,7 +39,11 @@ export default function SearchResultsPage() {
             icon: FileText,
             bg: "bg-rose-50",
             color: "text-rose-600",
-            border: "border-rose-100"
+            border: "border-rose-100",
+            category: "Documentos",
+            date: "2024-01-15",
+            price: 0,
+            relevance: 4
         },
         {
             title: "Empresas",
@@ -43,7 +52,11 @@ export default function SearchResultsPage() {
             icon: Building2,
             bg: "bg-blue-50",
             color: "text-blue-600",
-            border: "border-blue-100"
+            border: "border-blue-100",
+            category: "Empresas",
+            date: "2023-11-20",
+            price: 0,
+            relevance: 6
         },
         {
             title: "Produtos",
@@ -52,7 +65,11 @@ export default function SearchResultsPage() {
             icon: ShoppingBag,
             bg: "bg-emerald-50",
             color: "text-emerald-600",
-            border: "border-emerald-100"
+            border: "border-emerald-100",
+            category: "Produtos",
+            date: "2024-01-20",
+            price: 1500, // Mock price high
+            relevance: 8
         },
         {
             title: "Profissionais",
@@ -61,7 +78,11 @@ export default function SearchResultsPage() {
             icon: User,
             bg: "bg-purple-50",
             color: "text-purple-600",
-            border: "border-purple-100"
+            border: "border-purple-100",
+            category: "Profissionais",
+            date: "2023-10-05",
+            price: 500, // Mock price medium
+            relevance: 7
         },
         {
             title: "Propriedades",
@@ -70,54 +91,74 @@ export default function SearchResultsPage() {
             icon: LandPlot,
             bg: "bg-orange-50",
             color: "text-orange-600",
-            border: "border-orange-100"
+            border: "border-orange-100",
+            category: "Propriedades",
+            date: "2023-09-12",
+            price: 50000, // Mock price very high
+            relevance: 3
         }
     ];
 
-    const filteredItems = items.filter(item =>
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.description.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredItems = items.filter(item => {
+        if (selectedCategory === "Todos os resultados") return true;
+        return item.title.includes(selectedCategory);
+    }).sort((a, b) => {
+        if (sortOption === "Mais recentes") {
+            return new Date(b.date).getTime() - new Date(a.date).getTime();
+        }
+        if (sortOption === "Preço: Menor para Maior") {
+            return a.price - b.price;
+        }
+        if (sortOption === "Preço: Maior para Menor") {
+            return b.price - a.price;
+        }
+        // Default: Relevância
+        return b.relevance - a.relevance;
+    });
 
     return (
-        <div className="min-h-screen bg-white text-slate-900 font-sans">
-            <PageHeader
-                title="Repositório"
-                backgroundImage="https://images.unsplash.com/photo-1507842217121-9e871299ee18?q=80&w=2000&auto=format&fit=crop"
-                breadcrumbs={[
-                    { label: "Início", href: "/" },
-                    { label: "Repositório", href: undefined }
-                ]}
-            >
-                <div className="max-w-2xl mx-auto">
-                    <div className="flex items-center gap-3 bg-white p-2 rounded-full shadow-lg">
-                        <div className="flex-1 flex items-center gap-2 pl-4">
-                            <Search className="w-5 h-5 text-gray-400" />
-                            <input
-                                type="text"
-                                placeholder="Pesquisar no repositório..."
-                                className="w-full outline-none text-slate-600 placeholder:text-gray-400"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                        </div>
-                        <button className="bg-[#f97316] hover:bg-orange-600 text-white px-8 py-3 rounded-full font-bold transition-all shadow-md hover:shadow-lg">
-                            Pesquisar
+        <div className="min-h-screen bg-white text-slate-900 font-sans relative">
+            <div className="relative">
+                <PageHeader
+                    title="Repositório"
+                    backgroundImage="https://images.unsplash.com/photo-1507842217121-9e871299ee18?q=80&w=2000&auto=format&fit=crop"
+                    breadcrumbs={[
+                        { label: "Início", href: "/" },
+                        { label: "Repositório", href: undefined }
+                    ]}
+                />
+
+                {/* Botão de Pesquisa Flutuante - Posicionado no PageHeader */}
+                {/* Botão de Pesquisa Flutuante - Alinhado à Direita do Conteúdo */}
+                <div className="absolute bottom-6 w-full z-20 pointer-events-none">
+                    <div className="container-site mx-auto flex justify-end">
+                        <button
+                            onClick={() => setIsSearchOpen(!isSearchOpen)}
+                            className={`w-12 h-12 rounded-[7px] flex items-center justify-center transition-all duration-300 shadow-xl pointer-events-auto animate-in fade-in slide-in-from-bottom-8 duration-700 ${isSearchOpen
+                                ? "bg-[#f97316] text-white rotate-90 border border-[#f97316]"
+                                : "bg-[#22c55e] text-white hover:bg-[#f97316] hover:scale-110"
+                                }`}
+                        >
+                            {isSearchOpen ? <X className="w-6 h-6" /> : <Search className="w-6 h-6" />}
                         </button>
                     </div>
                 </div>
-            </PageHeader>
+            </div>
+
+            <SearchSection isOpen={isSearchOpen} withBottomBorder={true} />
 
             <main className="max-w-[1350px] mx-auto px-4 md:px-[60px] py-12">
                 <div className="flex flex-col lg:flex-row gap-12">
-
 
                     {/* Sidebar Filter */}
                     <aside className="w-full lg:w-72 shrink-0">
                         <div className="sticky top-24 space-y-8">
                             <div className="flex items-center justify-between">
                                 <h2 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Filtros</h2>
-                                <button className="text-xs font-bold text-[#f97316] hover:underline" onClick={() => setSearchQuery("")}>Limpar tudo</button>
+                                <button className="text-xs font-bold text-[#f97316] hover:underline" onClick={() => {
+                                    setSelectedCategory("Todos os resultados");
+                                    setSortOption("Relevância");
+                                }}>Limpar tudo</button>
                             </div>
 
                             {/* Categories */}
@@ -125,20 +166,23 @@ export default function SearchResultsPage() {
                                 <h3 className="text-sm font-bold text-slate-900">Categorias</h3>
                                 <div className="space-y-3">
                                     {[
-                                        { label: "Todos os resultados", checked: searchQuery === "" },
-                                        { label: "Produtos", checked: false },
-                                        { label: "Empresas", checked: false },
-                                        { label: "Profissionais", checked: false },
-                                        { label: "Propriedades", checked: false },
+                                        "Todos os resultados",
+                                        "Produtos",
+                                        "Empresas",
+                                        "Profissionais",
+                                        "Propriedades",
+                                        "Artigos Científicos",
+                                        "Documentos"
                                     ].map((cat, i) => (
                                         <label key={i} className="flex items-center gap-3 cursor-pointer group">
                                             <input
                                                 type="checkbox"
-                                                defaultChecked={cat.checked}
+                                                checked={selectedCategory === cat}
+                                                onChange={() => setSelectedCategory(cat)}
                                                 className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 h-4 w-4"
                                             />
-                                            <span className="text-sm font-medium text-slate-600 group-hover:text-emerald-600 transition-colors">
-                                                {cat.label}
+                                            <span className={`text-sm font-medium transition-colors ${selectedCategory === cat ? "text-emerald-600 font-bold" : "text-slate-600 group-hover:text-emerald-600"}`}>
+                                                {cat}
                                             </span>
                                         </label>
                                     ))}
@@ -148,7 +192,11 @@ export default function SearchResultsPage() {
                             {/* Sort By */}
                             <div className="space-y-3">
                                 <h3 className="text-sm font-bold text-slate-900">Ordenar por</h3>
-                                <select className="w-full bg-white border border-slate-200 rounded-[10px] py-2.5 px-4 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all">
+                                <select
+                                    className="w-full bg-white border border-slate-200 rounded-[10px] py-2.5 px-4 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+                                    value={sortOption}
+                                    onChange={(e) => setSortOption(e.target.value)}
+                                >
                                     <option>Relevância</option>
                                     <option>Mais recentes</option>
                                     <option>Preço: Menor para Maior</option>
@@ -190,7 +238,7 @@ export default function SearchResultsPage() {
                             )) : (
                                 <div className="col-span-full py-20 text-center text-gray-400">
                                     <Search className="w-12 h-12 mx-auto mb-4 opacity-20" />
-                                    <p>Nenhum resultado encontrado para "{searchQuery}".</p>
+                                    <p>Nenhum resultado encontrado.</p>
                                 </div>
                             )}
                         </div>

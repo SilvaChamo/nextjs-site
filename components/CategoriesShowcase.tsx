@@ -3,40 +3,21 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { ArrowRight, Building2, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { supabase } from "@/lib/supabaseClient";
+import Image from "next/image";
 
-export function CategoriesShowcase() {
-    const [items, setItems] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
+interface CategoriesShowcaseProps {
+    companies: any[];
+}
+
+export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
+    // items is now derived from props
+    const items = companies || [];
     const itemsPerPage = 4;
-
-    // Fetch Companies
-    useEffect(() => {
-        const fetchCompanies = async () => {
-            const { data, error } = await supabase
-                .from('companies')
-                .select('*')
-                // .eq('is_featured', true) // Optámos por mostrar todas ou filtrar se necessário
-                .limit(20);
-
-            if (data) {
-                const formatted = data.map(c => ({
-                    title: c.name,
-                    sub: c.category,
-                    location: c.location,
-                    logo: c.logo_url,
-                    icon: Building2 // Fallback icon
-                }));
-                setItems(formatted);
-            }
-            setLoading(false);
-        };
-        fetchCompanies();
-    }, []);
-
-    // --- SLIDER STATE ---
     const [currentIndex, setCurrentIndex] = useState(itemsPerPage);
     const [isTransitioning, setIsTransitioning] = useState(false);
+
+    // Removed internal fetching
+
 
     // Lógica de Loop Infinito: Clonar itens (Início e Fim)
     // Só computar se tivermos items
@@ -84,9 +65,7 @@ export function CategoriesShowcase() {
     }, [nextSlide, items.length]);
 
 
-    if (loading) {
-        return <div className="py-20 text-center text-gray-400">A carregar empresas...</div>;
-    }
+
 
     if (items.length === 0) return null;
 
@@ -153,7 +132,7 @@ export function CategoriesShowcase() {
                                                 <div className="shrink-0">
                                                     {company.logo ? (
                                                         <div className="w-12 h-12 rounded-[10px] overflow-hidden border border-gray-100 bg-white flex items-center justify-center">
-                                                            <img src={company.logo} alt={company.title} className="w-full h-full object-contain p-1" />
+                                                            <Image src={company.logo} alt={company.title} width={48} height={48} className="w-full h-full object-contain p-1" />
                                                         </div>
                                                     ) : (
                                                         <div className="w-12 h-12 rounded-[10px] flex items-center justify-center bg-emerald-50 text-emerald-600 group-hover:bg-[#f97316] group-hover:text-white transition-all duration-500">

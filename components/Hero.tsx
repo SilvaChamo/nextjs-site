@@ -1,35 +1,16 @@
-import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Search, X } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
 
 interface HeroProps {
     onToggleSearch: () => void;
     isSearchOpen: boolean;
+    stats: Record<string, any>;
 }
 
-export function Hero({ onToggleSearch, isSearchOpen }: HeroProps) {
-    const [stats, setStats] = useState<Record<string, any>>({});
-
-    useEffect(() => {
-        const fetchStats = async () => {
-            const { data, error } = await supabase
-                .from('dashboard_indicators')
-                .select('slug, value, trend')
-                .eq('location', 'hero');
-
-            if (data) {
-                const map = data.reduce((acc: any, item) => {
-                    acc[item.slug] = item;
-                    return acc;
-                }, {});
-                setStats(map);
-            }
-        };
-        fetchStats();
-    }, []);
+export function Hero({ onToggleSearch, isSearchOpen, stats }: HeroProps) {
+    // Removed internal fetching. stats are now passed via props.
 
     // Função auxiliar para obter o valor com segurança
     const getVal = (slug: string, fallback: string) => stats[slug]?.value || fallback;

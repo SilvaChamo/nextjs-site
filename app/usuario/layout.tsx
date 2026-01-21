@@ -49,14 +49,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         >
                             <Menu className="w-6 h-6" />
                         </button>
-                        {/* Logout moved to Left (swapped with collapse) */}
-                        <button
-                            onClick={handleLogout}
-                            className="p-2 -ml-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                            title="Sair da Conta"
-                        >
-                            <LogOut className="w-5 h-5" />
-                        </button>
+
 
                         <Link href="/" className="hover:opacity-80 transition-opacity duration-300">
                             <Image
@@ -72,14 +65,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     {/* Right side - Empty for now since Logout moved left? Or maybe User Profile snippet? 
                         The user asked to swap. Previous logout was big button. I'll leave space or put something generic.
                     */}
-                    <div className="text-sm font-medium text-slate-400">
-                        {/* Placeholder or empty */}
+                    {/* Right side - Logout Button */}
+                    <div className="flex items-center gap-4">
+                        <Button
+                            onClick={handleLogout}
+                            variant="outline"
+                            className="bg-slate-50 border-slate-200 text-slate-500 hover:bg-orange-50 hover:text-[#f97316] hover:border-orange-200 font-bold gap-2 transition-all shadow-sm"
+                        >
+                            <LogOut className="w-4 h-4" />
+                            Sair
+                        </Button>
                     </div>
                 </header>
 
                 {/* Scrollable Content */}
                 <div className="flex-1 overflow-y-auto p-5 md:p-8">
-                    <div className="max-w-6xl mx-auto w-full">
+                    <div className="w-full mx-auto">
                         {children}
                     </div>
                 </div>

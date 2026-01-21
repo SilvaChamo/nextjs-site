@@ -43,7 +43,7 @@ export default function DashboardPage() {
 
     return (
         <div>
-            <div className="w-full max-w-[1350px] mx-auto relative z-20">
+            <div className="w-full mx-auto relative z-20">
 
                 {/* Statistics Header & KPIs */}
                 <DashboardStats />

@@ -91,11 +91,11 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
                             href={item.href}
                             className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group ${isActive
                                 ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
-                                : "hover:bg-slate-800 hover:text-white"
+                                : "text-slate-400 hover:text-[#f97316]"
                                 } ${isCollapsed ? 'justify-center' : ''}`}
                             title={isCollapsed ? item.name : undefined}
                         >
-                            <item.icon className={`w-5 h-5 ${isActive ? "text-white" : "text-slate-500 group-hover:text-white"}`} />
+                            <item.icon className={`w-5 h-5 ${isActive ? "text-white" : "text-slate-500 group-hover:text-[#f97316]"}`} />
                             {!isCollapsed && item.name}
                         </Link>
                     );
@@ -103,12 +103,12 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
 
                 <div className="mt-8 pt-6 border-t border-emerald-900/50">
                     {!isCollapsed && <p className="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Sistema</p>}
-                    <Link href="/usuario/dashboard/configuracoes" className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-all ${isCollapsed ? 'justify-center' : 'w-full text-left'}`} title={isCollapsed ? "Configurações" : undefined}>
-                        <Settings className="w-5 h-5 text-slate-500" />
+                    <Link href="/usuario/dashboard/configuracoes" className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-[#f97316] transition-all group ${isCollapsed ? 'justify-center' : 'w-full text-left'}`} title={isCollapsed ? "Configurações" : undefined}>
+                        <Settings className="w-5 h-5 text-slate-500 group-hover:text-[#f97316]" />
                         {!isCollapsed && "Configurações"}
                     </Link>
-                    <Link href="/usuario/dashboard/ajuda" className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-all ${isCollapsed ? 'justify-center' : 'w-full text-left'}`} title={isCollapsed ? "Ajuda & Suporte" : undefined}>
-                        <HelpCircle className="w-5 h-5 text-slate-500" />
+                    <Link href="/usuario/dashboard/ajuda" className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-[#f97316] transition-all group ${isCollapsed ? 'justify-center' : 'w-full text-left'}`} title={isCollapsed ? "Ajuda & Suporte" : undefined}>
+                        <HelpCircle className="w-5 h-5 text-slate-500 group-hover:text-[#f97316]" />
                         {!isCollapsed && "Ajuda & Suporte"}
                     </Link>
                 </div>
@@ -131,23 +131,24 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
                             <p className="text-[11px] text-slate-400 mb-3 leading-tight">
                                 Tenha acesso a todos os recursos.
                             </p>
-                            <Button size="sm" className="w-full bg-orange-500 hover:bg-orange-600 text-white border-none h-7 text-xs font-bold uppercase tracking-wide">
-                                Ver Planos
-                            </Button>
+                            <Link href="/planos" className="block w-full">
+                                <Button size="sm" className="w-full bg-orange-500 hover:bg-orange-600 text-white border-none h-7 text-xs font-bold uppercase tracking-wide">
+                                    Ver Planos
+                                </Button>
+                            </Link>
                         </div>
                     </div>
                 )}
 
-                {/* Sidebar Toggle Button */}
+                {/* Sidebar Toggle Button - Right Aligned, Icon Only */}
                 <button
                     onClick={toggleSidebar}
-                    className={`flex items-center justify-center gap-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors ${isCollapsed ? 'w-10 h-10' : 'w-full px-3 py-2'}`}
+                    className={`flex items-center justify-center rounded-lg text-slate-400 hover:text-[#f97316] transition-colors ${isCollapsed ? 'w-10 h-10 mx-auto' : 'w-10 h-10 ml-auto'}`}
                     title={isCollapsed ? "Expandir Barra" : "Encolher Barra"}
                 >
-                    {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-                    {!isCollapsed && "Encolher Barra"}
+                    <LogOut className={`w-5 h-5 transition-transform duration-300 ${!isCollapsed ? 'rotate-180' : ''}`} />
                 </button>
             </div>
-        </aside>
+        </aside >
     );
 }

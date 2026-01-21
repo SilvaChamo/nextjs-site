@@ -1,10 +1,15 @@
 import { User, Mail, Phone, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+import { DashboardPageHeader } from "@/components/DashboardPageHeader";
+
 export default function MinhaContaPage() {
     return (
         <div className="space-y-6">
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900">Minha Conta</h2>
+            <DashboardPageHeader
+                title="Minha Conta"
+                description="Gerencie suas informações pessoais e preferências."
+            />
 
             <div className="bg-white rounded-xl p-8 border border-slate-100 shadow-sm">
                 <div className="flex flex-col md:flex-row items-center gap-8">

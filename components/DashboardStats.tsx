@@ -2,33 +2,29 @@
 
 import { Calendar, Download, TrendingUp, TrendingDown, Eye, MousePointerClick, MessageSquare, Percent } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DashboardPageHeader } from "@/components/DashboardPageHeader";
 
 export function DashboardStats() {
 
     return (
-        <div className="space-y-6 mb-[25px]">
+        <div className="space-y-5 mb-5">
             {/* Header Section */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h2 className="text-2xl font-black text-slate-800 tracking-tight">Estatística de Pesquisa</h2>
-                    <p className="text-slate-500 text-sm mt-1">
-                        Acompanhe a visibilidade da sua empresa e produtos no Agro Data Moz.
-                    </p>
+            <DashboardPageHeader
+                title="Estatística de Pesquisa"
+                description="Acompanhe a visibilidade da sua empresa e produtos no Agro Data Moz."
+            >
+                <div className="flex items-center justify-center px-4 h-10 gap-2 bg-white border border-slate-200 text-slate-600 font-semibold rounded-md shadow-sm cursor-default">
+                    <Calendar className="w-4 h-4" />
+                    Últimos 30 dias
                 </div>
-                <div className="flex gap-3">
-                    <div className="flex items-center justify-center px-4 h-10 gap-2 bg-white border border-slate-200 text-slate-600 font-semibold rounded-md shadow-sm cursor-default">
-                        <Calendar className="w-4 h-4" />
-                        Últimos 30 dias
-                    </div>
-                    <Button className="bg-[#22c55e] hover:bg-[#16a34a] text-white font-bold h-10 gap-2 shadow-lg shadow-green-500/20">
-                        <Download className="w-4 h-4" />
-                        Exportar Relatório
-                    </Button>
-                </div>
-            </div>
+                <Button className="bg-[#22c55e] hover:bg-[#16a34a] text-white font-bold h-10 gap-2 shadow-lg shadow-green-500/20">
+                    <Download className="w-4 h-4" />
+                    Exportar Relatório
+                </Button>
+            </DashboardPageHeader>
 
             {/* KPIs Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
                 {/* KPI 1 - Impressões */}
                 <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
                     <div className="flex justify-between items-start mb-2">
@@ -95,6 +91,5 @@ export function DashboardStats() {
             </div>
 
         </div>
-        </div >
     );
 }

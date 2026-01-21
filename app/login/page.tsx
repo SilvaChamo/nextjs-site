@@ -41,9 +41,9 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                 });
                 if (error) throw error;
                 router.push("/usuario/dashboard");
-                router.refresh(); // Force refresh to update middleware state
+                router.refresh();
             } else {
-                const { error } = await supabase.auth.signUp({
+                const { data, error } = await supabase.auth.signUp({
                     email: formData.email,
                     password: formData.password,
                     options: {
@@ -52,8 +52,29 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                         }
                     }
                 });
+
                 if (error) throw error;
-                setStatus({ type: 'success', message: 'Conta criada! Verifique o seu e-mail para confirmar.' });
+
+                // Se o Supabase já retornou a sessão (Email Confirm OFF), ótimo.
+                // Se não, tentamos fazer login explícito para garantir.
+                if (data.session) {
+                    router.push("/usuario/dashboard");
+                    router.refresh();
+                } else {
+                    // Tenta login imediato (caso o signUp não tenha retornado sessão mas o usuário tenha sido criado e email confirm esteja OFF)
+                    const { error: signInError } = await supabase.auth.signInWithPassword({
+                        email: formData.email,
+                        password: formData.password,
+                    });
+
+                    if (!signInError) {
+                        router.push("/usuario/dashboard");
+                        router.refresh();
+                    } else {
+                        // Se falhar o login também, provavelmente "Confirm Email" ainda está ATIVO no Supabase
+                        setStatus({ type: 'success', message: 'Conta criada! Se a configuração de email estiver ativa, verifique sua caixa de entrada.' });
+                    }
+                }
             }
         } catch (err: any) {
             setStatus({ type: 'error', message: err.message });

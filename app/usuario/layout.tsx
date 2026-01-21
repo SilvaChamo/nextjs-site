@@ -20,27 +20,42 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
     return (
         <div className="flex h-screen bg-slate-50 font-sans overflow-hidden">
-            {/* Sidebar Fixa (Animated Wrapper) */}
+            {/* Sidebar Fixa (Desktop) / Overlay (Mobile) */}
             <div
-                className={`flex-shrink-0 bg-emerald-950 transition-all duration-300 ease-in-out border-r border-emerald-900 overflow-hidden ${isSidebarOpen ? "w-64 opacity-100" : "w-0 opacity-0"
-                    }`}
+                className={`fixed inset-y-0 left-0 z-30 bg-emerald-950 transition-all duration-300 ease-in-out border-r border-emerald-900 overflow-hidden 
+                    ${isSidebarOpen ? "w-64 translate-x-0" : "w-[80px] -translate-x-full md:translate-x-0"} 
+                    md:relative md:flex-shrink-0`}
             >
-                <div className="w-64 h-full"> {/* Fixed width container to prevent layout shift inside */}
-                    <UserSidebar />
-                </div>
+                <UserSidebar isCollapsed={!isSidebarOpen} toggleSidebar={() => setSidebarOpen(!isSidebarOpen)} />
             </div>
+
+            {/* Overlay para fechar sidebar em mobile quando aberta */}
+            {isSidebarOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-20 md:hidden"
+                    onClick={() => setSidebarOpen(false)}
+                />
+            )}
 
             {/* Área de Conteúdo Principal (Rolável) */}
             <main className="flex-1 flex flex-col overflow-hidden relative">
                 {/* Top Header */}
                 <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0 shadow-sm z-10">
                     <div className="flex items-center gap-4">
+                        {/* Mobile Menu Toggle */}
                         <button
                             onClick={() => setSidebarOpen(!isSidebarOpen)}
-                            className="p-2 -ml-2 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
-                            title={isSidebarOpen ? "Recolher Menu" : "Expandir Menu"}
+                            className="md:hidden p-2 text-slate-500 hover:bg-slate-100 rounded-lg"
                         >
-                            {isSidebarOpen ? <ArrowLeftFromLine className="w-5 h-5" /> : <ArrowRightFromLine className="w-5 h-5" />}
+                            <Menu className="w-6 h-6" />
+                        </button>
+                        {/* Logout moved to Left (swapped with collapse) */}
+                        <button
+                            onClick={handleLogout}
+                            className="p-2 -ml-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Sair da Conta"
+                        >
+                            <LogOut className="w-5 h-5" />
                         </button>
 
                         <Link href="/" className="hover:opacity-80 transition-opacity duration-300">
@@ -54,17 +69,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         </Link>
                     </div>
 
-                    <button
-                        onClick={handleLogout}
-                        className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-red-600 transition-colors uppercase tracking-wider bg-slate-50 hover:bg-red-50 px-4 py-2 rounded-lg border border-slate-200 hover:border-red-200"
-                    >
-                        <LogOut className="w-4 h-4" />
-                        Sair
-                    </button>
+                    {/* Right side - Empty for now since Logout moved left? Or maybe User Profile snippet? 
+                        The user asked to swap. Previous logout was big button. I'll leave space or put something generic.
+                    */}
+                    <div className="text-sm font-medium text-slate-400">
+                        {/* Placeholder or empty */}
+                    </div>
                 </header>
 
                 {/* Scrollable Content */}
-                <div className="flex-1 overflow-y-auto p-[25px]">
+                <div className="flex-1 overflow-y-auto p-5 md:p-8">
                     <div className="max-w-6xl mx-auto w-full">
                         {children}
                     </div>

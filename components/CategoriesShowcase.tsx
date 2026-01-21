@@ -102,7 +102,7 @@ export function CategoriesShowcase() {
                 <div className="flex justify-between items-center mb-10">
                     <div className="flex items-center gap-4">
                         <div className="w-1 h-8 bg-[#f97316]"></div> {/* Linha Vertical Laranja */}
-                        <h2 className="text-[25px] font-heading font-semibold text-slate-600 uppercase tracking-tight">
+                        <h2 className="text-[25px] font-heading font-extrabold text-slate-600 uppercase tracking-tight">
                             Empresas em destaque
                         </h2>
                     </div>
@@ -174,7 +174,7 @@ export function CategoriesShowcase() {
                                             </div>
 
                                             {/* Título: Nome da Empresa */}
-                                            <h3 className="text-[15px] font-bold text-slate-600 mb-[8px] group-hover:text-slate-900 transition-colors whitespace-nowrap overflow-hidden text-ellipsis">
+                                            <h3 className="text-[15px] font-bold text-slate-600 mb-[8px] group-hover:text-[#3a3f47] transition-colors whitespace-nowrap overflow-hidden text-ellipsis">
                                                 {company.title}
                                             </h3>
 

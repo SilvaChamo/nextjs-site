@@ -163,7 +163,7 @@ export function InfoSection() {
                                             href={card.href || "#"}
                                             className={`p-6 md:p-8 rounded-[12px] text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col gap-4 group cursor-pointer border h-full ${card.dark
                                                 ? "bg-[#374151] text-white border-slate-600 shadow-xl shadow-slate-900/20"
-                                                : "bg-white text-slate-900 border-slate-200 shadow-lg shadow-slate-200/50"
+                                                : "bg-white text-[#3a3f47] border-slate-200 shadow-lg shadow-slate-200/50"
                                                 }`}
                                         >
                                             <div className="flex items-start gap-4">
@@ -238,7 +238,7 @@ export function InfoSection() {
                                                 <h3 className="text-lg font-bold text-slate-600 group-hover:text-[#f97316] transition-colors">{news.title}</h3>
                                                 <p className="text-sm text-slate-500 leading-relaxed line-clamp-3">{news.subtitle || news.description}</p>
                                             </div>
-                                            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 group-hover:text-slate-900 transition-colors mt-auto pt-4">
+                                            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 group-hover:text-[#3a3f47] transition-colors mt-auto pt-4">
                                                 Explorar <ArrowRight className="h-3 w-3" />
                                             </div>
                                         </Link>

@@ -1,6 +1,7 @@
 "use client";
 
 import { TrendingUp, Tags, ShieldCheck, ArrowUpRight } from "lucide-react";
+import { DashboardPageHeader } from "@/components/DashboardPageHeader";
 
 export default function MercadoPage() {
     const marketInfo = [
@@ -32,15 +33,13 @@ export default function MercadoPage() {
 
     return (
         <div className="space-y-8">
-            <div>
-                <h2 className="text-3xl font-bold tracking-tight text-slate-900">Mercado Agrícola</h2>
-                <p className="text-slate-500 mt-2">
-                    Plataforma dedicada à comercialização de produtos e serviços agrícolas em Moçambique.
-                </p>
-            </div>
+            <DashboardPageHeader
+                title="Mercado Agrícola"
+                description="Plataforma dedicada à comercialização de produtos e serviços agrícolas em Moçambique."
+            />
 
             {/* Market Info Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {marketInfo.map((item, i) => (
                     <div key={i} className="p-6 md:p-8 rounded-[12px] bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col gap-4 group cursor-pointer">
                         <div className="flex items-start justify-between">
@@ -49,13 +48,13 @@ export default function MercadoPage() {
                                     <item.icon className={`h-6 w-6 ${item.iconColor}`} />
                                 </div>
                                 <div className="space-y-1">
-                                    <h3 className="text-lg font-bold leading-tight text-slate-900 group-hover:text-[#f97316] transition-colors">{item.title}</h3>
-                                    <span className="text-2xl font-black text-slate-900">{item.val}</span>
+                                    <h3 className="text-lg font-bold leading-tight text-[#3a3f47] group-hover:text-[#f97316] transition-colors">{item.title}</h3>
+                                    <span className="text-2xl font-black text-[#3a3f47]">{item.val}</span>
                                 </div>
                             </div>
                         </div>
                         <p className="text-sm leading-relaxed text-slate-500 flex-1">{item.description}</p>
-                        <div className="flex items-center gap-2 text-xs font-bold text-slate-400 group-hover:text-slate-900 transition-colors pt-4 border-t border-slate-100 mt-2">
+                        <div className="flex items-center gap-2 text-xs font-bold text-slate-400 group-hover:text-[#3a3f47] transition-colors pt-4 border-t border-slate-100 mt-2">
                             Aceder <ArrowUpRight className="h-3 w-3" />
                         </div>
                     </div>

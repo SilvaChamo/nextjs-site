@@ -2,11 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "../../../lib/supabaseClient";
+import { createClient } from "@/utils/supabase/client"; // Usar o mesmo client do Login
 import { PageHeader } from "../../../components/PageHeader";
 import { DashboardStats } from "../../../components/DashboardStats";
 import { DashboardKeywordsTable } from "../../../components/DashboardKeywordsTable";
 import { GrowthTipCard } from "../../../components/GrowthTipCard";
+import { SearchCategories } from "../../../components/SearchCategories";
+import { VisibilityChart } from "../../../components/VisibilityChart";
+import { ActivePlanCard } from "../../../components/ActivePlanCard";
 import { Building2, ShoppingCart, Briefcase, GraduationCap, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../../../components/ui/button";
@@ -15,21 +18,22 @@ export default function DashboardPage() {
     const router = useRouter();
     const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const supabase = createClient(); // Inicializar client
 
     useEffect(() => {
         const checkUser = async () => {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) {
+            const { data: { user }, error } = await supabase.auth.getUser();
+            if (error || !user) {
+                console.log("No user found in Dashboard, redirecting...", error);
                 router.push("/login");
             } else {
+                console.log("User authorized:", user.email);
                 setUser(user);
             }
             setLoading(false);
         };
         checkUser();
-    }, [router]);
-
-
+    }, [router, supabase]);
 
     if (loading) return (
         <div className="min-h-screen bg-slate-50 flex items-center justify-center">
@@ -41,70 +45,79 @@ export default function DashboardPage() {
         <div>
             <div className="w-full max-w-[1350px] mx-auto relative z-20">
 
-                {/* Welcome Section Removed (Profile moved to Sidebar) */}
-
-                {/* Statistics Section - Added based on user request */}
+                {/* Statistics Header & KPIs */}
                 <DashboardStats />
 
-                {/* Main Actions Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Main Content Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
 
-                    {/* Primary Content - Keywords Table (Moved here) */}
-                    <div className="lg:col-span-2">
+                    {/* LEFT COLUMN (Charts & Tables) */}
+                    <div className="lg:col-span-2 space-y-5">
+                        {/* Active Plan */}
+                        <ActivePlanCard />
+
+                        {/* Visibility Chart */}
+                        <VisibilityChart />
+
+                        {/* Keywords Table */}
                         <DashboardKeywordsTable />
                     </div>
 
-                    {/* Secondary Actions - Stacked */}
-                    <div className="space-y-4">
-                        {/* Market Card */}
-                        <Link href="/usuario/dashboard/mercado" className="block bg-white rounded-lg p-6 shadow-sm border border-slate-100 hover:shadow-md transition-all group">
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
-                                    <ShoppingCart className="w-6 h-6" />
-                                </div>
-                                <div>
-                                    <h4 className="font-bold text-slate-800">Mercado Agrícola</h4>
-                                    <p className="text-xs text-slate-500 mt-1">Compre e venda produtos</p>
-                                </div>
-                                <ArrowRight className="w-5 h-5 text-slate-300 ml-auto group-hover:text-blue-500 transition-colors" />
-                            </div>
-                        </Link>
+                    {/* RIGHT COLUMN (Categories & Actions) */}
+                    <div className="space-y-5">
+                        {/* Search Categories */}
+                        <SearchCategories />
 
-                        {/* Jobs Card */}
-                        <Link href="/usuario/dashboard/emprego" className="block bg-white rounded-lg p-6 shadow-sm border border-slate-100 hover:shadow-md transition-all group">
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center text-purple-500 group-hover:scale-110 transition-transform">
-                                    <Briefcase className="w-6 h-6" />
-                                </div>
-                                <div>
-                                    <h4 className="font-bold text-slate-800">Vagas de Emprego</h4>
-                                    <p className="text-xs text-slate-500 mt-1">Encontre talentos ou oportunidades</p>
-                                </div>
-                                <ArrowRight className="w-5 h-5 text-slate-300 ml-auto group-hover:text-purple-500 transition-colors" />
-                            </div>
-                        </Link>
-
-                        {/* Training Card */}
-                        <Link href="/usuario/dashboard/formacao" className="block bg-white rounded-lg p-6 shadow-sm border border-slate-100 hover:shadow-md transition-all group">
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-amber-50 rounded-lg flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform">
-                                    <GraduationCap className="w-6 h-6" />
-                                </div>
-                                <div>
-                                    <h4 className="font-bold text-slate-800">Formação</h4>
-                                    <p className="text-xs text-slate-500 mt-1">Capacite a sua equipa</p>
-                                </div>
-                                <ArrowRight className="w-5 h-5 text-slate-300 ml-auto group-hover:text-amber-500 transition-colors" />
-                            </div>
-                        </Link>
-
-                        {/* Growth Tip - Moved here */}
+                        {/* Growth Tip */}
                         <GrowthTipCard />
+
+                        {/* Navigation Cards Block */}
+                        <div className="space-y-5 pt-2">
+                            {/* Market Card */}
+                            <Link href="/usuario/dashboard/mercado" className="block bg-white rounded-lg p-5 shadow-sm border border-slate-100 hover:shadow-md transition-all group">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
+                                        <ShoppingCart className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-slate-800 text-sm">Mercado Agrícola</h4>
+                                        <p className="text-[10px] text-slate-500">Compre e venda produtos</p>
+                                    </div>
+                                    <ArrowRight className="w-4 h-4 text-slate-300 ml-auto group-hover:text-blue-500 transition-colors" />
+                                </div>
+                            </Link>
+
+                            {/* Jobs Card */}
+                            <Link href="/usuario/dashboard/emprego" className="block bg-white rounded-lg p-5 shadow-sm border border-slate-100 hover:shadow-md transition-all group">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center text-purple-500 group-hover:scale-110 transition-transform">
+                                        <Briefcase className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-slate-800 text-sm">Vagas de Emprego</h4>
+                                        <p className="text-[10px] text-slate-500">Encontre talentos</p>
+                                    </div>
+                                    <ArrowRight className="w-4 h-4 text-slate-300 ml-auto group-hover:text-purple-500 transition-colors" />
+                                </div>
+                            </Link>
+
+                            {/* Training Card */}
+                            <Link href="/usuario/dashboard/formacao" className="block bg-white rounded-lg p-5 shadow-sm border border-slate-100 hover:shadow-md transition-all group">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform">
+                                        <GraduationCap className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-slate-800 text-sm">Formação</h4>
+                                        <p className="text-[10px] text-slate-500">Capacitação profissional</p>
+                                    </div>
+                                    <ArrowRight className="w-4 h-4 text-slate-300 ml-auto group-hover:text-amber-500 transition-colors" />
+                                </div>
+                            </Link>
+                        </div>
                     </div>
 
                 </div>
-
-                {/* Keywords Table - Centered with constrained width */}
             </div>
         </div>
     );

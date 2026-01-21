@@ -1,10 +1,15 @@
 import { Settings, Bell, Lock, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+import { DashboardPageHeader } from "@/components/DashboardPageHeader";
+
 export default function ConfiguracoesPage() {
     return (
         <div className="space-y-6">
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900">Configurações</h2>
+            <DashboardPageHeader
+                title="Configurações"
+                description="Defina as preferências de segurança e notificações da sua conta."
+            />
 
             <div className="bg-white rounded-xl border border-slate-100 divide-y divide-slate-100">
                 <div className="p-6 flex items-center justify-between hover:bg-slate-50/50 transition-colors">

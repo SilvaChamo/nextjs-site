@@ -1,10 +1,14 @@
 import { ListingCard } from "@/components/ListingCard";
 
+import { DashboardPageHeader } from "@/components/DashboardPageHeader";
+
 export default function ContactosPage() {
     return (
         <div className="space-y-6">
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900">Contactos e Mensagens</h2>
-            <p className="text-slate-500">Gerencie suas conversas com compradores e parceiros.</p>
+            <DashboardPageHeader
+                title="Contactos e Mensagens"
+                description="Gerencie suas conversas com compradores e parceiros."
+            />
 
             <div className="space-y-4">
                 <ListingCard

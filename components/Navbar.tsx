@@ -93,9 +93,17 @@ export function Navbar() {
         { label: "Mercado", link: "/pesquisa?cat=produtos" },
     ];
 
+    const offCanvasItems = [
+        { label: "Central de Ajuda", link: "/ajuda" },
+        { label: "Blog do Agro", link: "/blog" },
+        { label: "Carreiras", link: "/carreiras" },
+        { label: "Termos e Condições", link: "/termos" },
+        { label: "Política de Privacidade", link: "/privacidade" },
+    ];
+
     return (
         <header className="w-full fixed top-0 left-0 z-50 bg-white shadow-md">
-            <div className="container-site py-3 flex items-center justify-between overflow-hidden flex-nowrap">
+            <div className="container-site py-3 flex items-center justify-between overflow-hidden flex-nowrap gap-4">
                 {/* Logo Section */}
                 <div className="flex items-center flex-shrink-0">
                     <Link href="/">
@@ -110,6 +118,19 @@ export function Navbar() {
                         </div>
                     </Link>
                 </div>
+
+                {/* Desktop Navigation (Moved from Off-canvas) */}
+                <nav className="hidden lg:flex items-center gap-6 xl:gap-8 flex-1 justify-center">
+                    {menuItems.map((item, i) => (
+                        <Link
+                            key={i}
+                            href={item.link}
+                            className="text-[15px] font-medium text-gray-600 hover:text-[#f97316] transition-colors whitespace-nowrap tracking-tight font-sans"
+                        >
+                            {item.label}
+                        </Link>
+                    ))}
+                </nav>
 
                 {/* Right Actions Section */}
                 <div className="flex items-center gap-3 md:gap-4 flex-shrink-0">
@@ -141,7 +162,7 @@ export function Navbar() {
                             <div className="px-5 py-3 flex justify-between items-center bg-[#f3f4f6] shrink-0 border-b border-gray-200">
                                 <SheetClose className="flex items-center gap-2 text-gray-600 hover:text-[#f97316] transition-colors uppercase font-black tracking-widest text-sm outline-none">
                                     <ChevronLeft className="h-5 w-5" />
-                                    MENU
+                                    VOLTAR
                                 </SheetClose>
                                 {user ? (
                                     <Link href="/usuario/dashboard">
@@ -166,18 +187,34 @@ export function Navbar() {
                             </div>
 
                             {/* 2. Main Content (Flexible - No Scroll ideally) */}
-                            <div className="flex-1 flex flex-col px-5 py-3 overflow-hidden">
+                            <div className="flex-1 flex flex-col px-5 py-6 overflow-hidden">
                                 {view === "menu" ? (
                                     <div className="flex flex-col h-full">
-                                        {/* Navigation Links */}
-                                        <nav className="space-y-1 mb-3 shrink-0">
+                                        {/* Mobile Only: Main Navigation */}
+                                        <nav className="space-y-4 mb-6 shrink-0 lg:hidden display-block">
+                                            <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Menu Principal</p>
                                             {menuItems.map((item, i) => (
                                                 <Link
                                                     key={i}
                                                     href={item.link}
-                                                    className="flex items-center text-[14px] font-bold text-gray-700 hover:text-[#f97316] transition-colors"
+                                                    className="flex items-center text-xl font-bold text-gray-800 hover:text-[#f97316] transition-colors"
                                                 >
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-gray-400 mr-3"></span>
+                                                    {item.label}
+                                                </Link>
+                                            ))}
+                                            <div className="h-px bg-gray-100 w-full mt-4" />
+                                        </nav>
+
+                                        {/* New Off-canvas Menu (Invented) */}
+                                        <nav className="space-y-3 mb-6 shrink-0">
+                                            <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Mais Opções</p>
+                                            {offCanvasItems.map((item, i) => (
+                                                <Link
+                                                    key={i}
+                                                    href={item.link}
+                                                    className="flex items-center text-[15px] font-semibold text-gray-600 hover:text-[#f97316] transition-colors"
+                                                >
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-slate-300 mr-3 group-hover:bg-[#f97316]"></span>
                                                     {item.label}
                                                 </Link>
                                             ))}

@@ -1,10 +1,15 @@
 import { HelpCircle, Mail, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+import { DashboardPageHeader } from "@/components/DashboardPageHeader";
+
 export default function AjudaPage() {
     return (
         <div className="space-y-6">
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900">Ajuda & Suporte</h2>
+            <DashboardPageHeader
+                title="Ajuda & Suporte"
+                description="Central de suporte para esclarecer dúvidas e solicitar assistência."
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-white p-8 rounded-xl border border-slate-100 text-center space-y-4">

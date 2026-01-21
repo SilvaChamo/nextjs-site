@@ -1,9 +1,14 @@
 import { BarChart3, TrendingUp, Users } from "lucide-react";
 
+import { DashboardPageHeader } from "@/components/DashboardPageHeader";
+
 export default function AnalisesPage() {
     return (
         <div className="space-y-6">
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900">Análise de Desempenho</h2>
+            <DashboardPageHeader
+                title="Análise de Desempenho"
+                description="Visualize o crescimento e engajamento da sua empresa."
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">

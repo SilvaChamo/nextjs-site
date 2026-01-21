@@ -10,7 +10,7 @@ export function GrowthTipCard() {
                 <div>
                     <h4 className="text-sm font-black text-orange-600 uppercase tracking-wide mb-2">Dica de Crescimento</h4>
                     <p className="text-sm text-slate-700 leading-relaxed">
-                        Produtos da categoria <span className="font-bold text-slate-900">Cereais</span> estão com alta demanda nesta região.
+                        Produtos da categoria <span className="font-bold text-[#3a3f47]">Cereais</span> estão com alta demanda nesta região.
                         Considere atualizar seus preços e estoque.
                     </p>
                 </div>

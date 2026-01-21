@@ -12,34 +12,13 @@ interface CategoriesShowcaseProps {
 export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
     // items is now derived from props
     const items = companies || [];
-    const [itemsPerPage, setItemsPerPage] = useState(4);
-    const [currentIndex, setCurrentIndex] = useState(4); // Will sync with itemsPerPage effect
+    // Always buffer for the maximum (4), so the loop works for both mobile (1) and desktop (4)
+    const itemsPerPage = 4;
+
+    const [currentIndex, setCurrentIndex] = useState(itemsPerPage);
     const [isTransitioning, setIsTransitioning] = useState(false);
 
-    // Responsive itemsPerPage
-    useEffect(() => {
-        const handleResize = () => {
-            const newCount = window.innerWidth < 768 ? 1 : 4;
-            setItemsPerPage(newCount);
-        };
-
-        // Set initial
-        handleResize();
-
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-    // Sync currentIndex when itemsPerPage changes to avoid glitches
-    useEffect(() => {
-        setCurrentIndex(itemsPerPage);
-    }, [itemsPerPage]);
-
-    // Removed internal fetching
-
-
     // Lógica de Loop Infinito: Clonar itens (Início e Fim)
-    // Só computar se tivermos items
     const extendedItems = useMemo(() => {
         if (items.length === 0) return [];
         // Se tivermos poucos itens, duplicar o suficiente para preencher o slider
@@ -83,9 +62,6 @@ export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
         return () => clearInterval(timer);
     }, [nextSlide, items.length]);
 
-
-
-
     if (items.length === 0) return null;
 
     return (
@@ -96,7 +72,7 @@ export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
 
             <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10">
 
-                {/* Cabeçalho: Título à Esquerda + Setas à Direita */}
+                {/* Cabeçalho */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-10 gap-4">
                     <div className="flex items-center gap-4 order-1">
                         <div className="w-1 h-8 bg-[#f97316]"></div> {/* Linha Vertical Laranja */}
@@ -124,11 +100,12 @@ export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
                 {/* Contentor do Slider */}
                 <div className="w-full overflow-hidden py-4 pb-10">
                     <div
-                        className={`flex ${isTransitioning ? 'transition-transform duration-[800ms] ease-out' : ''}`}
+                        className={`flex ${isTransitioning ? 'transition-transform duration-[800ms] ease-out' : ''} [--items-visible:1] md:[--items-visible:4]`}
                         style={{
+                            // Width of container = (Total Items / Visible Items) * 100%
+                            width: `calc(${extendedItems.length} * (100% / var(--items-visible)))`,
                             transform: `translateX(-${currentIndex * (100 / extendedItems.length)}%)`,
-                            width: `${(extendedItems.length / itemsPerPage) * 100}%`
-                        }}
+                        } as React.CSSProperties}
                         onTransitionEnd={handleTransitionEnd}
                     >
                         {extendedItems.map((company, i) => {
@@ -141,7 +118,7 @@ export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
                             const location = company.location || "Moçambique";
 
                             return (
-                                <div key={i} className="px-3" style={{ width: `${100 / extendedItems.length}%` }}>
+                                <div key={i} className="px-3" style={{ width: `calc(100% / ${extendedItems.length})` }}>
                                     <Link href={`/detalhes/${i}`} className="group block h-full">
                                         <div className="bg-white p-6 rounded-[15px] border border-slate-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-500 flex flex-col h-full relative overflow-hidden">
 

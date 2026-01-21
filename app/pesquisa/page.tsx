@@ -171,7 +171,7 @@ export default function SearchResultsPage() {
                     <div className="flex-1 min-h-[400px]">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             {filteredItems.length > 0 ? filteredItems.map((item, i) => (
-                                <div key={i} className={`p-6 rounded-[15px] border ${item.border} ${item.bg} hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group flex flex-col items-center text-center gap-6`}>
+                                <div key={i} className={`p-6 rounded-[15px] border ${item.border} ${item.bg} shadow-md hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group flex flex-col items-center text-center gap-6`}>
                                     <div className={`w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm ${item.color} group-hover:scale-110 transition-transform`}>
                                         <item.icon className="w-8 h-8" />
                                     </div>

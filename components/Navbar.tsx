@@ -16,11 +16,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/lib/supabaseClient";
-import { ModeToggle } from "@/components/ThemeToggle";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export function Navbar() {
     const pathname = usePathname();
-    const [language, setLanguage] = useState<"PT" | "EN">("PT");
+    const { language, toggleLanguage, t } = useLanguage();
     const [view, setView] = useState<"menu" | "auth">("menu");
 
     // Form States
@@ -43,11 +43,6 @@ export function Navbar() {
 
         return () => subscription.unsubscribe();
     }, []);
-
-    const toggleLanguage = () => {
-        setLanguage((prev) => (prev === "PT" ? "EN" : "PT"));
-    };
-
 
     const handleContactSubmit = async () => {
         if (!contactForm.name || !contactForm.message) return;
@@ -89,20 +84,20 @@ export function Navbar() {
     };
 
     const menuItems = [
-        { label: "Sobre nós", link: "/sobre-nos" },
-        { label: "Serviços", link: "/servicos" },
-        { label: "Repositório", link: "/repositorio" },
-        { label: "Parceria", link: "/parceria" },
-        { label: "Mercado", link: "/mercado" },
-        { label: "Contactos", link: "/contactos" },
+        { label: t("navbar.about"), link: "/sobre-nos" },
+        { label: t("navbar.services"), link: "/servicos" },
+        { label: t("navbar.repository"), link: "/repositorio" },
+        { label: t("navbar.partnership"), link: "/parceria" },
+        { label: t("navbar.market"), link: "/mercado" },
+        { label: t("navbar.contacts"), link: "/contactos" },
     ];
 
     const offCanvasItems = [
-        { label: "Central de Ajuda", link: "/ajuda" },
-        { label: "Blog do Agro", link: "/blog" },
-        { label: "Carreiras", link: "/carreiras" },
-        { label: "Termos e Condições", link: "/termos" },
-        { label: "Política de Privacidade", link: "/privacidade" },
+        { label: t("common.help_center"), link: "/ajuda" },
+        { label: t("common.blog"), link: "/blog" },
+        { label: t("common.careers"), link: "/carreiras" },
+        { label: t("common.terms"), link: "/terms" },
+        { label: t("common.privacy"), link: "/privacidade" },
     ];
 
     return (
@@ -146,12 +141,12 @@ export function Navbar() {
                 {/* Right Actions Section */}
                 <div className="flex items-center gap-3 md:gap-4 flex-shrink-0">
                     {/* Theme Toggle */}
-                    <ModeToggle />
+                    {/* <ModeToggle /> */}
 
                     {/* Language Toggle */}
                     <button
                         onClick={toggleLanguage}
-                        className="w-9 h-9 flex items-center justify-center border border-gray-200 rounded-full bg-gray-50 font-bold text-[10px] text-gray-700 hover:text-[#f97316] hover:border-[#f97316] transition-all uppercase font-sans"
+                        className="w-8 h-8 flex items-center justify-center border border-gray-200 rounded-full bg-gray-50 font-bold text-[9px] text-gray-700 hover:text-[#f97316] hover:border-[#f97316] transition-all uppercase font-sans dark:bg-white/10 dark:backdrop-blur-md dark:border-white/20 dark:text-white dark:hover:bg-white/20"
                     >
                         {language === "PT" ? "EN" : "PT"}
                     </button>

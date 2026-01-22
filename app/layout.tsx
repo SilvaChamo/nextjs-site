@@ -4,6 +4,7 @@ import "./globals.css";
 import NavFooterToggle from "./components/NavFooterToggle";
 
 import { ThemeProvider } from "@/components/theme-provider";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -31,12 +32,13 @@ export default function RootLayout({
         className={`${montserrat.variable} ${mavenPro.variable} font-sans antialiased bg-background min-h-screen flex flex-col`}
       >
         <ThemeProvider
-          attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <NavFooterToggle>{children}</NavFooterToggle>
+          <LanguageProvider>
+            <NavFooterToggle>{children}</NavFooterToggle>
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

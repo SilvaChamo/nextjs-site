@@ -7,6 +7,7 @@ import { ShoppingBag, Search, X } from "lucide-react";
 
 import { MarketPriceTable } from "@/components/MarketPriceTable";
 import { MarketSidebar } from "@/components/MarketSidebar";
+import { SupermarketCarousel } from "@/components/SupermarketCarousel";
 
 export default function MercadoPage() {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -45,21 +46,17 @@ export default function MercadoPage() {
             <main className="max-w-[1350px] mx-auto px-4 md:px-[60px] py-12">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                     {/* Main Content Area */}
-                    <div className="lg:col-span-8 space-y-12">
-                        {/* 1. Tabela de Preços (SIMA) */}
+                    <div className="lg:col-span-8 space-y-8">
+
+                        {/* 1. Mercado Digital Carousel */}
+                        <section>
+                            <SupermarketCarousel />
+                        </section>
+
+                        {/* 2. Tabela de Preços (SIMA) */}
                         <section>
                             <MarketPriceTable />
                         </section>
-
-                        {/* 2. Mercado Digital Banner */}
-                        <div className="text-center py-20 bg-white rounded-[16px] shadow-sm border border-slate-100">
-                            <ShoppingBag className="w-16 h-16 mx-auto mb-4 text-emerald-200" />
-                            <h2 className="text-2xl font-black text-slate-800 mb-2">Mercado Digital</h2>
-                            <p className="text-slate-500 max-w-md mx-auto mb-8">
-                                Explore produtos e insumos agrícolas disponíveis para compra e venda.
-                                Filtre por categorias usando o botão de pesquisa acima.
-                            </p>
-                        </div>
                     </div>
 
                     {/* Sidebar Area */}

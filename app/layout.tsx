@@ -3,6 +3,8 @@ import { Montserrat, Maven_Pro } from "next/font/google";
 import "./globals.css";
 import NavFooterToggle from "./components/NavFooterToggle";
 
+import { ThemeProvider } from "@/components/theme-provider";
+
 const montserrat = Montserrat({
   subsets: ["latin"],
   variable: "--font-montserrat",
@@ -24,13 +26,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${montserrat.variable} ${mavenPro.variable} font-sans antialiased bg-background min-h-screen flex flex-col`}
-        suppressHydrationWarning
       >
-
-        <NavFooterToggle>{children}</NavFooterToggle>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <NavFooterToggle>{children}</NavFooterToggle>
+        </ThemeProvider>
       </body>
     </html>
   );

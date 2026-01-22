@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/lib/supabaseClient";
+import { ModeToggle } from "@/components/ThemeToggle";
 
 export function Navbar() {
     const pathname = usePathname();
@@ -144,6 +145,9 @@ export function Navbar() {
 
                 {/* Right Actions Section */}
                 <div className="flex items-center gap-3 md:gap-4 flex-shrink-0">
+                    {/* Theme Toggle */}
+                    <ModeToggle />
+
                     {/* Language Toggle */}
                     <button
                         onClick={toggleLanguage}

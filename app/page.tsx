@@ -4,6 +4,7 @@ import { InfoSection } from "@/components/InfoSection";
 import { CategoriesShowcase } from "@/components/CategoriesShowcase";
 import { CommunityBanner } from "@/components/CommunityBanner";
 import { WhyChooseUs } from "@/components/WhyChooseUs";
+import { MobileAppSection } from "@/components/MobileAppSection";
 import { supabase } from "@/lib/supabaseClient";
 
 export const revalidate = 60; // Revalidate every 60 seconds
@@ -41,6 +42,7 @@ export default async function Home() {
       <CommunityBanner />
       <WhyChooseUs />
       <InfoSection />
+      <MobileAppSection />
     </main>
   );
 }

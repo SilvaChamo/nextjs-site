@@ -98,9 +98,9 @@ export function InfoSection() {
                 {/* Background Image - Seedlings - Parallax Enabled */}
                 <div
                     ref={bgRef}
-                    className="absolute -top-[25%] left-0 w-full h-[150%] bg-[url('/info-banner-bg.jpg')] bg-cover bg-center opacity-60 pointer-events-none will-change-transform"
+                    className="absolute -top-[25%] left-0 w-full h-[150%] bg-[url('https://images.unsplash.com/photo-1625246333195-5819acf4261b?q=80&w=2672&auto=format&fit=crop')] bg-cover bg-center opacity-40 pointer-events-none will-change-transform"
                 />
-                <div className="absolute inset-0 bg-black/50" />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#111827]/80 via-[#111827]/60 to-[#111827]/90" />
 
                 <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] text-center space-y-8 relative z-10">
                     {/* Header Restored - White Text */}

@@ -60,7 +60,7 @@ export function MobileAppSection() {
                         </div>
 
                         <div className="pt-4">
-                            <button className="inline-flex items-center gap-3 bg-slate-900 hover:bg-emerald-600 text-white px-6 py-3 rounded-[12px] font-bold text-base transition-all duration-300 shadow-xl hover:shadow-emerald-500/30 hover:-translate-y-1 group">
+                            <button className="inline-flex items-center gap-3 bg-emerald-700 hover:bg-[#f97316] text-white px-6 py-3 rounded-[12px] font-bold text-base transition-all duration-300 shadow-xl hover:shadow-[#f97316]/30 hover:-translate-y-1 group">
                                 <Download className="w-5 h-5" />
                                 Baixar Aplicativo
                                 <ArrowRight className="w-5 h-5 opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />

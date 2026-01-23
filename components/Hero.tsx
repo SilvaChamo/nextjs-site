@@ -51,7 +51,7 @@ export function Hero({ onToggleSearch, isSearchOpen, stats }: HeroProps) {
                     </div>
 
                     <div className="flex flex-wrap gap-4">
-                        <Button className="bg-[#22c55e] hover:bg-[#16a34a] text-white px-8 py-6 rounded-[10px] text-base font-bold uppercase tracking-wider shadow-md">
+                        <Button className="bg-emerald-700 hover:bg-[#f97316] text-white px-8 py-6 rounded-[10px] text-base font-bold uppercase tracking-wider shadow-md transition-colors duration-300">
                             Seja nosso parceiro
                         </Button>
                         <Button variant="outline" className="bg-[#f97316]/20 border-[#f97316] text-white hover:bg-[#f97316]/20 hover:border-[#f97316] hover:text-[#f97316] px-8 py-6 rounded-[10px] text-base font-bold uppercase tracking-wider backdrop-blur-sm transition-all duration-300">
@@ -64,7 +64,7 @@ export function Hero({ onToggleSearch, isSearchOpen, stats }: HeroProps) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-[15px] animate-in slide-in-from-right-6 duration-700 delay-200">
                     {/* Cartão 1: Empresas Agrárias */}
                     <Link href="/estatisticas/empresas" className="block h-full animate-float">
-                        <div className="bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-2xl border border-white/40 p-6 rounded-[10px] shadow-2xl hover:from-white/40 hover:to-white/20 transition-all group relative overflow-hidden h-full">
+                        <div className="bg-gradient-to-br from-white/20 to-white/5 border border-[#f97316] p-6 rounded-[10px] shadow-2xl hover:from-white/30 hover:to-white/10 hover:border-[#f97316] transition-all group relative overflow-hidden h-full">
                             <div className="absolute top-0 right-0 p-2 opacity-50">
                                 <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
                             </div>
@@ -79,7 +79,7 @@ export function Hero({ onToggleSearch, isSearchOpen, stats }: HeroProps) {
 
                     {/* Cartão 2: Produção Agrária 2025 */}
                     <Link href="/estatisticas/producao" className="block h-full animate-float-delayed">
-                        <div className="bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-2xl border border-white/40 p-6 rounded-[10px] shadow-2xl hover:from-white/40 hover:to-white/20 transition-all group relative h-full">
+                        <div className="bg-gradient-to-br from-white/20 to-white/5 border border-white/40 p-6 rounded-[10px] shadow-2xl hover:from-white/30 hover:to-white/10 hover:border-[#f97316] transition-all group relative h-full">
                             <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-100 mb-2 truncate drop-shadow-md">Produção Agrária 2025</h4>
                             <div className="flex items-baseline gap-1">
                                 <h3 className="text-4xl font-heading font-black text-white drop-shadow-md">{getVal('hero-production', '20M+').split(' ')[0]}</h3>
@@ -93,13 +93,13 @@ export function Hero({ onToggleSearch, isSearchOpen, stats }: HeroProps) {
 
                     {/* Cartão 3: Economia Agrária 2025 */}
                     <Link href="/estatisticas/economia" className="block h-full md:col-span-2 lg:col-span-1 animate-float">
-                        <div className="bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-2xl border border-white/40 p-6 rounded-[10px] shadow-2xl hover:from-white/40 hover:to-white/20 transition-all group relative h-full">
+                        <div className="bg-gradient-to-br from-white/20 to-white/5 border border-white/40 p-6 rounded-[10px] shadow-2xl hover:from-white/30 hover:to-white/10 hover:border-[#f97316] transition-all group relative h-full">
                             <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-100 mb-2 truncate drop-shadow-md">Economia Agrária 2025</h4>
                             <div className="space-y-1">
                                 <h3 className="text-3xl font-heading font-black text-white leading-tight drop-shadow-md">{getVal('hero-economy', '91.4B').split(' ')[0]} <span className="text-base text-gray-200">MZN</span></h3>
                                 <p className="text-xs text-gray-100 uppercase tracking-wider drop-shadow-sm">PIB Agrícola (Q2 &apos;25)</p>
                                 <div className="w-full h-1.5 bg-black/20 rounded-full mt-2 overflow-hidden">
-                                    <div className="h-full w-[24%] bg-[#22c55e] shadow-[0_0_10px_rgba(34,197,94,0.5)]" title="24% do PIB Nacional"></div>
+                                    <div className="h-full w-[24%] bg-emerald-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]" title="24% do PIB Nacional"></div>
                                 </div>
                                 <p className="text-[10px] text-right text-gray-200 mt-1">{getTrend('hero-economy', '24% do PIB Nacional')}</p>
                             </div>
@@ -108,8 +108,8 @@ export function Hero({ onToggleSearch, isSearchOpen, stats }: HeroProps) {
 
                     {/* Cartão 4: Empregos na Agricultura */}
                     <Link href="/estatisticas/emprego" className="block h-full md:col-span-2 lg:col-span-1 animate-float-delayed">
-                        <div className="bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-2xl border border-white/40 p-6 rounded-[10px] shadow-2xl hover:from-white/40 hover:to-white/20 transition-all group md:col-span-2 lg:col-span-1 h-full">
-                            <h4 className="text-[10px] font-black uppercase tracking-widest text-[#22c55e] mb-2 truncate drop-shadow-md">Emprego Agrícola</h4>
+                        <div className="bg-gradient-to-br from-white/20 to-white/5 border border-white/40 p-6 rounded-[10px] shadow-2xl hover:from-white/30 hover:to-white/10 hover:border-[#f97316] transition-all group md:col-span-2 lg:col-span-1 h-full">
+                            <h4 className="text-[10px] font-black uppercase tracking-widest text-emerald-500 mb-2 truncate drop-shadow-md">Emprego Agrícola</h4>
                             <div className="flex items-end gap-2">
                                 <h3 className="text-4xl font-heading font-black text-white leading-none drop-shadow-md">{getVal('hero-jobs', '70%')}</h3>
                                 <p className="text-xs text-gray-200 uppercase tracking-wider mb-1.5 drop-shadow-sm">Força laboral</p>

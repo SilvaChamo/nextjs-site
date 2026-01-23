@@ -106,13 +106,15 @@ export function Navbar() {
                 {/* Logo Section */}
                 <div className="flex items-center flex-shrink-0">
                     <Link href="/">
-                        <Image
-                            src="/assets/logo-base-agro.png"
-                            alt="Base Agro Data Logo"
-                            width={160}
-                            height={60}
-                            className="h-10 md:h-12 w-auto object-contain"
-                        />
+                        <div className="hover:opacity-80 transition-opacity duration-300">
+                            <Image
+                                src="/assets/logo-base-agro.png"
+                                alt="Base Agro Data Logo"
+                                width={160}
+                                height={60}
+                                className="h-10 md:h-12 w-auto object-contain"
+                            />
+                        </div>
                     </Link>
                 </div>
 

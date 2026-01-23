@@ -23,12 +23,10 @@ type CategoryCard = {
     href: string;
 };
 
-// Section labeled as "Informação" for easier identification
 export function InfoSection() {
     const [activeTab, setActiveTab] = useState("informacoes");
     const bgRef = useRef<HTMLDivElement>(null);
 
-    // Dynamic Data State
     const [categoryCards, setCategoryCards] = useState<CategoryCard[]>([]);
     const [statsData, setStatsData] = useState<any[]>([]);
     const [articlesData, setArticlesData] = useState<any[]>([]);
@@ -37,7 +35,6 @@ export function InfoSection() {
     useEffect(() => {
         const handleScroll = () => {
             if (bgRef.current) {
-                // Get the top of the section relative to the document
                 const section = bgRef.current.parentElement;
                 if (!section) return;
 
@@ -45,16 +42,11 @@ export function InfoSection() {
                 const scrolled = window.scrollY;
                 const offsetTop = rect.top + scrolled;
 
-                // Calculate parallax relative to section visibility
                 const distance = scrolled - offsetTop;
                 bgRef.current.style.transform = `translateY(${distance * 0.3}px)`;
             }
         };
 
-        window.addEventListener("scroll", handleScroll);
-        handleScroll();
-
-        // Fetch Data
         const fetchData = async () => {
             const [cats, stats, arts] = await Promise.all([
                 supabase.from('info_categories').select('*'),
@@ -62,7 +54,6 @@ export function InfoSection() {
                 supabase.from('articles').select('*').limit(6)
             ]);
 
-            // Format Categories
             if (cats.data) {
                 const formattedCats = cats.data.map(c => {
                     // @ts-ignore
@@ -80,16 +71,14 @@ export function InfoSection() {
                 setCategoryCards(formattedCats);
             }
 
-            // Format Stats
             if (stats.data) {
                 setStatsData(stats.data.map(s => ({
-                    label: s.label || s.category, // Fallback if label missing
+                    label: s.label || s.category,
                     val: s.variation ? `${s.variation > 0 ? '+' : ''}${s.variation}%` : `${s.value}`,
                     color: s.variation && s.variation < 0 ? "text-red-500" : "text-emerald-500"
                 })));
             }
 
-            // Format Articles
             if (arts.data) {
                 setArticlesData(arts.data);
             }
@@ -132,7 +121,6 @@ export function InfoSection() {
 
     return (
         <section className="w-full bg-transparent relative" id="informacao">
-            {/* Top Banner Area - Dark Background - Fixed 400px Height */}
             <div className="w-full bg-[#111827] relative h-[400px] overflow-hidden flex items-center">
                 <div
                     ref={bgRef}
@@ -141,7 +129,6 @@ export function InfoSection() {
                 <div className="absolute inset-0 bg-black/50 z-1" />
 
                 <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] text-center space-y-8 relative z-10">
-                    {/* Header Restored - White Text */}
                     <div className="space-y-4 max-w-4xl mx-auto">
                         <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight">
                             Mantenha-se informado
@@ -151,7 +138,6 @@ export function InfoSection() {
                         </p>
                     </div>
 
-                    {/* Custom Tabs - Pill Style - Clean, no background container - 35px Margin Top */}
                     <div className="inline-flex items-center gap-4 flex-wrap justify-center mt-[35px]">
                         <button
                             onClick={() => setActiveTab("informacoes")}
@@ -184,11 +170,10 @@ export function InfoSection() {
                 </div>
             </div>
 
-            {/* Tabs Content Container - Separated by 40px Margin */}
             <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20 mt-10 pb-24">
                 <div className="animate-in fade-in duration-700 slide-in-from-bottom-8">
                     {loading ? (
-                        <div className="bg-white p-12 rounded-[12px] shadow-lg text-center text-gray-400">
+                        <div className="bg-white p-12 rounded-[4px] shadow-lg text-center text-gray-400 border border-slate-100">
                             A carregar informações...
                         </div>
                     ) : (
@@ -241,7 +226,7 @@ export function InfoSection() {
                                             )}
                                         </div>
                                     </div>
-                                    <div className="bg-[#374151] p-8 rounded-[12px] shadow-2xl text-white space-y-6 border border-slate-600">
+                                    <div className="bg-[#1e293b] p-8 rounded-[12px] shadow-2xl text-white space-y-6 border border-slate-600">
                                         <div className="flex items-center gap-4">
                                             <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
                                                 <TrendingUp className="text-white h-6 w-6" />
@@ -250,7 +235,6 @@ export function InfoSection() {
                                         </div>
                                         <p className="text-slate-300">Análise predictiva baseada no histórico de colheitas e condições meteorológicas actuais.</p>
                                         <div className="h-48 flex items-end gap-3 px-4">
-                                            {/* Dummy chart bars - could be dynamic later */}
                                             {[40, 70, 45, 90, 65, 80].map((h, i) => (
                                                 <div key={i} className="flex-1 bg-emerald-500 rounded-t-lg transition-all hover:bg-[#f97316] cursor-pointer" style={{ height: `${h}%` }}></div>
                                             ))}
@@ -301,7 +285,6 @@ export function InfoSection() {
                                         </div>
                                     </div>
 
-                                    {/* Navigation Arrows */}
                                     <button
                                         onClick={scrollPrev}
                                         className="absolute top-1/2 -left-4 md:-left-12 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all z-10"
@@ -315,7 +298,6 @@ export function InfoSection() {
                                         <ChevronRight className="h-6 w-6" />
                                     </button>
 
-                                    {/* Silicone Style Dots */}
                                     <div className="flex justify-center gap-2 mt-10">
                                         {scrollSnaps.map((_, index) => (
                                             <button

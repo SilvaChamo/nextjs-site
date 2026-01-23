@@ -38,7 +38,7 @@ export default function SobrePage() {
                             </h2>
                             <div className="space-y-4 text-slate-600 font-medium leading-relaxed text-lg">
                                 <p className="text-[20px]">
-                                    A <strong>Base Agro Data</strong> nasceu da necessidade urgente de organizar e modernizar o sector agrário em Moçambique. Somos a resposta digital para um desafio antigo: a fragmentação da informação.
+                                    A <strong>Base Agro Data Moz, Lda.</strong> é uma empresa moçambicana de serviços e base de dados focada na inovação tecnológica para o sector agrário, conectando produtores, empresas e o mercado global por meio de soluções digitais inteligentes e dados estratégicos.
                                 </p>
                                 <p className="text-[14px]">
                                     Mais do que uma plataforma, somos um <span className="text-emerald-600 font-bold">ecossistema integrado</span> que une o pequeno produtor aos grandes mercados, facilita o acesso a insumos de qualidade e democratiza o conhecimento técnico. Acreditamos que a informação correcta, no momento certo, é o insumo mais valioso para o crescimento.

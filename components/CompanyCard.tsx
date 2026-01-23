@@ -11,24 +11,21 @@ interface CompanyCardProps {
 
 export function CompanyCard({ company }: CompanyCardProps) {
     return (
-        <div className="bg-white rounded-[10px] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col h-[420px] group border border-gray-100 relative">
+        <div className="bg-white rounded-[10px] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col h-[280px] group border border-gray-100 relative">
             {/* Image Section */}
-            <div className="h-[200px] overflow-hidden relative w-full">
+            <div className="h-[180px] overflow-hidden relative w-full">
                 <Image
                     src={company.image || "https://images.unsplash.com/photo-1625246333195-58f21a416327"}
                     alt={company.name}
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
-                <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-[10px] text-[9px] font-black uppercase tracking-widest text-emerald-800 border border-emerald-100 shadow-sm">
-                    {company.type}
-                </div>
             </div>
 
             {/* Content Section */}
-            <div className="p-6 flex flex-col flex-grow relative bg-white">
+            <div className="p-4 flex flex-col flex-grow relative bg-white items-center text-center">
                 {/* Logo overlapping image */}
-                <div className="absolute -top-8 right-6 w-16 h-16 bg-white rounded-xl shadow-lg border border-gray-100 p-2 flex items-center justify-center transform group-hover:-translate-y-1 transition-transform duration-500">
+                <div className="absolute -top-8 w-16 h-16 bg-white rounded-xl shadow-lg border border-gray-100 p-2 flex items-center justify-center transform group-hover:-translate-y-1 transition-transform duration-500">
                     <Image
                         src={company.logoUrl}
                         alt={`${company.name} logo`}
@@ -38,24 +35,10 @@ export function CompanyCard({ company }: CompanyCardProps) {
                     />
                 </div>
 
-                <div className="mt-2 space-y-3">
-                    <div>
-                        <h3 className="text-lg font-black text-slate-600 leading-tight group-hover:text-emerald-700 transition-colors">
-                            {company.name}
-                        </h3>
-                        <p className="text-[10px] font-bold text-[#f97316] uppercase tracking-widest mt-1">{company.tag}</p>
-                    </div>
-
-                    <p className="text-xs text-gray-500 font-medium leading-relaxed line-clamp-3">
-                        {company.description}
-                    </p>
-                </div>
-
-                <div className="mt-auto pt-4 flex items-center justify-between border-t border-gray-50">
-                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-300 group-hover:text-emerald-500 transition-colors">Ver detalhes</span>
-                    <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-[#f97316] group-hover:text-white transition-all duration-300 transform group-hover:rotate-45">
-                        <ArrowUpRight className="w-4 h-4" />
-                    </div>
+                <div className="mt-8">
+                    <h3 className="text-base font-black text-slate-700 leading-tight group-hover:text-[#f97316] transition-colors">
+                        {company.name}
+                    </h3>
                 </div>
             </div>
         </div>

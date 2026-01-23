@@ -80,7 +80,7 @@ export function MarketPriceTable() {
     }
 
     return (
-        <div className="w-full bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-200 overflow-hidden">
+        <div className="w-full bg-white rounded-[15px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-200 overflow-hidden">
             {/* Header */}
             <div className="p-4 border-b border-[#4ade80] flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-emerald-600 relative">
                 <div>
@@ -134,8 +134,8 @@ export function MarketPriceTable() {
                         key={cat}
                         onClick={() => setActiveCategory(cat)}
                         className={`py-3 text-sm font-bold whitespace-nowrap transition-all duration-300 ${activeCategory === cat
-                                ? "text-[#f97316]"
-                                : "text-white/70 hover:text-[#f97316]"
+                            ? "text-[#f97316]"
+                            : "text-white/70 hover:text-[#f97316]"
                             }`}
                     >
                         {cat}

@@ -27,6 +27,14 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     const setLanguage = (lang: Language) => {
         setLanguageState(lang);
         localStorage.setItem('language', lang);
+
+        // Google Translate Logic
+        const translateCookie = lang === 'EN' ? '/pt/en' : '/pt/pt';
+        document.cookie = `googtrans=${translateCookie}; path=/`;
+        document.cookie = `googtrans=${translateCookie}; path=/; domain=.${window.location.hostname}`;
+
+        // Refresh page to apply translation (Standard way for Google Translate widget to kick in reliably)
+        window.location.reload();
     };
 
     const toggleLanguage = () => {
@@ -35,6 +43,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     };
 
     const t = (key: string): string => {
+        // We keep t function for manual overrides if needed, 
+        // but now the whole page is translated by Google
         const keys = key.split('.');
         let value: any = translations[language];
 
@@ -42,15 +52,13 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
             if (value && typeof value === 'object' && k in value) {
                 value = value[k as keyof typeof value];
             } else {
-                return key; // Return key if translation missing
+                return key;
             }
         }
 
         return typeof value === 'string' ? value : key;
     };
 
-    // Prevent flash of incorrect content if possible, or usually just render children.
-    // We render children anyway to transparently handle SSG/SSR mismatch (though text might swap on client)
     return (
         <LanguageContext.Provider value={{ language, setLanguage, toggleLanguage, t }}>
             {children}

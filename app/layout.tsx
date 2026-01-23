@@ -28,6 +28,27 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          type="text/javascript"
+          src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+          async
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              function googleTranslateElementInit() {
+                new google.translate.TranslateElement({
+                  pageLanguage: 'pt',
+                  includedLanguages: 'en,pt',
+                  layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                  autoDisplay: false
+                }, 'google_translate_element');
+              }
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${montserrat.variable} ${mavenPro.variable} font-sans antialiased bg-background min-h-screen flex flex-col`}
       >
@@ -37,7 +58,10 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <LanguageProvider>
-            <NavFooterToggle>{children}</NavFooterToggle>
+            <NavFooterToggle>
+              {children}
+              <div id="google_translate_element" style={{ display: 'none' }}></div>
+            </NavFooterToggle>
           </LanguageProvider>
         </ThemeProvider>
       </body>

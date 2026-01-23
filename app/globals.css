@@ -192,3 +192,25 @@
 .animate-ken-burns {
   animation: ken-burns 20s ease-in-out infinite alternate;
 }
+
+/* Google Translate UI Hiding */
+.skiptranslate,
+iframe.skiptranslate,
+#goog-gt-tt,
+.goog-te-banner-frame {
+  display: none !important;
+}
+
+body {
+  top: 0 !important;
+}
+
+.goog-te-balloon-frame {
+  display: none !important;
+}
+
+font {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  display: inline !important;
+}

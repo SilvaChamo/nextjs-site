@@ -12,6 +12,10 @@ Este workflow automatiza a sincronização do projeto:
 // turbo
 `git commit -m "Actualização automática"`
 
-3. Envia para o repositório remoto:
+3. Busca actualizações remotas (evita conflitos):
+// turbo
+`git pull --rebase origin main`
+
+4. Envia para o repositório remoto:
 // turbo
 `git push origin main`

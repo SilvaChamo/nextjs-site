@@ -5,10 +5,13 @@ import Link from "next/link";
 import {
     Cpu, Leaf, Book,
     BarChart3, TrendingUp, ArrowRight,
-    Scale, TreePalm, Sprout, Coins, FileText
+    Scale, TreePalm, Sprout, Coins, FileText,
+    ChevronLeft, ChevronRight
 } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
+import useEmblaCarousel from 'embla-carousel-react';
+import Autoplay from 'embla-carousel-autoplay';
 
 type CategoryCard = {
     title: string;
@@ -22,7 +25,7 @@ type CategoryCard = {
 
 // Section labeled as "Informação" for easier identification
 export function InfoSection() {
-    const [activeTab, setActiveTab] = useState("categorias");
+    const [activeTab, setActiveTab] = useState("informacoes");
     const bgRef = useRef<HTMLDivElement>(null);
 
     // Dynamic Data State
@@ -34,9 +37,17 @@ export function InfoSection() {
     useEffect(() => {
         const handleScroll = () => {
             if (bgRef.current) {
+                // Get the top of the section relative to the document
+                const section = bgRef.current.parentElement;
+                if (!section) return;
+
+                const rect = section.getBoundingClientRect();
                 const scrolled = window.scrollY;
-                // Parallax speed 0.4: Moves slower than the scroll
-                bgRef.current.style.transform = `translateY(${scrolled * 0.4}px)`;
+                const offsetTop = rect.top + scrolled;
+
+                // Calculate parallax relative to section visibility
+                const distance = scrolled - offsetTop;
+                bgRef.current.style.transform = `translateY(${distance * 0.3}px)`;
             }
         };
 
@@ -48,7 +59,7 @@ export function InfoSection() {
             const [cats, stats, arts] = await Promise.all([
                 supabase.from('info_categories').select('*'),
                 supabase.from('agricultural_stats').select('*').limit(3),
-                supabase.from('articles').select('*').limit(3)
+                supabase.from('articles').select('*').limit(6)
             ]);
 
             // Format Categories
@@ -88,23 +99,50 @@ export function InfoSection() {
 
         fetchData();
 
+        window.addEventListener("scroll", handleScroll, { passive: true });
+        handleScroll();
+
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
+    const [emblaRef, emblaApi] = useEmblaCarousel(
+        { loop: true, align: 'start', skipSnaps: false },
+        [Autoplay({ delay: 5000, stopOnInteraction: false })]
+    );
+
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
+
+    const scrollPrev = React.useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
+    const scrollNext = React.useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
+    const scrollTo = React.useCallback((index: number) => emblaApi && emblaApi.scrollTo(index), [emblaApi]);
+
+    const onSelect = React.useCallback(() => {
+        if (!emblaApi) return;
+        setSelectedIndex(emblaApi.selectedScrollSnap());
+    }, [emblaApi, setSelectedIndex]);
+
+    useEffect(() => {
+        if (!emblaApi) return;
+        onSelect();
+        setScrollSnaps(emblaApi.scrollSnapList());
+        emblaApi.on('select', onSelect);
+        emblaApi.on('reInit', onSelect);
+    }, [emblaApi, setScrollSnaps, onSelect]);
+
     return (
         <section className="w-full bg-transparent relative" id="informacao">
-            {/* Top Banner Area - Dark Background */}
-            <div className="w-full bg-[#111827] relative pt-20 pb-32 overflow-hidden">
-                {/* Background Image - Seedlings - Parallax Enabled */}
+            {/* Top Banner Area - Dark Background - Fixed 400px Height */}
+            <div className="w-full bg-[#111827] relative h-[400px] overflow-hidden flex items-center">
                 <div
                     ref={bgRef}
-                    className="absolute -top-[25%] left-0 w-full h-[150%] bg-[url('https://images.unsplash.com/photo-1625246333195-5819acf4261b?q=80&w=2672&auto=format&fit=crop')] bg-cover bg-center opacity-40 pointer-events-none will-change-transform"
+                    className="absolute top-0 left-0 w-full h-[150%] bg-[url('https://images.unsplash.com/photo-1625246333195-5819acf4261b?q=80&w=2672&auto=format&fit=crop')] bg-cover bg-center pointer-events-none will-change-transform scale-110 !bg-fixed z-0"
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-[#111827]/80 via-[#111827]/60 to-[#111827]/90" />
+                <div className="absolute inset-0 bg-black/50 z-1" />
 
                 <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] text-center space-y-8 relative z-10">
                     {/* Header Restored - White Text */}
-                    <div className="space-y-2 max-w-4xl mx-auto">
+                    <div className="space-y-4 max-w-4xl mx-auto">
                         <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight">
                             Mantenha-se informado
                         </h2>
@@ -113,41 +151,41 @@ export function InfoSection() {
                         </p>
                     </div>
 
-                    {/* Custom Tabs - Pill Style - Clean, no background container */}
-                    <div className="inline-flex items-center gap-4 flex-wrap justify-center">
+                    {/* Custom Tabs - Pill Style - Clean, no background container - 35px Margin Top */}
+                    <div className="inline-flex items-center gap-4 flex-wrap justify-center mt-[35px]">
                         <button
-                            onClick={() => setActiveTab("categorias")}
-                            className={`px-8 py-2 rounded-md text-base font-bold transition-all shadow-lg hover:bg-[#f97316] hover:text-white ${activeTab === "categorias"
-                                ? "bg-[#f97316] text-white"
-                                : "bg-white text-slate-700"
+                            onClick={() => setActiveTab("informacoes")}
+                            className={`px-8 py-3 rounded-md text-base font-bold transition-all backdrop-blur-md border transition-all duration-300 ${activeTab === "informacoes"
+                                ? "bg-[#f97316] border-[#f97316] text-white shadow-[0_0_20px_rgba(249,115,22,0.4)]"
+                                : "bg-white/10 border-white/20 text-white hover:bg-white/20"
                                 }`}
                         >
-                            Categorias
+                            Informações
                         </button>
                         <button
                             onClick={() => setActiveTab("estatisticas")}
-                            className={`px-8 py-2 rounded-md text-base font-bold transition-all shadow-lg hover:bg-[#f97316] hover:text-white ${activeTab === "estatisticas"
-                                ? "bg-[#f97316] text-white"
-                                : "bg-white text-slate-700"
+                            className={`px-8 py-3 rounded-md text-base font-bold transition-all backdrop-blur-md border transition-all duration-300 ${activeTab === "estatisticas"
+                                ? "bg-[#f97316] border-[#f97316] text-white shadow-[0_0_20px_rgba(249,115,22,0.4)]"
+                                : "bg-white/10 border-white/20 text-white hover:bg-white/20"
                                 }`}
                         >
                             Estatísticas
                         </button>
                         <button
-                            onClick={() => setActiveTab("informacoes")}
-                            className={`px-8 py-2 rounded-md text-base font-bold transition-all shadow-lg hover:bg-[#f97316] hover:text-white ${activeTab === "informacoes"
-                                ? "bg-[#f97316] text-white"
-                                : "bg-white text-slate-700"
+                            onClick={() => setActiveTab("categorias")}
+                            className={`px-8 py-3 rounded-md text-base font-bold transition-all backdrop-blur-md border transition-all duration-300 ${activeTab === "categorias"
+                                ? "bg-[#f97316] border-[#f97316] text-white shadow-[0_0_20px_rgba(249,115,22,0.4)]"
+                                : "bg-white/10 border-white/20 text-white hover:bg-white/20"
                                 }`}
                         >
-                            Informações
+                            Categorias
                         </button>
                     </div>
                 </div>
             </div>
 
-            {/* Overlapping Content Container */}
-            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20 -mt-20 pb-24">
+            {/* Tabs Content Container - Separated by 40px Margin */}
+            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20 mt-10 pb-24">
                 <div className="animate-in fade-in duration-700 slide-in-from-bottom-8">
                     {loading ? (
                         <div className="bg-white p-12 rounded-[12px] shadow-lg text-center text-gray-400">
@@ -161,17 +199,17 @@ export function InfoSection() {
                                         <Link
                                             key={idx}
                                             href={card.href || "#"}
-                                            className={`p-6 md:p-8 rounded-[12px] text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col gap-4 group cursor-pointer border h-full ${card.dark
+                                            className={`p-6 md:p-8 rounded-none text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col gap-4 group cursor-pointer border h-full ${card.dark
                                                 ? "bg-[#374151] text-white border-slate-600 shadow-xl shadow-slate-900/20"
                                                 : "bg-white text-[#3a3f47] border-slate-200 shadow-lg shadow-slate-200/50"
                                                 }`}
                                         >
                                             <div className="flex items-start gap-4">
-                                                <div className={`w-12 h-12 rounded-[10px] flex items-center justify-center shrink-0 ${card.iconBg}`}>
+                                                <div className={`w-12 h-12 rounded-[5px] flex items-center justify-center shrink-0 ${card.iconBg}`}>
                                                     <card.icon className={`h-6 w-6 ${card.iconColor}`} />
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <h3 className="text-xl font-bold leading-tight">{card.title}</h3>
+                                                    <h3 className="text-xl font-black leading-tight first-letter:uppercase lowercase">{card.title}</h3>
                                                 </div>
                                             </div>
                                             <p className={`text-sm leading-relaxed ${card.dark ? "text-slate-300" : "text-slate-500"} line-clamp-4`}>
@@ -222,27 +260,75 @@ export function InfoSection() {
                             )}
 
                             {activeTab === "informacoes" && (
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    {articlesData.map((news, i) => (
-                                        <Link
-                                            key={i}
-                                            href={news.slug ? `/artigos/${news.slug}` : "#"}
-                                            className="bg-white p-6 rounded-[12px] shadow-lg border border-slate-100 flex flex-col justify-between group cursor-pointer hover:border-[#f97316] transition-all gap-4 h-full"
-                                        >
-                                            <div className="space-y-3">
-                                                <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-[#f97316]">
-                                                    <span>{news.type || "Artigo"}</span>
-                                                    <span className="text-slate-300">•</span>
-                                                    <span className="text-slate-400">{news.date}</span>
+                                <div className="relative group/embla">
+                                    <div className="overflow-hidden" ref={emblaRef}>
+                                        <div className="flex">
+                                            {articlesData.map((news, i) => (
+                                                <div key={i} className="flex-[0_0_100%] md:flex-[0_0_33.33%] min-w-0 pl-6">
+                                                    <Link
+                                                        href={news.slug ? `/artigos/${news.slug}` : "#"}
+                                                        className="bg-white rounded-[12px] shadow-lg border border-slate-100 flex flex-col group cursor-pointer hover:border-[#f97316] transition-all overflow-hidden h-full"
+                                                    >
+                                                        <div className="relative h-48 w-full overflow-hidden">
+                                                            <img
+                                                                src={news.image_url || "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?q=80&w=800&auto=format&fit=crop"}
+                                                                alt={news.title}
+                                                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                                            />
+                                                            <div className="absolute top-4 left-4 bg-[#f97316] text-white text-[10px] font-black uppercase px-3 py-1 rounded-full">
+                                                                {news.type || "Artigo"}
+                                                            </div>
+                                                        </div>
+                                                        <div className="p-6 flex flex-col flex-1">
+                                                            <div className="space-y-3">
+                                                                <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400">
+                                                                    <span>{news.date}</span>
+                                                                </div>
+                                                                <h3 className="text-lg font-black text-slate-600 group-hover:text-[#f97316] transition-colors line-clamp-2 first-letter:uppercase lowercase my-0">
+                                                                    {news.title}
+                                                                </h3>
+                                                                <p className="text-xs text-slate-500 leading-relaxed line-clamp-4">
+                                                                    {news.subtitle || news.description}
+                                                                </p>
+                                                            </div>
+                                                            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 group-hover:text-[#3a3f47] transition-colors mt-auto pt-6">
+                                                                Explorar <ArrowRight className="h-3 w-3" />
+                                                            </div>
+                                                        </div>
+                                                    </Link>
                                                 </div>
-                                                <h3 className="text-lg font-bold text-slate-600 group-hover:text-[#f97316] transition-colors">{news.title}</h3>
-                                                <p className="text-sm text-slate-500 leading-relaxed line-clamp-3">{news.subtitle || news.description}</p>
-                                            </div>
-                                            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 group-hover:text-[#3a3f47] transition-colors mt-auto pt-4">
-                                                Explorar <ArrowRight className="h-3 w-3" />
-                                            </div>
-                                        </Link>
-                                    ))}
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Navigation Arrows */}
+                                    <button
+                                        onClick={scrollPrev}
+                                        className="absolute top-1/2 -left-4 md:-left-12 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all z-10"
+                                    >
+                                        <ChevronLeft className="h-6 w-6" />
+                                    </button>
+                                    <button
+                                        onClick={scrollNext}
+                                        className="absolute top-1/2 -right-4 md:-right-12 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all z-10"
+                                    >
+                                        <ChevronRight className="h-6 w-6" />
+                                    </button>
+
+                                    {/* Silicone Style Dots */}
+                                    <div className="flex justify-center gap-2 mt-10">
+                                        {scrollSnaps.map((_, index) => (
+                                            <button
+                                                key={index}
+                                                onClick={() => scrollTo(index)}
+                                                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${index === selectedIndex
+                                                    ? "bg-[#f97316] w-12"
+                                                    : "bg-slate-300 hover:bg-slate-400"
+                                                    }`}
+                                                aria-label={`Ir para notícia ${index + 1}`}
+                                            />
+                                        ))}
+                                    </div>
                                 </div>
                             )}
                         </>

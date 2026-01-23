@@ -21,7 +21,7 @@ export default function SobrePage() {
                 {/* 1. Introdução e História */}
                 <div className="bg-none rounded-[0] shadow-[0_0_0_0(0,0,0,0.08)] border border-slate-100 px-8 md:px-10 lg:px-12 py-10 md:py-12 mb-16">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                        <div className="relative h-[550px] rounded-2xl overflow-hidden shadow-2xl">
+                        <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                                 src="assets/Agotec.jpg"

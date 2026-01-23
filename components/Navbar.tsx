@@ -108,7 +108,7 @@ export function Navbar() {
                     <Link href="/">
                         <div className="hover:opacity-80 transition-opacity duration-300">
                             <Image
-                                src="https://baseagrodata.com/wp-content/uploads/2026/01/Logo2-01.png"
+                                src="/assets/Logo.png"
                                 alt="Base Agro Data Logo"
                                 width={160}
                                 height={60}

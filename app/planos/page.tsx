@@ -81,7 +81,7 @@ export default function PricingPage() {
                     </Link>
                     <Link href="/">
                         <Image
-                            src="https://baseagrodata.com/wp-content/uploads/2026/01/Logo2-01.png"
+                            src="/assets/Logo.png"
                             alt="Base Agro Data"
                             width={140}
                             height={50}
@@ -128,8 +128,8 @@ export default function PricingPage() {
                             <div
                                 key={plan.name}
                                 className={`relative bg-white rounded-2xl p-8 border hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 ${plan.popular
-                                        ? 'border-orange-500 shadow-orange-500/10 z-10 scale-105 md:scale-105 ring-4 ring-orange-500/5'
-                                        : 'border-slate-200 shadow-sm'
+                                    ? 'border-orange-500 shadow-orange-500/10 z-10 scale-105 md:scale-105 ring-4 ring-orange-500/5'
+                                    : 'border-slate-200 shadow-sm'
                                     }`}
                             >
                                 {plan.popular && (
@@ -154,10 +154,10 @@ export default function PricingPage() {
 
                                 <Button
                                     className={`w-full h-12 rounded-xl font-bold text-base mb-8 transition-all ${plan.popular
-                                            ? 'bg-orange-600 hover:bg-orange-700 text-white shadow-lg shadow-orange-600/20'
-                                            : plan.color === 'emerald'
-                                                ? 'bg-emerald-700 hover:bg-emerald-800 text-white'
-                                                : 'bg-slate-100 hover:bg-slate-200 text-slate-800'
+                                        ? 'bg-orange-600 hover:bg-orange-700 text-white shadow-lg shadow-orange-600/20'
+                                        : plan.color === 'emerald'
+                                            ? 'bg-emerald-700 hover:bg-emerald-800 text-white'
+                                            : 'bg-slate-100 hover:bg-slate-200 text-slate-800'
                                         }`}
                                 >
                                     {plan.cta}

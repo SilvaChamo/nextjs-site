@@ -3,144 +3,107 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
-    Cpu, Leaf, Book,
-    BarChart3, TrendingUp, ArrowRight,
-    Scale, TreePalm, Sprout, Coins, FileText
+    BarChart3, TrendingUp, ArrowRight
 } from "lucide-react";
-import * as LucideIcons from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
+import { Button } from "@/components/ui/button";
 
-type CategoryCard = {
-    title: string;
-    description: string;
-    icon: any;
-    dark?: boolean;
-    iconBg?: string;
-    iconColor?: string;
-    href: string;
-};
-
-// Section labeled as "Informação" for easier identification
 export function InfoSection() {
-    const [activeTab, setActiveTab] = useState("categorias");
-    const bgRef = useRef<HTMLDivElement>(null);
-
-    // Dynamic Data State
-    const [categoryCards, setCategoryCards] = useState<CategoryCard[]>([]);
+    const [activeTab, setActiveTab] = useState<"categorias" | "estatisticas" | "informacoes">("categorias");
     const [statsData, setStatsData] = useState<any[]>([]);
     const [articlesData, setArticlesData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const bgRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                // Fetch stats
+                const { data: stats } = await supabase
+                    .from('statistics_cards')
+                    .select('*')
+                    .limit(3);
+                if (stats) setStatsData(stats);
+
+                // Fetch latest 3 news
+                const { data: news } = await supabase
+                    .from('articles')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(3);
+                if (news) setArticlesData(news);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+
         const handleScroll = () => {
             if (bgRef.current) {
                 const scrolled = window.scrollY;
-                // Parallax speed 0.4: Moves slower than the scroll
                 bgRef.current.style.transform = `translateY(${scrolled * 0.4}px)`;
             }
         };
 
         window.addEventListener("scroll", handleScroll);
-        handleScroll();
-
-        // Fetch Data
-        const fetchData = async () => {
-            const [cats, stats, arts] = await Promise.all([
-                supabase.from('info_categories').select('*'),
-                supabase.from('agricultural_stats').select('*').limit(3),
-                supabase.from('articles').select('*').limit(3)
-            ]);
-
-            // Format Categories
-            if (cats.data) {
-                const formattedCats = cats.data.map(c => {
-                    // @ts-ignore
-                    const Icon = LucideIcons[c.icon_name] || TreePalm;
-                    return {
-                        title: c.title,
-                        description: c.description,
-                        icon: Icon,
-                        dark: c.is_dark,
-                        iconBg: c.bg_color,
-                        iconColor: c.text_color,
-                        href: c.href
-                    };
-                });
-                setCategoryCards(formattedCats);
-            }
-
-            // Format Stats
-            if (stats.data) {
-                setStatsData(stats.data.map(s => ({
-                    label: s.label || s.category, // Fallback if label missing
-                    val: s.variation ? `${s.variation > 0 ? '+' : ''}${s.variation}%` : `${s.value}`,
-                    color: s.variation && s.variation < 0 ? "text-red-500" : "text-emerald-500"
-                })));
-            }
-
-            // Format Articles
-            if (arts.data) {
-                setArticlesData(arts.data);
-            }
-
-            setLoading(false);
-        };
-
-        fetchData();
-
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
     return (
         <section className="w-full bg-transparent relative" id="informacao">
-            {/* Top Banner Area - Dark Background */}
-            <div className="w-full bg-[#111827] relative pt-20 pb-32 overflow-hidden">
+            {/* Top Banner Area - Fixed to 300px */}
+            <div className="w-full bg-[#000000] relative h-[300px] overflow-hidden flex flex-col justify-center">
                 {/* Background Image - Seedlings - Parallax Enabled */}
                 <div
                     ref={bgRef}
-                    className="absolute -top-[25%] left-0 w-full h-[150%] bg-[url('/assets/info-bg-seedlings.jpg')] bg-cover bg-center opacity-40 pointer-events-none will-change-transform"
+                    className="absolute -top-[25%] left-0 w-full h-[150%] bg-cover bg-center opacity-60 pointer-events-none transition-transform duration-100 will-change-transform z-0"
+                    style={{ backgroundImage: "url('/info-banner-bg.jpg')" }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-[#111827]/80 via-[#111827]/60 to-[#111827]/90" />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#000000]/60 via-[#000000]/40 to-[#000000]/70 z-10" />
 
-                <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] text-center space-y-8 relative z-10">
-                    {/* Header Restored - White Text */}
-                    <div className="space-y-2 max-w-4xl mx-auto">
-                        <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight">
+                <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] text-center space-y-6 relative z-20">
+                    <div className="space-y-3 max-w-4xl mx-auto">
+                        <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight uppercase">
                             Mantenha-se informado
                         </h2>
-                        <p className="text-slate-200 text-base md:text-lg leading-relaxed max-w-3xl mx-auto font-medium">
-                            Oferecemos serviços dinâmicos para facilitar suas actividades com vista a melhorar a produção. Fornecemos auxílio na busca por soluções assertivas de forma eficiente. Explore as categorias disponíveis abaixo
+                        <p className="text-white text-base md:text-xl leading-relaxed max-w-2xl mx-auto font-medium">
+                            Oferecemos serviços dinâmicos para facilitar suas actividades com vista a melhorar a produção e o mercado agrário em Moçambique.
                         </p>
                     </div>
 
-                    {/* Custom Tabs - Glass Style */}
-                    {/* Custom Tabs - Uppercase, Solid/Transparent Style */}
-                    <div className="inline-flex items-center gap-2 bg-white/5 p-1.5 rounded-lg border border-white/10 backdrop-blur-sm">
+                    {/* Custom Tabs - Sliding Style - Rectangle rounding */}
+                    <div className="relative inline-flex items-center bg-white/10 p-1 rounded-sm border border-white/20 backdrop-blur-md mx-auto">
+                        {/* Sliding Indicator */}
+                        <div
+                            className="absolute h-[calc(100%-12px)] rounded-sm bg-[#f97316] transition-all duration-300 ease-out shadow-[0_0_20px_rgba(249,115,22,0.4)]"
+                            style={{
+                                width: 'calc(33.333% - 8px)',
+                                left: activeTab === "categorias" ? '4px' : activeTab === "estatisticas" ? '33.333%' : '66.666%',
+                                transform: activeTab === "estatisticas" ? 'translateX(2px)' : activeTab === "informacoes" ? 'translateX(0px)' : 'none'
+                            }}
+                        />
+
                         <button
                             onClick={() => setActiveTab("categorias")}
-                            className={`px-8 py-3 rounded-md text-sm font-bold transition-all uppercase tracking-wider ${activeTab === "categorias"
-                                ? "bg-[#f97316] text-white shadow-md transform scale-105"
-                                : "bg-transparent text-white/70 hover:text-white hover:bg-white/5"
+                            className={`relative z-10 px-10 py-3 rounded-sm text-xs font-black transition-colors uppercase tracking-widest min-w-[140px] ${activeTab === "categorias" ? "text-white" : "text-white hover:text-white/80"
                                 }`}
                         >
-                            Categorias
+                            Soluções
                         </button>
-                        <div className="w-[1px] h-6 bg-white/20"></div>
                         <button
                             onClick={() => setActiveTab("estatisticas")}
-                            className={`px-8 py-3 rounded-md text-sm font-bold transition-all uppercase tracking-wider ${activeTab === "estatisticas"
-                                ? "bg-[#f97316] text-white shadow-md transform scale-105"
-                                : "bg-transparent text-white/70 hover:text-white hover:bg-white/5"
+                            className={`relative z-10 px-10 py-3 rounded-sm text-xs font-black transition-colors uppercase tracking-widest min-w-[140px] ${activeTab === "estatisticas" ? "text-white" : "text-white hover:text-white/80"
                                 }`}
                         >
-                            Estatísticas
+                            Mercado
                         </button>
-                        <div className="w-[1px] h-6 bg-white/20"></div>
                         <button
                             onClick={() => setActiveTab("informacoes")}
-                            className={`px-8 py-3 rounded-md text-sm font-bold transition-all uppercase tracking-wider ${activeTab === "informacoes"
-                                ? "bg-[#f97316] text-white shadow-md transform scale-105"
-                                : "bg-transparent text-white/70 hover:text-white hover:bg-white/5"
+                            className={`relative z-10 px-10 py-3 rounded-sm text-xs font-black transition-colors uppercase tracking-widest min-w-[140px] ${activeTab === "informacoes" ? "text-white" : "text-white hover:text-white/80"
                                 }`}
                         >
                             Informações
@@ -149,39 +112,68 @@ export function InfoSection() {
                 </div>
             </div>
 
-            {/* Overlapping Content Container */}
-            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20 -mt-20 pb-24">
+            {/* Content Container - No Overlap */}
+            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20 mt-16 pb-24">
                 <div className="animate-in fade-in duration-700 slide-in-from-bottom-8">
                     {loading ? (
-                        <div className="bg-white p-12 rounded-[12px] shadow-lg text-center text-gray-400">
+                        <div className="bg-white p-12 rounded-[4px] shadow-lg text-center text-gray-400 border border-slate-100">
                             A carregar informações...
                         </div>
                     ) : (
                         <>
                             {activeTab === "categorias" && (
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    {categoryCards.map((card, idx) => (
-                                        <Link
-                                            key={idx}
-                                            href={card.href || "#"}
-                                            className={`p-6 md:p-8 rounded-[12px] text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col gap-4 group cursor-pointer border h-full ${card.dark
-                                                ? "bg-[#374151] text-white border-slate-600 shadow-xl shadow-slate-900/20"
-                                                : "bg-white text-[#3a3f47] border-slate-200 shadow-lg shadow-slate-200/50"
-                                                }`}
-                                        >
-                                            <div className="flex items-start gap-4">
-                                                <div className={`w-12 h-12 rounded-[10px] flex items-center justify-center shrink-0 ${card.iconBg}`}>
-                                                    <card.icon className={`h-6 w-6 ${card.iconColor}`} />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <h3 className="text-xl font-bold leading-tight">{card.title}</h3>
-                                                </div>
+                                <div className="space-y-12">
+                                    {/* Header Section for Solutions */}
+                                    <div className="text-center space-y-4 max-w-4xl mx-auto mb-12">
+                                        <div className="flex flex-col items-center gap-2">
+                                            <div className="h-px w-12 bg-gray-300"></div>
+                                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Nossas Soluções</span>
+                                            <div className="h-px w-12 bg-gray-300"></div>
+                                        </div>
+                                        <h3 className="text-3xl md:text-4xl font-black text-slate-800">Ao serviço do produtor</h3>
+                                        <p className="text-slate-500 text-sm md:text-base max-w-3xl mx-auto leading-relaxed">
+                                            Além de fornecer informações cruciais sobre técnicas de produção, prestamos serviços que auxiliam na produtividade e acções pós-produção. Solicite um dos serviços abaixo.
+                                        </p>
+                                    </div>
+
+                                    {/* Solutions Grid - 3 Large Cards */}
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                        {/* Card 1: Venda */}
+                                        <div className="bg-white p-10 rounded-xl border border-slate-100 shadow-xl shadow-slate-200/50 hover:shadow-2xl transition-all text-center flex flex-col items-center gap-6 group">
+                                            <div className="w-20 h-20 flex items-center justify-center">
+                                                <img src="https://cdn-icons-png.flaticon.com/512/3258/3258522.png" alt="Icon" className="w-full h-full object-contain grayscale group-hover:grayscale-0 transition-all opacity-70" />
                                             </div>
-                                            <p className={`text-sm leading-relaxed ${card.dark ? "text-slate-300" : "text-slate-500"} line-clamp-4`}>
-                                                {card.description}
-                                            </p>
-                                        </Link>
-                                    ))}
+                                            <div className="space-y-4">
+                                                <h4 className="text-xl font-black text-slate-800">Quer vender um produto?</h4>
+                                                <p className="text-sm text-slate-500 font-medium">Cadastre aqui o seu produto e encontre um comprador profissional rapidamente.</p>
+                                            </div>
+                                            <Button variant="ghost" className="mt-4 text-[#f97316] font-black uppercase text-[10px] tracking-widest hover:bg-orange-50">Saber mais →</Button>
+                                        </div>
+
+                                        {/* Card 2: Compra */}
+                                        <div className="bg-white p-10 rounded-xl border border-slate-100 shadow-xl shadow-slate-200/50 hover:shadow-2xl transition-all text-center flex flex-col items-center gap-6 group">
+                                            <div className="w-20 h-20 flex items-center justify-center">
+                                                <img src="https://cdn-icons-png.flaticon.com/512/3502/3502601.png" alt="Icon" className="w-full h-full object-contain grayscale group-hover:grayscale-0 transition-all opacity-70" />
+                                            </div>
+                                            <div className="space-y-4">
+                                                <h4 className="text-xl font-black text-slate-800">Quer comprar?</h4>
+                                                <p className="text-sm text-slate-500 font-medium">Poupe tempo e recursos, pague suas taxas, impostos e aceda a fornecedores aqui!</p>
+                                            </div>
+                                            <Button variant="ghost" className="mt-4 text-[#f97316] font-black uppercase text-[10px] tracking-widest hover:bg-orange-50">Saber mais →</Button>
+                                        </div>
+
+                                        {/* Card 3: Logística */}
+                                        <div className="bg-white p-10 rounded-xl border border-slate-100 shadow-xl shadow-slate-200/50 hover:shadow-2xl transition-all text-center flex flex-col items-center gap-6 group">
+                                            <div className="w-20 h-20 flex items-center justify-center">
+                                                <img src="https://cdn-icons-png.flaticon.com/512/2830/2830305.png" alt="Icon" className="w-full h-full object-contain grayscale group-hover:grayscale-0 transition-all opacity-70" />
+                                            </div>
+                                            <div className="space-y-4">
+                                                <h4 className="text-xl font-black text-slate-800">Ou quer transportar?</h4>
+                                                <p className="text-sm text-slate-500 font-medium">Faça aqui a solicitação de DUAT, transporte logístico ou licença de construção.</p>
+                                            </div>
+                                            <Button variant="ghost" className="mt-4 text-[#f97316] font-black uppercase text-[10px] tracking-widest hover:bg-orange-50">Saber mais →</Button>
+                                        </div>
+                                    </div>
                                 </div>
                             )}
 
@@ -206,7 +198,7 @@ export function InfoSection() {
                                             )}
                                         </div>
                                     </div>
-                                    <div className="bg-[#374151] p-8 rounded-[12px] shadow-2xl text-white space-y-6 border border-slate-600">
+                                    <div className="bg-[#1e293b] p-8 rounded-[12px] shadow-2xl text-white space-y-6 border border-slate-600">
                                         <div className="flex items-center gap-4">
                                             <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
                                                 <TrendingUp className="text-white h-6 w-6" />
@@ -215,7 +207,6 @@ export function InfoSection() {
                                         </div>
                                         <p className="text-slate-300">Análise predictiva baseada no histórico de colheitas e condições meteorológicas actuais.</p>
                                         <div className="h-48 flex items-end gap-3 px-4">
-                                            {/* Dummy chart bars - could be dynamic later */}
                                             {[40, 70, 45, 90, 65, 80].map((h, i) => (
                                                 <div key={i} className="flex-1 bg-emerald-500 rounded-t-lg transition-all hover:bg-[#f97316] cursor-pointer" style={{ height: `${h}%` }}></div>
                                             ))}
@@ -229,20 +220,25 @@ export function InfoSection() {
                                     {articlesData.map((news, i) => (
                                         <Link
                                             key={i}
-                                            href={news.slug ? `/artigos/${news.slug}` : "#"}
-                                            className="bg-white p-6 rounded-[12px] shadow-lg border border-slate-100 flex flex-col justify-between group cursor-pointer hover:border-[#f97316] transition-all gap-4 h-full"
+                                            href={`/blog/${news.slug || news.id}`}
+                                            className="bg-white rounded-xl border border-slate-100 shadow-lg hover:shadow-2xl transition-all overflow-hidden group flex flex-col h-full"
                                         >
-                                            <div className="space-y-3">
-                                                <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-[#f97316]">
-                                                    <span>{news.type || "Artigo"}</span>
-                                                    <span className="text-slate-300">•</span>
-                                                    <span className="text-slate-400">{news.date}</span>
+                                            <div className="h-48 overflow-hidden relative">
+                                                <img
+                                                    src={news.image_url || "https://images.unsplash.com/photo-1595113316349-9fa4ee24f884?q=80&w=1000&auto=format&fit=crop"}
+                                                    alt={news.title}
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                />
+                                                <div className="absolute top-4 left-4">
+                                                    <span className="bg-emerald-500 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">Notícias</span>
                                                 </div>
-                                                <h3 className="text-lg font-bold text-slate-600 group-hover:text-[#f97316] transition-colors">{news.title}</h3>
-                                                <p className="text-sm text-slate-500 leading-relaxed line-clamp-3">{news.subtitle || news.description}</p>
                                             </div>
-                                            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 group-hover:text-[#3a3f47] transition-colors mt-auto pt-4">
-                                                Explorar <ArrowRight className="h-3 w-3" />
+                                            <div className="p-6 space-y-3 flex-1 flex flex-col">
+                                                <h4 className="text-lg font-bold text-slate-800 line-clamp-2">{news.title}</h4>
+                                                <p className="text-sm text-slate-500 line-clamp-3 leading-relaxed flex-1">{news.summary}</p>
+                                                <div className="pt-4 flex items-center text-emerald-600 font-black text-[10px] uppercase tracking-widest group-hover:gap-3 transition-all">
+                                                    Ler Artigo <ArrowRight className="w-3 h-3 ml-2" />
+                                                </div>
                                             </div>
                                         </Link>
                                     ))}

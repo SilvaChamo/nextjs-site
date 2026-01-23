@@ -73,22 +73,16 @@ export function FeaturedCompanies() {
     };
 
     // Re-mount checks for resets
+    // Re-mount checks for resets
     useEffect(() => {
+        if (items.length === 0) return;
+
         if (!isTransitioning) {
             if (currentIndex >= items.length + visibleItems) {
                 setCurrentIndex(visibleItems);
             } else if (currentIndex < visibleItems) {
-                // If we are showing the first set of clones (before real items)
-                // We want to jump to the real last set.
-                // Real items start at index `visibleItems`.
-                // Clones at start are 0 to `visibleItems - 1`.
-                // Example: 4 visible. Clones [0,1,2,3]. Real [4,5,6...]. 
-                // If we are at 3, we successfully moved left from 4. 
-                // We should instantly jump to `items.length + 3`.
-                setCurrentIndex(items.length + currentIndex);
-                // Wait, logic is: index 4 is item 0. index 3 is item MAX.
-                // We want to be at index (items.length + visibleItems - 1) no?
-                // Actually simplest is: Reset to `currentIndex + items.length`?
+                // Stabilize index if underflow
+                setCurrentIndex(currentIndex + items.length);
             }
         }
     }, [currentIndex, items.length, visibleItems, isTransitioning]);

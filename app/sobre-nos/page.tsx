@@ -1,7 +1,8 @@
 "use client";
 
 import { PageHeader } from "@/components/PageHeader";
-import { Info } from "lucide-react";
+import { Info, ArrowRight } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 
 export default function SobrePage() {
     return (
@@ -53,14 +54,12 @@ export default function SobrePage() {
                 <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
 
                 {/* Fixed Background Image Overlay */}
-                <div className="absolute inset-0 z-0 opacity-10">
-                    <img src="/assets/hero-bg-new.jpg" alt="bg" className="w-full h-full object-cover" />
-                </div>
+                <div className="absolute inset-0 z-0 opacity-10 bg-[url('/assets/hero-bg-new.jpg')] bg-fixed bg-cover bg-center" />
 
                 <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {/* Missão */}
-                        <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-8 rounded-2xl hover:bg-white/10 transition-all group">
+                        <div className="bg-white/5 border border-white/10 p-8 rounded-2xl hover:bg-white/10 transition-all group">
                             <div className="w-14 h-14 bg-emerald-500/20 rounded-full flex items-center justify-center mb-6 text-emerald-400 group-hover:scale-110 transition-transform">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-target"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></svg>
                             </div>
@@ -71,7 +70,7 @@ export default function SobrePage() {
                         </div>
 
                         {/* Visão */}
-                        <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-8 rounded-2xl hover:bg-white/10 transition-all group">
+                        <div className="bg-white/5 border border-white/10 p-8 rounded-2xl hover:bg-white/10 transition-all group">
                             <div className="w-14 h-14 bg-orange-500/20 rounded-full flex items-center justify-center mb-6 text-orange-400 group-hover:scale-110 transition-transform">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-eye"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
                             </div>
@@ -82,7 +81,7 @@ export default function SobrePage() {
                         </div>
 
                         {/* Valores */}
-                        <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-8 rounded-2xl hover:bg-white/10 transition-all group">
+                        <div className="bg-white/5 border border-white/10 p-8 rounded-2xl hover:bg-white/10 transition-all group">
                             <div className="w-14 h-14 bg-blue-500/20 rounded-full flex items-center justify-center mb-6 text-blue-400 group-hover:scale-110 transition-transform">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-heart-handshake"><path d="M19 14c1.49-1.28 3.6-1.28 5.14 0 .34.3.34.7 0 1-1.28 1.49-1.28 3.6 0 5.14.3.34.7.34 1 0 1.28-1.49 3.6-1.28 5.14 0 .34.3.34.7 0 1-1.28 1.49-1.28 3.6 0 5.14.3.34.7.34 1 0-.3-.34-.7-.34-1 0A7.5 7.5 0 0 0 2 11h20z" /><path d="M12.5 13a4.5 4.5 0 0 0-4.5-4.5h-1" /><path d="M13.5 16.5a4.5 4.5 0 0 0 3-3v-1" /></svg>
                             </div>
@@ -98,43 +97,127 @@ export default function SobrePage() {
                 </div>
             </div>
 
-            {/* Container for Remaining Content */}
-            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20 py-24">
+            {/* 3. Domínios de Actuação (New Section based on user categories) */}
+            <div className="w-full bg-slate-50 py-24">
+                <div className="max-w-[1350px] mx-auto px-4 md:px-[60px]">
+                    <div className="text-center space-y-4 mb-16">
+                        <h2 className="text-3xl md:text-4xl font-black text-slate-800 uppercase tracking-tight">Nossos <span className="text-[#f97316]">Domínios</span> de Actuação</h2>
+                        <p className="text-slate-500 max-w-2xl mx-auto font-medium">Focamos em áreas estratégicas para garantir a evolução completa da cadeia de valor agrária em Moçambique.</p>
+                    </div>
 
-                {/* 3. Nosso Impacto (Stats) */}
-                <div className="bg-[#111827] rounded-3xl p-12 relative overflow-hidden text-center mb-20">
-                    <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-                    <div className="relative z-10">
-                        <h2 className="text-3xl font-black text-white mb-12">O impacto que geramos</h2>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                            <div>
-                                <p className="text-5xl font-black text-[#f97316] mb-2">+500</p>
-                                <p className="text-slate-400 font-medium uppercase tracking-widest text-sm">Empresas Registadas</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {[
+                            { title: "Turismo Rural", desc: "Promoção de experiências autênticas que conectam o visitante à vida no campo e valorizam as tradições locais." },
+                            { title: "Tecnologia Agrária", desc: "Implementação de soluções digitais e mecanização inteligente para maximizar a produtividade e eficiência." },
+                            { title: "Políticas Agrárias", desc: "Análise e divulgação de normas e directrizes que moldam o futuro jurídico e económico do sector." },
+                            { title: "Insumos Agrários", desc: "Facilitação no acesso a sementes, fertilizantes e ferramentas de alta qualidade para o produtor." },
+                            { title: "Financiamento Agrário", desc: "Conexão entre produtores e instituições financeiras para viabilizar investimentos estratégicos no campo." },
+                            { title: "Artigos Científicos", desc: "Repositório de conhecimento especializado e pesquisas avançadas para embasar decisões técnicas." }
+                        ].map((domain, i) => (
+                            <div key={i} className="bg-white p-8 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all group">
+                                <div className="w-2 h-12 bg-[#f97316] mb-6 group-hover:h-16 transition-all duration-300"></div>
+                                <h4 className="text-xl font-black text-slate-800 mb-3">{domain.title}</h4>
+                                <p className="text-slate-500 text-sm leading-relaxed font-medium">{domain.desc}</p>
                             </div>
-                            <div>
-                                <p className="text-5xl font-black text-emerald-500 mb-2">12k</p>
-                                <p className="text-slate-400 font-medium uppercase tracking-widest text-sm">Produtores Conectados</p>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* 3. Domínios de Actuação (New Section based on user categories) */}
+            <div className="w-full bg-slate-50 py-24">
+                <div className="max-w-[1350px] mx-auto px-4 md:px-[60px]">
+                    <div className="text-center space-y-4 mb-20 relative">
+                        {/* Decorative Title with Arrows */}
+                        <div className="flex items-center justify-center gap-6 mb-4">
+                            <div className="h-[2px] w-12 bg-[#f97316] hidden md:block"></div>
+                            <ArrowRight className="text-[#f97316] w-6 h-6 rotate-180" />
+                            <span className="text-[12px] font-black uppercase tracking-[0.4em] text-gray-400">Nossos Domínios</span>
+                            <ArrowRight className="text-[#f97316] w-6 h-6" />
+                            <div className="h-[2px] w-12 bg-[#f97316] hidden md:block"></div>
+                        </div>
+                        <h2 className="text-3xl md:text-5xl font-black text-slate-800 uppercase tracking-tight">Actuação <span className="text-[#f97316]">Estratégica</span></h2>
+                        <p className="text-slate-500 max-w-2xl mx-auto font-medium">Focamos em áreas cruciais para garantir a evolução completa da cadeia de valor agrária em Moçambique.</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {[
+                            { title: "Turismo Rural", icon: LucideIcons.Map, desc: "Promoção de experiências autênticas que conectam o visitante à vida no campo e valorizam as tradições locais." },
+                            { title: "Tecnologia Agrária", icon: LucideIcons.Cpu, desc: "Implementação de soluções digitais e mecanização inteligente para maximizar a produtividade e eficiência." },
+                            { title: "Políticas Agrárias", icon: LucideIcons.Scale, desc: "Análise e divulgação de normas e directrizes que moldam o futuro jurídico e económico do sector." },
+                            { title: "Insumos Agrários", icon: LucideIcons.Sprout, desc: "Facilitação no acesso a sementes, fertilizantes e ferramentas de alta qualidade para o produtor." },
+                            { title: "Financiamento Agrário", icon: LucideIcons.Coins, desc: "Conexão entre produtores e instituições financeiras para viabilizar investimentos estratégicos no campo." },
+                            { title: "Artigos Científicos", icon: LucideIcons.BookOpen, desc: "Repositório de conhecimento especializado e pesquisas avançadas para embasar decisões técnicas." }
+                        ].map((domain, i) => (
+                            <div key={i} className="bg-white p-10 rounded-xl border border-slate-200 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all group relative overflow-hidden">
+                                <div className="absolute top-0 left-0 w-2 h-full bg-[#f97316] group-hover:w-full group-hover:opacity-[0.03] transition-all duration-500"></div>
+                                <div className="mb-6 flex items-center justify-between">
+                                    <div className="p-3 bg-orange-50 rounded-lg text-[#f97316] group-hover:bg-[#f97316] group-hover:text-white transition-colors">
+                                        <domain.icon className="w-6 h-6" />
+                                    </div>
+                                    <div className="h-[2px] w-16 bg-slate-100 group-hover:bg-[#f97316] transition-colors"></div>
+                                </div>
+                                <h4 className="text-xl font-black text-slate-800 mb-4 tracking-tight">{domain.title}</h4>
+                                <p className="text-slate-500 text-sm leading-relaxed font-medium">{domain.desc}</p>
                             </div>
-                            <div>
-                                <p className="text-5xl font-black text-blue-500 mb-2">+50</p>
-                                <p className="text-slate-400 font-medium uppercase tracking-widest text-sm">Parceiros Estratégicos</p>
-                            </div>
-                            <div>
-                                <p className="text-5xl font-black text-yellow-500 mb-2">24/7</p>
-                                <p className="text-slate-400 font-medium uppercase tracking-widest text-sm">Monitoria de Mercado</p>
-                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* 4. Nosso Impacto (Stats) - Full Width, No Rounding, 300px height */}
+            <div className="w-full bg-[#0f172a] relative h-auto md:h-[300px] flex items-center overflow-hidden border-t border-slate-800">
+                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a] via-[#0f172a]/90 to-transparent z-10"></div>
+
+                <div className="max-w-[1350px] mx-auto w-full px-4 md:px-[60px] relative z-20">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-12 text-center py-12 md:py-0">
+                        <div className="space-y-2">
+                            <p className="text-5xl md:text-6xl font-black text-[#f97316] drop-shadow-lg">+500</p>
+                            <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px] md:text-xs">Empresas Registadas</p>
+                        </div>
+                        <div className="space-y-2">
+                            <p className="text-5xl md:text-6xl font-black text-emerald-500 drop-shadow-lg">12k</p>
+                            <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px] md:text-xs">Produtores Conectados</p>
+                        </div>
+                        <div className="space-y-2">
+                            <p className="text-5xl md:text-6xl font-black text-blue-500 drop-shadow-lg">+50</p>
+                            <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px] md:text-xs">Parceiros Estratégicos</p>
+                        </div>
+                        <div className="space-y-2">
+                            <p className="text-5xl md:text-6xl font-black text-yellow-500 drop-shadow-lg">24/7</p>
+                            <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px] md:text-xs">Monitoria de Mercado</p>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                {/* 4. CTA */}
-                <div className="text-center max-w-2xl mx-auto">
-                    <h2 className="text-3xl font-black text-slate-800 mb-6">Faça parte desta transformação</h2>
-                    <p className="text-slate-600 mb-8 text-lg">
-                        Seja você um pequeno produtor, uma grande empresa comercial ou uma instituição de ensino, há um lugar para si na Base Agro Data.
-                    </p>
-                    <button className="px-10 py-4 bg-emerald-600 text-white rounded-full font-bold text-lg shadow-xl hover:bg-emerald-700 hover:scale-105 transition-all">
-                        Juntar-se à Rede
+            {/* 5. CTA Section - Styled as requested (Dark Image BG) */}
+            <div className="w-full relative py-32 overflow-hidden bg-[#1a1a1a]">
+                <div className="absolute inset-0 z-0">
+                    <img
+                        src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=2000&auto=format&fit=crop"
+                        alt="Join the network"
+                        className="w-full h-full object-cover opacity-30 blur-[2px]"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-transparent to-[#111827]"></div>
+                </div>
+
+                <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10 text-center space-y-10">
+                    <div className="space-y-6">
+                        <div className="h-1 w-20 bg-[#f97316] mx-auto rounded-full"></div>
+                        <h2 className="text-4xl md:text-6xl font-black text-white leading-tight tracking-tighter">
+                            Conectando Moçambique<br />
+                            <span className="text-[#f97316]">Infraestrutura</span> que Impulsiona o Desenvolvimento
+                        </h2>
+                        <p className="text-slate-300 text-lg md:text-xl max-w-3xl mx-auto font-medium leading-relaxed opacity-80">
+                            Seja você um pequeno produtor, uma grande empresa comercial ou uma instituição de ensino, há um lugar para si na Base de Dados Agrícola.
+                        </p>
+                    </div>
+
+                    <button className="px-12 py-5 bg-[#f97316] text-white rounded-lg font-black text-lg shadow-[0_10px_30px_rgba(249,115,22,0.4)] hover:bg-[#ea580c] hover:-translate-y-1 transition-all flex items-center justify-center gap-3 mx-auto group">
+                        FAÇA PARTE DESTA TRANSFORMAÇÃO
+                        <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
                     </button>
                 </div>
             </div>

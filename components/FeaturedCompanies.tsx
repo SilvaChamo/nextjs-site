@@ -138,7 +138,7 @@ export function FeaturedCompanies() {
             <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] py-24 flex flex-col justify-center animate-in fade-in duration-[1200ms] w-full">
                 <div className="mb-16 w-full">
                     <div className="flex justify-between items-center mb-10">
-                        <h2 className="text-gray-400 font-extrabold text-[11px] md:text-[13px] tracking-[0.7em] uppercase">Empresas em Destaque</h2>
+                        <h2 className="text-slate-900 font-black text-[11px] md:text-[13px] tracking-[0.7em] uppercase">Empresas em Destaque</h2>
                         <div className="flex space-x-4">
                             <button
                                 onClick={prevSlide}

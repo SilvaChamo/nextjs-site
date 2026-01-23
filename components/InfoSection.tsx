@@ -98,7 +98,7 @@ export function InfoSection() {
                 {/* Background Image - Seedlings - Parallax Enabled */}
                 <div
                     ref={bgRef}
-                    className="absolute -top-[25%] left-0 w-full h-[150%] bg-[url('https://images.unsplash.com/photo-1625246333195-5819acf4261b?q=80&w=2672&auto=format&fit=crop')] bg-cover bg-center opacity-40 pointer-events-none will-change-transform"
+                    className="absolute -top-[25%] left-0 w-full h-[150%] bg-[url('/assets/info-bg-seedlings.jpg')] bg-cover bg-center opacity-40 pointer-events-none will-change-transform"
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-[#111827]/80 via-[#111827]/60 to-[#111827]/90" />
 
@@ -113,31 +113,34 @@ export function InfoSection() {
                         </p>
                     </div>
 
-                    {/* Custom Tabs - Pill Style - Clean, no background container */}
-                    <div className="inline-flex items-center gap-4 flex-wrap justify-center">
+                    {/* Custom Tabs - Glass Style */}
+                    {/* Custom Tabs - Uppercase, Solid/Transparent Style */}
+                    <div className="inline-flex items-center gap-2 bg-white/5 p-1.5 rounded-lg border border-white/10 backdrop-blur-sm">
                         <button
                             onClick={() => setActiveTab("categorias")}
-                            className={`px-8 py-2 rounded-md text-base font-bold transition-all shadow-lg hover:bg-[#f97316] hover:text-white ${activeTab === "categorias"
-                                ? "bg-[#f97316] text-white"
-                                : "bg-white text-slate-700"
+                            className={`px-8 py-3 rounded-md text-sm font-bold transition-all uppercase tracking-wider ${activeTab === "categorias"
+                                ? "bg-[#f97316] text-white shadow-md transform scale-105"
+                                : "bg-transparent text-white/70 hover:text-white hover:bg-white/5"
                                 }`}
                         >
                             Categorias
                         </button>
+                        <div className="w-[1px] h-6 bg-white/20"></div>
                         <button
                             onClick={() => setActiveTab("estatisticas")}
-                            className={`px-8 py-2 rounded-md text-base font-bold transition-all shadow-lg hover:bg-[#f97316] hover:text-white ${activeTab === "estatisticas"
-                                ? "bg-[#f97316] text-white"
-                                : "bg-white text-slate-700"
+                            className={`px-8 py-3 rounded-md text-sm font-bold transition-all uppercase tracking-wider ${activeTab === "estatisticas"
+                                ? "bg-[#f97316] text-white shadow-md transform scale-105"
+                                : "bg-transparent text-white/70 hover:text-white hover:bg-white/5"
                                 }`}
                         >
                             Estatísticas
                         </button>
+                        <div className="w-[1px] h-6 bg-white/20"></div>
                         <button
                             onClick={() => setActiveTab("informacoes")}
-                            className={`px-8 py-2 rounded-md text-base font-bold transition-all shadow-lg hover:bg-[#f97316] hover:text-white ${activeTab === "informacoes"
-                                ? "bg-[#f97316] text-white"
-                                : "bg-white text-slate-700"
+                            className={`px-8 py-3 rounded-md text-sm font-bold transition-all uppercase tracking-wider ${activeTab === "informacoes"
+                                ? "bg-[#f97316] text-white shadow-md transform scale-105"
+                                : "bg-transparent text-white/70 hover:text-white hover:bg-white/5"
                                 }`}
                         >
                             Informações

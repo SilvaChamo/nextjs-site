@@ -19,30 +19,30 @@ export default function SobrePage() {
             <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20 mt-[50px] pb-24">
 
                 {/* 1. Introdução e História */}
-                <div className="bg-white rounded-[15px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] border border-slate-100 px-8 md:px-10 lg:px-12 py-10 md:py-12 mb-16">
+                <div className="bg-none rounded-[0] shadow-[0_0_0_0(0,0,0,0.08)] border border-slate-100 px-8 md:px-10 lg:px-12 py-10 md:py-12 mb-16">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                        <div className="space-y-6">
-                            <h2 className="text-2xl md:text-[40px] font-heading font-black text-slate-800 tracking-tight leading-[1.2]">
-                                Conectamos o campo ao <span className="text-[#f97316]">futuro.</span>
-                            </h2>
-                            <div className="space-y-4 text-slate-600 font-medium leading-relaxed text-lg">
-                                <p>
-                                    A <strong>Base Agro Data</strong> nasceu da necessidade urgente de organizar e modernizar o sector agrário em Moçambique. Somos a resposta digital para um desafio antigo: a fragmentação da informação.
-                                </p>
-                                <p>
-                                    Mais do que uma plataforma, somos um <span className="text-emerald-600 font-bold">ecossistema integrado</span> que une o pequeno produtor aos grandes mercados, facilita o acesso a insumos de qualidade e democratiza o conhecimento técnico. Acreditamos que a informação correcta, no momento certo, é o insumo mais valioso para o crescimento.
-                                </p>
-                            </div>
-                        </div>
-                        <div className="relative h-[400px] rounded-2xl overflow-hidden shadow-2xl skew-y-2 transform transition-transform hover:skew-y-0 duration-500">
+                        <div className="relative h-[550px] rounded-2xl overflow-hidden shadow-2xl">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
-                                src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=1000&auto=format&fit=crop"
+                                src="assets/Agotec.jpg"
                                 alt="Agricultura Moderna em Moçambique"
-                                className="object-cover w-full h-full scale-110 hover:scale-100 transition-transform duration-700"
+                                className="object-cover w-full h-full scale-100 hover:scale-100 transition-transform duration-700"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-8">
-                                <p className="text-white font-bold text-xl">Inovação no campo, prosperidade na colheita.</p>
+                            <div className="absolute inset-0 bg-gradient-to-t from to-transparent flex items-end p-8">
+                                <p className="text-white font-bold text-xl"></p>
+                            </div>
+                        </div>
+                        <div className="space-y-6">
+                            <h2 className="text-3xl md:text-[48px] font-heading font-black text-slate-800 tracking-tight leading-[1.2]">
+                                Conectamos os actores do sector ao <span className="text-[#f97316]">futuro.</span>
+                            </h2>
+                            <div className="space-y-4 text-slate-600 font-medium leading-relaxed text-lg">
+                                <p className="text-[20px]">
+                                    A <strong>Base Agro Data</strong> nasceu da necessidade urgente de organizar e modernizar o sector agrário em Moçambique. Somos a resposta digital para um desafio antigo: a fragmentação da informação.
+                                </p>
+                                <p className="text-[14px]">
+                                    Mais do que uma plataforma, somos um <span className="text-emerald-600 font-bold">ecossistema integrado</span> que une o pequeno produtor aos grandes mercados, facilita o acesso a insumos de qualidade e democratiza o conhecimento técnico. Acreditamos que a informação correcta, no momento certo, é o insumo mais valioso para o crescimento.
+                                </p>
                             </div>
                         </div>
                     </div>

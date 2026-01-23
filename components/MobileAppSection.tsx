@@ -10,15 +10,15 @@ export function MobileAppSection() {
             <div className="absolute top-0 right-0 w-1/2 h-full bg-slate-50/50 -skew-x-12 translate-x-1/4 pointer-events-none"></div>
 
             <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10">
-                <div className="grid lg:grid-cols-[2fr_1fr] gap-16 items-center">
+                <div className="grid lg:grid-cols-[60%_1fr] gap-16 items-center">
 
                     {/* Left Column: Content */}
                     <div className="space-y-6 text-center lg:text-left z-10 transition-all duration-700 delay-100 transform translate-y-0 opacity-100">
                         <div>
-                            <h2 className="text-4xl lg:text-5xl font-black text-emerald-600 mb-2 tracking-tight">
+                            <h2 className="text-[32px] md:text-[50px] font-heading font-black text-slate-600 leading-[1.1] tracking-tight mb-2">
                                 HerbariumAI
                             </h2>
-                            <h3 className="text-4xl lg:text-5xl font-black text-slate-600 mb-6 leading-[1.1]">
+                            <h3 className="text-[32px] md:text-[50px] font-heading font-black text-slate-600 mb-6 leading-[1.1] tracking-tight">
                                 O seu agrónomo digital <br /> de bolso
                             </h3>
                             <p className="text-slate-600 text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">
@@ -29,25 +29,29 @@ export function MobileAppSection() {
                         {/* Two Capabilities as requested */}
                         <div className="grid sm:grid-cols-2 gap-6">
                             {/* Feature 1 */}
-                            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:border-emerald-200 transition-colors group">
-                                <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                    <Scan className="w-6 h-6 text-emerald-600" />
+                            <div className="bg-slate-50 p-2 rounded-xl border border-slate-100 hover:border-emerald-200 transition-colors group flex items-start gap-3 text-left">
+                                <div className="w-10 h-10 bg-emerald-50 rounded-[5px] border border-slate-200 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                                    <Scan className="w-5 h-5 text-emerald-600" />
                                 </div>
-                                <h3 className="text-lg font-bold text-slate-700 mb-2">Scanner Inteligente</h3>
-                                <p className="text-sm text-slate-500">
-                                    Identifique plantas e revele seu valor nutritivo instantaneamente através da câmera.
-                                </p>
+                                <div className="space-y-0.5">
+                                    <h3 className="text-base font-bold text-slate-700">Scanner Inteligente</h3>
+                                    <p className="text-[11px] text-slate-500 leading-tight">
+                                        Identifique plantas e revele seu valor nutritivo instantaneamente através da câmera.
+                                    </p>
+                                </div>
                             </div>
 
                             {/* Feature 2 */}
-                            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:border-emerald-200 transition-colors group">
-                                <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                    <Stethoscope className="w-6 h-6 text-emerald-600" />
+                            <div className="bg-slate-50 p-2 rounded-xl border border-slate-100 hover:border-emerald-200 transition-colors group flex items-start gap-3 text-left">
+                                <div className="w-10 h-10 bg-emerald-50 rounded-[5px] border border-slate-200 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                                    <Stethoscope className="w-5 h-5 text-emerald-600" />
                                 </div>
-                                <h3 className="text-lg font-bold text-slate-700 mb-2">Doctor Plants</h3>
-                                <p className="text-sm text-slate-500">
-                                    Detecte doenças precocemente e receba sugestões de tratamento correctas.
-                                </p>
+                                <div className="space-y-0.5">
+                                    <h3 className="text-base font-bold text-slate-700">Doctor Plants</h3>
+                                    <p className="text-[11px] text-slate-500 leading-tight">
+                                        Detecte doenças precocemente e receba sugestões de tratamento correctas.
+                                    </p>
+                                </div>
                             </div>
                         </div>
 
@@ -70,20 +74,20 @@ export function MobileAppSection() {
                     </div>
 
                     {/* Right Column: App Interface Image */}
-                    <div className="relative flex justify-center lg:justify-end animate-in fade-in slide-in-from-right-8 duration-700 delay-100">
+                    <div className="relative flex justify-center lg:justify-end animate-in fade-in slide-in-from-right-8 duration-700 delay-100 perspective-1000">
                         {/* Blob Background */}
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-emerald-200/50 to-orange-200/50 blur-3xl opacity-70 rounded-full"></div>
 
                         {/* Realistic Phone Frame */}
-                        <div className="relative z-0 w-[280px] md:w-[320px] bg-slate-900 rounded-[35px] p-[8px] shadow-[0_50px_100px_-20px_rgba(50,50,93,0.25),0_30px_60px_-30px_rgba(0,0,0,0.3),inset_0_-2px_6px_0_rgba(255,255,255,0.2)] ring-1 ring-slate-900/50">
+                        <div className="relative z-0 w-[280px] md:w-[320px] lg:w-[340px] bg-slate-900 rounded-[45px] p-[5px] shadow-[0_50px_100px_-20px_rgba(50,50,93,0.15),0_30px_60px_-30px_rgba(0,0,0,0.2),inset_0_-1px_3px_0_rgba(255,255,255,0.1)] ring-1 ring-slate-900/20 transition-transform duration-500">
 
                             {/* Side Buttons */}
-                            <div className="absolute top-32 -right-[5px] w-[5px] h-20 bg-slate-800 rounded-r-md shadow-sm"></div>
-                            <div className="absolute top-24 -left-[5px] w-[5px] h-10 bg-slate-800 rounded-l-md shadow-sm"></div>
-                            <div className="absolute top-40 -left-[5px] w-[5px] h-10 bg-slate-800 rounded-l-md shadow-sm"></div>
+                            <div className="absolute top-32 -right-[2px] w-[2px] h-16 bg-slate-800 rounded-r-sm shadow-sm"></div>
+                            <div className="absolute top-24 -left-[2px] w-[2px] h-10 bg-slate-800 rounded-l-sm shadow-sm"></div>
+                            <div className="absolute top-40 -left-[2px] w-[2px] h-10 bg-slate-800 rounded-l-sm shadow-sm"></div>
 
                             {/* Inner Screen Container */}
-                            <div className="relative w-full h-full bg-black rounded-[28px] overflow-hidden border-[5px] border-slate-900 ring-1 ring-slate-800">
+                            <div className="relative w-full h-full bg-black rounded-[40px] overflow-hidden border-[2px] border-slate-900/50">
 
                                 {/* Dynamic Area / Notch */}
                                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[100px] h-[25px] bg-black z-20 rounded-b-[16px]">

@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
@@ -53,53 +52,6 @@ export function FeaturedCompanies() {
         setCurrentIndex(prev => prev - 1);
     }, [isTransitioning]);
 
-    const handleTransitionEnd = () => {
-        setIsTransitioning(false);
-        if (currentIndex >= items.length + visibleItems) {
-            setCurrentIndex(visibleItems);
-        }
-        else if (currentIndex < visibleItems) {
-            // Correct logic if we go backwards too far (though prevSlide logic should handle normal flow)
-            // If index is 0 or less (start of clone), jump to end.
-            // Actually the logic in original was: if (currentIndex <= 0) which is slightly buggy if clones > 1. 
-            // Better: if currentIndex === visibleItems - 1 (last clone at start)
-            // Check standard infinite scroll logic. Original code used currentIndex <= 0.
-            // Let's stick to a robust reset.
-            // If we lie at index (visibleItems - 1), we are at the clone of the last item.
-            // We want to jump to (items.length + visibleItems - 1).
-            // Original: if (currentIndex <= 0) setCurrentIndex(items.length).
-            // Let's replicate original logic structure but make it robust.
-        }
-    };
-
-    // Re-mount checks for resets
-    // Re-mount checks for resets
-    useEffect(() => {
-        if (items.length === 0) return;
-
-        if (!isTransitioning) {
-            if (currentIndex >= items.length + visibleItems) {
-                setCurrentIndex(visibleItems);
-            } else if (currentIndex < visibleItems) {
-                // Stabilize index if underflow
-                setCurrentIndex(currentIndex + items.length);
-            }
-        }
-    }, [currentIndex, items.length, visibleItems, isTransitioning]);
-
-    // Custom effect to handle the 'snap' reset specifically for the original 'transitionEnd' logic
-    // The original code was:
-    /*
-      if (currentIndex >= items.length + visibleItems) {
-        setIsTransitioning(false);
-        setCurrentIndex(visibleItems);
-      } 
-      else if (currentIndex <= 0) {
-        setIsTransitioning(false);
-        setCurrentIndex(items.length); 
-      }
-    */
-    // I'll stick to 'onTransitionEnd' event on the div mostly.
 
     // Helper for onTransitionEnd prop
     const onTransitionEnd = () => {
@@ -107,14 +59,6 @@ export function FeaturedCompanies() {
         if (currentIndex >= items.length + visibleItems) {
             setCurrentIndex(visibleItems);
         } else if (currentIndex < visibleItems) {
-            // If we are in the left clone zone (indices 0 to visibleItems-1)
-            // We really want to be at (items.length + currentIndex) 
-            // e.g. visible=4. currentIndex=3 (clone of last item). We want to be at items.length + 3? No.
-            // Real items are at indices [4 ... 4+N]. 
-            // Last item is at index 4+N-1.
-            // Clone of last item is at index 3.
-            // If we are at 3, we want to jump to Real Last Item => 4+N-1.
-            // So jump to currentIndex + items.length? 3 + N. Yes.
             setCurrentIndex(currentIndex + items.length);
         }
     };
@@ -149,10 +93,10 @@ export function FeaturedCompanies() {
                         </div>
                     </div>
 
-                    <div className="relative overflow-visible w-full"> {/* overflow-visible to show shadows/popouts if needed, or hidden */}
-                        <div className="overflow-hidden -mx-5 px-5 py-5"> {/* Padding wrapper for shadows */}
+                    <div className="relative overflow-visible w-full">
+                        <div className="overflow-hidden py-5">
                             <div
-                                className={`flex ${isTransitioning ? 'transition-transform duration-[1000ms] cubic-bezier(0.19, 1, 0.22, 1)' : ''}`}
+                                className={`flex -mx-[10px] ${isTransitioning ? 'transition-transform duration-[1000ms] cubic-bezier(0.19, 1, 0.22, 1)' : ''}`}
                                 style={{
                                     transform: `translateX(-${currentIndex * (100 / extendedItems.length)}%)`,
                                     width: `${(extendedItems.length / visibleItems) * 100}%`
@@ -160,7 +104,7 @@ export function FeaturedCompanies() {
                                 onTransitionEnd={onTransitionEnd}
                             >
                                 {extendedItems.map((company, idx) => (
-                                    <div key={`${company.id}-${idx}`} className="px-5" style={{ width: `${100 / extendedItems.length}%`, flexShrink: 0 }}>
+                                    <div key={`${company.id}-${idx}`} className="px-[10px]" style={{ width: `${100 / extendedItems.length}%`, flexShrink: 0 }}>
                                         <CompanyCard company={company} />
                                     </div>
                                 ))}

@@ -98,7 +98,7 @@ export function WhyChooseUs() {
                                     <Building2 className="w-5 h-5 text-white" />
                                 </div>
                                 <div className="space-y-1">
-                                    <h4 className="font-bold text-lg leading-tight text-white">
+                                    <h4 className="font-black text-lg leading-tight text-white tracking-normal">
                                         {counts.empresas > 0 ? `${counts.empresas} ` : ''}Empresas<br />Registadas
                                     </h4>
                                     <p className="text-emerald-50 text-[10px] uppercase font-bold tracking-wider flex items-center gap-2 group-hover:gap-3 transition-all">
@@ -121,7 +121,7 @@ export function WhyChooseUs() {
                                     <Users className="w-5 h-5 text-[#f97316]" />
                                 </div>
                                 <div className="space-y-1">
-                                    <h4 className="font-bold text-slate-700 text-lg leading-tight">
+                                    <h4 className="font-black text-slate-700 text-lg leading-tight tracking-normal">
                                         {counts.profissionais > 0 ? `${counts.profissionais} ` : ''}Profissionais<br />Cadastrados
                                     </h4>
                                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider group-hover:text-[#f97316] transition-colors flex items-center gap-2">
@@ -144,7 +144,7 @@ export function WhyChooseUs() {
                                     <Tractor className="w-5 h-5 text-[#f97316]" />
                                 </div>
                                 <div className="space-y-1">
-                                    <h4 className="font-bold text-slate-700 text-lg leading-tight">
+                                    <h4 className="font-black text-slate-700 text-lg leading-tight tracking-normal">
                                         {counts.propriedades > 0 ? `${counts.propriedades} ` : ''}Propriedades<br />Cadastrados
                                     </h4>
                                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider group-hover:text-[#f97316] transition-colors flex items-center gap-2">
@@ -164,7 +164,7 @@ export function WhyChooseUs() {
                                     <ShoppingBag className="w-5 h-5 text-white" />
                                 </div>
                                 <div className="space-y-1">
-                                    <h4 className="font-bold text-lg leading-tight text-white">
+                                    <h4 className="font-black text-lg leading-tight text-white tracking-normal">
                                         {counts.produtos > 0 ? `${counts.produtos} ` : ''}Produtos<br />Cadastrados
                                     </h4>
                                     <p className="text-orange-50 text-[10px] uppercase font-bold tracking-wider flex items-center gap-2 group-hover:gap-3 transition-all">

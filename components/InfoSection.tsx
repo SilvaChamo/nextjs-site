@@ -96,7 +96,7 @@ export function InfoSection() {
 
     const [emblaRef, emblaApi] = useEmblaCarousel(
         { loop: true, align: 'start', skipSnaps: false },
-        [Autoplay({ delay: 5000, stopOnInteraction: false })]
+        [Autoplay({ delay: 5000, stopOnInteraction: true, stopOnMouseEnter: true })]
     );
 
     const [selectedIndex, setSelectedIndex] = useState(0);
@@ -122,26 +122,42 @@ export function InfoSection() {
     return (
         <section className="w-full bg-transparent relative" id="informacao">
             <div className="w-full bg-[#111827] relative h-[400px] overflow-hidden flex items-center">
-                <div
-                    ref={bgRef}
-                    className="absolute top-0 left-0 w-full h-[150%] bg-[url('https://images.unsplash.com/photo-1625246333195-5819acf4261b?q=80&w=2672&auto=format&fit=crop')] bg-cover bg-center pointer-events-none will-change-transform scale-110 !bg-fixed z-0"
-                />
-                <div className="absolute inset-0 bg-black/50 z-1" />
+                {/* Dynamic Glowing Blobs for Premium Feel */}
+                <div className="absolute inset-0 z-0 overflow-hidden">
+                    <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[80%] bg-[#f97316]/20 rounded-full blur-[120px] animate-pulse-slow" />
+                    <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[90%] bg-emerald-500/10 rounded-full blur-[120px] animate-pulse-delayed" />
+                    <div className="absolute top-[30%] left-[30%] w-[40%] h-[40%] bg-blue-500/5 rounded-full blur-[100px] animate-pulse" />
+                </div>
 
-                <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] text-center space-y-8 relative z-10">
+                <img
+                    src="https://images.unsplash.com/photo-1625246333195-5819acf4261b?q=80&w=2672&auto=format&fit=crop"
+                    alt="Background"
+                    className="absolute inset-0 w-full h-full object-cover z-0 opacity-20 pointer-events-none mix-blend-overlay"
+                />
+
+                <div className="absolute inset-0 bg-gradient-to-b from-[#111827]/95 via-[#111827]/75 to-[#111827]/95 z-[1]" />
+
+                <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] text-center space-y-6 relative z-10 pt-[20px]">
                     <div className="space-y-4 max-w-4xl mx-auto">
+                        <div className="flex items-center justify-center gap-4">
+                            <span className="w-[20px] h-[1px] bg-white opacity-60"></span>
+                            <span className="text-[#f97316] text-xs font-black uppercase tracking-[0.3em] shadow-sm">
+                                Inovação e Crescimento
+                            </span>
+                            <span className="w-[20px] h-[1px] bg-white opacity-60"></span>
+                        </div>
                         <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight">
                             Mantenha-se informado
                         </h2>
-                        <p className="text-slate-200 text-base md:text-lg leading-relaxed max-w-3xl mx-auto font-medium">
+                        <p className="text-slate-200 text-sm md:text-base leading-relaxed max-w-3xl mx-auto font-medium">
                             Oferecemos serviços dinâmicos para facilitar suas actividades com vista a melhorar a produção. Fornecemos auxílio na busca por soluções assertivas de forma eficiente. Explore as categorias disponíveis abaixo
                         </p>
                     </div>
 
-                    <div className="inline-flex items-center gap-4 flex-wrap justify-center mt-[35px]">
+                    <div className="inline-flex items-center gap-4 flex-wrap justify-center mt-5">
                         <button
                             onClick={() => setActiveTab("informacoes")}
-                            className={`px-8 py-3 rounded-md text-base font-bold transition-all backdrop-blur-md border transition-all duration-300 ${activeTab === "informacoes"
+                            className={`px-8 py-3 rounded-[5px] text-base font-bold transition-all backdrop-blur-md border transition-all duration-300 ${activeTab === "informacoes"
                                 ? "bg-[#f97316] border-[#f97316] text-white shadow-[0_0_20px_rgba(249,115,22,0.4)]"
                                 : "bg-white/10 border-white/20 text-white hover:bg-white/20"
                                 }`}
@@ -150,7 +166,7 @@ export function InfoSection() {
                         </button>
                         <button
                             onClick={() => setActiveTab("estatisticas")}
-                            className={`px-8 py-3 rounded-md text-base font-bold transition-all backdrop-blur-md border transition-all duration-300 ${activeTab === "estatisticas"
+                            className={`px-8 py-3 rounded-[5px] text-base font-bold transition-all backdrop-blur-md border transition-all duration-300 ${activeTab === "estatisticas"
                                 ? "bg-[#f97316] border-[#f97316] text-white shadow-[0_0_20px_rgba(249,115,22,0.4)]"
                                 : "bg-white/10 border-white/20 text-white hover:bg-white/20"
                                 }`}
@@ -159,7 +175,7 @@ export function InfoSection() {
                         </button>
                         <button
                             onClick={() => setActiveTab("categorias")}
-                            className={`px-8 py-3 rounded-md text-base font-bold transition-all backdrop-blur-md border transition-all duration-300 ${activeTab === "categorias"
+                            className={`px-8 py-3 rounded-[5px] text-base font-bold transition-all backdrop-blur-md border transition-all duration-300 ${activeTab === "categorias"
                                 ? "bg-[#f97316] border-[#f97316] text-white shadow-[0_0_20px_rgba(249,115,22,0.4)]"
                                 : "bg-white/10 border-white/20 text-white hover:bg-white/20"
                                 }`}
@@ -190,7 +206,13 @@ export function InfoSection() {
                                                 }`}
                                         >
                                             <div className="flex items-start gap-4">
-                                                <div className={`w-12 h-12 rounded-[5px] flex items-center justify-center shrink-0 ${card.iconBg}`}>
+                                                <div className={`w-12 h-12 rounded-[5px] flex items-center justify-center shrink-0 ${card.iconBg} ${card.title.toLowerCase().includes('visibilidade') ||
+                                                        card.title.toLowerCase().includes('crescimento') ||
+                                                        card.title.toLowerCase().includes('scanner') ||
+                                                        card.title.toLowerCase().includes('doctor')
+                                                        ? "border-2 border-[#f97316]"
+                                                        : ""
+                                                    }`}>
                                                     <card.icon className={`h-6 w-6 ${card.iconColor}`} />
                                                 </div>
                                                 <div className="space-y-2">
@@ -209,7 +231,7 @@ export function InfoSection() {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
                                     <div className="bg-white p-8 rounded-[12px] shadow-xl shadow-slate-200 border border-slate-100 space-y-6">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center">
+                                            <div className="w-12 h-12 rounded-[5px] bg-orange-50 flex items-center justify-center">
                                                 <BarChart3 className="text-[#f97316] h-6 w-6" />
                                             </div>
                                             <h3 className="text-2xl font-bold text-slate-600">Mercado Agrário</h3>
@@ -246,9 +268,9 @@ export function InfoSection() {
                             {activeTab === "informacoes" && (
                                 <div className="relative group/embla">
                                     <div className="overflow-hidden" ref={emblaRef}>
-                                        <div className="flex">
+                                        <div className="flex -mr-[15px]">
                                             {articlesData.map((news, i) => (
-                                                <div key={i} className="flex-[0_0_100%] md:flex-[0_0_33.33%] min-w-0 pl-6">
+                                                <div key={i} className="flex-[0_0_100%] md:flex-[0_0_33.33%] min-w-0 pr-[15px]">
                                                     <Link
                                                         href={news.slug ? `/artigos/${news.slug}` : "#"}
                                                         className="bg-white rounded-[12px] shadow-lg border border-slate-100 flex flex-col group cursor-pointer hover:border-[#f97316] transition-all overflow-hidden h-full"
@@ -259,7 +281,7 @@ export function InfoSection() {
                                                                 alt={news.title}
                                                                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                                             />
-                                                            <div className="absolute top-4 left-4 bg-[#f97316] text-white text-[10px] font-black uppercase px-3 py-1 rounded-full">
+                                                            <div className="absolute top-4 left-4 bg-[#f97316] text-white text-[10px] font-black uppercase px-3 py-1 rounded-[5px]">
                                                                 {news.type || "Artigo"}
                                                             </div>
                                                         </div>
@@ -275,7 +297,7 @@ export function InfoSection() {
                                                                     {news.subtitle || news.description}
                                                                 </p>
                                                             </div>
-                                                            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 group-hover:text-[#3a3f47] transition-colors mt-auto pt-6">
+                                                            <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 group-hover:text-[#f97316] transition-colors mt-auto pt-6">
                                                                 Explorar <ArrowRight className="h-3 w-3" />
                                                             </div>
                                                         </div>

@@ -1,175 +1,135 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { ArrowRight, Building2, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import useEmblaCarousel from 'embla-carousel-react';
+import Autoplay from 'embla-carousel-autoplay';
 
 interface CategoriesShowcaseProps {
     companies: any[];
 }
 
 export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
-    // items is now derived from props
     const items = companies || [];
-    // Always buffer for the maximum (4), so the loop works for both mobile (1) and desktop (4)
-    const itemsPerPage = 4;
 
-    const [currentIndex, setCurrentIndex] = useState(itemsPerPage);
-    const [isTransitioning, setIsTransitioning] = useState(false);
+    const [emblaRef, emblaApi] = useEmblaCarousel(
+        { loop: true, align: 'start', skipSnaps: false },
+        [Autoplay({ delay: 5000, stopOnInteraction: true, stopOnMouseEnter: true })]
+    );
 
-    // Lógica de Loop Infinito: Clonar itens (Início e Fim)
-    const extendedItems = useMemo(() => {
-        if (items.length === 0) return [];
-        // Se tivermos poucos itens, duplicar o suficiente para preencher o slider
-        const safeItems = items.length < itemsPerPage ? [...items, ...items, ...items, ...items] : items;
-        return [
-            ...safeItems.slice(-itemsPerPage),
-            ...safeItems,
-            ...safeItems.slice(0, itemsPerPage)
-        ];
-    }, [items, itemsPerPage]);
+    const [selectedIndex, setSelectedIndex] = useState(0);
 
-    const nextSlide = useCallback(() => {
-        if (isTransitioning || items.length === 0) return;
-        setIsTransitioning(true);
-        setCurrentIndex(prev => prev + 1);
-    }, [isTransitioning, items.length]);
+    const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
+    const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
 
-    const prevSlide = useCallback(() => {
-        if (isTransitioning || items.length === 0) return;
-        setIsTransitioning(true);
-        setCurrentIndex(prev => prev - 1);
-    }, [isTransitioning, items.length]);
+    const onSelect = useCallback(() => {
+        if (!emblaApi) return;
+        setSelectedIndex(emblaApi.selectedScrollSnap());
+    }, [emblaApi, setSelectedIndex]);
 
-    // Tratar Fim da Transição (Salto de Loop Infinito)
-    const handleTransitionEnd = () => {
-        setIsTransitioning(false);
-        // Ajustar lógica de reset baseada no tamanho real
-        const totalReal = extendedItems.length - (itemsPerPage * 2);
-
-        if (currentIndex >= totalReal + itemsPerPage) {
-            setCurrentIndex(itemsPerPage);
-        } else if (currentIndex < itemsPerPage) {
-            setCurrentIndex(totalReal + currentIndex);
-        }
-    };
-
-    // Reprodução Automática
     useEffect(() => {
-        if (items.length === 0) return;
-        const timer = setInterval(nextSlide, 7000);
-        return () => clearInterval(timer);
-    }, [nextSlide, items.length]);
+        if (!emblaApi) return;
+        onSelect();
+        emblaApi.on('select', onSelect);
+        emblaApi.on('reInit', onSelect);
+    }, [emblaApi, onSelect]);
 
     if (items.length === 0) return null;
 
     return (
-        <section className="w-full bg-transparent py-14 relative overflow-hidden">
-            {/* Elementos Decorativos de Fundo */}
+        <section className="w-full bg-transparent pt-[35px] pb-[35px] relative overflow-hidden">
+            {/* Background Decorative Elements */}
             <div className="absolute top-0 right-0 w-1/3 h-full bg-emerald-50/30 blur-[100px] pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-1/4 h-1/2 bg-orange-50/20 blur-[80px] pointer-events-none" />
 
             <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10">
-
-                {/* Cabeçalho */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-10 gap-4">
-                    <div className="flex items-center gap-4 order-1">
-                        <div className="w-1 h-8 bg-[#f97316]"></div> {/* Linha Vertical Laranja */}
+                {/* Header - Fixed margins as requested: mb-[35px] for card spacing, no top/bottom margin for section/title area */}
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-[35px] gap-4">
+                    <div className="flex items-center gap-4">
+                        <div className="w-1 h-8 bg-[#f97316]"></div>
                         <h2 className="text-[20px] md:text-[25px] font-heading font-extrabold text-slate-600 uppercase tracking-tight">
                             Empresas em destaque
                         </h2>
                     </div>
-
-                    <div className="flex space-x-4 order-2 md:order-2 self-end md:self-auto">
-                        <button
-                            onClick={prevSlide}
-                            className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white border border-gray-200 text-gray-400 hover:text-[#f97316] hover:border-[#f97316] transition-all rounded-full"
-                        >
-                            <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
-                        </button>
-                        <button
-                            onClick={nextSlide}
-                            className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white border border-gray-200 text-gray-400 hover:text-[#f97316] hover:border-[#f97316] transition-all rounded-full"
-                        >
-                            <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
-                        </button>
-                    </div>
                 </div>
 
-                {/* Contentor do Slider */}
-                <div className="w-full overflow-hidden py-4 pb-10">
-                    <div
-                        className={`flex ${isTransitioning ? 'transition-transform duration-[800ms] ease-out' : ''} [--items-visible:1] md:[--items-visible:4]`}
-                        style={{
-                            // Width of container = (Total Items / Visible Items) * 100%
-                            width: `calc(${extendedItems.length} * (100% / var(--items-visible)))`,
-                            transform: `translateX(-${currentIndex * (100 / extendedItems.length)}%)`,
-                        } as React.CSSProperties}
-                        onTransitionEnd={handleTransitionEnd}
-                    >
-                        {extendedItems.map((company, i) => {
-                            const Icon = company.icon || Building2;
-                            // Safe split
-                            const parts = (company.sub || "").split(" - ");
-                            const category = parts[0] || "Empresa";
-                            const activity = parts[1] || company.sub || "Actividade";
-                            // @ts-ignore
-                            const location = company.location || "Moçambique";
+                {/* Slider Container */}
+                <div className="relative group/embla">
+                    <div className="overflow-hidden" ref={emblaRef}>
+                        <div className="flex -mr-[15px]">
+                            {items.map((company, i) => {
+                                const Icon = company.icon || Building2;
+                                const parts = (company.sub || "").split(" - ");
+                                const category = parts[0] || "Empresa";
+                                const activity = parts[1] || company.sub || "Actividade";
+                                const location = company.location || "Moçambique";
 
-                            return (
-                                <div key={i} className="px-3" style={{ width: `calc(100% / ${extendedItems.length})` }}>
-                                    <Link href={`/detalhes/${i}`} className="group block h-full">
-                                        <div className="bg-white p-6 rounded-[15px] border border-slate-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-500 flex flex-col h-full relative overflow-hidden">
+                                return (
+                                    <div
+                                        key={i}
+                                        className="flex-[0_0_100%] sm:flex-[0_0_50%] lg:flex-[0_0_25%] min-w-0 pr-[15px] pb-10"
+                                    >
+                                        <Link href={`/detalhes/${i}`} className="group block h-full">
+                                            <div className="bg-white p-6 rounded-[15px] border border-slate-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-500 flex flex-col h-full relative overflow-hidden">
 
-                                            {/* Cabeçalho: Logo Esquerda - Categoria/Localização Direita */}
-                                            <div className="flex justify-between items-start mb-6">
-                                                {/* Logo Esquerda */}
-                                                <div className="shrink-0">
-                                                    {company.logo ? (
-                                                        <div className="w-12 h-12 rounded-[10px] overflow-hidden border border-gray-100 bg-white flex items-center justify-center">
-                                                            <Image src={company.logo} alt={company.title} width={48} height={48} className="w-full h-full object-contain p-1" />
-                                                        </div>
-                                                    ) : (
-                                                        <div className="w-12 h-12 rounded-[10px] flex items-center justify-center bg-emerald-50 text-emerald-600 group-hover:bg-[#f97316] group-hover:text-white transition-all duration-500">
-                                                            <Icon className="w-6 h-6" />
-                                                        </div>
-                                                    )}
-                                                </div>
-
-                                                {/* Categoria e Localização Direita */}
-                                                <div className="flex flex-col items-end">
-                                                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-[#f97316] transition-colors line-clamp-1 text-right">
-                                                        {category}
+                                                <div className="flex justify-between items-start mb-6">
+                                                    <div className="shrink-0">
+                                                        {company.logo ? (
+                                                            <div className="w-12 h-12 rounded-[10px] overflow-hidden border border-gray-100 bg-white flex items-center justify-center">
+                                                                <Image src={company.logo} alt={company.title} width={48} height={48} className="w-full h-full object-contain p-1" />
+                                                            </div>
+                                                        ) : (
+                                                            <div className="w-12 h-12 rounded-[10px] flex items-center justify-center bg-emerald-50 text-emerald-600 group-hover:bg-[#f97316] group-hover:text-white transition-all duration-500">
+                                                                <Icon className="w-6 h-6" />
+                                                            </div>
+                                                        )}
                                                     </div>
-                                                    <div className="text-[10px] text-slate-300 font-medium mt-1">
-                                                        {location}
+
+                                                    <div className="flex flex-col items-end">
+                                                        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-[#f97316] transition-colors line-clamp-1 text-right">
+                                                            {category}
+                                                        </div>
+                                                        <div className="text-[10px] text-slate-300 font-medium mt-1">
+                                                            {location}
+                                                        </div>
                                                     </div>
                                                 </div>
+
+                                                <h3 className="text-[15px] font-bold text-slate-600 mb-[8px] group-hover:text-[#3a3f47] transition-colors whitespace-nowrap overflow-hidden text-ellipsis">
+                                                    {company.title}
+                                                </h3>
+
+                                                <p className="text-slate-400 text-xs leading-relaxed mb-[8px] flex-1 line-clamp-1">
+                                                    {activity}
+                                                </p>
+
+                                                <div className="pt-2 border-t border-slate-50 flex items-center justify-start gap-2 text-slate-400 group-hover:text-[#f97316] transition-colors">
+                                                    <span className="text-[10px] font-black uppercase tracking-wider">Ver detalhes</span>
+                                                    <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                                                </div>
                                             </div>
-
-                                            {/* Título: Nome da Empresa */}
-                                            <h3 className="text-[15px] font-bold text-slate-600 mb-[8px] group-hover:text-[#3a3f47] transition-colors whitespace-nowrap overflow-hidden text-ellipsis">
-                                                {company.title}
-                                            </h3>
-
-                                            {/* Corpo: Atividade */}
-                                            <p className="text-slate-400 text-xs leading-relaxed mb-[8px] flex-1 line-clamp-1">
-                                                {activity}
-                                            </p>
-
-                                            {/* Rodapé: Ver detalhes + Seta Direita */}
-                                            <div className="pt-2 border-t border-slate-50 flex items-center justify-start gap-2 text-slate-400 group-hover:text-[#f97316] transition-colors">
-                                                <span className="text-[10px] font-black uppercase tracking-wider">Ver detalhes</span>
-                                                <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-
-                                            </div>
-                                        </div>
-                                    </Link>
-                                </div>
-                            );
-                        })}
+                                        </Link>
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
+
+                    {/* Navigation Arrows */}
+                    <button
+                        onClick={scrollPrev}
+                        className="absolute top-1/2 -left-4 md:-left-12 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all z-10"
+                    >
+                        <ChevronLeft className="h-6 w-6" />
+                    </button>
+                    <button
+                        onClick={scrollNext}
+                        className="absolute top-1/2 -right-4 md:-right-12 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all z-10"
+                    >
+                        <ChevronRight className="h-6 w-6" />
+                    </button>
                 </div>
             </div>
         </section>

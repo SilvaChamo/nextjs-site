@@ -1,114 +1,90 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { CompanyCard } from './CompanyCard';
 import { FEATURED_COMPANIES } from '@/lib/constants';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import useEmblaCarousel from 'embla-carousel-react';
+import Autoplay from 'embla-carousel-autoplay';
 
 export function FeaturedCompanies() {
     const items = FEATURED_COMPANIES;
 
-    const getVisibleItems = () => {
-        // Check if window is defined (client-side)
-        if (typeof window === 'undefined') return 4;
-        if (window.innerWidth < 768) return 1;
-        if (window.innerWidth < 1024) return 2;
-        return 4; // Default to 4 for consistency with design
-    };
+    const [emblaRef, emblaApi] = useEmblaCarousel(
+        { loop: true, align: 'start', skipSnaps: false },
+        [Autoplay({ delay: 5000, stopOnInteraction: true, stopOnMouseEnter: true })]
+    );
 
-    // State
-    const [visibleItems, setVisibleItems] = useState(4); // Start with default
-    const [mounting, setMounting] = useState(true);
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
 
-    // Initialize correct visible items on client mount
-    useEffect(() => {
-        setVisibleItems(getVisibleItems());
-        setMounting(false);
+    const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
+    const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
+    const scrollTo = useCallback((index: number) => emblaApi && emblaApi.scrollTo(index), [emblaApi]);
 
-        const handleResize = () => setVisibleItems(getVisibleItems());
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-    // Infinite Scroll Logic
-    const extendedItems = useMemo(() => [
-        ...items.slice(-visibleItems),
-        ...items,
-        ...items.slice(0, visibleItems)
-    ], [items, visibleItems]);
-
-    const [currentIndex, setCurrentIndex] = useState(visibleItems);
-    const [isTransitioning, setIsTransitioning] = useState(false);
-
-    const nextSlide = useCallback(() => {
-        if (isTransitioning) return;
-        setIsTransitioning(true);
-        setCurrentIndex(prev => prev + 1);
-    }, [isTransitioning]);
-
-    const prevSlide = useCallback(() => {
-        if (isTransitioning) return;
-        setIsTransitioning(true);
-        setCurrentIndex(prev => prev - 1);
-    }, [isTransitioning]);
-
-
-    // Helper for onTransitionEnd prop
-    const onTransitionEnd = () => {
-        setIsTransitioning(false);
-        if (currentIndex >= items.length + visibleItems) {
-            setCurrentIndex(visibleItems);
-        } else if (currentIndex < visibleItems) {
-            setCurrentIndex(currentIndex + items.length);
-        }
-    };
-
+    const onSelect = useCallback(() => {
+        if (!emblaApi) return;
+        setSelectedIndex(emblaApi.selectedScrollSnap());
+    }, [emblaApi, setSelectedIndex]);
 
     useEffect(() => {
-        const timer = setInterval(nextSlide, 7000);
-        return () => clearInterval(timer);
-    }, [nextSlide]);
-
-    if (mounting) return <div className="h-[600px] w-full bg-gray-50/50 animate-pulse"></div>;
+        if (!emblaApi) return;
+        onSelect();
+        setScrollSnaps(emblaApi.scrollSnapList());
+        emblaApi.on('select', onSelect);
+        emblaApi.on('reInit', onSelect);
+    }, [emblaApi, setScrollSnaps, onSelect]);
 
     return (
         <div className="w-full bg-[#fdfdfd] overflow-hidden">
             <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] py-24 flex flex-col justify-center animate-in fade-in duration-[1200ms] w-full">
                 <div className="mb-16 w-full">
                     <div className="flex justify-between items-center mb-10">
-                        <h2 className="text-slate-900 font-black text-[11px] md:text-[13px] tracking-[0.7em] uppercase">Empresas em Destaque</h2>
-                        <div className="flex space-x-4">
-                            <button
-                                onClick={prevSlide}
-                                className="w-14 h-14 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-[#f97316] hover:border-[#f97316] hover:bg-orange-50 transition-all duration-500 bg-white shadow-xl active:scale-90"
-                            >
-                                <ChevronLeft className="w-5 h-5" />
-                            </button>
-                            <button
-                                onClick={nextSlide}
-                                className="w-14 h-14 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-[#f97316] hover:border-[#f97316] hover:bg-orange-50 transition-all duration-500 bg-white shadow-xl active:scale-90"
-                            >
-                                <ChevronRight className="w-5 h-5" />
-                            </button>
-                        </div>
+                        <h2 className="text-slate-900 font-black text-[11px] md:text-[13px] tracking-[0.7em] uppercase">
+                            Empresas em Destaque
+                        </h2>
                     </div>
 
-                    <div className="relative overflow-visible w-full">
-                        <div className="overflow-hidden py-5">
-                            <div
-                                className={`flex -mx-[10px] ${isTransitioning ? 'transition-transform duration-[1000ms] cubic-bezier(0.19, 1, 0.22, 1)' : ''}`}
-                                style={{
-                                    transform: `translateX(-${currentIndex * (100 / extendedItems.length)}%)`,
-                                    width: `${(extendedItems.length / visibleItems) * 100}%`
-                                }}
-                                onTransitionEnd={onTransitionEnd}
-                            >
-                                {extendedItems.map((company, idx) => (
-                                    <div key={`${company.id}-${idx}`} className="px-[10px]" style={{ width: `${100 / extendedItems.length}%`, flexShrink: 0 }}>
+                    <div className="relative group/embla">
+                        <div className="overflow-hidden" ref={emblaRef}>
+                            <div className="flex -mr-[15px]">
+                                {items.map((company, idx) => (
+                                    <div
+                                        key={`${company.id}-${idx}`}
+                                        className="flex-[0_0_100%] sm:flex-[0_0_50%] lg:flex-[0_0_25%] min-w-0 pr-[15px]"
+                                    >
                                         <CompanyCard company={company} />
                                     </div>
                                 ))}
                             </div>
+                        </div>
+
+                        {/* Navigation Arrows - Match InfoSection position and style */}
+                        <button
+                            onClick={scrollPrev}
+                            className="absolute top-1/2 -left-4 md:-left-12 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all z-10"
+                        >
+                            <ChevronLeft className="h-6 w-6" />
+                        </button>
+                        <button
+                            onClick={scrollNext}
+                            className="absolute top-1/2 -right-4 md:-right-12 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all z-10"
+                        >
+                            <ChevronRight className="h-6 w-6" />
+                        </button>
+
+                        <div className="flex justify-center gap-2 mt-10">
+                            {scrollSnaps.map((_, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => scrollTo(index)}
+                                    className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${index === selectedIndex
+                                        ? "bg-[#f97316] w-12"
+                                        : "bg-slate-300 hover:bg-slate-400"
+                                        }`}
+                                    aria-label={`Ir para slide ${index + 1}`}
+                                />
+                            ))}
                         </div>
                     </div>
                 </div>

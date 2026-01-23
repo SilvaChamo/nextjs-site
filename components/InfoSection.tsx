@@ -146,7 +146,7 @@ export function InfoSection() {
                             </span>
                             <span className="w-[20px] h-[1px] bg-white opacity-60"></span>
                         </div>
-                        <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight">
+                        <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight mt-6">
                             Mantenha-se informado
                         </h2>
                         <p className="text-slate-200 text-sm md:text-base leading-relaxed max-w-3xl mx-auto font-medium">
@@ -207,11 +207,11 @@ export function InfoSection() {
                                         >
                                             <div className="flex items-start gap-4">
                                                 <div className={`w-12 h-12 rounded-[5px] flex items-center justify-center shrink-0 ${card.iconBg} ${card.title.toLowerCase().includes('visibilidade') ||
-                                                        card.title.toLowerCase().includes('crescimento') ||
-                                                        card.title.toLowerCase().includes('scanner') ||
-                                                        card.title.toLowerCase().includes('doctor')
-                                                        ? "border-2 border-[#f97316]"
-                                                        : ""
+                                                    card.title.toLowerCase().includes('crescimento') ||
+                                                    card.title.toLowerCase().includes('scanner') ||
+                                                    card.title.toLowerCase().includes('doctor')
+                                                    ? "border-2 border-[#f97316]"
+                                                    : ""
                                                     }`}>
                                                     <card.icon className={`h-6 w-6 ${card.iconColor}`} />
                                                 </div>

@@ -10,12 +10,12 @@ export function MobileAppSection() {
             <div className="absolute top-0 right-0 w-1/2 h-full bg-slate-50/50 -skew-x-12 translate-x-1/4 pointer-events-none"></div>
 
             <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10">
-                <div className="grid lg:grid-cols-[60%_1fr] gap-16 items-center">
+                <div className="grid lg:grid-cols-[50%_1fr] gap-16 items-center">
 
                     {/* Left Column: Content */}
                     <div className="space-y-6 text-center lg:text-left z-10 transition-all duration-700 delay-100 transform translate-y-0 opacity-100">
                         <div>
-                            <h2 className="text-[32px] md:text-[50px] font-heading font-black text-slate-600 leading-[1.1] tracking-tight mb-2">
+                            <h2 className="text-[32px] md:text-[50px] font-heading font-black text-emerald-600 leading-[1.1] tracking-tight mb-2">
                                 HerbariumAI
                             </h2>
                             <h3 className="text-[32px] md:text-[50px] font-heading font-black text-slate-600 mb-6 leading-[1.1] tracking-tight">

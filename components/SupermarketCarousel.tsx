@@ -16,24 +16,28 @@ export function SupermarketCarousel() {
         {
             name: "Shoprite",
             logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Shoprite_Holdings_Logo.svg/1200px-Shoprite_Holdings_Logo.svg.png",
+            bgImage: "/images/markets/shoprite_bg.png",
             color: "bg-red-50",
             borderColor: "border-red-100"
         },
         {
             name: "Spar",
             logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Spar_Logo.svg/1200px-Spar_Logo.svg.png",
+            bgImage: "/images/markets/spar_bg.png",
             color: "bg-emerald-50",
             borderColor: "border-emerald-100"
         },
         {
             name: "Choppies",
             logo: "https://upload.wikimedia.org/wikipedia/commons/2/28/Choppies_Logo.png",
+            bgImage: "/images/markets/choppies_bg.png",
             color: "bg-orange-50",
             borderColor: "border-orange-100"
         },
         {
             name: "Super Marés",
-            logo: "https://lh3.googleusercontent.com/p/AF1QipN3XQ_lqX_lqX_lqX_lqX_lqX_lqX_lqX_lqX", // General placeholder as specific logo might be hard to fetch
+            logo: "https://lh3.googleusercontent.com/p/AF1QipN3XQ_lqX_lqX_lqX_lqX_lqX_lqX_lqX_lqX",
+            bgImage: "/images/markets/premier_bg.png", // Reusing premier style for Marés
             fallbackText: "Super Marés",
             color: "bg-blue-50",
             borderColor: "border-blue-100"
@@ -41,12 +45,14 @@ export function SupermarketCarousel() {
         {
             name: "Premier",
             logo: "https://premier.co.mz/wp-content/uploads/2021/09/Logo-Premier-1.png",
+            bgImage: "/images/markets/premier_bg.png",
             color: "bg-slate-50",
             borderColor: "border-slate-100"
         },
         {
             name: "Woolworths",
             logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Woolworths_logo.svg/1200px-Woolworths_logo.svg.png",
+            bgImage: "/images/markets/woolworths_bg.png",
             color: "bg-neutral-50",
             borderColor: "border-neutral-100"
         }
@@ -74,8 +80,18 @@ export function SupermarketCarousel() {
                 <CarouselContent className="-ml-2 md:-ml-4">
                     {supermarkets.map((market, index) => (
                         <CarouselItem key={index} className="pl-2 md:pl-4 basis-1/2 md:basis-1/3 lg:basis-1/4">
-                            <div className={`p-4 rounded-2xl border ${market.borderColor} ${market.color} h-32 flex flex-col items-center justify-center gap-2 group cursor-pointer hover:shadow-md transition-all`}>
-                                <div className="relative w-full h-12 flex items-center justify-center">
+                            <div className={`relative p-4 rounded-2xl border overflow-hidden ${market.borderColor} ${market.color} h-32 flex flex-col items-center justify-center gap-2 group cursor-pointer hover:shadow-md transition-all`}>
+                                {/* Background Image with Overlay */}
+                                <div className="absolute inset-0 z-0">
+                                    <img
+                                        src={market.bgImage}
+                                        alt=""
+                                        className="w-full h-full object-cover opacity-10 group-hover:opacity-20 transition-opacity"
+                                    />
+                                    <div className="absolute inset-0 bg-white/40"></div>
+                                </div>
+
+                                <div className="relative z-10 w-full h-12 flex items-center justify-center">
                                     {market.fallbackText ? (
                                         <span className="font-black text-slate-700 text-center leading-tight">{market.fallbackText}</span>
                                     ) : (

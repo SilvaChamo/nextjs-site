@@ -5,6 +5,7 @@ import NavFooterToggle from "./components/NavFooterToggle";
 
 import { ThemeProvider } from "@/components/theme-provider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { FloatingChatButton } from "@/components/FloatingChatButton";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -60,6 +61,7 @@ export default function RootLayout({
           <LanguageProvider>
             <NavFooterToggle>
               {children}
+              <FloatingChatButton />
               <div id="google_translate_element" style={{ display: 'none' }}></div>
             </NavFooterToggle>
           </LanguageProvider>

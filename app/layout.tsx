@@ -8,6 +8,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { FloatingChatButton } from "@/components/FloatingChatButton";
 
+import { GoogleTranslate } from "@/components/GoogleTranslate";
+
 const montserrat = Montserrat({
   subsets: ["latin"],
   variable: "--font-montserrat",
@@ -53,6 +55,7 @@ export default function RootLayout({
       </head>
       <body
         className={`${montserrat.variable} ${mavenPro.variable} font-sans antialiased bg-background min-h-screen flex flex-col`}
+        suppressHydrationWarning
       >
         <ThemeProvider
           defaultTheme="system"
@@ -61,9 +64,11 @@ export default function RootLayout({
         >
           <LanguageProvider>
             <NavFooterToggle>
-              {children}
+              <main className="flex-1 flex flex-col">
+                {children}
+              </main>
               <FloatingChatButton />
-              <div id="google_translate_element" style={{ display: 'none' }}></div>
+              <GoogleTranslate />
             </NavFooterToggle>
           </LanguageProvider>
         </ThemeProvider>

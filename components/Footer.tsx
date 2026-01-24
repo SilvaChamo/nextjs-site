@@ -17,9 +17,9 @@ export function Footer() {
 
                 <div className="container-site relative z-10">
                     {/* RE-RENDERING GRID STRUCTURE FOR ACCURACY */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 mb-12">
                         {/* 1. Brand */}
-                        <div className="col-span-1 lg:col-span-1 space-y-4">
+                        <div className="col-span-1 lg:col-span-3 space-y-4">
                             <div className="flex flex-col items-start gap-1">
                                 {/* Logo Image */}
                                 <div className="w-32">
@@ -30,13 +30,13 @@ export function Footer() {
                                     />
                                 </div>
                             </div>
-                            <p className="text-gray-400 text-xs leading-relaxed">
+                            <p className="text-gray-400 text-sm leading-tight">
                                 Criado para impulsionar o sector agrário, através de facilitação ao acesso à informação e divulgação de dados agricolas e iniciativas do desenvolvimento do sector.
                             </p>
                         </div>
 
                         {/* 2. Links Internos */}
-                        <div className="col-span-1 space-y-4">
+                        <div className="col-span-1 lg:col-span-2 space-y-4">
                             <h3 className="text-lg font-bold text-gray-200">Links internos</h3>
                             <ul className="space-y-2 text-sm text-gray-400">
                                 <li><Link href="/sobre-nos" className="hover:text-[#f97316] transition-colors">Sobre nós</Link></li>
@@ -49,7 +49,7 @@ export function Footer() {
                         </div>
 
                         {/* 3. Links Rápidos */}
-                        <div className="col-span-1 space-y-4">
+                        <div className="col-span-1 lg:col-span-2 space-y-4">
                             <h3 className="text-lg font-bold text-gray-200">Links rápidos</h3>
                             <ul className="space-y-2 text-sm text-gray-400">
                                 <li><Link href="#" className="hover:text-[#f97316] transition-colors">Agro-negócio</Link></li>
@@ -62,7 +62,7 @@ export function Footer() {
                         </div>
 
                         {/* 4. Nossos Serviços */}
-                        <div className="col-span-1 space-y-4">
+                        <div className="col-span-1 lg:col-span-2 space-y-4">
                             <h3 className="text-lg font-bold text-gray-200">Nossos Serviços</h3>
                             <ul className="space-y-2 text-sm text-gray-400">
                                 <li><Link href="/servicos/transporte" className="hover:text-[#f97316] transition-colors">Logística & Transporte</Link></li>
@@ -75,8 +75,11 @@ export function Footer() {
                         </div>
 
                         {/* 5. Newsletter */}
-                        <div className="col-span-1 lg:col-span-1 space-y-4">
+                        <div className="col-span-1 lg:col-span-3 space-y-4">
                             <h3 className="text-lg font-bold text-gray-200">Newsletter</h3>
+                            <p className="text-gray-400 text-xs leading-tight">
+                                Receba as últimas actualizações e oportunidades do mercado agrário directamente no seu e-mail.
+                            </p>
                             <div className="space-y-[10px]">
                                 <input
                                     type="email"
@@ -92,7 +95,7 @@ export function Footer() {
                     </div>
 
                     {/* Bottom Bar: Legal Links & Socials */}
-                    <div className="border-t border-gray-500 pt-4 pb-2 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div className="border-t border-gray-500 pt-4 pb-4 flex flex-col md:flex-row justify-between items-center gap-4">
                         <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-gray-400 text-[10px] font-bold uppercase tracking-wider">
                             <Link href="/politica-privacidade" className="hover:text-[#f97316] transition-colors">Política de privacidade</Link>
                             <Link href="/termos" className="hover:text-[#f97316] transition-colors">Termos e condições</Link>

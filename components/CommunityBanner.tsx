@@ -80,7 +80,7 @@ export function CommunityBanner() {
                         {/* Green Button with Orange Hover */}
                         <Link
                             href="/registar"
-                            className="inline-block bg-[#22c55e]/10 text-[#22c55e] border border-[#22c55e] hover:bg-transparent hover:text-[#f97316] hover:border-[#f97316] text-xs font-bold px-8 py-3 rounded-md transition-all duration-300 shadow-md"
+                            className="inline-block bg-[#22c55e]/10 text-[#22c55e] border border-[#22c55e] hover:bg-transparent hover:text-[#f97316] hover:border-[#f97316] text-xs font-bold px-8 py-3 rounded-[7px] transition-all duration-300 shadow-md"
                         >
                             Registe se aqui
                         </Link>

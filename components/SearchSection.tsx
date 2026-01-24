@@ -97,14 +97,14 @@ export function SearchSection({ isOpen, withBottomBorder = false }: SearchSectio
                 <div className="w-full px-4 md:px-[60px]">
                     <div className="max-w-3xl mx-auto relative z-20">
                         <div className="relative">
-                            <div className="relative bg-white rounded-[10px] shadow-sm h-12 flex items-center border border-gray-200 transition-all duration-300 overflow-hidden my-[15px]">
+                            <div className="relative bg-white rounded-[5px] shadow-sm h-12 flex items-center border border-gray-200 transition-all duration-300 overflow-hidden my-[15px]">
 
                                 <div className="pl-6 text-gray-400">
                                     <Search className="h-5 w-5" />
                                 </div>
 
                                 <Input
-                                    className="border-none shadow-none focus-visible:ring-0 text-base h-full bg-transparent placeholder:text-gray-400 flex-1 px-4 my-1 ml-2 rounded-[4px]"
+                                    className="border-none shadow-none focus-visible:ring-0 text-base h-full bg-transparent placeholder:text-gray-400 flex-1 px-4 my-1 ml-2 rounded-[5px]"
                                     placeholder="O que procura hoje?"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -113,7 +113,7 @@ export function SearchSection({ isOpen, withBottomBorder = false }: SearchSectio
                                 {/* Category Selector inside Search Bar (RIGHT SIDE) */}
                                 <Popover open={isCategoryOpen} onOpenChange={setIsCategoryOpen}>
                                     <PopoverTrigger asChild>
-                                        <button className="flex items-center gap-2 px-6 h-full border-l border-gray-100 bg-gray-100 hover:bg-gray-200 transition-colors rounded-r-[10px] group">
+                                        <button className="flex items-center gap-2 px-6 h-full border-l border-gray-100 bg-gray-100 hover:bg-gray-200 transition-colors rounded-r-[5px] group">
                                             <span className="text-xs font-bold text-gray-400 uppercase tracking-wider hidden sm:block whitespace-nowrap">
                                                 {currentCat.label}
                                             </span>

@@ -250,24 +250,24 @@ export function Navbar() {
                                                             placeholder="Nome"
                                                             value={contactForm.name}
                                                             onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
-                                                            className="rounded-[10px] bg-white border-none h-8 px-3 text-xs text-gray-700 placeholder:text-gray-400 shadow-sm"
+                                                            className="rounded-[7px] bg-white border-none h-8 px-3 text-xs text-gray-700 placeholder:text-gray-400 shadow-sm"
                                                         />
                                                         <Input
                                                             placeholder="E-mail"
                                                             value={contactForm.email}
                                                             onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
-                                                            className="rounded-[10px] bg-white border-none h-8 px-3 text-xs text-gray-700 placeholder:text-gray-400 shadow-sm"
+                                                            className="rounded-[7px] bg-white border-none h-8 px-3 text-xs text-gray-700 placeholder:text-gray-400 shadow-sm"
                                                         />
                                                         <Textarea
                                                             placeholder="Mensagem"
                                                             value={contactForm.message}
                                                             onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
-                                                            className="rounded-[10px] bg-white border-none resize-none px-3 py-2 text-xs text-gray-700 placeholder:text-gray-400 shadow-sm flex-1 min-h-[80px]"
+                                                            className="rounded-[7px] bg-white border-none resize-none px-3 py-2 text-xs text-gray-700 placeholder:text-gray-400 shadow-sm flex-1 min-h-[80px]"
                                                         />
                                                         <Button
                                                             onClick={handleContactSubmit}
                                                             disabled={loading.contact}
-                                                            className="w-full rounded-[10px] bg-emerald-950 text-white hover:bg-[#f97316] transition-all font-bold h-8 text-[10px] shadow-sm self-start uppercase tracking-wider"
+                                                            className="w-full rounded-[7px] bg-[#f97316] text-white hover:bg-[#ea580c] transition-all font-bold h-8 text-[10px] shadow-md self-start uppercase tracking-wider"
                                                         >
                                                             {loading.contact ? <Loader2 className="w-3 h-3 animate-spin" /> : "Enviar"}
                                                         </Button>

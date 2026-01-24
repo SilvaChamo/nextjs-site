@@ -62,8 +62,20 @@ export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
                             {items.map((company, i) => {
                                 const Icon = company.icon || Building2;
                                 const parts = (company.sub || "").split(" - ");
-                                const category = parts[0] || "Empresa";
-                                const activity = parts[1] || company.sub || "Actividade";
+
+                                // Função para refinar texto: Remove "agrário/a" e limita a 2 palavras
+                                const refineText = (text: string) => {
+                                    if (!text) return "";
+                                    return text
+                                        .replace(/agrár[io]a?/gi, "") // Remove variações de "agrário"
+                                        .split(/\s+/) // Divide por espaços
+                                        .filter(word => word.length > 0) // Remove espaços vazios
+                                        .slice(0, 2) // Pega apenas as primeiras 2 palavras
+                                        .join(" "); // Junta novamente
+                                };
+
+                                const category = refineText(parts[0] || "Empresa");
+                                const activity = refineText(parts[1] || company.sub || "Actividade");
                                 const location = company.location || "Moçambique";
 
                                 return (

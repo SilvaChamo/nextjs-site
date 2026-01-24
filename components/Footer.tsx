@@ -80,15 +80,15 @@ export function Footer() {
                                 <input
                                     type="email"
                                     placeholder="E-Mail"
-                                    className="w-full bg-white text-gray-800 px-4 py-2 rounded-[4px] text-xs focus:outline-none focus:ring-2 focus:ring-[#f97316] border-none"
+                                    className="w-full bg-white text-gray-800 px-4 py-2 rounded-[7px] text-xs focus:outline-none focus:ring-2 focus:ring-[#f97316] border border-gray-100 shadow-inner"
                                 />
                                 <input
                                     type="text"
                                     placeholder="Nome da empresa"
-                                    className="w-full bg-white text-gray-800 px-4 py-2 rounded-[4px] text-xs focus:outline-none focus:ring-2 focus:ring-[#f97316] border-none"
+                                    className="w-full bg-white text-gray-800 px-4 py-2 rounded-[7px] text-xs focus:outline-none focus:ring-2 focus:ring-[#f97316] border border-gray-100 shadow-inner"
                                 />
-                                <button className="w-full bg-[#00a600] text-white font-bold uppercase py-2 rounded-[4px] hover:bg-[#008f00] transition-colors text-xs tracking-wider">
-                                    Subscribe
+                                <button className="w-full bg-[#f97316] text-white font-bold uppercase py-2 rounded-[7px] hover:bg-[#ea580c] transition-colors text-xs tracking-wider shadow-md active:scale-95">
+                                    Subscrever
                                 </button>
                             </div>
                         </div>

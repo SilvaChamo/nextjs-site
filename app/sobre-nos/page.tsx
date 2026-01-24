@@ -44,7 +44,7 @@ export default function SobrePage() {
                             <p>
                                 A <strong>Base de Dados Agrícola</strong> é mais do que uma plataforma; somos o motor digital que conecta produtores rurais aos mercados globais.
                             </p>
-                            <p className="text-base">
+                            <p className="text-[12px]">
                                 Utilizamos tecnologia de ponta para democratizar o acesso à informação, transformar dados brutos em inteligência de mercado e criar um ecossistema onde o pequeno produtor e a grande indústria crescem juntos.
                             </p>
                         </div>
@@ -83,7 +83,7 @@ export default function SobrePage() {
                 <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {/* Missão Card */}
-                        <div className="bg-white/10 backdrop-blur-md p-4 rounded-lg border border-white/10 hover:bg-white/15 transition-all group flex items-start gap-4">
+                        <div className="bg-white/10 p-10 rounded-lg border border-white/10 hover:bg-white/15 transition-all group flex items-start gap-4">
                             <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/30 group-hover:scale-105 transition-transform">
                                 <LucideIcons.Target className="w-5 h-5 text-white" />
                             </div>
@@ -96,7 +96,7 @@ export default function SobrePage() {
                         </div>
 
                         {/* Visão Card */}
-                        <div className="bg-white/10 backdrop-blur-md p-4 rounded-lg border border-white/10 hover:bg-white/15 transition-all group flex items-start gap-4">
+                        <div className="bg-white/10 p-10 rounded-lg border border-white/10 hover:bg-white/15 transition-all group flex items-start gap-4">
                             <div className="w-10 h-10 bg-[#f97316] rounded-lg flex items-center justify-center shrink-0 shadow-lg shadow-orange-500/30 group-hover:scale-105 transition-transform">
                                 <LucideIcons.Eye className="w-5 h-5 text-white" />
                             </div>
@@ -109,7 +109,7 @@ export default function SobrePage() {
                         </div>
 
                         {/* Valores Card */}
-                        <div className="bg-white/10 backdrop-blur-md p-4 rounded-lg border border-white/10 hover:bg-white/15 transition-all group flex items-start gap-4">
+                        <div className="bg-white/10 p-10 rounded-lg border border-white/10 hover:bg-white/15 transition-all group flex items-start gap-4">
                             <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shrink-0 shadow-lg shadow-blue-600/30 group-hover:scale-105 transition-transform">
                                 <LucideIcons.Diamond className="w-5 h-5 text-white" />
                             </div>

@@ -158,7 +158,7 @@ export function InfoSection() {
                     <div className="inline-flex items-center gap-4 flex-wrap justify-center mt-[25px]">
                         <button
                             onClick={() => setActiveTab("informacoes")}
-                            className={`px-5 py-2 rounded-[8px] text-sm font-bold transition-all backdrop-blur-md border transition-all duration-300 ${activeTab === "informacoes"
+                            className={`px-8 py-[14px] rounded-[12px] text-sm font-medium transition-all backdrop-blur-md border transition-all duration-300 ${activeTab === "informacoes"
                                 ? "bg-[#f97316] border-[#f97316] text-white shadow-[0_0_20px_rgba(249,115,22,0.4)]"
                                 : "bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-[#f97316]"
                                 }`}
@@ -167,7 +167,7 @@ export function InfoSection() {
                         </button>
                         <button
                             onClick={() => setActiveTab("mercado")}
-                            className={`px-5 py-2 rounded-[8px] text-sm font-bold transition-all backdrop-blur-md border transition-all duration-300 ${activeTab === "mercado"
+                            className={`px-8 py-[14px] rounded-[12px] text-sm font-medium transition-all backdrop-blur-md border transition-all duration-300 ${activeTab === "mercado"
                                 ? "bg-[#f97316] border-[#f97316] text-white shadow-[0_0_20px_rgba(249,115,22,0.4)]"
                                 : "bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-[#f97316]"
                                 }`}
@@ -176,7 +176,7 @@ export function InfoSection() {
                         </button>
                         <button
                             onClick={() => setActiveTab("categorias")}
-                            className={`px-5 py-2 rounded-[8px] text-sm font-bold transition-all backdrop-blur-md border transition-all duration-300 ${activeTab === "categorias"
+                            className={`px-8 py-[14px] rounded-[12px] text-sm font-medium transition-all backdrop-blur-md border transition-all duration-300 ${activeTab === "categorias"
                                 ? "bg-[#f97316] border-[#f97316] text-white shadow-[0_0_20px_rgba(249,115,22,0.4)]"
                                 : "bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-[#f97316]"
                                 }`}
@@ -201,7 +201,7 @@ export function InfoSection() {
                                         <Link
                                             key={idx}
                                             href={card.href || "#"}
-                                            className={`p-6 md:p-8 rounded-[10px] text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col gap-4 group cursor-pointer border h-full ${card.dark
+                                            className={`p-10 md:p-12 rounded-[10px] text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col gap-4 group cursor-pointer border h-full ${card.dark
                                                 ? "bg-[#374151] text-white border-slate-600 shadow-xl shadow-slate-900/20"
                                                 : "bg-white text-[#3a3f47] border-slate-200 shadow-lg shadow-slate-200/50"
                                                 }`}
@@ -275,7 +275,7 @@ export function InfoSection() {
                                                                 {news.type || "Artigo"}
                                                             </div>
                                                         </div>
-                                                        <div className="p-6 flex flex-col flex-1">
+                                                        <div className="p-12 flex flex-col flex-1">
                                                             <div className="space-y-3">
                                                                 <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400">
                                                                     <span>{news.date}</span>

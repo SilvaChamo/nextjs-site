@@ -10,12 +10,14 @@ import {
 
 export type Company = {
     id: string;
+    slug?: string;
     name: string;
     tag: string;
     description: string;
     logoUrl: string;
     type: string;
     image?: string;
+    isVerified?: boolean;
 };
 
 export const FEATURED_COMPANIES: Company[] = [

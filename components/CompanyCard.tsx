@@ -1,8 +1,8 @@
-
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Company } from '@/lib/constants';
-import { ArrowUpRight } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 
 interface CompanyCardProps {
     company: Company;
@@ -11,7 +11,10 @@ interface CompanyCardProps {
 
 export function CompanyCard({ company }: CompanyCardProps) {
     return (
-        <div className="bg-white rounded-[10px] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col h-[280px] group border border-gray-100 relative">
+        <Link
+            href={`/directory/${company.slug || company.id}`}
+            className="bg-white rounded-[10px] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col h-[280px] group border border-gray-100 relative"
+        >
             {/* Image Section */}
             <div className="h-[180px] overflow-hidden relative w-full">
                 <Image
@@ -20,6 +23,14 @@ export function CompanyCard({ company }: CompanyCardProps) {
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
+
+                {company.isVerified && (
+                    <div className="absolute top-4 right-4 z-10">
+                        <div className="bg-emerald-500 text-white p-1.5 rounded-full shadow-lg border-2 border-white">
+                            <CheckCircle2 className="w-3 h-3" />
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Content Section */}
@@ -35,12 +46,13 @@ export function CompanyCard({ company }: CompanyCardProps) {
                     />
                 </div>
 
-                <div className="mt-8">
-                    <h3 className="text-base font-black text-slate-700 leading-tight group-hover:text-[#f97316] transition-colors">
+                <div className="mt-8 flex items-center gap-1.5 justify-center w-full">
+                    <h3 className="text-base font-black text-slate-700 leading-tight group-hover:text-[#f97316] transition-colors truncate">
                         {company.name}
                     </h3>
+                    {company.isVerified && <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />}
                 </div>
             </div>
-        </div>
+        </Link>
     );
 }

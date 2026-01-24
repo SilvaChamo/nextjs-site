@@ -6,7 +6,12 @@ import { ContactForm } from "@/components/ContactForm";
 
 export default function ContactosPage() {
     return (
-        <main className="min-h-screen bg-slate-50">
+        <main className="min-h-screen bg-transparent relative">
+            {/* Background Image Overlay */}
+            <div
+                className="absolute inset-0 z-0 opacity-[0.2] pointer-events-none bg-center bg-cover bg-no-repeat"
+                style={{ backgroundImage: "url('/assets/cta-gradient-bg.jpg')" }}
+            />
             <PageHeader
                 title={<>Entre em <span className="text-[#f97316]">Contacto</span></>}
                 icon={Phone}

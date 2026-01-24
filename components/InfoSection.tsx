@@ -159,7 +159,7 @@ export function InfoSection() {
                     <div className="inline-flex items-center gap-4 flex-wrap justify-center mt-[25px]">
                         <button
                             onClick={() => setActiveTab("informacoes")}
-                            className={`px-8 py-[10px] rounded-[7px] text-sm font-medium transition-all backdrop-blur-md border transition-all duration-300 ${activeTab === "informacoes"
+                            className={`px-8 py-[8.5px] rounded-[7px] text-sm font-medium transition-all backdrop-blur-md border transition-all duration-300 ${activeTab === "informacoes"
                                 ? "bg-[#f97316] border-[#f97316] text-white shadow-[0_0_20px_rgba(249,115,22,0.4)]"
                                 : "bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-[#f97316]"
                                 }`}
@@ -168,7 +168,7 @@ export function InfoSection() {
                         </button>
                         <button
                             onClick={() => setActiveTab("mercado")}
-                            className={`px-8 py-[10px] rounded-[7px] text-sm font-medium transition-all backdrop-blur-md border transition-all duration-300 ${activeTab === "mercado"
+                            className={`px-8 py-[8.5px] rounded-[7px] text-sm font-medium transition-all backdrop-blur-md border transition-all duration-300 ${activeTab === "mercado"
                                 ? "bg-[#f97316] border-[#f97316] text-white shadow-[0_0_20px_rgba(249,115,22,0.4)]"
                                 : "bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-[#f97316]"
                                 }`}
@@ -177,7 +177,7 @@ export function InfoSection() {
                         </button>
                         <button
                             onClick={() => setActiveTab("categorias")}
-                            className={`px-8 py-[10px] rounded-[7px] text-sm font-medium transition-all backdrop-blur-md border transition-all duration-300 ${activeTab === "categorias"
+                            className={`px-8 py-[8.5px] rounded-[7px] text-sm font-medium transition-all backdrop-blur-md border transition-all duration-300 ${activeTab === "categorias"
                                 ? "bg-[#f97316] border-[#f97316] text-white shadow-[0_0_20px_rgba(249,115,22,0.4)]"
                                 : "bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-[#f97316]"
                                 }`}

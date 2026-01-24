@@ -19,7 +19,12 @@ export default function SobrePage() {
             />
 
             {/* 1. Introdução Premium (Redesigned - Left Image) */}
-            <div className="w-full relative bg-white overflow-hidden">
+            <div className="w-full relative bg-transparent overflow-hidden">
+                {/* Background Image Overlay */}
+                <div
+                    className="absolute inset-0 z-0 opacity-[0.15] pointer-events-none bg-center bg-cover bg-no-repeat"
+                    style={{ backgroundImage: "url('/assets/cta-gradient-bg.jpg')" }}
+                />
                 <div className="absolute top-0 left-0 w-[48%] h-full hidden lg:block">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img

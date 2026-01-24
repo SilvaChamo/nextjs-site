@@ -6,7 +6,11 @@ import { Footer } from "../../components/Footer";
 
 export default function NavFooterToggle({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
-    const hide = pathname?.includes("usuario") || pathname?.includes("admin");
+    const hide = pathname?.includes("usuario") ||
+        pathname?.includes("admin") ||
+        pathname?.includes("login") ||
+        pathname?.includes("registar") ||
+        pathname?.includes("cadastro-empresa");
     return (
         <>
 

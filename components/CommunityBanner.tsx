@@ -37,7 +37,13 @@ export function CommunityBanner() {
     const displayCount = count !== null ? count.toLocaleString() : "...";
 
     return (
-        <section className="w-full bg-[#3a3f47] py-12 md:py-14 relative overflow-hidden">
+        <section
+            className="w-full py-12 md:py-14 relative overflow-hidden bg-center bg-cover"
+            style={{ backgroundImage: "url('/assets/cta-gradient-bg.jpg')" }}
+        >
+            {/* Dark Overlay to make background subtle as requested */}
+            <div className="absolute inset-0 bg-black/80 z-0" />
+
             {/* Dynamic Particles Background */}
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-[10%] left-[15%] w-1 h-1 bg-white/20 rounded-full animate-ping" style={{ animationDuration: '3s' }} />

@@ -34,7 +34,13 @@ export function WhyChooseUs() {
 
     return (
 
-        <section className="bg-transparent py-10 md:py-[100px] overflow-hidden">
+        <section className="bg-transparent py-10 md:py-[100px] overflow-hidden relative">
+            {/* Transparent Background Image */}
+            <div
+                className="absolute inset-0 z-0 opacity-[0.2] pointer-events-none bg-center bg-cover bg-no-repeat"
+                style={{ backgroundImage: "url('/assets/cta-gradient-bg.jpg')" }}
+            />
+
             <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] grid lg:grid-cols-2 gap-16 lg:gap-12 items-start">
                 {/* Left Column: Text Content */}
                 <div className="space-y-8 animate-in fade-in slide-in-from-left-8 duration-700 sticky top-24">

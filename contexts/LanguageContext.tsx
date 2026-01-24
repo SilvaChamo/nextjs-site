@@ -28,12 +28,21 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         setLanguageState(lang);
         localStorage.setItem('language', lang);
 
-        // Google Translate Logic
-        const translateCookie = lang === 'EN' ? '/pt/en' : '/pt/pt';
-        document.cookie = `googtrans=${translateCookie}; path=/`;
-        document.cookie = `googtrans=${translateCookie}; path=/; domain=.${window.location.hostname}`;
+        if (lang === 'PT') {
+            // Clear Google Translate cookies to restore original text
+            document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.${window.location.hostname}`;
+            // Also try clearing the specific value if it persists
+            document.cookie = "googtrans=; path=/;";
+            document.cookie = `googtrans=; path=/; domain=.${window.location.hostname}`;
+        } else {
+            // Set for English
+            const translateValue = '/pt/en';
+            document.cookie = `googtrans=${translateValue}; path=/`;
+            document.cookie = `googtrans=${translateValue}; path=/; domain=.${window.location.hostname}`;
+        }
 
-        // Refresh page to apply translation (Standard way for Google Translate widget to kick in reliably)
+        // Refresh to apply change
         window.location.reload();
     };
 

@@ -16,7 +16,9 @@ const STEPS = [
     { id: 1, title: "Identidade", icon: Building2, description: "Essenciais do negócio" },
     { id: 2, title: "Plano", icon: Crown, description: "Escolha sua presença" },
     { id: 3, title: "Localização", icon: MapPin, description: "Sede e operação" },
-    { id: 4, title: "Atividade", icon: Briefcase, description: "Perfil detalhado" }
+    { id: 4, title: "Atividade", icon: Briefcase, description: "Perfil detalhado" },
+    { id: 5, title: "Produtos", icon: Save, description: "Seu catálogo" },
+    { id: 6, title: "Pagamento", icon: CheckCircle2, description: "Facturação" }
 ];
 
 export default function RegisterCompanyPage() {
@@ -41,6 +43,7 @@ export default function RegisterCompanyPage() {
 
         // Passo 2: Plano
         plan: "gratuito", // gratuito | profissional | empresarial | parceiro
+        billingPeriod: "monthly",
 
         // Passo 3: Localização
         province: "",
@@ -50,7 +53,15 @@ export default function RegisterCompanyPage() {
         // Passo 4: Atividade
         sector: "",
         description: "",
-        tags: "" // String separada por vírgulas
+        tags: "",
+
+        // Passo 5: Produtos
+        products: [] as { name: string; price: string; description: string }[],
+
+        // Passo 6: Pagamento
+        paymentMethod: "",
+        paymentPhone: "",
+        paymentConfirmed: false
     });
 
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -105,7 +116,7 @@ export default function RegisterCompanyPage() {
     };
 
     const handleNext = () => {
-        if (currentStep < 4) setCurrentStep(prev => prev + 1);
+        if (currentStep < 6) setCurrentStep(prev => prev + 1);
     };
 
     const handleBack = () => {
@@ -124,11 +135,15 @@ export default function RegisterCompanyPage() {
                 contact: formData.contact,
                 logo_url: formData.logoUrl,
                 province: formData.province,
-                district: formData.district, // Note: We might need to handle district if column doesn't exist, but we use geo_location
+                district: formData.district,
                 address: formData.address,
                 category: formData.sector,
                 description: formData.description,
                 plan: formData.plan,
+                billing_period: formData.billingPeriod,
+                products: formData.products, // Assumindo coluna JSONB
+                payment_method: formData.paymentMethod,
+                payment_phone: formData.paymentPhone,
                 geo_location: `${formData.province}, ${formData.district}`,
                 updated_at: new Date().toISOString()
             }, { onConflict: 'user_id' });
@@ -193,10 +208,10 @@ export default function RegisterCompanyPage() {
 
                     {/* Header Mobile Steps */}
                     <div className="md:hidden flex items-center justify-between mb-8 pb-4 border-b border-slate-200">
-                        <span className="text-sm font-bold text-slate-500">Passo {currentStep} de 4</span>
+                        <span className="text-sm font-bold text-slate-500">Passo {currentStep} de 6</span>
                         <div className="flex gap-1">
-                            {[1, 2, 3, 4].map(i => (
-                                <div key={i} className={`h-1.5 w-8 rounded-full ${i <= currentStep ? 'bg-emerald-600' : 'bg-slate-200'}`} />
+                            {[1, 2, 3, 4, 5, 6].map(i => (
+                                <div key={i} className={`h-1.5 w-6 rounded-full ${i <= currentStep ? 'bg-emerald-600' : 'bg-slate-200'}`} />
                             ))}
                         </div>
                     </div>
@@ -516,6 +531,108 @@ export default function RegisterCompanyPage() {
                                 </div>
                             </div>
                         )}
+
+                        {/* PASSO 5: PRODUTOS */}
+                        {currentStep === 5 && (
+                            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                                <div className="flex justify-between items-center">
+                                    <h2 className="text-2xl font-bold text-slate-800">Seu Catálogo</h2>
+                                    <Button
+                                        onClick={() => setFormData(p => ({ ...p, products: [...p.products, { name: "", price: "", description: "" }] }))}
+                                        className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                                    >
+                                        + Adicionar Produto
+                                    </Button>
+                                </div>
+
+                                <div className="space-y-4">
+                                    {formData.products.length === 0 ? (
+                                        <div className="text-center py-12 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
+                                            <Save className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+                                            <p className="text-slate-500">Ainda não adicionou produtos ao seu catálogo.</p>
+                                        </div>
+                                    ) : (
+                                        formData.products.map((prod, idx) => (
+                                            <div key={idx} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                                                <div className="flex justify-between">
+                                                    <span className="text-xs font-black uppercase text-slate-400">Produto #{idx + 1}</span>
+                                                    <button onClick={() => setFormData(p => ({ ...p, products: p.products.filter((_, i) => i !== idx) }))} className="text-red-500 hover:text-red-700 text-xs font-bold">Remover</button>
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <Input placeholder="Nome do Produto" value={prod.name} onChange={e => {
+                                                        const newProds = [...formData.products];
+                                                        newProds[idx].name = e.target.value;
+                                                        setFormData(p => ({ ...p, products: newProds }));
+                                                    }} />
+                                                    <Input placeholder="Preço (Ex: 100 MT)" value={prod.price} onChange={e => {
+                                                        const newProds = [...formData.products];
+                                                        newProds[idx].price = e.target.value;
+                                                        setFormData(p => ({ ...p, products: newProds }));
+                                                    }} />
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* PASSO 6: PAGAMENTO */}
+                        {currentStep === 6 && (
+                            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                                <h2 className="text-2xl font-bold text-slate-800 mb-6">Finalizar e Pagar</h2>
+                                <div className="bg-orange-50 p-6 rounded-2xl border border-orange-100 flex items-center justify-between">
+                                    <div>
+                                        <p className="text-[10px] font-black uppercase text-orange-600 tracking-widest">Plano Seleccionado</p>
+                                        <h3 className="text-xl font-black text-slate-800 uppercase">{formData.plan}</h3>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-[10px] font-black uppercase text-orange-600 tracking-widest">Total a Pagar</p>
+                                        <h3 className="text-2xl font-black text-slate-800">
+                                            {formData.plan === 'gratuito' ? '0 MT' : formData.plan === 'profissional' ? '250 MT' : '1.000 MT'}
+                                        </h3>
+                                    </div>
+                                </div>
+
+                                {formData.plan !== 'gratuito' && (
+                                    <div className="space-y-4">
+                                        <p className="text-sm font-bold text-slate-700">Método de Pagamento</p>
+                                        <div className="grid grid-cols-3 gap-3">
+                                            {['Mpesa', 'Emola', 'Banco'].map(m => (
+                                                <button
+                                                    key={m}
+                                                    onClick={() => setFormData(p => ({ ...p, paymentMethod: m }))}
+                                                    className={`py-4 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest transition-all ${formData.paymentMethod === m ? 'border-emerald-600 bg-emerald-50 text-emerald-700' : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200'}`}
+                                                >
+                                                    {m}
+                                                </button>
+                                            ))}
+                                        </div>
+                                        {formData.paymentMethod && (
+                                            <div className="pt-4 space-y-4">
+                                                <Input
+                                                    placeholder={formData.paymentMethod === 'Banco' ? "Número do Comprovativo" : "Número de Telefone"}
+                                                    value={formData.paymentPhone}
+                                                    onChange={e => setFormData(p => ({ ...p, paymentPhone: e.target.value }))}
+                                                />
+                                                <Button
+                                                    onClick={() => {
+                                                        setLoading(true);
+                                                        setTimeout(() => {
+                                                            setLoading(false);
+                                                            setFormData(p => ({ ...p, paymentConfirmed: true }));
+                                                        }, 2000);
+                                                    }}
+                                                    className="w-full h-14 bg-[#10b981] text-white font-black uppercase tracking-widest"
+                                                >
+                                                    {loading ? <Loader2 className="animate-spin" /> : `CONFIRMAR PAGAMENTO ${formData.paymentMethod.toUpperCase()}`}
+                                                </Button>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
 
                     {/* Footer Actions */}
@@ -528,7 +645,7 @@ export default function RegisterCompanyPage() {
                             <div /> // Espaçador
                         )}
 
-                        {currentStep < 4 ? (
+                        {currentStep < 6 ? (
                             <Button
                                 onClick={handleNext}
                                 className="h-12 px-8 bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
@@ -538,7 +655,7 @@ export default function RegisterCompanyPage() {
                         ) : (
                             <Button
                                 onClick={handleSubmit}
-                                disabled={loading}
+                                disabled={loading || (formData.plan !== 'gratuito' && !formData.paymentConfirmed)}
                                 className="h-12 px-8 bg-orange-500 hover:bg-orange-600 text-white font-bold shadow-lg shadow-orange-500/20"
                             >
                                 {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}

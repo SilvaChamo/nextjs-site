@@ -16,7 +16,7 @@ export function MobileAppSection() {
                     <div className="space-y-6 text-center lg:text-left z-10 transition-all duration-700 delay-100 transform translate-y-0 opacity-100">
                         <div>
                             <h2 className="text-[32px] md:text-[50px] font-heading font-black text-emerald-600 leading-[1.1] tracking-tight mb-2">
-                                HerbariumAI
+                                Botánica AI
                             </h2>
                             <h3 className="text-[32px] md:text-[50px] font-heading font-black text-slate-600 mb-6 leading-[1.1] tracking-tight">
                                 O seu agrónomo digital <br /> de bolso
@@ -98,7 +98,7 @@ export function MobileAppSection() {
                                 {/* Screen Image */}
                                 <img
                                     src="/assets/botanica.png"
-                                    alt="Interface do HerbariumAI"
+                                    alt="Interface do Botánica AI"
                                     className="w-full h-auto object-cover"
                                 />
                             </div>

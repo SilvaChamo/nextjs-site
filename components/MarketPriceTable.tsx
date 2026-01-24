@@ -133,7 +133,7 @@ export function MarketPriceTable() {
                     <button
                         key={cat}
                         onClick={() => setActiveCategory(cat)}
-                        className={`py-3 text-sm font-bold whitespace-nowrap transition-all duration-300 ${activeCategory === cat
+                        className={`py-[10.5px] text-sm font-bold whitespace-nowrap transition-all duration-300 ${activeCategory === cat
                             ? "text-[#f97316]"
                             : "text-white/70 hover:text-[#f97316]"
                             }`}

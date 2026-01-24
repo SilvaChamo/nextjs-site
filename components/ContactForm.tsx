@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Send, CheckCircle2, AlertCircle, RefreshCw } from "lucide-react";
+import { Send, CheckCircle2, AlertCircle, RefreshCw, User, Mail } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
 export function ContactForm() {
@@ -91,106 +91,107 @@ export function ContactForm() {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-sm border border-slate-200">
-            <h3 className="text-xl font-black text-slate-800 mb-6 flex items-center gap-2">
-                <span className="w-1.5 h-6 bg-[#f97316] rounded-full"></span>
-                Envie-nos uma Mensagem
-            </h3>
+        <div className="bg-white rounded-[20px] shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative border border-slate-100 overflow-hidden">
+            {/* Top Orange Line - Premium Signature */}
+            <div className="absolute top-0 left-0 w-full h-[5px] bg-[#f97316] z-10" />
 
-            <div className="space-y-5">
-                {/* Nome */}
-                <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-[10px]">Nome Completo</label>
-                    <input
-                        type="text"
-                        required
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        placeholder="Seu nome"
-                        className="w-full p-3 bg-slate-50 border border-slate-200 rounded-md text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-[#f97316]/20 focus:border-[#f97316] outline-none transition-all"
-                    />
-                </div>
+            <div className="p-8 pb-4 text-center">
+                <h3 className="text-xl font-black text-slate-800 mb-1">Envie-nos uma Mensagem</h3>
+                <p className="text-slate-400 text-[11px] font-bold uppercase tracking-widest leading-relaxed">Estamos aqui para ajudar no seu crescimento</p>
+            </div>
 
-                {/* Email */}
-                <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-[10px]">E-mail para Contacto</label>
-                    <input
-                        type="email"
-                        required
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        placeholder="exemplo@email.com"
-                        className="w-full p-3 bg-slate-50 border border-slate-200 rounded-md text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-[#f97316]/20 focus:border-[#f97316] outline-none transition-all"
-                    />
-                </div>
+            <form onSubmit={handleSubmit} className="p-8 pt-4 space-y-4">
+                <div className="space-y-4">
+                    {/* Nome */}
+                    <div className="relative">
+                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <input
+                            type="text"
+                            required
+                            value={formData.name}
+                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            placeholder="Nome Completo"
+                            className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-[10px] text-[13px] font-bold text-slate-700 placeholder:text-slate-400 placeholder:font-medium focus:ring-2 focus:ring-[#f97316]/20 focus:border-[#f97316] outline-none transition-all"
+                        />
+                    </div>
 
-                {/* Mensagem */}
-                <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-[10px]">Sua Mensagem</label>
-                    <textarea
-                        required
-                        rows={6}
-                        value={formData.message}
-                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                        placeholder="Como podemos ajudar?"
-                        className="w-full p-3 bg-slate-50 border border-slate-200 rounded-md text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-[#f97316]/20 focus:border-[#f97316] outline-none transition-all resize-none"
-                    />
-                </div>
+                    {/* Email */}
+                    <div className="relative">
+                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <input
+                            type="email"
+                            required
+                            value={formData.email}
+                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                            placeholder="E-mail para Contacto"
+                            className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-[10px] text-[13px] font-bold text-slate-700 placeholder:text-slate-400 placeholder:font-medium focus:ring-2 focus:ring-[#f97316]/20 focus:border-[#f97316] outline-none transition-all"
+                        />
+                    </div>
 
-                {/* Anti-Robot Captcha */}
-                <div className="bg-slate-50 p-4 rounded-md border border-slate-200 space-y-3 w-fit">
-                    <div className="flex items-center justify-between gap-4">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
-                            <AlertCircle className="w-4 h-4 text-emerald-500" />
-                            Verificação
-                        </label>
+                    {/* Mensagem */}
+                    <div className="relative">
+                        <textarea
+                            required
+                            rows={4}
+                            value={formData.message}
+                            onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                            placeholder="Como podemos ajudar?"
+                            className="w-full p-5 bg-slate-50 border border-slate-200 rounded-[10px] text-[13px] font-medium text-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-[#f97316]/20 focus:border-[#f97316] outline-none transition-all resize-none"
+                        />
+                    </div>
+
+                    {/* Anti-Robot Captcha */}
+                    <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                            <div className="bg-white border border-slate-200 px-4 py-2 rounded-lg font-mono font-black text-slate-600 tracking-widest text-base shadow-sm">
+                                {captchaCode} =
+                            </div>
+                            <input
+                                type="number"
+                                required
+                                value={userCaptcha}
+                                onChange={(e) => setUserCaptcha(e.target.value)}
+                                placeholder="?"
+                                className="w-16 p-2 bg-white border border-slate-200 rounded-lg text-slate-800 font-bold focus:ring-2 focus:ring-[#f97316]/20 outline-none text-center shadow-sm"
+                            />
+                        </div>
                         <button
                             type="button"
                             onClick={regenerateCaptcha}
-                            className="text-slate-400 hover:text-[#f97316] transition-colors"
+                            className="bg-white p-2 rounded-lg border border-slate-200 text-slate-400 hover:text-[#f97316] hover:border-[#f97316]/30 transition-all shadow-sm group"
                             title="Gerar novo código"
                         >
-                            <RefreshCw className="w-4 h-4" />
+                            <RefreshCw className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" />
                         </button>
                     </div>
-                    <div className="flex items-center gap-4">
-                        <div className="bg-slate-200 px-4 py-2 rounded-md font-mono font-black text-slate-600 tracking-widest text-lg select-none">
-                            {captchaCode} = ?
+
+                    {status && (
+                        <div className={`p-4 rounded-xl flex items-start gap-3 text-[13px] animate-in fade-in slide-in-from-top-2 ${status.type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-red-50 text-red-700 border border-red-100'
+                            }`}>
+                            {status.type === 'success' ? <CheckCircle2 className="w-5 h-5 flex-shrink-0" /> : <AlertCircle className="w-5 h-5 flex-shrink-0" />}
+                            <span className="font-bold">{status.message}</span>
                         </div>
-                        <input
-                            type="number"
-                            required
-                            value={userCaptcha}
-                            onChange={(e) => setUserCaptcha(e.target.value)}
-                            placeholder="Res."
-                            className="w-32 p-3 bg-white border border-slate-200 rounded-md text-slate-800 font-bold focus:ring-2 focus:ring-[#f97316]/20 outline-none text-center"
-                        />
-                    </div>
-                </div>
-
-                {status && (
-                    <div className={`p-4 rounded-lg flex items-start gap-3 text-sm animate-in fade-in slide-in-from-top-2 ${status.type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-red-50 text-red-700 border border-red-100'
-                        }`}>
-                        {status.type === 'success' ? <CheckCircle2 className="w-5 h-5 flex-shrink-0 mt-0.5" /> : <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />}
-                        <span className="font-medium">{status.message}</span>
-                    </div>
-                )}
-
-                <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-fit px-8 bg-[#22c55e] hover:bg-[#f97316] text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-green-500/20 hover:shadow-orange-500/30 active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
-                >
-                    {loading ? (
-                        <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    ) : (
-                        <>
-                            Enviar Mensagem
-                            <Send className="w-5 h-5" />
-                        </>
                     )}
-                </button>
-            </div>
-        </form>
+
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full py-4 bg-[#10b981] hover:bg-[#f97316] text-white font-black uppercase tracking-widest text-xs rounded-[10px] transition-all shadow-lg hover:shadow-orange-500/20 active:scale-[0.98] flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
+                    >
+                        {loading ? (
+                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        ) : (
+                            <>
+                                Enviar Mensagem Agora
+                                <Send className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                            </>
+                        )}
+                    </button>
+                </div>
+            </form>
+
+            {/* Bottom Orange Decoration */}
+            <div className="absolute bottom-0 left-0 w-full h-[5px] bg-[#f97316] z-10 opacity-20" />
+        </div>
     );
 }

@@ -214,3 +214,15 @@ font {
   box-shadow: none !important;
   display: inline !important;
 }
+
+@keyframes candy-glow {
+  0% { box-shadow: 0 0 4px rgba(5, 150, 105, 0.4); border-color: rgba(5, 150, 105, 0.5); }
+  50% { box-shadow: 0 0 8px rgba(249, 115, 22, 0.5); border-color: rgba(249, 115, 22, 0.6); }
+  100% { box-shadow: 0 0 4px rgba(5, 150, 105, 0.4); border-color: rgba(5, 150, 105, 0.5); }
+}
+
+.focus-candy:focus {
+  animation: candy-glow 2s infinite ease-in-out;
+  outline: none !important;
+  border-width: 1px;
+}

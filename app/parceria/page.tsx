@@ -2,7 +2,7 @@
 
 import { PageHeader } from "@/components/PageHeader";
 import { MarketStatsStrip } from "@/components/MarketStatsStrip";
-import { Handshake, TrendingUp, Eye, Globe, Target, Briefcase } from "lucide-react";
+import { Handshake, TrendingUp, Eye, Globe, Target, Briefcase, Building2, Mail } from "lucide-react";
 import {
     Carousel,
     CarouselContent,
@@ -167,22 +167,43 @@ export default function ParceriaPage() {
                         </div>
                         <div className="relative">
                             <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-amber-500 transform rotate-3 rounded-2xl opacity-20 blur-lg"></div>
-                            <div id="parceria-form-container" className="bg-white rounded-3xl shadow-[0_40px_80px_-15px_rgba(0,0,0,0.1)] relative border border-white overflow-hidden">
-                                {/* Form Header with Soft Color */}
-                                <div className="bg-slate-200 p-5 border-b border-slate-300 text-center">
-                                    <h4 className="text-2xl font-black text-slate-700 mb-0.5">{t('parceria.form_title')}</h4>
-                                    <p className="text-slate-500 text-xs font-medium leading-relaxed">{t('parceria.form_text')}</p>
+                            <div id="parceria-form-container" className="bg-white rounded-[20px] shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative border border-slate-100 overflow-hidden">
+                                {/* Top Orange Line - Premium Signature */}
+                                <div className="absolute top-0 left-0 w-full h-[5px] bg-[#f97316] z-10" />
+
+                                <div className="p-8 pb-4 text-center">
+                                    <h4 className="text-xl font-black text-slate-800 mb-1">{t('parceria.form_title')}</h4>
+                                    <p className="text-slate-400 text-[11px] font-bold uppercase tracking-widest">{t('parceria.form_text')}</p>
                                 </div>
 
-                                <form id="parceria-form" className="p-10 space-y-5 text-left scroll-mt-24" action="mailto:geral@baseagrodata.com" method="POST" encType="text/plain">
-                                    <div>
-                                        <input type="text" name="empresa" className="w-full bg-slate-50 border border-slate-200 rounded-[7px] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#f97316]/20 focus:border-[#f97316] transition-all font-medium text-slate-700" placeholder={t('parceria.form_name')} required />
+                                <form id="parceria-form" className="p-8 pt-4 space-y-4" action="mailto:geral@baseagrodata.com" method="POST" encType="text/plain">
+                                    <div className="relative">
+                                        <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                        <input
+                                            type="text"
+                                            name="empresa"
+                                            className="w-full bg-slate-50 border border-slate-200 rounded-[10px] pl-11 pr-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#f97316]/20 focus:border-[#f97316] transition-all font-bold text-[13px] text-slate-700 placeholder:text-slate-400 placeholder:font-medium"
+                                            placeholder={t('parceria.form_name')}
+                                            required
+                                        />
                                     </div>
-                                    <div>
-                                        <input type="email" name="email" className="w-full bg-slate-50 border border-slate-200 rounded-[7px] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#f97316]/20 focus:border-[#f97316] transition-all font-medium text-slate-700" placeholder={t('parceria.form_email')} required />
+                                    <div className="relative">
+                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                        <input
+                                            type="email"
+                                            name="email"
+                                            className="w-full bg-slate-50 border border-slate-200 rounded-[10px] pl-11 pr-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#f97316]/20 focus:border-[#f97316] transition-all font-bold text-[13px] text-slate-700 placeholder:text-slate-400 placeholder:font-medium"
+                                            placeholder={t('parceria.form_email')}
+                                            required
+                                        />
                                     </div>
-                                    <div>
-                                        <select name="categoria" className="w-full bg-slate-50 border border-slate-200 rounded-[7px] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#f97316]/20 focus:border-[#f97316] transition-all font-medium text-slate-700 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2364748b%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-[length:20px] bg-[right_1rem_center] bg-no-repeat" required>
+                                    <div className="relative">
+                                        <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                        <select
+                                            name="categoria"
+                                            className="w-full bg-slate-50 border border-slate-200 rounded-[10px] pl-11 pr-10 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#f97316]/20 focus:border-[#f97316] transition-all font-black text-[11px] uppercase tracking-wider text-slate-600 appearance-none"
+                                            required
+                                        >
                                             <option value="" disabled selected>{t('parceria.form_category')}</option>
                                             <option value="insumos">Fornecedor de Insumos</option>
                                             <option value="tecnologia">Tecnologia e Inovação</option>
@@ -192,13 +213,28 @@ export default function ParceriaPage() {
                                             <option value="consultoria">Consultoria e Assistência Técnica</option>
                                             <option value="outro">Outra Categoria</option>
                                         </select>
+                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                                            <div className="w-1.5 h-1.5 border-r-2 border-b-2 border-slate-400 rotate-45" />
+                                        </div>
                                     </div>
-                                    <div>
-                                        <textarea name="mensagem" className="w-full bg-slate-50 border border-slate-200 rounded-[7px] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#f97316]/20 focus:border-[#f97316] transition-all font-medium h-40 resize-none text-slate-700" placeholder={t('parceria.form_message')} required></textarea>
+                                    <div className="relative">
+                                        <textarea
+                                            name="mensagem"
+                                            className="w-full bg-slate-50 border border-slate-200 rounded-[10px] px-5 py-4 focus:outline-none focus:ring-2 focus:ring-[#f97316]/20 focus:border-[#f97316] transition-all font-medium text-[13px] h-32 resize-none text-slate-700 placeholder:text-slate-400"
+                                            placeholder={t('parceria.form_message')}
+                                            required
+                                        ></textarea>
                                     </div>
-                                    <button type="submit" className="w-fit px-12 py-4 bg-emerald-700 text-white font-black uppercase tracking-widest text-xs rounded-[7px] hover:bg-[#f97316] transition-all duration-300 shadow-lg active:scale-95 flex items-center justify-center gap-2">
+                                    <button
+                                        type="submit"
+                                        className="w-full py-4 bg-[#f97316] text-white font-black uppercase tracking-widest text-xs rounded-[10px] hover:bg-[#ea580c] transition-all duration-300 shadow-lg active:scale-95 flex items-center justify-center gap-2 group"
+                                    >
                                         {t('parceria.form_submit')}
+                                        <TrendingUp className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                                     </button>
+
+                                    {/* Bottom Orange Decoration */}
+                                    <div className="absolute bottom-0 left-0 w-full h-[5px] bg-[#f97316] z-10 opacity-20" />
                                 </form>
                             </div>
                         </div>

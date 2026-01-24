@@ -97,7 +97,7 @@ export function MobileAppSection() {
 
                                 {/* Screen Image */}
                                 <img
-                                    src="/assets/Botânica.png"
+                                    src="/assets/botanica.png"
                                     alt="Interface do HerbariumAI"
                                     className="w-full h-auto object-cover"
                                 />

@@ -188,7 +188,7 @@ export function InfoSection() {
                 </div>
             </div>
 
-            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20 mt-10 pb-24">
+            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20 mt-[70px] pb-24">
                 <div className="animate-in fade-in duration-700 slide-in-from-bottom-8">
                     {loading ? (
                         <div className="bg-white p-12 rounded-[4px] shadow-lg text-center text-gray-400 border border-slate-100">
@@ -257,7 +257,7 @@ export function InfoSection() {
                             )}
 
                             {activeTab === "informacoes" && (
-                                <div className="relative group/embla mt-[40px]">
+                                <div className="relative group/embla mt-[70px]">
                                     <div className="overflow-hidden" ref={emblaRef}>
                                         <div className="flex -mr-[15px]">
                                             {articlesData.map((news, i) => (

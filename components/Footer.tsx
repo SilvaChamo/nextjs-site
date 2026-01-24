@@ -38,11 +38,12 @@ export function Footer() {
                         {/* 2. Links Internos */}
                         <div className="col-span-1 space-y-4">
                             <h3 className="text-lg font-bold text-gray-200">Links internos</h3>
-                            <ul className="space-y-2 text-xs text-gray-400">
-                                <li><Link href="#" className="hover:text-[#f97316] transition-colors">Minha conta</Link></li>
-                                <li><Link href="#" className="hover:text-[#f97316] transition-colors">Actividades</Link></li>
-                                <li><Link href="#" className="hover:text-[#f97316] transition-colors">Nossos parceiros</Link></li>
-                                <li><Link href="#" className="hover:text-[#f97316] transition-colors">Repositório</Link></li>
+                            <ul className="space-y-2 text-sm text-gray-400">
+                                <li><Link href="/sobre-nos" className="hover:text-[#f97316] transition-colors">Sobre nós</Link></li>
+                                <li><Link href="/login" className="hover:text-[#f97316] transition-colors">Minha conta</Link></li>
+                                <li><Link href="/relatorios" className="hover:text-[#f97316] transition-colors">Relatórios</Link></li>
+                                <li><Link href="/artigos" className="hover:text-[#f97316] transition-colors">Actividades</Link></li>
+                                <li><Link href="/blog" className="hover:text-[#f97316] transition-colors">Blog do Agro</Link></li>
                                 <li><Link href="/usuario/dashboard" className="hover:text-[#f97316] transition-colors">Dashboard</Link></li>
                             </ul>
                         </div>
@@ -68,12 +69,8 @@ export function Footer() {
                                 <li><Link href="/servicos/insumos" className="hover:text-[#f97316] transition-colors">Lojas de Insumos</Link></li>
                                 <li><Link href="/servicos/mercado" className="hover:text-[#f97316] transition-colors">Compra & Venda</Link></li>
                                 <li><Link href="/servicos/emprego" className="hover:text-[#f97316] transition-colors">Vagas de Emprego</Link></li>
-                                <li className="pt-2">
-                                    <p className="text-[10px] text-gray-500 italic leading-tight">
-                                        Encontre mais serviços no menu principal do cabeçalho.
-                                    </p>
-                                </li>
-                                <li className="pt-1"><Link href="/servicos" className="text-emerald-400 font-black uppercase text-[10px] tracking-widest hover:text-white transition-colors">→ Ver Todos os Serviços</Link></li>
+                                <li><Link href="/servicos/consultoria" className="hover:text-[#f97316] transition-colors">Consultoria Digital</Link></li>
+                                <li><Link href="/servicos/anuncios" className="hover:text-[#f97316] transition-colors">Publicidade & Anúncios</Link></li>
                             </ul>
                         </div>
 
@@ -86,11 +83,6 @@ export function Footer() {
                                     placeholder="E-Mail"
                                     className="w-full bg-white text-gray-800 px-4 py-2 rounded-[7px] text-xs focus:outline-none focus:ring-2 focus:ring-[#f97316] border border-gray-100 shadow-inner"
                                 />
-                                <input
-                                    type="text"
-                                    placeholder="Nome da empresa"
-                                    className="w-full bg-white text-gray-800 px-4 py-2 rounded-[7px] text-xs focus:outline-none focus:ring-2 focus:ring-[#f97316] border border-gray-100 shadow-inner"
-                                />
                                 <button className="w-full bg-[#f97316] text-white font-bold uppercase py-2 rounded-[7px] hover:bg-[#ea580c] transition-colors text-xs tracking-wider shadow-md active:scale-95">
                                     Subscrever
                                 </button>
@@ -99,10 +91,12 @@ export function Footer() {
 
                     </div>
 
-                    {/* Bottom Bar: Location & Socials */}
+                    {/* Bottom Bar: Legal Links & Socials */}
                     <div className="border-t border-gray-500 pt-4 pb-2 flex flex-col md:flex-row justify-between items-center gap-4">
-                        <div className="text-gray-400 text-xs font-medium">
-                            Maputo – Moçambique
+                        <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-gray-400 text-[10px] font-bold uppercase tracking-wider">
+                            <Link href="/politica-privacidade" className="hover:text-[#f97316] transition-colors">Política de privacidade</Link>
+                            <Link href="/termos" className="hover:text-[#f97316] transition-colors">Termos e condições</Link>
+                            <Link href="/suporte" className="hover:text-[#f97316] transition-colors">Suporte</Link>
                         </div>
                         <div className="flex items-center gap-4">
                             <SocialIcon Icon={Facebook} />

@@ -1,3 +1,4 @@
+// Baseagrodata - App Layout
 import type { Metadata } from "next";
 import { Montserrat, Maven_Pro } from "next/font/google";
 import "./globals.css";

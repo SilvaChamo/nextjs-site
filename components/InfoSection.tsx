@@ -26,7 +26,7 @@ type CategoryCard = {
 
 export function InfoSection() {
     const [activeTab, setActiveTab] = useState("informacoes");
-    const bgRef = useRef<HTMLDivElement>(null);
+    const bgRef = useRef<HTMLImageElement>(null);
 
     const [categoryCards, setCategoryCards] = useState<CategoryCard[]>([]);
     const [statsData, setStatsData] = useState<any[]>([]);
@@ -131,9 +131,10 @@ export function InfoSection() {
                 </div>
 
                 <img
+                    ref={bgRef}
                     src="https://images.unsplash.com/photo-1592982537447-7440770cbfc9?q=80&w=2672&auto=format&fit=crop"
                     alt="Background"
-                    className="absolute inset-0 w-full h-full object-cover z-0 opacity-40 pointer-events-none"
+                    className="absolute inset-x-0 top-0 w-full h-[150%] object-cover z-0 opacity-40 pointer-events-none transition-transform duration-100 ease-out"
                 />
 
                 <div className="absolute inset-0 bg-gradient-to-b from-[#111827]/90 via-[#111827]/40 to-[#111827]/90 z-[1]" />
@@ -256,7 +257,7 @@ export function InfoSection() {
                             )}
 
                             {activeTab === "informacoes" && (
-                                <div className="relative group/embla">
+                                <div className="relative group/embla mt-[40px]">
                                     <div className="overflow-hidden" ref={emblaRef}>
                                         <div className="flex -mr-[15px]">
                                             {articlesData.map((news, i) => (

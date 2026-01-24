@@ -9,11 +9,15 @@ export function Footer() {
                 <div className="w-full h-[6px] bg-[#f97316] shadow-[0_0_15px_rgba(249,115,22,0.6)]" />
             </div>
 
-            {/* Main Content - Dark Dashboard Theme */}
-            <div className="bg-emerald-950 text-white pt-10 pb-4">
-                <div className="container-site">
+            {/* Main Content - Premium Dark Gradient Theme */}
+            <div className="bg-gradient-to-br from-emerald-950 via-[#011a14] to-emerald-950 text-white pt-16 pb-8 relative overflow-hidden">
+                {/* Subtle Decorative Blobs for Depth */}
+                <div className="absolute top-[-20%] left-[-10%] w-[40%] h-[100%] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none"></div>
+                <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[100%] bg-green-900/10 rounded-full blur-[140px] pointer-events-none"></div>
+
+                <div className="container-site relative z-10">
                     {/* RE-RENDERING GRID STRUCTURE FOR ACCURACY */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 mb-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">
                         {/* 1. Brand */}
                         <div className="col-span-1 lg:col-span-1 space-y-4">
                             <div className="flex flex-col items-start gap-1">
@@ -114,11 +118,11 @@ export function Footer() {
                 </div>
             </div>
 
-            {/* Copyright Bar - Ultra Dark */}
-            <div className="bg-[#021a14] py-3 border-t border-emerald-900">
+            {/* Copyright Bar - Ultra Dark Integrated */}
+            <div className="bg-[#000d0a] py-4 border-t border-white/5 relative z-10">
                 <div className="container-site text-center">
-                    <p className="text-[10px] text-gray-500">
-                        Copyright © 2023 Base de dados agrícola | Powered by <a href="https://visualdesigne.com" target="_blank" rel="noopener noreferrer" className="text-[#08ED19] font-bold hover:underline">VisualDESIGN</a> Services, Lda.
+                    <p className="text-[10px] text-gray-500 tracking-wider">
+                        Copyright © 2023 Base de dados agrícola | Powered by <a href="https://visualdesigne.com" target="_blank" rel="noopener noreferrer" className="text-emerald-500 font-bold hover:text-[#f97316] transition-colors hover:underline">VisualDESIGN</a> Services, Lda.
                     </p>
                 </div>
             </div>

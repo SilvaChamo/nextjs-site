@@ -29,10 +29,10 @@ export default function ParceriaPage() {
             />
 
             {/* Container 1: Intro & Stats */}
-            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20 mt-[50px]">
+            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20">
 
                 {/* 1. Crescemos Juntos */}
-                <section className="bg-transparent py-10 md:pt-[20px] md:pb-[40px] overflow-hidden">
+                <section className="bg-transparent py-[100px] overflow-hidden">
                     <div className="grid lg:grid-cols-2 gap-16 lg:gap-12 items-center">
                         {/* Left Column: Image */}
                         <div className="relative h-[450px] rounded-[20px] overflow-hidden shadow-2xl group">
@@ -54,7 +54,7 @@ export default function ParceriaPage() {
                                     {t('parceria.intro_title')} <br />
                                     {t('parceria.intro_subtitle').split(' ').slice(0, -1).join(' ')} <span className="text-emerald-600">{t('parceria.intro_subtitle').split(' ').slice(-1)}</span>
                                 </h2>
-                                <p className="text-slate-600 text-sm leading-relaxed">
+                                <p className="text-slate-600 text-[15px] leading-snug font-medium mb-12">
                                     {t('parceria.intro_text')}
                                 </p>
                             </div>
@@ -135,7 +135,7 @@ export default function ParceriaPage() {
                             <h3 className="text-[35px] md:text-[48px] font-[900] text-slate-700 leading-[1.1] tracking-tight mb-2">
                                 {t('parceria.who_title').split(' ')[0]} <span className="text-emerald-600">{t('parceria.who_title').split(' ')[1]}</span>
                             </h3>
-                            <p className="text-slate-600 mb-12 text-sm leading-relaxed max-w-xl">
+                            <p className="text-slate-600 mb-12 text-[15px] leading-snug font-medium max-w-xl">
                                 {t('parceria.who_text')}
                             </p>
                             <ul className="grid grid-cols-2 gap-4">
@@ -219,7 +219,7 @@ export default function ParceriaPage() {
                         <h2 className="text-[35px] md:text-[48px] font-[900] text-slate-700 leading-[1.1] tracking-tight mb-4">
                             {t('parceria.premium_partners').split(' ')[0]} <span className="text-[#f97316]">{t('parceria.premium_partners').split(' ')[1]}</span>
                         </h2>
-                        <p className="text-slate-500 text-sm max-w-2xl mx-auto">
+                        <p className="text-slate-500 text-[15px] leading-snug font-medium max-w-2xl mx-auto">
                             {t('parceria.premium_text')}
                         </p>
                     </div>

@@ -23,8 +23,8 @@ export default function ContactosPage() {
                 <div className="bg-white rounded-[15px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] border border-slate-100 px-8 md:px-10 lg:px-12 py-10 md:py-12 mb-12">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                         <div className="space-y-6">
-                            <h2 className="text-2xl md:text-[40px] font-heading font-black text-slate-600 tracking-tight leading-[1.2]">
-                                Fale com a nossa <span className="text-[#f97316]">equipa</span>
+                            <h2 className="text-[35px] md:text-[48px] font-[900] text-slate-700 tracking-tight leading-[1.1]">
+                                Fale com a nossa <span className="text-emerald-600">equipa</span>
                             </h2>
                             <p className="text-sm text-slate-500 font-medium leading-relaxed">
                                 Tem dúvidas sobre os nossos serviços ou precisa de suporte técnico? Entre em contacto connosco através dos canais abaixo ou visite os nossos escritórios.

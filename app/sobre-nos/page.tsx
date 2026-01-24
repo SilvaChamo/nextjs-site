@@ -31,16 +31,16 @@ export default function SobrePage() {
 
                 <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10 py-12 md:py-20 flex justify-end">
                     <div className="max-w-2xl">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 border border-orange-100 mb-6">
-                            <span className="w-2 h-2 rounded-full bg-[#f97316]"></span>
-                            <span className="text-xs font-bold uppercase tracking-widest text-[#f97316]">Nossa Identidade</span>
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-emerald-600/10 border border-emerald-500/20 mb-6">
+                            <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
+                            <span className="text-xs font-bold uppercase tracking-widest text-emerald-700">Nossa Identidade é:</span>
                         </div>
 
-                        <h1 className="text-4xl md:text-6xl font-heading font-black text-slate-700 leading-[1.1] mb-8 tracking-tight">
-                            Impulsionando o <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f97316] to-orange-600">Futuro Agrário</span> de Moçambique.
+                        <h1 className="text-4xl md:text-6xl font-heading font-black text-slate-600 leading-[1.1] mb-8 tracking-tight py-[6px]">
+                            Impulsionar o <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f97316] to-orange-600">Futuro da Agricultura</span> moçambicana
                         </h1>
 
-                        <div className="space-y-6 text-lg text-slate-700 font-medium leading-relaxed border-l-4 border-emerald-500 pl-6">
+                        <div className="space-y-6 text-lg text-slate-600 font-medium leading-relaxed border-l-4 border-emerald-500 pl-6">
                             <p>
                                 A <strong>Base de Dados Agrícola</strong> é mais do que uma plataforma; somos o motor digital que conecta produtores rurais aos mercados globais.
                             </p>
@@ -50,13 +50,17 @@ export default function SobrePage() {
                         </div>
 
                         <div className="mt-10 flex flex-wrap gap-4">
-                            <div className="flex items-center gap-3 px-6 py-4 bg-slate-50 rounded-2xl border border-slate-100">
+                            <div className="flex items-center gap-2 px-5 py-[5px] bg-white/70 backdrop-blur-sm rounded border border-slate-200/50 shadow-sm">
                                 <LucideIcons.CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                                <span className="font-bold text-slate-700 text-sm">Dados Oficiais</span>
+                                <span className="font-bold text-slate-600 text-sm">Dados Oficiais</span>
                             </div>
-                            <div className="flex items-center gap-3 px-6 py-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                <LucideIcons.CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                                <span className="font-bold text-slate-700 text-sm">Tecnologia de Ponta</span>
+                            <div className="flex items-center gap-2 px-5 py-[5px] bg-white/70 backdrop-blur-sm rounded border border-slate-200/50 shadow-sm">
+                                <LucideIcons.Zap className="w-5 h-5 text-emerald-500" />
+                                <span className="font-bold text-slate-600 text-sm">Inovação</span>
+                            </div>
+                            <div className="flex items-center gap-2 px-5 py-[5px] bg-white/70 backdrop-blur-sm rounded border border-slate-200/50 shadow-sm">
+                                <LucideIcons.Globe2 className="w-5 h-5 text-emerald-500" />
+                                <span className="font-bold text-slate-600 text-sm">Tecnologia de Ponta</span>
                             </div>
                         </div>
                     </div>
@@ -126,12 +130,12 @@ export default function SobrePage() {
                 </div>
             </div>
 
-            {/* 3. Dados e Monitoria (SECÇÃO DE CIMA - BRANCA) */}
-            <div className="w-full bg-white py-24 border-b border-slate-100">
+            {/* 3. Dados e Monitoria (SECÇÃO DE CIMA - TRANSPARENTE) */}
+            <div className="w-full py-24 border-b border-slate-200">
                 <div className="max-w-[1350px] mx-auto px-4 md:px-[60px]">
                     <div className="text-center mb-16">
-                        <span className="text-[#f97316] font-bold tracking-widest uppercase text-xs mb-3 block">Ecossistema de Informação</span>
-                        <h2 className="text-3xl md:text-5xl font-heading font-black text-slate-700 tracking-tight">
+                        <span className="text-[#f97316] font-bold tracking-widest uppercase text-xs mb-3 block">— Ecossistema de Informação —</span>
+                        <h2 className="text-3xl md:text-5xl font-heading font-black text-slate-600 tracking-tight">
                             O Que <span className="text-[#f97316]">Monitoramos</span>
                         </h2>
                         <p className="text-slate-500 max-w-2xl mx-auto mt-4 font-medium leading-relaxed">
@@ -150,7 +154,7 @@ export default function SobrePage() {
                                 <div className="w-14 h-14 bg-slate-50 rounded-full flex items-center justify-center shadow-sm mb-6 text-slate-400 group-hover:text-[#f97316] group-hover:scale-110 transition-all">
                                     <item.icon className="w-7 h-7" />
                                 </div>
-                                <h4 className="text-lg font-black text-slate-700 mb-3">{item.label}</h4>
+                                <h4 className="text-lg font-black text-slate-600 mb-3">{item.label}</h4>
                                 <p className="text-sm text-slate-500 leading-relaxed font-medium">{item.desc}</p>
                             </div>
                         ))}
@@ -212,7 +216,7 @@ export default function SobrePage() {
                                         01
                                     </div>
                                     <div>
-                                        <h4 className="text-xl font-bold text-slate-700">Confiabilidade</h4>
+                                        <h4 className="text-xl font-bold text-slate-600">Confiabilidade</h4>
                                         <p className="text-slate-400 text-sm mt-1">Dados validados e cruzados com fontes oficiais (MADER, INE).</p>
                                     </div>
                                 </div>
@@ -221,7 +225,7 @@ export default function SobrePage() {
                                         02
                                     </div>
                                     <div>
-                                        <h4 className="text-xl font-bold text-slate-700">Acessibilidade</h4>
+                                        <h4 className="text-xl font-bold text-slate-600">Acessibilidade</h4>
                                         <p className="text-slate-400 text-sm mt-1">Informação complexa transformada em gráficos simples para todos.</p>
                                     </div>
                                 </div>

@@ -235,13 +235,13 @@ export function InfoSection() {
                                             <div className="w-12 h-12 rounded-[5px] bg-orange-50 flex items-center justify-center">
                                                 <BarChart3 className="text-[#f97316] h-6 w-6" />
                                             </div>
-                                            <h3 className="text-2xl font-bold text-slate-800">Mercado Agrário</h3>
+                                            <h3 className="text-2xl font-bold text-slate-600">Mercado Agrário</h3>
                                         </div>
                                         <p className="text-slate-500">Dados em tempo real sobre a flutuação de preços e volume de produção nas principais províncias moçambicanas.</p>
                                         <div className="space-y-4">
                                             {statsData.length > 0 ? statsData.map((stat, i) => (
                                                 <div key={i} className="flex justify-between items-center p-4 bg-slate-50 rounded-[10px]">
-                                                    <span className="font-bold text-slate-700">{stat.label}</span>
+                                                    <span className="font-bold text-slate-600">{stat.label}</span>
                                                     <span className={`font-black ${stat.color}`}>{stat.val}</span>
                                                 </div>
                                             )) : (

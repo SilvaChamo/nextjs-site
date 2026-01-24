@@ -55,7 +55,7 @@ export function WhyChooseUs() {
                                     <Eye className="w-5 h-5 text-[#f97316]" />
                                 </div>
                                 <div>
-                                    <h3 className="text-base font-bold text-slate-700">Visibilidade no Sector</h3>
+                                    <h3 className="text-base font-bold text-slate-600">Visibilidade no Sector</h3>
                                     <p className="text-slate-500 text-sm mt-0.5">Apareça nos primeiros resultados para quem procura produtos.</p>
                                 </div>
                             </div>
@@ -65,7 +65,7 @@ export function WhyChooseUs() {
                                     <TrendingUp className="w-5 h-5 text-emerald-600" />
                                 </div>
                                 <div>
-                                    <h3 className="text-base font-bold text-slate-700">Crescimento Exponencial</h3>
+                                    <h3 className="text-base font-bold text-slate-600">Crescimento Exponencial</h3>
                                     <p className="text-slate-500 text-sm mt-0.5">Aumente as suas vendas através de campanhas segmentadas.</p>
                                 </div>
                             </div>
@@ -121,7 +121,7 @@ export function WhyChooseUs() {
                                     <Users className="w-5 h-5 text-[#f97316]" />
                                 </div>
                                 <div className="space-y-1">
-                                    <h4 className="font-black text-slate-700 text-lg leading-tight tracking-normal">
+                                    <h4 className="font-black text-slate-600 text-lg leading-tight tracking-normal">
                                         {counts.profissionais > 0 ? `${counts.profissionais} ` : ''}Profissionais<br />Cadastrados
                                     </h4>
                                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider group-hover:text-[#f97316] transition-colors flex items-center gap-2">
@@ -144,7 +144,7 @@ export function WhyChooseUs() {
                                     <Tractor className="w-5 h-5 text-[#f97316]" />
                                 </div>
                                 <div className="space-y-1">
-                                    <h4 className="font-black text-slate-700 text-lg leading-tight tracking-normal">
+                                    <h4 className="font-black text-slate-600 text-lg leading-tight tracking-normal">
                                         {counts.propriedades > 0 ? `${counts.propriedades} ` : ''}Propriedades<br />Cadastrados
                                     </h4>
                                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider group-hover:text-[#f97316] transition-colors flex items-center gap-2">

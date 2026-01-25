@@ -1,8 +1,11 @@
 "use client";
 
 import { PageHeader } from "@/components/PageHeader";
-import { Info, ArrowRight } from "lucide-react";
-import * as LucideIcons from "lucide-react";
+import {
+    Info, ArrowRight, CheckCircle2, Zap, Globe2,
+    Target, Eye, Diamond, TrendingUp, Database,
+    Sprout, Building2
+} from "lucide-react";
 import Link from "next/link";
 
 export default function SobrePage() {
@@ -23,12 +26,12 @@ export default function SobrePage() {
                 {/* Background Image Overlay */}
                 <div
                     className="absolute inset-0 z-0 opacity-[0.15] pointer-events-none bg-center bg-cover bg-no-repeat"
-                    style={{ backgroundImage: "url('/assets/cta-gradient-bg.jpg')" }}
+                    style={{ backgroundImage: "url('/assets/cta-gradient-bg.webp')" }}
                 />
                 <div className="absolute top-0 left-0 w-[48%] h-full hidden lg:block">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                        src="assets/Agotec.jpg"
+                        src="/assets/Agrotec.webp"
                         alt="Background Tech"
                         className="w-full h-full object-cover"
                         style={{ clipPath: "polygon(0 0, 100% 0, 88% 100%, 0% 100%)" }}
@@ -49,25 +52,25 @@ export default function SobrePage() {
                         </h2>
 
                         <div className="space-y-6 text-slate-600 font-medium border-l-4 border-emerald-500 pl-6">
-                            <p className="text-[22px] leading-tight">
+                            <p className="text-[20px] leading-tight">
                                 A <strong>Base de Dados Agrícola</strong> é mais do que uma plataforma; somos o motor digital que conecta produtores rurais aos mercados globais.
                             </p>
-                            <p className="text-[16px] leading-snug">
+                            <p className="text-[14px] leading-relaxed">
                                 Utilizamos tecnologia de ponta para democratizar o acesso à informação, transformar dados brutos em inteligência de mercado e criar um ecossistema onde o pequeno produtor e a grande indústria crescem juntos.
                             </p>
                         </div>
 
                         <div className="mt-10 flex flex-wrap gap-4">
                             <div className="flex items-center gap-2 px-5 py-2.5 bg-white/70 backdrop-blur-sm rounded-[7px] border border-slate-200/50 shadow-sm">
-                                <LucideIcons.CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                                <CheckCircle2 className="w-5 h-5 text-emerald-500" />
                                 <span className="font-bold text-slate-600 text-sm">Dados Oficiais</span>
                             </div>
                             <div className="flex items-center gap-2 px-5 py-2.5 bg-white/70 backdrop-blur-sm rounded-[7px] border border-slate-200/50 shadow-sm">
-                                <LucideIcons.Zap className="w-5 h-5 text-emerald-500" />
+                                <Zap className="w-5 h-5 text-emerald-500" />
                                 <span className="font-bold text-slate-600 text-sm">Inovação</span>
                             </div>
                             <div className="flex items-center gap-2 px-5 py-2.5 bg-white/70 backdrop-blur-sm rounded-[7px] border border-slate-200/50 shadow-sm">
-                                <LucideIcons.Globe2 className="w-5 h-5 text-emerald-500" />
+                                <Globe2 className="w-5 h-5 text-emerald-500" />
                                 <span className="font-bold text-slate-600 text-sm">Tecnologia de Ponta</span>
                             </div>
                         </div>
@@ -110,11 +113,11 @@ export default function SobrePage() {
                             <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-25deg] transition-all duration-1000 group-hover:left-[100%] pointer-events-none z-20"></div>
 
                             <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-transform duration-500 relative z-10">
-                                <LucideIcons.Target className="w-6 h-6 text-white" />
+                                <Target className="w-6 h-6 text-white" />
                             </div>
                             <div className="relative z-10">
                                 <h3 className="text-xl font-bold text-white mb-2">Nossa Missão</h3>
-                                <p className="text-sm text-slate-300 leading-relaxed font-medium transition-colors">
+                                <p className="text-[14px] text-slate-300 leading-relaxed font-medium transition-colors">
                                     Potencializar o agronegócio através da inclusão digital e transações transparentes em toda a cadeia de valor.
                                 </p>
                             </div>
@@ -126,11 +129,11 @@ export default function SobrePage() {
                             <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-25deg] transition-all duration-1000 group-hover:left-[100%] pointer-events-none z-20"></div>
 
                             <div className="w-12 h-12 bg-[#f97316] rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-orange-500/30 group-hover:scale-110 transition-transform duration-500 relative z-10">
-                                <LucideIcons.Eye className="w-6 h-6 text-white" />
+                                <Eye className="w-6 h-6 text-white" />
                             </div>
                             <div className="relative z-10">
                                 <h3 className="text-xl font-bold text-white mb-2">Nossa Visão</h3>
-                                <p className="text-sm text-slate-300 leading-relaxed font-medium transition-colors">
+                                <p className="text-[14px] text-slate-300 leading-relaxed font-medium transition-colors">
                                     Ser a referência digital do sector agrário na África Austral.
                                 </p>
                             </div>
@@ -142,7 +145,7 @@ export default function SobrePage() {
                             <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-25deg] transition-all duration-1000 group-hover:left-[100%] pointer-events-none z-20"></div>
 
                             <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-blue-600/30 group-hover:scale-110 transition-transform duration-500 relative z-10">
-                                <LucideIcons.Diamond className="w-6 h-6 text-white" />
+                                <Diamond className="w-6 h-6 text-white" />
                             </div>
                             <div className="relative z-10">
                                 <h3 className="text-xl font-bold text-white mb-2">Nossos Valores</h3>
@@ -180,17 +183,17 @@ export default function SobrePage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {[
-                            { icon: LucideIcons.TrendingUp, label: "Cotações de Mercado", desc: "Preços actualizados diariamente dos principais mercados grossistas (SIMA)." },
-                            { icon: LucideIcons.Database, label: "Censo Agro-Pecuário", desc: "Dados estruturais do INE sobre explorações, efectivo pecuário e uso da terra." },
-                            { icon: LucideIcons.Sprout, label: "Produção e Colheitas", desc: "Estatísticas de produção por província e previsões para as próximas campanhas." },
-                            { icon: LucideIcons.Building2, label: "Directório Comercial", desc: "Base de dados verificada de fornecedores, compradores e prestadores de serviços." }
+                            { icon: TrendingUp, label: "Cotações de Mercado", desc: "Preços actualizados diariamente dos principais mercados grossistas (SIMA)." },
+                            { icon: Database, label: "Censo Agro-Pecuário", desc: "Dados estruturais do INE sobre explorações, efectivo pecuário e uso da terra." },
+                            { icon: Sprout, label: "Produção e Colheitas", desc: "Estatísticas de produção por província e previsões para as próximas campanhas." },
+                            { icon: Building2, label: "Directório Comercial", desc: "Base de dados verificada de fornecedores, compradores e prestadores de serviços." }
                         ].map((item, idx) => (
                             <div key={idx} className="bg-white p-8 rounded-2xl border border-slate-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
                                 <div className="w-14 h-14 bg-slate-50 rounded-full flex items-center justify-center shadow-sm mb-6 text-slate-400 group-hover:text-[#f97316] group-hover:scale-110 transition-all">
                                     <item.icon className="w-7 h-7" />
                                 </div>
                                 <h4 className="text-lg font-black text-slate-600 mb-3">{item.label}</h4>
-                                <p className="text-sm text-slate-500 leading-relaxed font-medium">{item.desc}</p>
+                                <p className="text-[14px] text-slate-500 leading-relaxed font-medium">{item.desc}</p>
                             </div>
                         ))}
                     </div>
@@ -219,13 +222,16 @@ export default function SobrePage() {
                                 Infra-estrutura que Impulsiona o Desenvolvimento
                             </h3>
 
-                            <p className="text-slate-300 text-[16px] leading-snug mb-10 font-medium max-w-2xl">
-                                Com uma infra-estrutura de dados robusta e actualizada, a Base de dados agrícolas desempenha um papel fundamental no desenvolvimento do sector agrário, facilitando o acesso à informação e a tomada de decisão sobre agricultura em Moçambique.
+                            <p className="text-slate-300 text-[14px] leading-relaxed mb-6 font-medium max-w-2xl border-l-2 border-[#f97316] pl-4">
+                                A nossa jornada começou com o <strong>Jornal Agrícola</strong>, um hub de projectos comunitários registado para dar voz ao campo. Percebemos que, para impulsionar o desenvolvimento, Moçambique precisava de mais do que notícias — precisava de dados e ferramentas práticas.
+                            </p>
+                            <p className="text-slate-300 text-[14px] leading-relaxed mb-10 font-medium max-w-2xl opacity-80">
+                                Com uma infra-estrutura de dados robusta e actualizada, a Base de dados agrícolas desempenha um papel fundamental no desenvolvimento do sector agrário em Moçambique.
                             </p>
 
-                            <Link href="/servicos">
+                            <Link href="/sobre-nos/historial">
                                 <button className="bg-[#f97316] text-white pl-6 pr-4 py-3 rounded-full font-bold text-xs tracking-widest uppercase hover:bg-[#ea580c] transition-all flex items-center gap-3 group shadow-lg shadow-orange-900/20">
-                                    Saiba mais sobre nossos serviços
+                                    Saiba mais sobre nosso historial
                                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                                 </button>
                             </Link>
@@ -236,7 +242,7 @@ export default function SobrePage() {
                             <div className="absolute -inset-4 bg-[#f97316]/20 rounded-[24px] blur-2xl group-hover/img:bg-[#f97316]/30 transition-colors pointer-events-none"></div>
                             <div className="relative h-[450px] rounded-[20px] overflow-hidden border border-white/10 shadow-2xl">
                                 <img
-                                    src="/assets/Mercado.jpg"
+                                    src="/assets/Mercado.webp"
                                     alt="Mercado Agrário"
                                     className="w-full h-full object-cover transform group-hover/img:scale-105 transition-transform duration-700"
                                 />
@@ -259,7 +265,7 @@ export default function SobrePage() {
                             <h2 className="text-[35px] md:text-[48px] font-[900] text-slate-700 leading-[1.1] tracking-tight mb-6">
                                 Uma base de dados em <span className="text-emerald-600">crescimento</span>
                             </h2>
-                            <p className="text-slate-500 text-[16px] leading-snug font-medium">
+                            <p className="text-slate-500 text-[14px] leading-relaxed font-medium">
                                 A nossa plataforma não é apenas um arquivo estático. É um organismo vivo alimentado diariamente por milhares de pontos de dados vindos de todas as províncias de Moçambique.
                             </p>
 
@@ -288,20 +294,20 @@ export default function SobrePage() {
                         {/* Big Numbers Grid */}
                         <div className="grid grid-cols-2 gap-4 px-20">
                             <div className="bg-slate-50 p-8 rounded-2xl text-center border border-slate-100">
-                                <p className="text-4xl md:text-5xl font-black text-[#f97316] mb-2">+10</p>
-                                <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Anos de Histórico</p>
+                                <p className="text-4xl md:text-5xl font-black text-[#f97316] mb-2">+12</p>
+                                <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Anos de Experiência</p>
                             </div>
                             <div className="bg-slate-50 p-8 rounded-2xl text-center border border-slate-100">
                                 <p className="text-4xl md:text-5xl font-black text-emerald-600 mb-2">100%</p>
                                 <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Cobertura Nacional</p>
                             </div>
                             <div className="bg-slate-50 p-8 rounded-2xl text-center border border-slate-100">
-                                <p className="text-4xl md:text-5xl font-black text-blue-600 mb-2">+10</p>
-                                <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Anos de Experiência</p>
+                                <p className="text-4xl md:text-5xl font-black text-blue-600 mb-2">+1500</p>
+                                <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Parceiros Activos</p>
                             </div>
                             <div className="bg-slate-50 p-8 rounded-2xl text-center border border-slate-100">
                                 <p className="text-4xl md:text-5xl font-black text-slate-700 mb-2">24h</p>
-                                <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Tempo de Actualização</p>
+                                <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Actualização Diária</p>
                             </div>
                         </div>
                     </div>

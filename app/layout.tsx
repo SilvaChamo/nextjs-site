@@ -1,4 +1,4 @@
-// Baseagrodata - App Layout
+// Baseagrodata - App Layout | Deployment: 2026-01-25 08:11
 import type { Metadata } from "next";
 import { Montserrat, Maven_Pro } from "next/font/google";
 import "./globals.css";

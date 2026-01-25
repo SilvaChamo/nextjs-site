@@ -136,7 +136,7 @@ export default async function CompanyDirectoryPage({ params }: PageProps) {
 
                                                 <div className="flex gap-2 pt-4">
                                                     <a
-                                                        href={`https://wa.me/${company.contact?.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Olá! Vi o vosso produto na Botánica AI e gostaria de mais informações:\n\n*Produto:* ${p.name}\n*Empresa:* ${company.name}`)}`}
+                                                        href={`https://wa.me/${company.contact?.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Olá! Vi o vosso produto na Agrobotanica e gostaria de mais informações:\\n\\n*Produto:* ${p.name}\\n*Empresa:* ${company.name}`)}`}
                                                         target="_blank"
                                                         className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white py-3 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all active:scale-95"
                                                     >

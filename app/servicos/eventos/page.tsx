@@ -207,7 +207,7 @@ export default function EventosPage() {
                     <div
                         className="absolute inset-0 z-0 animate-ken-burns"
                         style={{
-                            backgroundImage: "url('/assets/cta-gradient-bg.jpg')",
+                            backgroundImage: "url('/assets/cta-gradient-bg.webp')",
                             backgroundSize: 'cover',
                             backgroundPosition: 'center'
                         }}

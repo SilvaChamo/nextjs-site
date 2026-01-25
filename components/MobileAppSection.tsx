@@ -2,8 +2,11 @@
 
 import { Scan, Stethoscope, Store, ArrowRight, Download, Smartphone } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
+import { AboutAppModal } from "./AboutAppModal";
 
 export function MobileAppSection() {
+    const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
     return (
         <section className="py-24 bg-white overflow-hidden relative">
             {/* Background Decor */}
@@ -16,10 +19,10 @@ export function MobileAppSection() {
                     <div className="space-y-6 text-center lg:text-left z-10 transition-all duration-700 delay-100 transform translate-y-0 opacity-100">
                         <div>
                             <h2 className="text-[32px] md:text-[50px] font-heading font-black text-emerald-600 leading-[1.1] tracking-tight mb-2">
-                                Botánica AI
+                                Botânica
                             </h2>
                             <h3 className="text-[32px] md:text-[50px] font-heading font-black text-slate-600 mb-6 leading-[1.1] tracking-tight">
-                                O seu agrónomo digital <br /> de bolso
+                                Scanner inteligente
                             </h3>
                             <p className="text-slate-600 text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">
                                 Identifique pragas, doenças e receba orientações técnicas em segundos com nossa Inteligência Artificial avançada.
@@ -97,22 +100,25 @@ export function MobileAppSection() {
 
                                 {/* Screen Image */}
                                 <img
-                                    src="/assets/botanica.png"
-                                    alt="Interface do Botánica AI"
+                                    src="/assets/botanica.webp"
+                                    alt="Interface do Agrobotanica"
                                     className="w-full h-auto object-cover"
                                 />
                             </div>
                         </div>
 
-                        {/* Floating Badge */}
-                        <div className="absolute z-10 bottom-20 -left-6 md:left-0 lg:-left-12 bg-white p-4 rounded-2xl shadow-xl animate-bounce delay-1000 duration-3000 border border-slate-50">
+                        {/* Floating Badge - "Sobre o aplicativo" */}
+                        <div
+                            onClick={() => setIsAboutModalOpen(true)}
+                            className="absolute z-10 bottom-20 -left-6 md:left-0 lg:-left-12 bg-white p-4 rounded-2xl shadow-xl animate-bounce delay-1000 duration-3000 border border-slate-50 cursor-pointer hover:scale-105 transition-transform group"
+                        >
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                                    <Scan className="w-5 h-5 text-green-600" />
+                                <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center group-hover:bg-[#f97316] transition-colors">
+                                    <Scan className="w-5 h-5 text-[#f97316] group-hover:text-white" />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-slate-400 font-bold uppercase">Status</p>
-                                    <p className="text-sm font-black text-slate-700">Scan Completo</p>
+                                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-tighter">Sobre o</p>
+                                    <p className="text-sm font-black text-slate-700">Aplicativo</p>
                                 </div>
                             </div>
                         </div>
@@ -120,6 +126,11 @@ export function MobileAppSection() {
 
                 </div>
             </div>
+
+            <AboutAppModal
+                isOpen={isAboutModalOpen}
+                onClose={() => setIsAboutModalOpen(false)}
+            />
         </section>
     );
 }

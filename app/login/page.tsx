@@ -110,7 +110,7 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
             {/* Background Image Overlay */}
             <div
                 className="absolute inset-0 z-0 opacity-[0.2] pointer-events-none bg-center bg-cover bg-no-repeat"
-                style={{ backgroundImage: "url('/assets/cta-gradient-bg.jpg')" }}
+                style={{ backgroundImage: "url('/assets/cta-gradient-bg.webp')" }}
             />
 
             <div className="w-full max-w-[380px] px-4 relative z-10">

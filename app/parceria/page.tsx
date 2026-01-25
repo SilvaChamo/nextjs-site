@@ -38,7 +38,7 @@ export default function ParceriaPage() {
                         <div className="relative h-[450px] rounded-[20px] overflow-hidden shadow-2xl group">
                             <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-slate-900/0 transition-colors duration-500 z-10"></div>
                             <img
-                                src="/assets/Parceira.jpg"
+                                src="/assets/parceira.webp"
                                 alt="Parceria Base Agro Data"
                                 className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
                             />
@@ -116,7 +116,7 @@ export default function ParceriaPage() {
                 {/* Background Image Overlay - Blurred and Transparent */}
                 <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
                     <img
-                        src="/assets/Parceira.jpg"
+                        src="/assets/parceira.webp"
                         alt="Background Decor"
                         className="w-full h-full object-cover opacity-10 blur-3xl scale-110"
                     />

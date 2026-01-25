@@ -98,7 +98,7 @@ export default function ServicesIndexPage() {
             {/* Background Image Overlay */}
             <div
                 className="absolute inset-0 z-0 opacity-[0.2] pointer-events-none bg-center bg-cover bg-no-repeat"
-                style={{ backgroundImage: "url('/assets/cta-gradient-bg.jpg')" }}
+                style={{ backgroundImage: "url('/assets/cta-gradient-bg.webp')" }}
             />
             <PageHeader
                 title={<>Nossos <span className="text-[#f97316]">Serviços</span></>}

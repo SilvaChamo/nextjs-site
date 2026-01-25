@@ -104,8 +104,10 @@ export function WhyChooseUs() {
                                     <Building2 className="w-5 h-5 text-white" />
                                 </div>
                                 <div className="space-y-1">
-                                    <h4 className="font-black text-lg leading-tight text-white tracking-normal">
-                                        {counts.empresas > 0 ? `${counts.empresas} ` : ''}Empresas<br />Registadas
+                                    <h4 className="font-black text-lg leading-tight text-white tracking-normal" suppressHydrationWarning>
+                                        <span>{counts.empresas > 0 ? `${counts.empresas} ` : ''}</span>
+                                        <span>Empresas</span><br />
+                                        <span>Registadas</span>
                                     </h4>
                                     <p className="text-emerald-50 text-[10px] uppercase font-bold tracking-wider flex items-center gap-2 group-hover:gap-3 transition-all">
                                         Ver arquivo <ArrowRight className="w-3 h-3" />
@@ -127,8 +129,10 @@ export function WhyChooseUs() {
                                     <Users className="w-5 h-5 text-[#f97316]" />
                                 </div>
                                 <div className="space-y-1">
-                                    <h4 className="font-black text-slate-600 text-lg leading-tight tracking-normal">
-                                        {counts.profissionais > 0 ? `${counts.profissionais} ` : ''}Profissionais<br />Cadastrados
+                                    <h4 className="font-black text-slate-600 text-lg leading-tight tracking-normal" suppressHydrationWarning>
+                                        <span>{counts.profissionais > 0 ? `${counts.profissionais} ` : ''}</span>
+                                        <span>Profissionais</span><br />
+                                        <span>Cadastrados</span>
                                     </h4>
                                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider group-hover:text-[#f97316] transition-colors flex items-center gap-2">
                                         Explorar <ArrowRight className="w-3 h-3" />
@@ -150,8 +154,10 @@ export function WhyChooseUs() {
                                     <Tractor className="w-5 h-5 text-[#f97316]" />
                                 </div>
                                 <div className="space-y-1">
-                                    <h4 className="font-black text-slate-600 text-lg leading-tight tracking-normal">
-                                        {counts.propriedades > 0 ? `${counts.propriedades} ` : ''}Propriedades<br />Cadastrados
+                                    <h4 className="font-black text-slate-600 text-lg leading-tight tracking-normal" suppressHydrationWarning>
+                                        <span>{counts.propriedades > 0 ? `${counts.propriedades} ` : ''}</span>
+                                        <span>Propriedades</span><br />
+                                        <span>Cadastrados</span>
                                     </h4>
                                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider group-hover:text-[#f97316] transition-colors flex items-center gap-2">
                                         Explorar <ArrowRight className="w-3 h-3" />
@@ -170,8 +176,10 @@ export function WhyChooseUs() {
                                     <ShoppingBag className="w-5 h-5 text-white" />
                                 </div>
                                 <div className="space-y-1">
-                                    <h4 className="font-black text-lg leading-tight text-white tracking-normal">
-                                        {counts.produtos > 0 ? `${counts.produtos} ` : ''}Produtos<br />Cadastrados
+                                    <h4 className="font-black text-lg leading-tight text-white tracking-normal" suppressHydrationWarning>
+                                        <span>{counts.produtos > 0 ? `${counts.produtos} ` : ''}</span>
+                                        <span>Produtos</span><br />
+                                        <span>Cadastrados</span>
                                     </h4>
                                     <p className="text-orange-50 text-[10px] uppercase font-bold tracking-wider flex items-center gap-2 group-hover:gap-3 transition-all">
                                         Ver arquivo <ArrowRight className="w-3 h-3" />

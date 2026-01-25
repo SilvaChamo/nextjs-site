@@ -72,8 +72,8 @@ export function Hero({ onToggleSearch, isSearchOpen, stats }: HeroProps) {
                             <div className="absolute top-0 right-0 p-2 opacity-50">
                                 <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
                             </div>
-                            <h4 className="text-[10px] font-black uppercase tracking-widest text-white mb-2 truncate drop-shadow-md">Empresas Agrárias</h4>
-                            <h3 className="text-4xl font-heading font-black text-white mb-1 drop-shadow-md">{getVal('hero-companies', '950+')}</h3>
+                            <h4 className="text-[10px] font-black uppercase tracking-widest text-white mb-2 truncate drop-shadow-md" suppressHydrationWarning>Empresas Agrárias</h4>
+                            <h3 className="text-4xl font-heading font-black text-white mb-1 drop-shadow-md" suppressHydrationWarning><span>{getVal('hero-companies', '950+')}</span></h3>
                             <p className="text-xs text-gray-100 uppercase tracking-wider drop-shadow-sm">Activas no mercado</p>
                             <div className="mt-3 w-full h-1 bg-black/20 rounded-full overflow-hidden">
                                 <div className="h-full bg-[#f97316] w-[85%] shadow-[0_0_10px_rgba(249,115,22,0.5)]"></div>
@@ -84,9 +84,9 @@ export function Hero({ onToggleSearch, isSearchOpen, stats }: HeroProps) {
                     {/* Cartão 2: Produção Agrária 2025 */}
                     <Link href="/estatisticas/producao" className="block h-full animate-float-delayed">
                         <div className="bg-gradient-to-br from-white/20 to-white/5 border border-white/40 p-6 rounded-[10px] shadow-2xl hover:from-white/30 hover:to-white/10 hover:border-[#f97316] transition-all group relative h-full">
-                            <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-100 mb-2 truncate drop-shadow-md">Produção Agrária 2025</h4>
+                            <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-100 mb-2 truncate drop-shadow-md" suppressHydrationWarning>Produção Agrária 2025</h4>
                             <div className="flex items-baseline gap-1">
-                                <h3 className="text-4xl font-heading font-black text-white drop-shadow-md">{getVal('hero-production', '20M+').split(' ')[0]}</h3>
+                                <h3 className="text-4xl font-heading font-black text-white drop-shadow-md" suppressHydrationWarning><span>{getVal('hero-production', '20M+').split(' ')[0]}</span></h3>
                                 <span className="text-sm font-bold text-gray-200">Tons</span>
                             </div>
                             <p className="text-xs text-green-300 mt-1 uppercase tracking-wider flex items-center gap-1 font-bold drop-shadow-sm">
@@ -98,14 +98,14 @@ export function Hero({ onToggleSearch, isSearchOpen, stats }: HeroProps) {
                     {/* Cartão 3: Economia Agrária 2025 */}
                     <Link href="/estatisticas/economia" className="block h-full md:col-span-2 lg:col-span-1 animate-float">
                         <div className="bg-gradient-to-br from-white/20 to-white/5 border border-white/40 p-6 rounded-[10px] shadow-2xl hover:from-white/30 hover:to-white/10 hover:border-[#f97316] transition-all group relative h-full">
-                            <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-100 mb-2 truncate drop-shadow-md">Economia Agrária 2025</h4>
+                            <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-100 mb-2 truncate drop-shadow-md" suppressHydrationWarning>Economia Agrária 2025</h4>
                             <div className="space-y-1">
-                                <h3 className="text-3xl font-heading font-black text-white leading-tight drop-shadow-md">{getVal('hero-economy', '91.4B').split(' ')[0]} <span className="text-base text-gray-200">MZN</span></h3>
+                                <h3 className="text-3xl font-heading font-black text-white leading-tight drop-shadow-md" suppressHydrationWarning><span>{getVal('hero-economy', '91.4B').split(' ')[0]}</span> <span className="text-base text-gray-200">MZN</span></h3>
                                 <p className="text-xs text-gray-100 uppercase tracking-wider drop-shadow-sm">PIB Agrícola (Q2 &apos;25)</p>
                                 <div className="w-full h-1.5 bg-black/20 rounded-full mt-2 overflow-hidden">
                                     <div className="h-full w-[24%] bg-emerald-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]" title="24% do PIB Nacional"></div>
                                 </div>
-                                <p className="text-[10px] text-right text-gray-200 mt-1">{getTrend('hero-economy', '24% do PIB Nacional')}</p>
+                                <p className="text-[10px] text-right text-gray-200 mt-1" suppressHydrationWarning><span>{getTrend('hero-economy', '24% do PIB Nacional')}</span></p>
                             </div>
                         </div>
                     </Link>
@@ -113,9 +113,9 @@ export function Hero({ onToggleSearch, isSearchOpen, stats }: HeroProps) {
                     {/* Cartão 4: Empregos na Agricultura */}
                     <Link href="/estatisticas/emprego" className="block h-full md:col-span-2 lg:col-span-1 animate-float-delayed">
                         <div className="bg-gradient-to-br from-white/20 to-white/5 border border-white/40 p-6 rounded-[10px] shadow-2xl hover:from-white/30 hover:to-white/10 hover:border-[#f97316] transition-all group md:col-span-2 lg:col-span-1 h-full">
-                            <h4 className="text-[10px] font-black uppercase tracking-widest text-emerald-500 mb-2 truncate drop-shadow-md">Emprego Agrícola</h4>
+                            <h4 className="text-[10px] font-black uppercase tracking-widest text-emerald-500 mb-2 truncate drop-shadow-md" suppressHydrationWarning>Emprego Agrícola</h4>
                             <div className="flex items-end gap-2">
-                                <h3 className="text-4xl font-heading font-black text-white leading-none drop-shadow-md">{getVal('hero-jobs', '70%')}</h3>
+                                <h3 className="text-4xl font-heading font-black text-white leading-none drop-shadow-md" suppressHydrationWarning><span>{getVal('hero-jobs', '70%')}</span></h3>
                                 <p className="text-xs text-gray-200 uppercase tracking-wider mb-1.5 drop-shadow-sm">Força laboral</p>
                             </div>
                             <p className="text-[10px] text-white mt-2 leading-tight drop-shadow-sm">
@@ -123,6 +123,7 @@ export function Hero({ onToggleSearch, isSearchOpen, stats }: HeroProps) {
                             </p>
                         </div>
                     </Link>
+
                 </div>
 
             </div>

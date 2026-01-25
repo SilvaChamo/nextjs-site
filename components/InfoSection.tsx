@@ -218,7 +218,9 @@ export function InfoSection() {
                                                     <card.icon className={`h-6 w-6 ${card.dark ? card.iconColor : "text-slate-600"}`} />
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <h3 className={`text-xl font-black leading-tight first-letter:uppercase lowercase ${card.dark ? "text-white" : "text-[#3a3f47]"}`}>{card.title}</h3>
+                                                    <h3 className={`text-xl font-black leading-tight first-letter:uppercase lowercase ${card.dark ? "text-white" : "text-[#3a3f47]"}`} suppressHydrationWarning>
+                                                        <span>{card.title}</span>
+                                                    </h3>
                                                 </div>
                                             </div>
                                             <p className={`text-sm leading-relaxed ${card.dark ? "text-slate-300" : "text-slate-500"} line-clamp-4`}>
@@ -242,8 +244,8 @@ export function InfoSection() {
                                         <div className="space-y-4">
                                             {statsData.length > 0 ? statsData.map((stat, i) => (
                                                 <div key={i} className="flex justify-between items-center p-4 bg-slate-50 rounded-[10px]">
-                                                    <span className="font-bold text-slate-600">{stat.label}</span>
-                                                    <span className={`font-black ${stat.color}`}>{stat.val}</span>
+                                                    <span className="font-bold text-slate-600" suppressHydrationWarning><span>{stat.label}</span></span>
+                                                    <span className={`font-black ${stat.color}`} suppressHydrationWarning><span>{stat.val}</span></span>
                                                 </div>
                                             )) : (
                                                 <div className="text-gray-400 text-sm">Sem dados recentes de mercado.</div>
@@ -281,8 +283,8 @@ export function InfoSection() {
                                                                 <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400">
                                                                     <span>{news.date}</span>
                                                                 </div>
-                                                                <h3 className="text-lg font-black text-slate-600 group-hover:text-[#f97316] transition-colors line-clamp-2 first-letter:uppercase lowercase my-0">
-                                                                    {news.title}
+                                                                <h3 className="text-lg font-black text-slate-600 group-hover:text-[#f97316] transition-colors line-clamp-2 first-letter:uppercase lowercase my-0" suppressHydrationWarning>
+                                                                    <span>{news.title}</span>
                                                                 </h3>
                                                                 <p className="text-xs text-slate-500 leading-relaxed line-clamp-3">
                                                                     {news.subtitle || news.description}

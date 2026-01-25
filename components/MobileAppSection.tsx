@@ -1,12 +1,9 @@
 "use client";
 
-import { Scan, Stethoscope, Store, ArrowRight, Download, Smartphone } from "lucide-react";
-import Image from "next/image";
-import { useState } from "react";
-import { AboutAppModal } from "./AboutAppModal";
+import { Scan, Stethoscope, Store, ArrowRight, Download } from "lucide-react";
+import Link from "next/link";
 
 export function MobileAppSection() {
-    const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
     return (
         <section className="py-24 bg-white overflow-hidden relative">
             {/* Background Decor */}
@@ -108,8 +105,8 @@ export function MobileAppSection() {
                         </div>
 
                         {/* Floating Badge - "Sobre o aplicativo" */}
-                        <div
-                            onClick={() => setIsAboutModalOpen(true)}
+                        <Link
+                            href="/sobre-aplicativo"
                             className="absolute z-10 bottom-20 -left-6 md:left-0 lg:-left-12 bg-white p-4 rounded-2xl shadow-xl animate-bounce delay-1000 duration-3000 border border-slate-50 cursor-pointer hover:scale-105 transition-transform group"
                         >
                             <div className="flex items-center gap-3">
@@ -121,16 +118,11 @@ export function MobileAppSection() {
                                     <p className="text-sm font-black text-slate-700">Aplicativo</p>
                                 </div>
                             </div>
-                        </div>
+                        </Link>
                     </div>
 
                 </div>
             </div>
-
-            <AboutAppModal
-                isOpen={isAboutModalOpen}
-                onClose={() => setIsAboutModalOpen(false)}
-            />
         </section>
     );
 }

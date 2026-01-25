@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { MessageCircle, X, MessageSquare, Send, User, Bot, MessageSquareText } from "lucide-react";
+import { MessageCircle, X, MessageSquare, Send, User, Bot, MessageSquareText, MessagesSquare } from "lucide-react";
 
 export function FloatingChatButton() {
     const [isOpen, setIsOpen] = useState(false);
@@ -60,7 +60,7 @@ export function FloatingChatButton() {
     };
 
     return (
-        <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end gap-3">
+        <div className="fixed bottom-32 right-6 z-[9999] flex flex-col items-end gap-3">
             {/* Chatbot Window */}
             {isChatWindowOpen && (
                 <div className="absolute bottom-20 right-0 w-[350px] md:w-[400px] h-[500px] bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-300">
@@ -168,7 +168,7 @@ export function FloatingChatButton() {
                 {isOpen || isChatWindowOpen ? (
                     <X className="w-6 h-6" />
                 ) : (
-                    <MessageSquare className="w-6 h-6 animate-pulse" />
+                    <MessagesSquare className="w-6 h-6 animate-pulse" />
                 )}
             </button>
         </div>

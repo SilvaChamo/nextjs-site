@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { cn, compressImage } from "@/lib/utils";
 
 // Definindo os passos do Wizard
 const STEPS = [
@@ -91,13 +92,13 @@ export default function RegisterCompanyPage() {
         setUploading(true);
 
         try {
-            const fileExt = file.name.split('.').pop();
-            const filePath = `company-logos/${user?.id}-${Math.random()}.${fileExt}`;
+            const compressedBlob = await compressImage(file);
+            const filePath = `company-logos/${user?.id}-${Math.random()}.webp`;
 
             // Upload
             const { error: uploadError } = await supabase.storage
                 .from('public-assets')
-                .upload(filePath, file);
+                .upload(filePath, compressedBlob);
 
             if (uploadError) throw uploadError;
 

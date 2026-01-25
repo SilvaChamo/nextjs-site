@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Facebook, Instagram, Linkedin, Send } from "lucide-react";
+import { Facebook, Instagram, Linkedin, Send, Youtube } from "lucide-react";
 
 export function Footer() {
     return (
@@ -10,7 +10,7 @@ export function Footer() {
             </div>
 
             {/* Main Content - Premium Dark Gradient Theme */}
-            <div className="bg-gradient-to-br from-emerald-950 via-[#011a14] to-emerald-950 text-white pt-8 pb-0 relative overflow-hidden">
+            <div className="bg-gradient-to-br from-emerald-950 via-[#011a14] to-emerald-950 text-white pt-2 pb-0 relative overflow-hidden">
                 {/* Subtle Decorative Blobs for Depth */}
                 <div className="absolute top-[-20%] left-[-10%] w-[40%] h-[100%] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none"></div>
                 <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[100%] bg-green-900/10 rounded-full blur-[140px] pointer-events-none"></div>
@@ -19,7 +19,7 @@ export function Footer() {
                     {/* RE-RENDERING GRID STRUCTURE FOR ACCURACY */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 mb-[40px]">
                         {/* 1. Brand */}
-                        <div className="col-span-1 lg:col-span-3 space-y-6">
+                        <div className="col-span-1 lg:col-span-3 space-y-3 pt-[30px]">
                             <div className="flex flex-col items-start gap-1">
                                 {/* Logo Image */}
                                 <div className="w-32">
@@ -30,15 +30,14 @@ export function Footer() {
                                     />
                                 </div>
                             </div>
-                            <p className="text-gray-400 text-xs leading-relaxed">
+                            <p className="text-gray-400 text-[14px] leading-relaxed">
                                 Criado para impulsionar o sector agrário, através de facilitação ao acesso à informação e divulgação de dados agricolas e iniciativas do desenvolvimento do sector.
                             </p>
                         </div>
 
-                        {/* 2. Links Internos */}
-                        <div className="col-span-1 lg:col-span-2 space-y-4">
+                        <div className="col-span-1 lg:col-span-2 space-y-4 pt-[30px]">
                             <h3 className="text-lg font-bold text-gray-200">Links internos</h3>
-                            <ul className="space-y-2 text-xs text-gray-400">
+                            <ul className="space-y-1 text-[15px] text-gray-400">
                                 <li><Link href="/sobre-nos" className="hover:text-[#f97316] transition-colors">Sobre nós</Link></li>
                                 <li><Link href="/login" className="hover:text-[#f97316] transition-colors">Minha conta</Link></li>
                                 <li><Link href="/relatorios" className="hover:text-[#f97316] transition-colors">Relatórios</Link></li>
@@ -48,10 +47,9 @@ export function Footer() {
                             </ul>
                         </div>
 
-                        {/* 3. Links Rápidos */}
-                        <div className="col-span-1 lg:col-span-2 space-y-4">
+                        <div className="col-span-1 lg:col-span-2 space-y-4 pt-[30px]">
                             <h3 className="text-lg font-bold text-gray-200">Links rápidos</h3>
-                            <ul className="space-y-2 text-xs text-gray-400">
+                            <ul className="space-y-1 text-[15px] text-gray-400">
                                 <li><Link href="#" className="hover:text-[#f97316] transition-colors">Agro-negócio</Link></li>
                                 <li><Link href="#" className="hover:text-[#f97316] transition-colors">Tecnologia agrária</Link></li>
                                 <li><Link href="#" className="hover:text-[#f97316] transition-colors">Políticas agrárias</Link></li>
@@ -61,10 +59,9 @@ export function Footer() {
                             </ul>
                         </div>
 
-                        {/* 4. Nossos Serviços */}
-                        <div className="col-span-1 lg:col-span-2 space-y-4">
+                        <div className="col-span-1 lg:col-span-2 space-y-4 pt-[30px]">
                             <h3 className="text-lg font-bold text-gray-200">Nossos Serviços</h3>
-                            <ul className="space-y-2 text-xs text-gray-400">
+                            <ul className="space-y-1 text-[15px] text-gray-400">
                                 <li><Link href="/servicos/transporte" className="hover:text-[#f97316] transition-colors">Logística & Transporte</Link></li>
                                 <li><Link href="/servicos/insumos" className="hover:text-[#f97316] transition-colors">Lojas de Insumos</Link></li>
                                 <li><Link href="/servicos/mercado" className="hover:text-[#f97316] transition-colors">Compra & Venda</Link></li>
@@ -74,8 +71,7 @@ export function Footer() {
                             </ul>
                         </div>
 
-                        {/* 5. Newsletter */}
-                        <div className="col-span-1 lg:col-span-3 space-y-4">
+                        <div className="col-span-1 lg:col-span-3 space-y-4 pt-[30px]">
                             <h3 className="text-lg font-bold text-gray-200">Newsletter</h3>
                             <p className="text-gray-400 text-xs leading-tight">
                                 Receba as últimas actualizações e oportunidades do mercado agrário directamente no seu e-mail.
@@ -84,9 +80,9 @@ export function Footer() {
                                 <input
                                     type="email"
                                     placeholder="E-Mail"
-                                    className="w-full bg-white text-gray-800 px-4 py-2 rounded-[7px] text-xs focus:outline-none focus:ring-2 focus:ring-[#f97316] border border-gray-100 shadow-inner"
+                                    className="w-full bg-white text-gray-800 px-6 py-3 rounded-[7px] text-xs focus:outline-none focus:ring-2 focus:ring-[#f97316] border border-gray-100 shadow-inner"
                                 />
-                                <button className="w-full bg-[#f97316] text-white font-bold uppercase py-2 rounded-[7px] hover:bg-[#ea580c] transition-colors text-xs tracking-wider shadow-md active:scale-95">
+                                <button className="w-full bg-[#f97316] text-white font-bold uppercase py-3 rounded-[7px] hover:bg-[#ea580c] transition-colors text-xs tracking-wider shadow-md active:scale-95">
                                     Subscrever
                                 </button>
                             </div>
@@ -95,7 +91,7 @@ export function Footer() {
                     </div>
 
                     {/* Bottom Bar: Legal Links & Socials */}
-                    <div className="border-t border-gray-500 pt-6 pb-0 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div className="border-t border-gray-500 py-6 flex flex-col md:flex-row justify-between items-center gap-6">
                         <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-gray-400 text-[10px] font-black uppercase tracking-widest">
                             <Link href="/politica-privacidade" className="hover:text-[#f97316] transition-colors">Política de privacidade</Link>
                             <Link href="/termos" className="hover:text-[#f97316] transition-colors">Termos e condições</Link>
@@ -105,19 +101,17 @@ export function Footer() {
                             <SocialIcon Icon={Facebook} />
                             <SocialIcon Icon={Linkedin} />
                             <SocialIcon Icon={Instagram} />
-                            <div className="w-8 h-8 rounded-full border border-gray-500 flex items-center justify-center text-gray-400 hover:text-[#22c55e] hover:border-[#22c55e] transition-all cursor-pointer">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-phone"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79(0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
-                            </div>
+                            <SocialIcon Icon={Youtube} />
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* Copyright Bar - Ultra Dark Integrated */}
-            <div className="bg-[#000d0a] pt-6 pb-2 border-t border-white/5 relative z-10">
+            <div className="bg-[#000d0a] py-4 border-t border-white/5 relative z-20">
                 <div className="container-site text-center">
-                    <p className="text-[10px] text-gray-500 tracking-wider">
-                        Copyright © 2023 Base de dados agrícola | Powered by <a href="https://visualdesigne.com" target="_blank" rel="noopener noreferrer" className="text-emerald-500 font-bold hover:text-[#f97316] transition-colors hover:underline">VisualDESIGN</a> Services, Lda.
+                    <p className="text-[12px] text-gray-400 tracking-wider">
+                        Copyright © 2023 Base de dados agrícola | Powered by <a href="https://visualdesigne.com" target="_blank" rel="noopener noreferrer" className="text-emerald-600/80 font-bold hover:text-[#f97316] transition-colors hover:underline">VisualDESIGN</a> Services, Lda.
                     </p>
                 </div>
             </div>

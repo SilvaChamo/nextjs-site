@@ -2,7 +2,7 @@
 
 import { PageHeader } from "@/components/PageHeader";
 import { MarketStatsStrip } from "@/components/MarketStatsStrip";
-import { Handshake, TrendingUp, Eye, Globe, Target, Briefcase, Building2, Mail } from "lucide-react";
+import { Handshake, TrendingUp, Eye, Globe, Target, Briefcase, Building2, Mail, Phone, User } from "lucide-react";
 import {
     Carousel,
     CarouselContent,
@@ -12,9 +12,21 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useState } from "react";
 
 export default function ParceriaPage() {
     const { t } = useLanguage();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const handleSubmit = (e: React.FormEvent) => {
+        if (isSubmitting) {
+            e.preventDefault();
+            return;
+        }
+        setIsSubmitting(true);
+        // Anti-rebound: disable for 3 seconds
+        setTimeout(() => setIsSubmitting(false), 3000);
+    };
 
     return (
         <main className="min-h-screen bg-slate-50">
@@ -28,11 +40,18 @@ export default function ParceriaPage() {
                 ]}
             />
 
-            {/* Container 1: Intro & Stats */}
-            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20">
+            {/* 1. Crescemos Juntos */}
+            <section className="bg-white py-[100px] overflow-hidden relative border-b border-slate-100">
+                {/* Background Image with 10% opacity */}
+                <div className="absolute inset-0 z-0 pointer-events-none">
+                    <img
+                        src="/images/markets/choppies_bg.png"
+                        alt="Background"
+                        className="w-full h-full object-cover opacity-[0.10]"
+                    />
+                </div>
 
-                {/* 1. Crescemos Juntos */}
-                <section className="bg-transparent py-[100px] overflow-hidden">
+                <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10">
                     <div className="grid lg:grid-cols-2 gap-16 lg:gap-12 items-center">
                         {/* Left Column: Image */}
                         <div className="relative h-[450px] rounded-[20px] overflow-hidden shadow-2xl group">
@@ -104,9 +123,8 @@ export default function ParceriaPage() {
                             </div>
                         </div>
                     </div>
-                </section>
-
-            </div>
+                </div>
+            </section>
 
             {/* 1.5. Market Position Stats Strip */}
             <MarketStatsStrip />
@@ -129,55 +147,90 @@ export default function ParceriaPage() {
                 <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
                         <div className="z-10">
-                            {/* Visual Bar instead of ante-title text */}
-                            <div className="w-10 h-[1.5px] bg-[#f97316] mb-6"></div>
+                            <div className="flex items-center gap-3 mb-2">
+                                <div className="w-10 h-[1.5px] bg-[#f97316]"></div>
+                                <span className="text-[#f97316] font-bold text-xs uppercase tracking-wider">Para uma parceria solida</span>
+                            </div>
 
                             <h3 className="text-[35px] md:text-[48px] font-[900] text-slate-700 leading-[1.1] tracking-tight mb-2">
                                 {t('parceria.who_title').split(' ')[0]} <span className="text-emerald-600">{t('parceria.who_title').split(' ')[1]}</span>
                             </h3>
-                            <p className="text-slate-600 mb-12 text-[15px] leading-snug font-medium max-w-xl">
+                            <p className="text-slate-600 mb-6 text-[15px] leading-snug font-medium max-w-xl">
                                 {t('parceria.who_text')}
                             </p>
                             <ul className="grid grid-cols-2 gap-4">
                                 <li className="flex items-center gap-3 bg-slate-50 p-3 rounded-md shadow-sm border border-slate-100 hover:border-orange-200 transition-all group overflow-hidden">
                                     <div className="w-1 h-8 bg-orange-500 rounded-full group-hover:scale-y-110 transition-transform"></div>
-                                    <h4 className="font-bold text-slate-700 text-sm whitespace-nowrap">{t('parceria.who_item1_title')}</h4>
+                                    <h4 className="font-bold text-slate-700 text-sm">{t('parceria.who_item1_title')}</h4>
                                 </li>
                                 <li className="flex items-center gap-3 bg-slate-50 p-3 rounded-md shadow-sm border border-slate-100 hover:border-emerald-200 transition-all group overflow-hidden">
                                     <div className="w-1 h-8 bg-emerald-500 rounded-full group-hover:scale-y-110 transition-transform"></div>
-                                    <h4 className="font-bold text-slate-700 text-sm whitespace-nowrap">{t('parceria.who_item2_title')}</h4>
+                                    <h4 className="font-bold text-slate-700 text-sm">{t('parceria.who_item2_title')}</h4>
                                 </li>
                                 <li className="flex items-center gap-3 bg-slate-50 p-3 rounded-md shadow-sm border border-slate-100 hover:border-teal-200 transition-all group overflow-hidden">
                                     <div className="w-1 h-8 bg-teal-500 rounded-full group-hover:scale-y-110 transition-transform"></div>
-                                    <h4 className="font-bold text-slate-700 text-sm whitespace-nowrap">{t('parceria.who_item3_title')}</h4>
+                                    <h4 className="font-bold text-slate-700 text-sm">{t('parceria.who_item3_title')}</h4>
                                 </li>
                                 <li className="flex items-center gap-3 bg-slate-50 p-3 rounded-md shadow-sm border border-slate-100 hover:border-yellow-200 transition-all group overflow-hidden">
                                     <div className="w-1 h-8 bg-yellow-500 rounded-full group-hover:scale-y-110 transition-transform"></div>
-                                    <h4 className="font-bold text-slate-700 text-sm whitespace-nowrap">{t('parceria.who_item4_title')}</h4>
+                                    <h4 className="font-bold text-slate-700 text-sm">{t('parceria.who_item4_title')}</h4>
                                 </li>
                                 <li className="flex items-center gap-3 bg-slate-50 p-3 rounded-md shadow-sm border border-slate-100 hover:border-emerald-300 transition-all group overflow-hidden">
                                     <div className="w-1 h-8 bg-emerald-600 rounded-full group-hover:scale-y-110 transition-transform"></div>
-                                    <h4 className="font-bold text-slate-700 text-sm whitespace-nowrap">{t('parceria.who_item5_title')}</h4>
+                                    <h4 className="font-bold text-slate-700 text-sm">{t('parceria.who_item5_title')}</h4>
                                 </li>
                                 <li className="flex items-center gap-3 bg-slate-50 p-3 rounded-md shadow-sm border border-slate-100 hover:border-orange-300 transition-all group overflow-hidden">
                                     <div className="w-1 h-8 bg-orange-600 rounded-full group-hover:scale-y-110 transition-transform"></div>
-                                    <h4 className="font-bold text-slate-700 text-sm whitespace-nowrap">{t('parceria.who_item6_title')}</h4>
+                                    <h4 className="font-bold text-slate-700 text-sm">{t('parceria.who_item6_title')}</h4>
                                 </li>
                             </ul>
                         </div>
                         <div className="relative">
                             <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-amber-500 transform rotate-3 rounded-2xl opacity-20 blur-lg"></div>
                             <div id="parceria-form-container" className="bg-white rounded-[20px] shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative border border-slate-100 overflow-hidden">
-                                {/* Top Orange Line - Premium Signature */}
-                                <div className="absolute top-0 left-0 w-full h-[5px] bg-[#f97316] z-10" />
-
-                                <div className="p-8 pb-4 text-center">
-                                    <h4 className="text-xl font-black text-slate-800 mb-1">{t('parceria.form_title')}</h4>
-                                    <p className="text-slate-400 text-[11px] font-bold uppercase tracking-widest">{t('parceria.form_text')}</p>
+                                <div className="p-8 pb-4 text-left">
+                                    <h4 className="text-[25px] font-black text-black/70 mb-1">
+                                        Quer ser um <span className="text-[#f97316]">parceiro</span>?
+                                    </h4>
+                                    <p className="text-black/60 text-[15px] font-medium leading-relaxed">
+                                        Envie nos a sua manifestação de interesse preenchendo o formulário abaixo, a nossa equipa entrará em contacto com sigo em breve.
+                                    </p>
                                 </div>
 
-                                <form id="parceria-form" className="p-8 pt-4 space-y-4" action="mailto:geral@baseagrodata.com" method="POST" encType="text/plain">
-                                    <div className="relative">
+                                <form id="parceria-form" className="p-8 pt-4 space-y-4 flex flex-col items-start" action="mailto:geral@baseagrodata.com" method="POST" encType="text/plain" onSubmit={handleSubmit}>
+                                    <div className="relative w-full">
+                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                        <input
+                                            type="text"
+                                            name="nome_contato"
+                                            className="w-full bg-slate-50 border border-slate-200 rounded-[10px] pl-11 pr-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#f97316]/20 focus:border-[#f97316] transition-all font-bold text-[13px] text-slate-700 placeholder:text-slate-400 placeholder:font-medium"
+                                            placeholder="Nome Completo"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                                        <div className="relative w-full">
+                                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                            <input
+                                                type="tel"
+                                                name="telefone"
+                                                className="w-full bg-slate-50 border border-slate-200 rounded-[10px] pl-11 pr-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#f97316]/20 focus:border-[#f97316] transition-all font-bold text-[13px] text-slate-700 placeholder:text-slate-400 placeholder:font-medium"
+                                                placeholder="Número de Telefone"
+                                                required
+                                            />
+                                        </div>
+                                        <div className="relative w-full">
+                                            <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                            <input
+                                                type="text"
+                                                name="cargo"
+                                                className="w-full bg-slate-50 border border-slate-200 rounded-[10px] pl-11 pr-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#f97316]/20 focus:border-[#f97316] transition-all font-bold text-[13px] text-slate-700 placeholder:text-slate-400 placeholder:font-medium"
+                                                placeholder="Seu Cargo / Função"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="relative w-full">
                                         <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                         <input
                                             type="text"
@@ -187,7 +240,7 @@ export default function ParceriaPage() {
                                             required
                                         />
                                     </div>
-                                    <div className="relative">
+                                    <div className="relative w-full">
                                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                         <input
                                             type="email"
@@ -197,14 +250,15 @@ export default function ParceriaPage() {
                                             required
                                         />
                                     </div>
-                                    <div className="relative">
+                                    <div className="relative w-full">
                                         <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                         <select
                                             name="categoria"
-                                            className="w-full bg-slate-50 border border-slate-200 rounded-[10px] pl-11 pr-10 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#f97316]/20 focus:border-[#f97316] transition-all font-black text-[11px] uppercase tracking-wider text-slate-600 appearance-none"
+                                            className="w-full bg-slate-50 border border-slate-200 rounded-[10px] pl-11 pr-10 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#f97316]/20 focus:border-[#f97316] transition-all font-bold text-[14px] text-slate-600 appearance-none"
                                             required
+                                            defaultValue=""
                                         >
-                                            <option value="" disabled selected>{t('parceria.form_category')}</option>
+                                            <option value="" disabled>{t('parceria.form_category')}</option>
                                             <option value="insumos">Fornecedor de Insumos</option>
                                             <option value="tecnologia">Tecnologia e Inovação</option>
                                             <option value="financeiro">Instituição Financeira / Crédito</option>
@@ -217,7 +271,7 @@ export default function ParceriaPage() {
                                             <div className="w-1.5 h-1.5 border-r-2 border-b-2 border-slate-400 rotate-45" />
                                         </div>
                                     </div>
-                                    <div className="relative">
+                                    <div className="relative w-full">
                                         <textarea
                                             name="mensagem"
                                             className="w-full bg-slate-50 border border-slate-200 rounded-[10px] px-5 py-4 focus:outline-none focus:ring-2 focus:ring-[#f97316]/20 focus:border-[#f97316] transition-all font-medium text-[13px] h-32 resize-none text-slate-700 placeholder:text-slate-400"
@@ -227,9 +281,10 @@ export default function ParceriaPage() {
                                     </div>
                                     <button
                                         type="submit"
-                                        className="w-full py-4 bg-[#f97316] text-white font-black uppercase tracking-widest text-xs rounded-[10px] hover:bg-[#ea580c] transition-all duration-300 shadow-lg active:scale-95 flex items-center justify-center gap-2 group"
+                                        disabled={isSubmitting}
+                                        className={`py-3.5 px-8 text-white font-bold uppercase tracking-wider text-xs rounded-[10px] transition-all duration-300 shadow-lg active:scale-95 flex items-center justify-center gap-2 group ${isSubmitting ? 'bg-slate-400 cursor-not-allowed' : 'bg-emerald-600 hover:bg-[#f97316]'}`}
                                     >
-                                        {t('parceria.form_submit')}
+                                        {isSubmitting ? t('common.loading') : t('parceria.form_submit')}
                                         <TrendingUp className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                                     </button>
 

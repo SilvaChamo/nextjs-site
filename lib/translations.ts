@@ -28,12 +28,15 @@ export const translations = {
             back: "Voltar"
         },
         navbar: {
+            base: "Base",
             about: "Sobre nós",
             services: "Serviços",
             repository: "Repositório",
+            history: "Nossa história",
             partnership: "Parceria",
             market: "Mercado",
             contacts: "Contactos",
+            app: "Sobre o app",
         },
         parceria: {
             header_title: "Seja nosso",
@@ -99,12 +102,15 @@ export const translations = {
             back: "Back"
         },
         navbar: {
+            base: "Base",
             about: "About us",
             services: "Services",
             repository: "Repository",
+            history: "Our history",
             partnership: "Partnership",
             market: "Market",
             contacts: "Contacts",
+            app: "About app",
         },
         parceria: {
             header_title: "Become our",

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ArrowLeft, BookOpen, ScrollText, History, Target, Users } from "lucide-react";
+import { ArrowLeft, BookOpen, ScrollText, History, Target, Users, Quote } from "lucide-react";
 import Link from "next/link";
 
 export default function HistorialPage() {
@@ -24,37 +24,37 @@ export default function HistorialPage() {
             <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row min-h-[calc(100vh-65px)]">
 
                 {/* Left Column (Menu / Identity) */}
-                <aside className="w-full md:w-[350px] bg-white border-r border-slate-200 p-8 md:p-12 space-y-10">
-                    <div className="space-y-6">
+                <aside className="w-full md:w-[350px] bg-white border-b md:border-b-0 md:border-r border-slate-200 p-8 md:p-12 pb-24 space-y-8 md:sticky md:top-[80px] md:self-start md:h-[calc(100vh-80px)] overflow-y-auto">
+                    <div className="space-y-2.5">
                         <div>
-                            <h2 className="text-2xl font-black text-slate-800/80 leading-tight">Base de Dados <br /><span className="text-emerald-600">Agrícola</span></h2>
+                            <h2 className="text-2xl font-black text-slate-800 leading-tight">Base de Dados <br /><span className="text-emerald-600">Agrícola</span></h2>
                         </div>
-                        <p className="text-sm text-slate-500 leading-relaxed font-medium">
+                        <p className="text-[15px] text-slate-500 leading-relaxed font-medium">
                             A força motriz da inovação agrária no país, unindo o legado da comunicação à precisão da tecnologia de dados.
                         </p>
                     </div>
 
-                    <nav className="space-y-2">
+                    <nav className="space-y-0.5">
                         {[
-                            { icon: BookOpen, label: "A Origem", active: true },
-                            { icon: ScrollText, label: "O Jornal Agrícola", active: false },
-                            { icon: Target, label: "A Evolução Digital", active: false },
-                            { icon: Users, label: "Impacto Comunitário", active: false }
+                            { icon: BookOpen, label: "A origem", active: true },
+                            { icon: ScrollText, label: "O jornal agrícola", active: false },
+                            { icon: Target, label: "A evolução digital", active: false },
+                            { icon: Users, label: "Impacto comunitário", active: false }
                         ].map((item, i) => (
                             <div
                                 key={i}
-                                className={`flex items-center gap-4 p-4 rounded-[10px] transition-all cursor-pointer ${item.active ? 'bg-emerald-50 text-emerald-700 shadow-sm border border-emerald-100' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'}`}
+                                className={`flex items-center gap-4 py-2 px-4 rounded-[12px] transition-all cursor-pointer border ${item.active ? 'bg-emerald-50 text-emerald-700 shadow-sm border-emerald-100 font-semibold' : 'text-slate-500 border-transparent hover:bg-slate-50 hover:text-slate-700 font-medium'}`}
                             >
-                                <item.icon className="w-4 h-4" />
-                                <span className="text-sm font-bold uppercase tracking-widest">{item.label}</span>
+                                <item.icon className={`w-5 h-5 ${item.active ? 'text-emerald-600' : 'text-slate-400'}`} />
+                                <span className="text-[15px] tracking-tight">{item.label}</span>
                             </div>
                         ))}
                     </nav>
 
-                    <div className="pt-8 border-t border-slate-100">
-                        <div className="bg-orange-50 rounded-2xl p-6 border border-orange-100">
-                            <p className="text-[10px] font-black text-orange-600 uppercase tracking-widest mb-2">Próximo Capítulo</p>
-                            <p className="text-xs font-bold text-slate-700 leading-relaxed">
+                    <div className="pt-10 pb-12 border-t border-slate-300">
+                        <div className="bg-orange-100 rounded-[20px] p-8 border border-orange-300/40 shadow-md">
+                            <p className="text-[11px] font-black text-orange-600 uppercase tracking-widest mb-3">Próximo capítulo</p>
+                            <p className="text-[14px] font-bold text-slate-700 leading-relaxed italic">
                                 "Não paramos no diagnóstico; agora estamos a construir o futuro da robótica no campo."
                             </p>
                         </div>
@@ -62,8 +62,8 @@ export default function HistorialPage() {
                 </aside>
 
                 {/* Right Column (The History Content) */}
-                <section className="flex-1 bg-white md:bg-transparent p-8 md:p-16 lg:p-24 overflow-y-auto">
-                    <div className="max-w-3xl">
+                <section className="flex-1 bg-white md:bg-transparent p-8 md:p-16 lg:p-24 pb-32">
+                    <div>
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-emerald-600/10 border border-emerald-500/20 mb-6">
                             <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
                             <span className="text-xs font-black uppercase tracking-[0.2em] text-emerald-700">Trajectória de Inovação</span>
@@ -97,7 +97,7 @@ export default function HistorialPage() {
                                     <h3 className="text-2xl font-black text-slate-800/90 mb-6">
                                         A Raiz: O Jornal Agrícola
                                     </h3>
-                                    <div className="space-y-6">
+                                    <div className="space-y-2.5">
                                         <p className="text-[19px] text-slate-600 leading-tight font-medium">
                                             Tudo começou com o **Jornal Agrícola**, uma iniciativa registada junto às entidades de comunicação nacional como um hub de projectos para o desenvolvimento comunitário.
                                         </p>
@@ -124,7 +124,7 @@ export default function HistorialPage() {
                                     <h3 className="text-2xl font-black text-slate-800/90 mb-6">
                                         A Metamorfose Tecnológica
                                     </h3>
-                                    <div className="space-y-6">
+                                    <div className="space-y-2.5">
                                         <p className="text-[19px] text-slate-600 leading-tight font-medium">
                                             Identificamos que a maior barreira para o crescimento não era a falta de vontade, mas a **falta de dados estruturados** e a dificuldade de conexão directa entre os actores da cadeia de valor.
                                         </p>
@@ -151,7 +151,7 @@ export default function HistorialPage() {
                                     <h3 className="text-2xl font-black text-slate-800/90 mb-6">
                                         O Presente e o Futuro
                                     </h3>
-                                    <div className="space-y-6">
+                                    <div className="space-y-2.5">
                                         <p className="text-[19px] text-slate-600 leading-tight font-medium">
                                             Hoje, a base de dados é muito mais do que um arquivo — é o motor propulsor que alimenta o aplicativo **Botânica**, monitora cotações de mercado e conecta fornecedores a clientes.
                                         </p>
@@ -164,15 +164,23 @@ export default function HistorialPage() {
                             </div>
 
                             {/* Quote Section (Final Milestone) */}
-                            <div className="pt-8">
-                                <div className="bg-gradient-to-br from-emerald-950 via-emerald-900 to-slate-900 rounded-[15px] p-12 text-center relative overflow-hidden group border border-emerald-800/30">
+                            <div className="pt-12 -ml-8 md:-ml-16 lg:-ml-24">
+                                <div className="bg-gradient-to-br from-emerald-950 via-emerald-900 to-slate-900 rounded-r-[20px] rounded-l-none py-10 px-12 md:py-12 md:px-16 text-left relative overflow-hidden group border-y border-r border-emerald-800/30">
                                     <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[100px] rounded-full"></div>
-                                    <div className="relative z-10">
-                                        <h4 className="text-emerald-400 text-[28px] font-black mb-6">Para produzir soluções tangíveis</h4>
-                                        <p className="text-2xl font-medium text-white leading-tight italic px-8">
-                                            "Transformamos o jornal em tecnologia, para que o agricultor não apenas leia sobre a mudança, mas a sinta no seu rendimento final."
-                                        </p>
-                                        <div className="w-12 h-1 bg-orange-500 mx-auto mt-8"></div>
+                                    <div className="relative z-10 max-w-3xl">
+                                        <h4 className="text-emerald-400 text-[32px] font-[900] tracking-tight mb-8">Para produzir soluções tangíveis</h4>
+                                        <div className="flex items-start gap-6">
+                                            <div className="flex flex-col items-center shrink-0 mt-1.5 gap-4">
+                                                <div className="relative">
+                                                    <Quote className="w-6 h-6 text-emerald-400 opacity-80 fill-emerald-400/20" />
+                                                    <div className="absolute inset-0 w-6 h-6 bg-emerald-500/20 blur-md rounded-full"></div>
+                                                </div>
+                                                <div className="w-[3px] h-16 bg-orange-500 rounded-full"></div>
+                                            </div>
+                                            <p className="text-[20px] md:text-[24px] font-normal text-white leading-relaxed tracking-tight">
+                                                Transformamos o jornal em tecnologia, para que o agricultor não apenas leia sobre a mudança, mas a sinta no seu rendimento final.
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

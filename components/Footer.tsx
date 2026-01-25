@@ -1,16 +1,24 @@
+"use client";
+
 import Link from "next/link";
 import { Facebook, Instagram, Linkedin, Send, Youtube } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export function Footer() {
+    const pathname = usePathname();
+    const showTopBorder = pathname !== "/sobre-aplicativo";
+
     return (
         <footer className="w-full font-sans">
             {/* Orange Top Border */}
-            <div className="container-site">
-                <div className="w-full h-[6px] bg-[#f97316] shadow-[0_0_15px_rgba(249,115,22,0.6)]" />
-            </div>
+            {showTopBorder && (
+                <div className="container-site">
+                    <div className="w-full h-[6px] bg-[#f97316] shadow-[0_0_15px_rgba(249,115,22,0.6)]" />
+                </div>
+            )}
 
             {/* Main Content - Premium Dark Gradient Theme */}
-            <div className="bg-gradient-to-br from-emerald-950 via-[#011a14] to-emerald-950 text-white pt-2 pb-0 relative overflow-hidden">
+            <div className={`bg-gradient-to-br from-emerald-950 via-[#011a14] to-emerald-950 text-white ${showTopBorder ? 'pt-2' : 'pt-0'} pb-0 relative overflow-hidden ShortView`}>
                 {/* Subtle Decorative Blobs for Depth */}
                 <div className="absolute top-[-20%] left-[-10%] w-[40%] h-[100%] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none"></div>
                 <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[100%] bg-green-900/10 rounded-full blur-[140px] pointer-events-none"></div>

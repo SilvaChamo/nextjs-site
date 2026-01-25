@@ -3,7 +3,7 @@
 import { PageHeader } from "@/components/PageHeader";
 import {
     Info, ArrowRight, CheckCircle2, Zap, Globe2,
-    Target, Eye, Diamond, TrendingUp, Database,
+    Target, Eye, Gem, TrendingUp, Database,
     Sprout, Building2
 } from "lucide-react";
 import Link from "next/link";
@@ -108,12 +108,12 @@ export default function SobrePage() {
                 <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {/* Missão Card */}
-                        <div className="relative bg-white/5 backdrop-blur-sm p-10 rounded-2xl border border-white/10 transition-all duration-500 group overflow-hidden flex items-start gap-4 hover:bg-white/10">
+                        <div className="relative bg-white/5 backdrop-blur-sm p-[20px] rounded-lg border border-white/10 transition-all duration-500 group overflow-hidden flex items-start gap-4 hover:bg-white/10">
                             {/* Animated Shimmer Bar */}
                             <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-25deg] transition-all duration-1000 group-hover:left-[100%] pointer-events-none z-20"></div>
 
-                            <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-transform duration-500 relative z-10">
-                                <Target className="w-6 h-6 text-white" />
+                            <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-transform duration-500 relative z-10">
+                                <Target className="w-5 h-5 text-white" />
                             </div>
                             <div className="relative z-10">
                                 <h3 className="text-xl font-bold text-white mb-2">Nossa Missão</h3>
@@ -124,12 +124,12 @@ export default function SobrePage() {
                         </div>
 
                         {/* Visão Card */}
-                        <div className="relative bg-white/5 backdrop-blur-sm p-10 rounded-2xl border border-white/10 transition-all duration-500 group overflow-hidden flex items-start gap-4 hover:bg-white/10">
+                        <div className="relative bg-white/5 backdrop-blur-sm p-[20px] rounded-lg border border-white/10 transition-all duration-500 group overflow-hidden flex items-start gap-4 hover:bg-white/10">
                             {/* Animated Shimmer Bar */}
                             <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-25deg] transition-all duration-1000 group-hover:left-[100%] pointer-events-none z-20"></div>
 
-                            <div className="w-12 h-12 bg-[#f97316] rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-orange-500/30 group-hover:scale-110 transition-transform duration-500 relative z-10">
-                                <Eye className="w-6 h-6 text-white" />
+                            <div className="w-10 h-10 bg-[#f97316] rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-orange-500/30 group-hover:scale-110 transition-transform duration-500 relative z-10">
+                                <Eye className="w-5 h-5 text-white" />
                             </div>
                             <div className="relative z-10">
                                 <h3 className="text-xl font-bold text-white mb-2">Nossa Visão</h3>
@@ -140,12 +140,12 @@ export default function SobrePage() {
                         </div>
 
                         {/* Valores Card */}
-                        <div className="relative bg-white/5 backdrop-blur-sm p-10 rounded-2xl border border-white/10 transition-all duration-500 group overflow-hidden flex items-start gap-4 hover:bg-white/10">
+                        <div className="relative bg-white/5 backdrop-blur-sm p-[20px] rounded-lg border border-white/10 transition-all duration-500 group overflow-hidden flex items-start gap-4 hover:bg-white/10">
                             {/* Animated Shimmer Bar */}
                             <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-25deg] transition-all duration-1000 group-hover:left-[100%] pointer-events-none z-20"></div>
 
-                            <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-blue-600/30 group-hover:scale-110 transition-transform duration-500 relative z-10">
-                                <Diamond className="w-6 h-6 text-white" />
+                            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-blue-600/30 group-hover:scale-110 transition-transform duration-500 relative z-10">
+                                <Gem className="w-5 h-5 text-white" />
                             </div>
                             <div className="relative z-10">
                                 <h3 className="text-xl font-bold text-white mb-2">Nossos Valores</h3>
@@ -183,17 +183,17 @@ export default function SobrePage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {[
-                            { icon: TrendingUp, label: "Cotações de Mercado", desc: "Preços actualizados diariamente dos principais mercados grossistas (SIMA)." },
+                            { icon: TrendingUp, label: "Cotações de Mercado", desc: "Actualização do preços diariários dos principais produtos nos mercados grossistas (SIMA)." },
                             { icon: Database, label: "Censo Agro-Pecuário", desc: "Dados estruturais do INE sobre explorações, efectivo pecuário e uso da terra." },
                             { icon: Sprout, label: "Produção e Colheitas", desc: "Estatísticas de produção por província e previsões para as próximas campanhas." },
                             { icon: Building2, label: "Directório Comercial", desc: "Base de dados verificada de fornecedores, compradores e prestadores de serviços." }
                         ].map((item, idx) => (
-                            <div key={idx} className="bg-white p-8 rounded-2xl border border-slate-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
-                                <div className="w-14 h-14 bg-slate-50 rounded-full flex items-center justify-center shadow-sm mb-6 text-slate-400 group-hover:text-[#f97316] group-hover:scale-110 transition-all">
-                                    <item.icon className="w-7 h-7" />
+                            <div key={idx} className="bg-white p-[25px] rounded-lg border border-slate-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+                                <div className="w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center shadow-sm mb-3 text-slate-400 group-hover:text-[#f97316] group-hover:scale-110 transition-all">
+                                    <item.icon className="w-5 h-5" />
                                 </div>
-                                <h4 className="text-lg font-black text-slate-600 mb-3">{item.label}</h4>
-                                <p className="text-[14px] text-slate-500 leading-relaxed font-medium">{item.desc}</p>
+                                <h4 className="text-base font-black text-slate-600 mb-1">{item.label}</h4>
+                                <p className="text-[13px] text-slate-500 leading-snug font-medium">{item.desc}</p>
                             </div>
                         ))}
                     </div>
@@ -212,8 +212,7 @@ export default function SobrePage() {
                 <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10 w-full py-[100px]">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                         <div className="max-w-3xl">
-                            {/* Hyphen (Customized 60px) */}
-                            <div className="w-[60px] h-[1.5px] bg-[#f97316] mb-8"></div>
+
 
                             <h1 className="text-[35px] md:text-[50px] font-[900] text-white leading-[1.1] mb-2 tracking-tight">
                                 Conectando o agro-negócio ao <span className="text-[#f97316]">mercado nacional</span>
@@ -222,10 +221,7 @@ export default function SobrePage() {
                                 Infra-estrutura que Impulsiona o Desenvolvimento
                             </h3>
 
-                            <p className="text-slate-300 text-[14px] leading-relaxed mb-6 font-medium max-w-2xl border-l-2 border-[#f97316] pl-4">
-                                A nossa jornada começou com o <strong>Jornal Agrícola</strong>, um hub de projectos comunitários registado para dar voz ao campo. Percebemos que, para impulsionar o desenvolvimento, Moçambique precisava de mais do que notícias — precisava de dados e ferramentas práticas.
-                            </p>
-                            <p className="text-slate-300 text-[14px] leading-relaxed mb-10 font-medium max-w-2xl opacity-80">
+                            <p className="text-slate-300 text-[14px] leading-relaxed mb-10 font-medium max-w-2xl border-l-2 border-[#f97316] pl-4">
                                 Com uma infra-estrutura de dados robusta e actualizada, a Base de dados agrícolas desempenha um papel fundamental no desenvolvimento do sector agrário em Moçambique.
                             </p>
 

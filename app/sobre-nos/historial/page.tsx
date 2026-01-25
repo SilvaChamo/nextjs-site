@@ -1,9 +1,8 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
-import Link from "next/link";
 import { ArrowLeft, BookOpen, ScrollText, History, Target, Users } from "lucide-react";
+import Link from "next/link";
 
 export default function HistorialPage() {
     return (
@@ -27,18 +26,8 @@ export default function HistorialPage() {
                 {/* Left Column (Menu / Identity) */}
                 <aside className="w-full md:w-[350px] bg-white border-r border-slate-200 p-8 md:p-12 space-y-10">
                     <div className="space-y-6">
-                        <div className="w-24 h-24 bg-slate-50 rounded-[2rem] flex items-center justify-center border border-slate-100 shadow-inner overflow-hidden">
-                            <Image
-                                src="/assets/Logo.png"
-                                alt="Base Agro Data Logo"
-                                width={80}
-                                height={80}
-                                className="object-contain"
-                            />
-                        </div>
                         <div>
-                            <h2 className="text-2xl font-black text-slate-800 leading-tight">Base de Dados <br /><span className="text-emerald-600">Agrícola</span></h2>
-                            <p className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mt-2">Fundada em Moçambique</p>
+                            <h2 className="text-2xl font-black text-slate-800/80 leading-tight">Base de Dados <br /><span className="text-emerald-600">Agrícola</span></h2>
                         </div>
                         <p className="text-sm text-slate-500 leading-relaxed font-medium">
                             A força motriz da inovação agrária no país, unindo o legado da comunicação à precisão da tecnologia de dados.
@@ -54,9 +43,9 @@ export default function HistorialPage() {
                         ].map((item, i) => (
                             <div
                                 key={i}
-                                className={`flex items-center gap-4 p-4 rounded-xl transition-all cursor-pointer ${item.active ? 'bg-emerald-50 text-emerald-700 shadow-sm border border-emerald-100' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'}`}
+                                className={`flex items-center gap-4 p-4 rounded-[10px] transition-all cursor-pointer ${item.active ? 'bg-emerald-50 text-emerald-700 shadow-sm border border-emerald-100' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'}`}
                             >
-                                <item.icon className="w-5 h-5" />
+                                <item.icon className="w-4 h-4" />
                                 <span className="text-sm font-bold uppercase tracking-widest">{item.label}</span>
                             </div>
                         ))}
@@ -80,65 +69,107 @@ export default function HistorialPage() {
                             <span className="text-xs font-black uppercase tracking-[0.2em] text-emerald-700">Trajectória de Inovação</span>
                         </div>
 
-                        <h1 className="text-[40px] md:text-[56px] font-black text-slate-800 leading-[1] mb-8 tracking-tighter">
+                        <h1 className="text-[40px] md:text-[60px] font-[900] text-slate-800/80 leading-[1.1] mb-6 tracking-tight">
                             O nosso <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f97316] to-orange-600">Historial</span>
                         </h1>
 
-                        <div className="prose prose-slate max-w-none space-y-12">
+                        <p className="text-[18px] text-slate-500 font-medium leading-relaxed max-w-2xl mb-20">
+                            A nossa jornada é marcada pela adaptação constante e pelo compromisso inabalável com o sector agrário. Explore os marcos fundamentais que transformaram a nossa visão em realidade tecnológica.
+                        </p>
+
+                        {/* Timeline Container */}
+                        <div className="relative space-y-20">
+                            {/* Vertical Journey Line */}
+                            <div className="absolute left-[27px] top-6 bottom-0 w-[2px] bg-gradient-to-b from-slate-200 via-emerald-500/30 to-orange-500/30 hidden md:block"></div>
+
                             {/* Section 1 */}
-                            <div className="space-y-6">
-                                <h3 className="text-2xl font-black text-slate-700 flex items-center gap-4">
-                                    <span className="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center text-sm">01</span>
-                                    A Raiz: O Jornal Agrícola
-                                </h3>
-                                <div className="pl-14 space-y-4">
-                                    <p className="text-lg text-slate-600 leading-relaxed font-medium">
-                                        Tudo começou com o **Jornal Agrícola**, uma iniciativa registada junto às entidades de comunicação nacional como um hub de projectos para o desenvolvimento comunitário.
-                                    </p>
-                                    <p className="text-slate-500 leading-relaxed font-medium">
-                                        Durante anos, o jornal foi a voz do campo, reportando notícias e desafios enfrentados pelos agricultores. No entanto, percebemos que reportar os factos era apenas o início. Para realmente transformar a vida no campo, era necessário entregar **soluções tangíveis**.
-                                    </p>
+                            <div className="relative group transition-all duration-500">
+                                {/* Marker Circle */}
+                                <div className="absolute left-0 md:left-[27px] top-8 md:-translate-x-1/2 z-20 hidden md:block">
+                                    <span className="w-14 h-14 rounded-full bg-slate-900 text-white flex items-center justify-center text-[22px] font-black shrink-0 shadow-xl shadow-slate-900/20 group-hover:scale-110 transition-transform">01</span>
+                                </div>
+
+                                {/* Content Card */}
+                                <div className="md:ml-[80px] bg-white p-8 md:p-10 rounded-[20px] border border-slate-300 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] transition-all duration-500 relative">
+                                    <div className="md:hidden mb-6">
+                                        <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-900 text-white text-lg font-black">01</span>
+                                    </div>
+                                    <h3 className="text-2xl font-black text-slate-800/90 mb-6">
+                                        A Raiz: O Jornal Agrícola
+                                    </h3>
+                                    <div className="space-y-6">
+                                        <p className="text-[19px] text-slate-600 leading-tight font-medium">
+                                            Tudo começou com o **Jornal Agrícola**, uma iniciativa registada junto às entidades de comunicação nacional como um hub de projectos para o desenvolvimento comunitário.
+                                        </p>
+                                        <div className="w-full h-[1.5px] bg-slate-100"></div>
+                                        <p className="text-[15px] text-slate-500 leading-relaxed font-medium">
+                                            Durante anos, o jornal foi a voz do campo, reportando notícias e desafios enfrentados pelos agricultores. No entanto, percebemos que reportar os factos era apenas o início. Para realmente transformar a vida no campo, era necessário entregar **soluções tangíveis**.
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
 
                             {/* Section 2 */}
-                            <div className="space-y-6">
-                                <h3 className="text-2xl font-black text-slate-700 flex items-center gap-4">
-                                    <span className="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center text-sm">02</span>
-                                    A Metamorfose Tecnológica
-                                </h3>
-                                <div className="pl-14 space-y-4">
-                                    <p className="text-lg text-slate-600 leading-relaxed font-medium">
-                                        Identificamos que a maior barreira para o crescimento não era a falta de vontade, mas a **falta de dados estruturados** e a dificuldade de conexão directa entre os actores da cadeia de valor.
-                                    </p>
-                                    <p className="text-slate-500 leading-relaxed font-medium">
-                                        Foi então que tomamos uma decisão estratégica: o Jornal Agrícola deixaria de ser apenas um meio impresso para se tornar o coração de uma infra-estrutura digital. Assim nasceu a **Base de Dados Agrícola de Moçambique**.
-                                    </p>
+                            <div className="relative group transition-all duration-500">
+                                {/* Marker Circle */}
+                                <div className="absolute left-0 md:left-[27px] top-8 md:-translate-x-1/2 z-20 hidden md:block">
+                                    <span className="w-14 h-14 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[22px] font-black shrink-0 shadow-xl shadow-emerald-600/20 group-hover:scale-110 transition-transform">02</span>
+                                </div>
+
+                                {/* Content Card */}
+                                <div className="md:ml-[80px] bg-white p-8 md:p-10 rounded-[20px] border border-slate-300 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] transition-all duration-500 relative">
+                                    <div className="md:hidden mb-6">
+                                        <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-emerald-600 text-white text-lg font-black">02</span>
+                                    </div>
+                                    <h3 className="text-2xl font-black text-slate-800/90 mb-6">
+                                        A Metamorfose Tecnológica
+                                    </h3>
+                                    <div className="space-y-6">
+                                        <p className="text-[19px] text-slate-600 leading-tight font-medium">
+                                            Identificamos que a maior barreira para o crescimento não era a falta de vontade, mas a **falta de dados estruturados** e a dificuldade de conexão directa entre os actores da cadeia de valor.
+                                        </p>
+                                        <div className="w-full h-[1.5px] bg-slate-100"></div>
+                                        <p className="text-[15px] text-slate-500 leading-relaxed font-medium">
+                                            Foi então que tomamos uma decisão estratégica: o Jornal Agrícola deixaria de ser apenas um meio impresso para se tornar o coração de uma infra-estrutura digital. Assim nasceu a **Base de Dados Agrícola de Moçambique**.
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
 
                             {/* Section 3 */}
-                            <div className="space-y-6">
-                                <h3 className="text-2xl font-black text-slate-700 flex items-center gap-4">
-                                    <span className="w-10 h-10 rounded-full bg-[#f97316] text-white flex items-center justify-center text-sm">03</span>
-                                    O Presente e o Futuro
-                                </h3>
-                                <div className="pl-14 space-y-4">
-                                    <p className="text-lg text-slate-600 leading-relaxed font-medium">
-                                        Hoje, a base de dados é muito mais do que um arquivo — é o motor propulsor que alimenta o aplicativo **Botânica**, monitora cotações de mercado e conecta fornecedores a clientes.
-                                    </p>
-                                    <p className="text-slate-500 leading-relaxed font-medium">
-                                        Esquecemos a banca para focar no terreno. A nossa história está a ser escrita agora, linha a linha de código, transação a transação, hectare a hectare. Somos a evolução digital da comunicação agrária em Moçambique.
-                                    </p>
+                            <div className="relative group transition-all duration-500">
+                                {/* Marker Circle */}
+                                <div className="absolute left-0 md:left-[27px] top-8 md:-translate-x-1/2 z-20 hidden md:block">
+                                    <span className="w-14 h-14 rounded-full bg-[#f97316] text-white flex items-center justify-center text-[22px] font-black shrink-0 shadow-xl shadow-orange-600/20 group-hover:scale-110 transition-transform">03</span>
+                                </div>
+
+                                {/* Content Card */}
+                                <div className="md:ml-[80px] bg-white p-8 md:p-10 rounded-[20px] border border-slate-300 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] transition-all duration-500 relative">
+                                    <div className="md:hidden mb-6">
+                                        <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#f97316] text-white text-lg font-black">03</span>
+                                    </div>
+                                    <h3 className="text-2xl font-black text-slate-800/90 mb-6">
+                                        O Presente e o Futuro
+                                    </h3>
+                                    <div className="space-y-6">
+                                        <p className="text-[19px] text-slate-600 leading-tight font-medium">
+                                            Hoje, a base de dados é muito mais do que um arquivo — é o motor propulsor que alimenta o aplicativo **Botânica**, monitora cotações de mercado e conecta fornecedores a clientes.
+                                        </p>
+                                        <div className="w-full h-[1.5px] bg-slate-100"></div>
+                                        <p className="text-[15px] text-slate-500 leading-relaxed font-medium">
+                                            Esquecemos a banca para focar no terreno. A nossa historia está a ser escrita agora, linha a linha de código, transação a transação, hectare a hectare. Somos a evolução digital da comunicação agrária em Moçambique.
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Quote Section */}
-                            <div className="pt-12">
-                                <div className="bg-slate-900 rounded-[2.5rem] p-12 text-center relative overflow-hidden group">
-                                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/20 blur-3xl rounded-full"></div>
+                            {/* Quote Section (Final Milestone) */}
+                            <div className="pt-8">
+                                <div className="bg-gradient-to-br from-emerald-950 via-emerald-900 to-slate-900 rounded-[15px] p-12 text-center relative overflow-hidden group border border-emerald-800/30">
+                                    <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[100px] rounded-full"></div>
                                     <div className="relative z-10">
-                                        <p className="text-2xl font-bold text-white leading-tight italic px-8">
+                                        <h4 className="text-emerald-400 text-[28px] font-black mb-6">Para produzir soluções tangíveis</h4>
+                                        <p className="text-2xl font-medium text-white leading-tight italic px-8">
                                             "Transformamos o jornal em tecnologia, para que o agricultor não apenas leia sobre a mudança, mas a sinta no seu rendimento final."
                                         </p>
                                         <div className="w-12 h-1 bg-orange-500 mx-auto mt-8"></div>

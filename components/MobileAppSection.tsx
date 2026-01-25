@@ -107,7 +107,7 @@ export function MobileAppSection() {
                         {/* Floating Badge - "Sobre o aplicativo" */}
                         <Link
                             href="/sobre-aplicativo"
-                            className="absolute z-10 bottom-20 -left-6 md:left-0 lg:-left-12 bg-white p-4 rounded-2xl shadow-xl animate-bounce delay-1000 duration-3000 border border-slate-50 cursor-pointer hover:scale-105 transition-transform group"
+                            className="absolute z-10 bottom-20 -left-6 md:left-0 lg:-left-12 bg-white py-4 px-6 rounded-2xl shadow-xl animate-bounce delay-1000 duration-3000 border border-slate-50 cursor-pointer hover:scale-105 transition-transform group"
                         >
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center group-hover:bg-[#f97316] transition-colors">

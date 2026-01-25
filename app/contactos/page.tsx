@@ -24,19 +24,6 @@ export default function ContactosPage() {
 
             <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20 mt-[50px] pb-24">
 
-                {/* Intro Box */}
-                <div className="bg-white rounded-[15px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] border border-slate-100 px-8 md:px-10 lg:px-12 py-10 md:py-12 mb-12">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                        <div className="space-y-6">
-                            <h2 className="text-[35px] md:text-[48px] font-[900] text-slate-700 tracking-tight leading-[1.1]">
-                                Fale com a nossa <span className="text-emerald-600">equipa</span>
-                            </h2>
-                            <p className="text-sm text-slate-500 font-medium leading-relaxed">
-                                Tem dúvidas sobre os nossos serviços ou precisa de suporte técnico? Entre em contacto connosco através dos canais abaixo ou visite os nossos escritórios.
-                            </p>
-                        </div>
-                    </div>
-                </div>
 
                 {/* Main Content Area - Split Layout */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -48,7 +35,7 @@ export default function ContactosPage() {
                                 <Phone className="w-6 h-6" />
                             </div>
                             <div>
-                                <h3 className="font-bold text-slate-800 text-lg mb-1">Telefones</h3>
+                                <h3 className="font-black text-slate-800/80 text-[24px] mb-1">Telefones</h3>
                                 <p className="text-slate-500 font-medium">+258 87 75 75 288</p>
                                 <p className="text-slate-500 font-medium">+258 82 52 88 328</p>
                             </div>
@@ -59,7 +46,7 @@ export default function ContactosPage() {
                                 <Mail className="w-6 h-6" />
                             </div>
                             <div>
-                                <h3 className="font-bold text-slate-800 text-lg mb-1">E-mail</h3>
+                                <h3 className="font-black text-slate-800/80 text-[24px] mb-1">E-mail</h3>
                                 <a href="mailto:geral@baseagrodata.com" className="text-slate-500 font-medium hover:text-[#f97316] transition-colors">
                                     geral@baseagrodata.com
                                 </a>
@@ -71,7 +58,7 @@ export default function ContactosPage() {
                                 <MapPin className="w-6 h-6" />
                             </div>
                             <div>
-                                <h3 className="font-bold text-slate-800 text-lg mb-1">Endereço Físico</h3>
+                                <h3 className="font-black text-slate-800/80 text-[24px] mb-1">Endereço Físico</h3>
                                 <p className="text-slate-500 font-medium">Av. Karl Marx nº 177</p>
                                 <p className="text-slate-500 font-medium">Maputo - Moçambique</p>
                             </div>

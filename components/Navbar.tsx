@@ -143,7 +143,7 @@ export function Navbar() {
                     {/* Language Toggle */}
                     <button
                         onClick={toggleLanguage}
-                        className="notranslate w-9 h-9 flex items-center justify-center rounded-[8px] bg-slate-200 font-medium text-[13px] text-gray-700 hover:bg-orange-100 hover:text-[#f97316] transition-all uppercase tracking-tight shadow-sm"
+                        className="notranslate w-9 h-9 flex items-center justify-center rounded-[8px] bg-[#f97316]/10 font-medium text-[13px] text-[#f97316] hover:bg-[#f97316]/20 transition-all uppercase tracking-tight shadow-sm"
                         title={language === "PT" ? "Switch to English" : "Mudar para Português"}
                     >
                         {language === "PT" ? "EN" : "PT"}

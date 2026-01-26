@@ -186,7 +186,7 @@ export default function SobrePage() {
                             { icon: TrendingUp, label: "Cotações de Mercado", desc: "Actualização do preços diariários dos principais produtos nos mercados grossistas (SIMA)." },
                             { icon: Database, label: "Censo Agro-Pecuário", desc: "Dados estruturais do INE sobre explorações, efectivo pecuário e uso da terra." },
                             { icon: Sprout, label: "Produção e Colheitas", desc: "Estatísticas de produção por província e previsões para as próximas campanhas." },
-                            { icon: Building2, label: "Directório Comercial", desc: "Base de dados verificada de fornecedores, compradores e prestadores de serviços." }
+                            { icon: Building2, label: "Empresas Comercial", desc: "Base de dados verificada de fornecedores, compradores e prestadores de serviços." }
                         ].map((item, idx) => (
                             <div key={idx} className="bg-white p-agro rounded-lg border border-slate-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full">
                                 <div className="w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center shadow-sm mb-4 text-slate-400 group-hover:text-[#f97316] group-hover:scale-110 transition-all shrink-0">

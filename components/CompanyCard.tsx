@@ -12,7 +12,7 @@ interface CompanyCardProps {
 export function CompanyCard({ company }: CompanyCardProps) {
     return (
         <Link
-            href={`/directory/${company.slug || company.id}`}
+            href={`/empresas/${company.slug || company.id}`}
             className="bg-white rounded-[10px] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col h-[280px] group border border-gray-100 relative"
         >
             {/* Image Section */}

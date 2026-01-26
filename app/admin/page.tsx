@@ -51,7 +51,7 @@ export default function AdminDashboardPage() {
     const cards = [
         { name: "Artigos Publicados", value: stats.articles, icon: FileText, color: "text-blue-600", bg: "bg-blue-50" },
         { name: "Empresas Registadas", value: stats.companies, icon: Building2, color: "text-emerald-600", bg: "bg-emerald-50" },
-        { name: "Profissionais no Directório", value: stats.professionals, icon: Users, color: "text-indigo-600", bg: "bg-indigo-50" },
+        { name: "Profissionais no Empresas", value: stats.professionals, icon: Users, color: "text-indigo-600", bg: "bg-indigo-50" },
         { name: "Produtos & Insumos", value: stats.products, icon: ShoppingCart, color: "text-orange-600", bg: "bg-orange-50" },
     ];
 
@@ -115,13 +115,13 @@ export default function AdminDashboardPage() {
                         </div>
                         <h3 className="text-xl font-black mb-4 relative z-10">Dica de Gestão</h3>
                         <p className="text-sm text-slate-400 font-medium leading-relaxed relative z-10 mb-6">
-                            Mantenha o directório de empresas actualizado para garantir que os utilizadores encontram sempre informações precisas sobre parceiros e fornecedores.
+                            Mantenha o empresas de empresas actualizado para garantir que os utilizadores encontram sempre informações precisas sobre parceiros e fornecedores.
                         </p>
                         <Link
                             href="/admin/empresas"
                             className="text-xs font-black uppercase tracking-widest text-emerald-400 hover:text-white transition-colors flex items-center gap-2 group"
                         >
-                            Ver Directório
+                            Ver Empresas
                             <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                         </Link>
                     </div>

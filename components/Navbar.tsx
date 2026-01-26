@@ -177,8 +177,8 @@ export function Navbar() {
                         </button>
                         <div className="absolute left-1/2 -translate-x-1/2 top-[calc(100%-5px)] pt-4 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-300 z-50">
                             <div className="bg-white border border-slate-200 rounded-lg shadow-[0_10px_40px_rgba(0,0,0,0.06)] py-1.5 min-w-[200px] overflow-hidden">
-                                <Link href="/directory" className="block px-4 py-2 text-[13px] font-medium text-slate-600 hover:text-[#f97316] hover:bg-slate-50 transition-all font-bold text-[#f97316]">
-                                    Directório (Empresas)
+                                <Link href="/empresas" className="block px-4 py-2 text-[13px] font-medium text-slate-600 hover:text-[#f97316] hover:bg-slate-50 transition-all font-bold text-[#f97316]">
+                                    Empresas (Empresas)
                                 </Link>
                                 <Link href="/design-system/detalhes-empresa" className="block px-4 py-2 text-[13px] font-medium text-slate-600 hover:text-[#f97316] hover:bg-slate-50 transition-all">
                                     Exemplo Detalhes

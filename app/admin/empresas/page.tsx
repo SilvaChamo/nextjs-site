@@ -9,7 +9,7 @@ import { CompanyForm } from "@/components/admin/CompanyForm";
 import { ProfessionalForm } from "@/components/admin/ProfessionalForm";
 import { ProductForm } from "@/components/admin/ProductForm";
 
-export default function AdminDirectoryPage() {
+export default function AdminEmpresasPage() {
     const [view, setView] = useState<'companies' | 'professionals' | 'products'>('companies');
     const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -114,7 +114,7 @@ export default function AdminDirectoryPage() {
         <div className="space-y-8">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Directório Agrário</h1>
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Empresas Agrário</h1>
                     <p className="text-slate-500 font-medium text-sm">Gira empresas, profissionais e produtos do ecossistema.</p>
                 </div>
             </div>

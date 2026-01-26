@@ -22,7 +22,7 @@ const navigation = [
     { name: "Estatísticas", href: "/admin/estatisticas", icon: BarChart3 },
     { name: "Indicadores", href: "/admin/indicadores", icon: Target },
     { name: "Categorias", href: "/admin/categorias", icon: Grid2X2 },
-    { name: "Directório", href: "/admin/diretorio", icon: Building2 },
+    { name: "Empresas", href: "/admin/empresas", icon: Building2 },
     { name: "Mensagens", href: "/admin/mensagens", icon: MessageSquare },
 ];
 

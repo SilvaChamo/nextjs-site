@@ -29,7 +29,7 @@ export default function ServicesIndexPage() {
         },
         {
             title: "Lojas de Insumos",
-            description: "Directório nacional de sementes, fertilizantes e maquinaria agrícola.",
+            description: "Empresas nacional de sementes, fertilizantes e maquinaria agrícola.",
             icon: ShoppingCart,
             href: "/servicos/insumos",
             iconBg: "bg-orange-50",

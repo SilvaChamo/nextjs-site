@@ -31,7 +31,7 @@ export default function StandardCompanyDetailsPage() {
             backgroundImage="/images/Prototipo/sala3.jpg"
             breadcrumbs={[
                 { label: "Início", href: "/" },
-                { label: "Directório", href: "/directory" },
+                { label: "Empresas", href: "/empresas" },
                 { label: "Agro-Indústria Zambézia" }
             ]}
             sidebarComponents={
@@ -140,7 +140,7 @@ export default function StandardCompanyDetailsPage() {
                         </Link>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-agro">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-agro">
                         {products.map((product, i) => (
                             <div key={i} className="group relative h-[210px] rounded-agro overflow-hidden shadow-md card-interactive transition-all duration-300 cursor-pointer border border-slate-100/50 bg-white">
                                 <Image

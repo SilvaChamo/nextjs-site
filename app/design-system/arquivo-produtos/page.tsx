@@ -32,7 +32,7 @@ export default function ProductsArchiveExamplePage() {
             backgroundImage="/images/Prototipo/sala2.jpg"
             breadcrumbs={[
                 { label: "Início", href: "/" },
-                { label: "Directório", href: "/directory" },
+                { label: "Empresas", href: "/empresas" },
                 { label: companyName, href: "/design-system/detalhes-empresa" },
                 { label: "Produtos" }
             ]}

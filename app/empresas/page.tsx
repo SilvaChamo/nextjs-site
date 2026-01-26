@@ -6,7 +6,7 @@ import { Building2, MapPin, CheckCircle2, ArrowRight, Search, ShieldCheck } from
 import Image from "next/image";
 import Link from "next/link";
 
-export default function DirectoryPage() {
+export default function EmpresasPage() {
     const companies = [
         {
             id: 1,
@@ -54,7 +54,7 @@ export default function DirectoryPage() {
             title="Empresas"
             breadcrumbs={[
                 { label: "Início", href: "/" },
-                { label: "Directório" }
+                { label: "Empresas" }
             ]}
             sidebarComponents={
                 <div className="space-y-agro">
@@ -106,7 +106,7 @@ export default function DirectoryPage() {
                     {companies.map((company, i) => (
                         <div key={i} className="group bg-white rounded-agro-lg border border-slate-200 shadow-md card-interactive transition-all duration-500 flex flex-col relative overflow-hidden">
                             {/* 1. Header Image */}
-                            <div className="relative h-[160px] w-full overflow-hidden">
+                            <div className="relative h-[140px] w-full overflow-hidden">
                                 <Image
                                     src={company.image}
                                     alt={company.name}
@@ -143,9 +143,9 @@ export default function DirectoryPage() {
                             </div>
 
                             {/* 2. Content Region */}
-                            <div className="p-5 flex flex-col">
+                            <div className="p-4 flex flex-col">
                                 {/* Company Name: Slightly Increased Size */}
-                                <Link href={`/directory/${company.slug}`}>
+                                <Link href={`/empresas/${company.slug}`}>
                                     <h3 className="text-[15px] font-black text-slate-500 uppercase tracking-tighter leading-tight hover:text-[#f97316] transition-colors mb-1">
                                         {company.name}
                                     </h3>
@@ -159,7 +159,7 @@ export default function DirectoryPage() {
                                 {/* Action: Tightened Area - No border/padding-top */}
                                 <div className="flex justify-start">
                                     <Link
-                                        href={`/directory/${company.slug}`}
+                                        href={`/empresas/${company.slug}`}
                                         className="text-[10px] font-black uppercase tracking-widest text-[#f97316] hover:text-orange-700 flex items-center gap-1.5 transition-all"
                                     >
                                         Ver Perfil

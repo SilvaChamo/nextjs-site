@@ -106,9 +106,9 @@ export default function SobrePage() {
                 </div>
 
                 <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                         {/* Missão Card */}
-                        <div className="relative bg-white/5 p-[20px] rounded-lg border border-white/10 transition-all duration-500 group overflow-hidden flex items-start gap-4 hover:bg-white/10">
+                        <div className="relative bg-white/5 p-5 rounded-lg border border-white/10 transition-all duration-500 group overflow-hidden flex items-start gap-4 hover:bg-white/10">
                             {/* Animated Shimmer Bar */}
                             <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-25deg] transition-all duration-1000 group-hover:left-[100%] pointer-events-none z-20"></div>
 
@@ -124,7 +124,7 @@ export default function SobrePage() {
                         </div>
 
                         {/* Visão Card */}
-                        <div className="relative bg-white/5 p-[20px] rounded-lg border border-white/10 transition-all duration-500 group overflow-hidden flex items-start gap-4 hover:bg-white/10">
+                        <div className="relative bg-white/5 p-5 rounded-lg border border-white/10 transition-all duration-500 group overflow-hidden flex items-start gap-4 hover:bg-white/10">
                             {/* Animated Shimmer Bar */}
                             <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-25deg] transition-all duration-1000 group-hover:left-[100%] pointer-events-none z-20"></div>
 
@@ -140,7 +140,7 @@ export default function SobrePage() {
                         </div>
 
                         {/* Valores Card */}
-                        <div className="relative bg-white/5 p-[20px] rounded-lg border border-white/10 transition-all duration-500 group overflow-hidden flex items-start gap-4 hover:bg-white/10">
+                        <div className="relative bg-white/5 p-5 rounded-lg border border-white/10 transition-all duration-500 group overflow-hidden flex items-start gap-4 hover:bg-white/10">
                             {/* Animated Shimmer Bar */}
                             <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-25deg] transition-all duration-1000 group-hover:left-[100%] pointer-events-none z-20"></div>
 
@@ -181,19 +181,19 @@ export default function SobrePage() {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
                         {[
                             { icon: TrendingUp, label: "Cotações de Mercado", desc: "Actualização do preços diariários dos principais produtos nos mercados grossistas (SIMA)." },
                             { icon: Database, label: "Censo Agro-Pecuário", desc: "Dados estruturais do INE sobre explorações, efectivo pecuário e uso da terra." },
                             { icon: Sprout, label: "Produção e Colheitas", desc: "Estatísticas de produção por província e previsões para as próximas campanhas." },
                             { icon: Building2, label: "Directório Comercial", desc: "Base de dados verificada de fornecedores, compradores e prestadores de serviços." }
                         ].map((item, idx) => (
-                            <div key={idx} className="bg-white p-[25px] rounded-lg border border-slate-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
-                                <div className="w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center shadow-sm mb-3 text-slate-400 group-hover:text-[#f97316] group-hover:scale-110 transition-all">
+                            <div key={idx} className="bg-white p-5 rounded-lg border border-slate-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full">
+                                <div className="w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center shadow-sm mb-4 text-slate-400 group-hover:text-[#f97316] group-hover:scale-110 transition-all shrink-0">
                                     <item.icon className="w-5 h-5" />
                                 </div>
-                                <h4 className="text-base font-black text-slate-600 mb-1">{item.label}</h4>
-                                <p className="text-[13px] text-slate-500 leading-snug font-medium">{item.desc}</p>
+                                <h4 className="text-base font-black text-slate-700 mb-2">{item.label}</h4>
+                                <p className="text-[13px] text-slate-500 leading-relaxed font-medium flex-1">{item.desc}</p>
                             </div>
                         ))}
                     </div>
@@ -288,20 +288,20 @@ export default function SobrePage() {
                         </div>
 
                         {/* Big Numbers Grid */}
-                        <div className="grid grid-cols-2 gap-4 px-20">
-                            <div className="bg-slate-50 p-8 rounded-2xl text-center border border-slate-100">
+                        <div className="grid grid-cols-2 gap-5 px-0 md:px-20">
+                            <div className="bg-slate-50 p-5 rounded-2xl text-center border border-slate-100">
                                 <p className="text-4xl md:text-5xl font-black text-[#f97316] mb-2">+12</p>
                                 <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Anos de Experiência</p>
                             </div>
-                            <div className="bg-slate-50 p-8 rounded-2xl text-center border border-slate-100">
+                            <div className="bg-slate-50 p-5 rounded-2xl text-center border border-slate-100">
                                 <p className="text-4xl md:text-5xl font-black text-emerald-600 mb-2">100%</p>
                                 <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Cobertura Nacional</p>
                             </div>
-                            <div className="bg-slate-50 p-8 rounded-2xl text-center border border-slate-100">
+                            <div className="bg-slate-50 p-5 rounded-2xl text-center border border-slate-100">
                                 <p className="text-4xl md:text-5xl font-black text-blue-600 mb-2">+1500</p>
                                 <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Parceiros Activos</p>
                             </div>
-                            <div className="bg-slate-50 p-8 rounded-2xl text-center border border-slate-100">
+                            <div className="bg-slate-50 p-5 rounded-2xl text-center border border-slate-100">
                                 <p className="text-4xl md:text-5xl font-black text-slate-700 mb-2">24h</p>
                                 <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Actualização Diária</p>
                             </div>

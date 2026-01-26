@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import {
     Clock, ThumbsUp, Share2,
     ArrowRight, Facebook, Twitter, Linkedin,
-    ChevronLeft, Calendar, User, Bookmark,
+    ChevronLeft, ChevronRight, Calendar, User, Bookmark,
     Newspaper, Tag, MessageCircle
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
@@ -108,7 +108,7 @@ export default function ArticleReadingPage() {
             />
 
             <main className="max-w-[1350px] mx-auto px-4 md:px-[60px] py-16">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
                     {/* Main Content Area */}
                     <div className="lg:col-span-9">
                         <div className="bg-white rounded-[15px] border border-slate-100 shadow-sm overflow-hidden mb-12">
@@ -266,31 +266,42 @@ export default function ArticleReadingPage() {
                     </div>
 
                     {/* Sidebar */}
-                    <aside className="lg:col-span-3 space-y-6 sticky top-32">
-                        {/* 1. Clima */}
-                        <WeatherSidebar />
-
-                        {/* 2. Categorias */}
-                        <div className="bg-white rounded-[15px] border border-slate-100 shadow-lg p-6">
-                            <h3 className="text-[10px] font-black text-slate-800 uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-                                Categorias <span className="flex-1 h-px bg-slate-50"></span>
-                            </h3>
-                            <div className="space-y-1">
-                                {["Técnico", "Mercado", "Agro-Internacional", "Comunidade", "Institucional"].map((cat, i) => (
-                                    <Link key={i} href={`/blog?cat=${cat}`} className="flex items-center justify-between py-2 group">
-                                        <span className="text-[13px] font-bold text-slate-500 group-hover:text-[#f97316] transition-colors">{cat}</span>
-                                        <ChevronLeft className="w-3.5 h-3.5 text-slate-300 group-hover:text-[#f97316] rotate-180 transition-all" />
+                    <aside className="lg:col-span-3 space-y-5 sticky top-32">
+                        {/* 1. Categorias (Back in card) */}
+                        <div className="bg-white rounded-[15px] border border-slate-100 shadow-xl p-5">
+                            <div className="mb-6">
+                                <h3 className="text-sm font-black text-slate-800 uppercase tracking-tight flex items-center gap-3">
+                                    Categorias <span className="flex-1 h-px bg-slate-100"></span>
+                                </h3>
+                            </div>
+                            <div className="space-y-2">
+                                {["Técnico", "Mercado", "Comunidade", "Institucional"].map((cat, i) => (
+                                    <Link
+                                        key={i}
+                                        href={`/blog?cat=${cat}`}
+                                        className="flex items-center gap-3 py-2 group transition-all duration-300 hover:translate-x-2"
+                                    >
+                                        <span className="size-1.5 rounded-full bg-slate-300 group-hover:bg-[#f97316] transition-colors"></span>
+                                        <span className="text-[15px] font-bold text-slate-600 group-hover:text-[#f97316] transition-colors">
+                                            {cat}
+                                        </span>
                                     </Link>
                                 ))}
                             </div>
                         </div>
 
-                        {/* 3. Espaço Publicitário */}
-                        <div className="relative aspect-[4/5] rounded-[15px] overflow-hidden group shadow-xl border border-emerald-500/20 bg-emerald-600">
+                        {/* 2. Clima */}
+                        <WeatherSidebar />
+
+                        {/* 3. Newsletter */}
+                        <NewsletterCard />
+
+                        {/* 4. Espaço Publicitário */}
+                        <div className="relative aspect-[4/5] rounded-[15px] overflow-hidden group shadow-xl border border-emerald-500/20 bg-emerald-600 p-5">
                             <div className="absolute inset-0 opacity-20 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
                             <div className="absolute top-0 right-0 size-32 bg-emerald-400/20 blur-3xl rounded-full -mr-16 -mt-16"></div>
 
-                            <div className="absolute inset-0 p-8 flex flex-col justify-end">
+                            <div className="absolute inset-0 p-5 flex flex-col justify-end">
                                 <p className="text-emerald-100 text-[10px] font-black uppercase tracking-widest mb-2">Publicidade</p>
                                 <h4 className="text-white font-black text-xl mb-6 leading-tight">Sua marca aqui em destaque no blog</h4>
                                 <Link href="/contactos">
@@ -298,9 +309,6 @@ export default function ArticleReadingPage() {
                                 </Link>
                             </div>
                         </div>
-
-                        {/* 4. Newsletter */}
-                        <NewsletterCard />
                     </aside>
                 </div>
             </main>

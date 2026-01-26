@@ -168,6 +168,27 @@ export function Navbar() {
                             </Link>
                         );
                     })}
+
+                    {/* DEV KIT DROPDOWN - TEMPORARY */}
+                    <div className="relative group py-4">
+                        <button className="flex items-center gap-1.5 text-[15px] font-black text-emerald-600 bg-emerald-50 px-3 py-1 rounded-md transition-colors whitespace-nowrap tracking-tight font-sans">
+                            <span className="leading-none">Kit Padrão</span>
+                            <ChevronDown className="w-3.5 h-3.5 opacity-70 group-hover:rotate-180 transition-transform duration-300" />
+                        </button>
+                        <div className="absolute left-1/2 -translate-x-1/2 top-[calc(100%-5px)] pt-4 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-300 z-50">
+                            <div className="bg-white border border-slate-200 rounded-lg shadow-[0_10px_40px_rgba(0,0,0,0.06)] py-1.5 min-w-[200px] overflow-hidden">
+                                <Link href="/design-system/detalhes-empresa" className="block px-4 py-2 text-[13px] font-medium text-slate-600 hover:text-[#f97316] hover:bg-slate-50 transition-all">
+                                    Exemplo Detalhes
+                                </Link>
+                                <Link href="/sobre-nos" className="block px-4 py-2 text-[13px] font-medium text-slate-600 hover:text-[#f97316] hover:bg-slate-50 transition-all">
+                                    Sobre Nós (Refatorado)
+                                </Link>
+                                <Link href="/contactos" className="block px-4 py-2 text-[13px] font-medium text-slate-600 hover:text-[#f97316] hover:bg-slate-50 transition-all">
+                                    Contactos (Refatorado)
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
                 </nav>
 
                 {/* Right Actions Section */}

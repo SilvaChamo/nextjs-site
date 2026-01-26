@@ -45,7 +45,7 @@ export default function SobrePage() {
                             <span className="text-xs font-bold uppercase tracking-widest text-emerald-700">Nossa Identidade é:</span>
                         </div>
 
-                        <h2 className="text-[35px] md:text-[48px] font-[900] text-slate-700 leading-[1.1] mb-8 tracking-tight py-[6px]">
+                        <h2>
                             Impulsionando o <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f97316] to-orange-600">futuro da agricultura</span> <br />
                             <span className="text-slate-700">moçambicana</span>
@@ -140,7 +140,7 @@ export default function SobrePage() {
                         </div>
 
                         {/* Valores Card */}
-                        <div className="relative bg-white/5 p-5 rounded-lg border border-white/10 transition-all duration-500 group overflow-hidden flex items-start gap-4 hover:bg-white/10">
+                        <div className="relative bg-white/5 p-agro rounded-lg border border-white/10 transition-all duration-500 group overflow-hidden flex items-start gap-4 hover:bg-white/10">
                             {/* Animated Shimmer Bar */}
                             <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-25deg] transition-all duration-1000 group-hover:left-[100%] pointer-events-none z-20"></div>
 
@@ -173,7 +173,7 @@ export default function SobrePage() {
                             <span className="text-[#f97316] font-bold text-sm uppercase tracking-[0.3em]">nas nossas actividades</span>
                             <div className="w-10 h-[1.5px] bg-[#f97316]"></div>
                         </div>
-                        <h2 className="text-[35px] md:text-[48px] font-[900] text-slate-700 leading-[1.1] tracking-tight">
+                        <h2>
                             O Que <span className="text-emerald-600">Monitoramos?</span>
                         </h2>
                         <p className="text-slate-500 max-w-2xl mx-auto mt-4 font-medium leading-relaxed">
@@ -181,14 +181,14 @@ export default function SobrePage() {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-agro">
                         {[
                             { icon: TrendingUp, label: "Cotações de Mercado", desc: "Actualização do preços diariários dos principais produtos nos mercados grossistas (SIMA)." },
                             { icon: Database, label: "Censo Agro-Pecuário", desc: "Dados estruturais do INE sobre explorações, efectivo pecuário e uso da terra." },
                             { icon: Sprout, label: "Produção e Colheitas", desc: "Estatísticas de produção por província e previsões para as próximas campanhas." },
                             { icon: Building2, label: "Directório Comercial", desc: "Base de dados verificada de fornecedores, compradores e prestadores de serviços." }
                         ].map((item, idx) => (
-                            <div key={idx} className="bg-white p-5 rounded-lg border border-slate-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full">
+                            <div key={idx} className="bg-white p-agro rounded-lg border border-slate-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full">
                                 <div className="w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center shadow-sm mb-4 text-slate-400 group-hover:text-[#f97316] group-hover:scale-110 transition-all shrink-0">
                                     <item.icon className="w-5 h-5" />
                                 </div>
@@ -214,7 +214,7 @@ export default function SobrePage() {
                         <div className="max-w-3xl">
 
 
-                            <h1 className="text-[35px] md:text-[50px] font-[900] text-white leading-[1.1] mb-2 tracking-tight">
+                            <h1 className="text-white mb-2">
                                 Conectando o agro-negócio ao <span className="text-[#f97316]">mercado nacional</span>
                             </h1>
                             <h3 className="text-2xl md:text-4xl font-heading font-normal text-slate-300 leading-tight mb-8">
@@ -226,7 +226,7 @@ export default function SobrePage() {
                             </p>
 
                             <Link href="/sobre-nos/historial">
-                                <button className="bg-[#f97316] text-white pl-6 pr-4 py-3 rounded-full font-bold text-xs tracking-widest uppercase hover:bg-[#ea580c] transition-all flex items-center gap-3 group shadow-lg shadow-orange-900/20">
+                                <button className="btn-accent rounded-full shadow-lg shadow-orange-900/20">
                                     Saiba mais sobre nosso historial
                                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                                 </button>

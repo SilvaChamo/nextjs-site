@@ -26,11 +26,11 @@ export default function ContactosPage() {
 
 
                 {/* Main Content Area - Split Layout */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-agro items-start">
 
                     {/* Left Column: Contact Info (Vertical Stack) */}
-                    <div className="lg:col-span-4 space-y-5">
-                        <div className="bg-white p-8 rounded-xl border border-slate-200 shadow-sm flex items-start gap-6 hover:shadow-md transition-all group">
+                    <div className="lg:col-span-4 space-y-agro">
+                        <div className="card-agro group flex items-start gap-6">
                             <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                                 <Phone className="w-6 h-6" />
                             </div>
@@ -41,7 +41,7 @@ export default function ContactosPage() {
                             </div>
                         </div>
 
-                        <div className="bg-white p-8 rounded-xl border border-slate-200 shadow-sm flex items-start gap-6 hover:shadow-md transition-all group">
+                        <div className="card-agro group flex items-start gap-6">
                             <div className="w-12 h-12 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                                 <Mail className="w-6 h-6" />
                             </div>
@@ -53,7 +53,7 @@ export default function ContactosPage() {
                             </div>
                         </div>
 
-                        <div className="bg-white p-8 rounded-xl border border-slate-200 shadow-sm flex items-start gap-6 hover:shadow-md transition-all group">
+                        <div className="card-agro group flex items-start gap-6">
                             <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                                 <MapPin className="w-6 h-6" />
                             </div>

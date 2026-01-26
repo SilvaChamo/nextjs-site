@@ -70,7 +70,7 @@ export function PageHeader({ title, breadcrumbs, backgroundImage, icon: Icon, ba
             )}
 
             <div className="container-site relative z-10 flex flex-col items-center text-center">
-                <h1 className="text-[35px] md:text-[48px] font-[900] mb-4 tracking-tight text-white leading-[1.1]">{title}</h1>
+                <h1 className="text-white mb-4">{title}</h1>
                 <nav className="flex items-center justify-center text-xs md:text-sm text-white font-medium">
                     {breadcrumbs.map((item, index) => (
                         <div key={index} className="flex items-center">
@@ -90,7 +90,7 @@ export function PageHeader({ title, breadcrumbs, backgroundImage, icon: Icon, ba
                 {backButton && (
                     <Link
                         href={backButton.href}
-                        className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-[7px] border border-white/20 bg-transparent text-white text-sm font-semibold hover:bg-white/10 hover:border-white/40 transition-all group"
+                        className="btn-outline mt-4 group"
                     >
                         <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
                         {backButton.label}

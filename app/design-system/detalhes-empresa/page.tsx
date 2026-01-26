@@ -1,22 +1,29 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 import { StandardBlogTemplate } from "@/components/StandardBlogTemplate";
-import { CheckCircle2, MapPin, Globe, Phone, Mail, ChevronLeft, ChevronRight, Package } from "lucide-react";
+import { CheckCircle2, MapPin, Globe, Phone, Mail, Package, ArrowRight, Share2, Facebook, Twitter, Linkedin } from "lucide-react";
 import Image from "next/image";
-import useEmblaCarousel from 'embla-carousel-react';
+import Link from "next/link";
 
 export default function StandardCompanyDetailsPage() {
-    // Product Carousel Logic
-    const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start' });
-    const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
-    const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
-
     const products = [
         { name: "Castanha de Caju Refinada", price: "500 MT/kg", img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=800", available: true },
         { name: "Algodão em Fardo", price: "Sob Consulta", img: "https://images.unsplash.com/photo-1589923188905-a759330d638d?q=80&w=800", available: true },
         { name: "Sementes Selecionadas", price: "250 MT/pk", img: "https://images.unsplash.com/photo-1464226184884-fa280b87c399?q=80&w=800", available: false },
         { name: "Óleo Vegetal Natural", price: "120 MT/L", img: "https://images.unsplash.com/photo-1474440692490-2e83afef4841?q=80&w=800", available: true },
+    ];
+
+    const [activeShareProduct, setActiveShareProduct] = useState<number | null>(null);
+    const [showCompanyShare, setShowCompanyShare] = useState(false);
+
+    const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
+    const shareTitle = "Agro-Indústria Zambézia";
+
+    const shareOptions = [
+        { name: 'WhatsApp', icon: <Share2 className="w-4 h-4" />, color: 'hover:bg-green-500', url: '#' },
+        { name: 'Facebook', icon: <Facebook className="w-4 h-4" />, color: 'hover:bg-blue-600', url: '#' },
+        { name: 'Twitter', icon: <Twitter className="w-4 h-4" />, color: 'hover:bg-sky-500', url: '#' },
     ];
 
     return (
@@ -79,9 +86,31 @@ export default function StandardCompanyDetailsPage() {
                             <div className="w-24 h-24 bg-white rounded-xl p-2 shadow-2xl shrink-0 border border-slate-100">
                                 <img src="https://placehold.co/100x100/f97316/white?text=LOGO" alt="Logo" className="w-full h-full object-contain" />
                             </div>
-                            <div className="text-white mb-2 flex-1">
-                                <h1 className="text-3xl md:text-4xl font-black mb-1 text-white leading-tight drop-shadow-md uppercase tracking-tighter">Agro-Indústria Zambézia</h1>
-                                <p className="text-white/90 font-medium drop-shadow-sm">Processamento de Castanha de Caju e Algodão</p>
+                            <div className="text-white mb-2 flex-1 flex items-end justify-between">
+                                <div>
+                                    <h1 className="text-3xl md:text-4xl font-black mb-1 text-white leading-tight drop-shadow-md uppercase tracking-tighter">Agro-Indústria Zambézia</h1>
+                                    <p className="text-white/90 font-medium drop-shadow-sm">Processamento de Castanha de Caju e Algodão</p>
+                                </div>
+
+                                {/* Share Company Button (Icon Only) */}
+                                <div className="relative">
+                                    <button
+                                        onClick={() => setShowCompanyShare(!showCompanyShare)}
+                                        className="flex items-center justify-center w-10 h-10 bg-white/20 backdrop-blur-md hover:bg-white hover:text-orange-600 text-white rounded-full transition-all border border-white/30"
+                                    >
+                                        <Share2 className="w-5 h-5" />
+                                    </button>
+
+                                    {showCompanyShare && (
+                                        <div className="absolute right-0 bottom-full mb-2 bg-white border border-slate-100 shadow-xl rounded-xl p-2 z-50 flex gap-1 animate-in fade-in slide-in-from-bottom-2">
+                                            {shareOptions.map((opt) => (
+                                                <button key={opt.name} className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${opt.color} hover:text-white text-slate-400`}>
+                                                    {opt.icon}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -105,61 +134,69 @@ export default function StandardCompanyDetailsPage() {
                     </div>
                 </div>
 
-                {/* Product Carousel Section */}
+                {/* Product Grid Section (4 products visible, no slide) */}
                 <div className="card-agro-lg">
                     <div className="flex items-center justify-between mb-8">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-orange-50 text-orange-600 rounded-lg flex items-center justify-center">
                                 <Package className="w-5 h-5" />
                             </div>
-                            <h3 className="mb-0">Catálogo de Produtos</h3>
+                            <h3 className="mb-0 text-xl font-black uppercase tracking-tight">Catálogo de Produtos</h3>
                         </div>
-                        <div className="flex gap-2">
-                            <button onClick={scrollPrev} className="w-10 h-10 rounded-full border border-slate-100 flex items-center justify-center hover:bg-slate-50 transition-colors">
-                                <ChevronLeft className="w-5 h-5 text-slate-400" />
-                            </button>
-                            <button onClick={scrollNext} className="w-10 h-10 rounded-full border border-slate-100 flex items-center justify-center hover:bg-slate-50 transition-colors">
-                                <ChevronRight className="w-5 h-5 text-slate-400" />
-                            </button>
-                        </div>
+                        <Link
+                            href="/design-system/arquivo-produtos"
+                            className="text-sm font-bold text-[#f97316] hover:underline flex items-center gap-1 transition-all"
+                        >
+                            Ver todos os produtos
+                            <ArrowRight className="w-4 h-4 ml-1" />
+                        </Link>
                     </div>
 
-                    <div className="overflow-hidden" ref={emblaRef}>
-                        <div className="flex gap-6 -mr-6">
-                            {products.map((product, i) => (
-                                <div key={i} className="flex-[0_0_300px] min-w-0 pr-6 pb-2">
-                                    <div className="group/item relative h-[320px] rounded-[20px] overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 cursor-pointer">
-                                        {/* Background Image */}
-                                        <Image
-                                            src={product.img}
-                                            alt={product.name}
-                                            fill
-                                            className="object-cover group-hover/item:scale-110 transition-transform duration-700"
-                                        />
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+                        {products.map((product, i) => (
+                            <div key={i} className="group relative h-[320px] rounded-[12px] overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer border border-slate-100/50 bg-white">
+                                {/* Background Image */}
+                                <Image
+                                    src={product.img}
+                                    alt={product.name}
+                                    fill
+                                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                                />
 
-                                        {/* Status Badge */}
-                                        <div className={`absolute top-4 left-4 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm z-10 ${product.available ? 'bg-emerald-500 text-white' : 'bg-slate-400 text-white'}`}>
-                                            {product.available ? 'Disponível' : 'Indisponível'}
-                                        </div>
+                                {/* Share Product */}
+                                <div className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    <button className="bg-white/20 backdrop-blur-md hover:bg-white hover:text-orange-600 text-white w-8 h-8 rounded-full flex items-center justify-center border border-white/30">
+                                        <Share2 className="w-4 h-4" />
+                                    </button>
+                                </div>
 
-                                        {/* Clean Overlay (No inner box) */}
-                                        <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex flex-col justify-end">
-                                            <h4 className="text-[20px] font-black text-white mb-1 line-clamp-2 leading-tight drop-shadow-md uppercase tracking-tight">
-                                                {product.name}
-                                            </h4>
-                                            <p className="text-[#f97316] font-black text-[18px] drop-shadow-sm">
-                                                {product.price}
-                                            </p>
-                                        </div>
+                                {/* Content Overlay */}
+                                <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex flex-col justify-end h-full">
+                                    {/* Title */}
+                                    <h4 className="text-[17px] font-black text-white mb-1 line-clamp-2 leading-tight uppercase tracking-tight group-hover:mb-2 transition-all">
+                                        {product.name}
+                                    </h4>
 
-                                        {/* Hover Indicator */}
-                                        <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-md w-8 h-8 rounded-full flex items-center justify-center text-white opacity-0 group-hover/item:opacity-100 transition-opacity duration-300 border border-white/20">
-                                            <Package className="w-4 h-4" />
-                                        </div>
+                                    {/* Availability (Hover) */}
+                                    <div className="max-h-0 opacity-0 group-hover:max-h-6 group-hover:opacity-100 transition-all duration-300 ease-out overflow-hidden mb-1">
+                                        <span className={`text-[10px] font-bold uppercase tracking-widest ${product.available ? 'text-emerald-400' : 'text-red-400'}`}>
+                                            ● {product.available ? 'Disponível' : 'Indisponível'}
+                                        </span>
+                                    </div>
+
+                                    {/* Price */}
+                                    <p className="text-[#f97316] font-black text-[16px] drop-shadow-sm mb-1">
+                                        {product.price}
+                                    </p>
+
+                                    {/* View Details Link (Always Visible) */}
+                                    <div className="flex items-center gap-1 text-white/90 text-[11px] font-bold mt-2 hover:text-white transition-colors">
+                                        <span>Ver detalhes</span>
+                                        <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-2" />
                                     </div>
                                 </div>
-                            ))}
-                        </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>

@@ -180,6 +180,9 @@ export function Navbar() {
                                 <Link href="/design-system/detalhes-empresa" className="block px-4 py-2 text-[13px] font-medium text-slate-600 hover:text-[#f97316] hover:bg-slate-50 transition-all">
                                     Exemplo Detalhes
                                 </Link>
+                                <Link href="/design-system/arquivo-produtos" className="block px-4 py-2 text-[13px] font-medium text-slate-600 hover:text-[#f97316] hover:bg-slate-50 transition-all font-bold text-emerald-600">
+                                    Arquivo de Produtos
+                                </Link>
                                 <Link href="/sobre-nos" className="block px-4 py-2 text-[13px] font-medium text-slate-600 hover:text-[#f97316] hover:bg-slate-50 transition-all">
                                     Sobre Nós (Refatorado)
                                 </Link>

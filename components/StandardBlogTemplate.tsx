@@ -26,7 +26,7 @@ export function StandardBlogTemplate({
                 breadcrumbs={breadcrumbs}
             />
 
-            <main className="container-site py-24">
+            <main className="container-site pt-12 pb-[70px]">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-agro items-start">
 
                     {/* Main Content Area */}

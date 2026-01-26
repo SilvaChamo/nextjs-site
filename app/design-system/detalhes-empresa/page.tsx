@@ -11,7 +11,6 @@ export default function StandardCompanyDetailsPage() {
         { name: "Castanha de Caju Refinada", price: "500 MT/kg", img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=800", available: true },
         { name: "Algodão em Fardo", price: "Sob Consulta", img: "https://images.unsplash.com/photo-1589923188905-a759330d638d?q=80&w=800", available: true },
         { name: "Sementes Selecionadas", price: "250 MT/pk", img: "https://images.unsplash.com/photo-1464226184884-fa280b87c399?q=80&w=800", available: false },
-        { name: "Óleo Vegetal Natural", price: "120 MT/L", img: "https://images.unsplash.com/photo-1474440692490-2e83afef4841?q=80&w=800", available: true },
     ];
 
     const [activeShareProduct, setActiveShareProduct] = useState<number | null>(null);
@@ -80,7 +79,6 @@ export default function StandardCompanyDetailsPage() {
                         fill
                         className="object-cover"
                     />
-                    {/* Darker gradient at bottom for text, but transparent at top to see image */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-8">
                         <div className="flex items-end gap-6 w-full">
                             <div className="w-24 h-24 bg-white rounded-xl p-2 shadow-2xl shrink-0 border border-slate-100">
@@ -91,8 +89,6 @@ export default function StandardCompanyDetailsPage() {
                                     <h1 className="text-3xl md:text-4xl font-black mb-1 text-white leading-tight drop-shadow-md uppercase tracking-tighter">Agro-Indústria Zambézia</h1>
                                     <p className="text-white/90 font-medium drop-shadow-sm">Processamento de Castanha de Caju e Algodão</p>
                                 </div>
-
-                                {/* Share Company Button (Icon Only) */}
                                 <div className="relative">
                                     <button
                                         onClick={() => setShowCompanyShare(!showCompanyShare)}
@@ -122,19 +118,10 @@ export default function StandardCompanyDetailsPage() {
                         <p>
                             A <strong>Agro-Indústria Zambézia</strong> é líder no processamento e exportação de castanha de caju na região centro de Moçambique. Fundada em 2010, nossa missão é agregar valor à produção local e garantir preços justos aos pequenos produtores.
                         </p>
-                        <p>
-                            Atuamos em toda a cadeia produtiva, desde o fomento agrícola junto às comunidades locais até a exportação final para mercados internacionais de alta exigência.
-                        </p>
-                        <h3>Nossos Serviços</h3>
-                        <ul>
-                            <li>Processamento industrial de caju de alta qualidade</li>
-                            <li>Comercialização de algodão e matérias-primas têxteis</li>
-                            <li>Apoio técnico e distribuição de insumos a produtores</li>
-                        </ul>
                     </div>
                 </div>
 
-                {/* Product Grid Section (4 products visible, no slide) */}
+                {/* Product Grid Section (3 items per line) */}
                 <div className="card-agro-lg">
                     <div className="flex items-center justify-between mb-8">
                         <div className="flex items-center gap-3">
@@ -152,10 +139,9 @@ export default function StandardCompanyDetailsPage() {
                         </Link>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-agro">
                         {products.map((product, i) => (
-                            <div key={i} className="group relative h-[320px] rounded-[12px] overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer border border-slate-100/50 bg-white">
-                                {/* Background Image */}
+                            <div key={i} className="group relative h-[260px] rounded-[12px] overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer border border-slate-100/50 bg-white">
                                 <Image
                                     src={product.img}
                                     alt={product.name}
@@ -163,33 +149,27 @@ export default function StandardCompanyDetailsPage() {
                                     className="object-cover group-hover:scale-110 transition-transform duration-700"
                                 />
 
-                                {/* Share Product */}
                                 <div className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                     <button className="bg-white/20 backdrop-blur-md hover:bg-white hover:text-orange-600 text-white w-8 h-8 rounded-full flex items-center justify-center border border-white/30">
                                         <Share2 className="w-4 h-4" />
                                     </button>
                                 </div>
 
-                                {/* Content Overlay */}
                                 <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex flex-col justify-end h-full">
-                                    {/* Title */}
                                     <h4 className="text-[17px] font-black text-white mb-1 line-clamp-2 leading-tight uppercase tracking-tight group-hover:mb-2 transition-all">
                                         {product.name}
                                     </h4>
 
-                                    {/* Availability (Hover) */}
                                     <div className="max-h-0 opacity-0 group-hover:max-h-6 group-hover:opacity-100 transition-all duration-300 ease-out overflow-hidden mb-1">
                                         <span className={`text-[10px] font-bold uppercase tracking-widest ${product.available ? 'text-emerald-400' : 'text-red-400'}`}>
                                             ● {product.available ? 'Disponível' : 'Indisponível'}
                                         </span>
                                     </div>
 
-                                    {/* Price */}
                                     <p className="text-[#f97316] font-black text-[16px] drop-shadow-sm mb-1">
                                         {product.price}
                                     </p>
 
-                                    {/* View Details Link (Always Visible) */}
                                     <div className="flex items-center gap-1 text-white/90 text-[11px] font-bold mt-2 hover:text-white transition-colors">
                                         <span>Ver detalhes</span>
                                         <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-2" />

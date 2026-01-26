@@ -72,11 +72,11 @@ export function FeaturedCompanies() {
 
                     <div className="relative group/embla">
                         <div className="overflow-hidden" ref={emblaRef}>
-                            <div className="flex -mr-[15px]">
+                            <div className="flex -mr-5">
                                 {companies.map((company, idx) => (
                                     <div
                                         key={`${company.id}-${idx}`}
-                                        className="flex-[0_0_100%] sm:flex-[0_0_50%] lg:flex-[0_0_25%] min-w-0 pr-[15px]"
+                                        className="flex-[0_0_100%] sm:flex-[0_0_50%] lg:flex-[0_0_25%] min-w-0 pr-5"
                                     >
                                         <CompanyCard company={company} />
                                     </div>

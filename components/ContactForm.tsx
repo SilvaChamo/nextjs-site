@@ -18,7 +18,7 @@ export function ContactForm() {
     return (
         <div className="bg-white rounded-[20px] shadow-[0_20px_50px_rgba(0,0,0,0.08)] relative border border-slate-100 overflow-hidden">
 
-            <div className="p-[50px] pb-6">
+            <div className="p-5 pb-6">
                 <h4 className="text-[45px] font-black text-slate-800/80 mb-2 leading-[1.1]">
                     Fale <span className="text-[#f97316]">connosco</span>
                 </h4>
@@ -28,13 +28,13 @@ export function ContactForm() {
             </div>
 
             {/* Linha separadora mais tonalizada */}
-            <div className="px-[50px]">
+            <div className="px-5">
                 <div className="w-full h-[1.5px] bg-slate-300"></div>
             </div>
 
             <form
                 id="contact-form"
-                className="p-[50px] pt-8 flex flex-col items-start space-y-4"
+                className="p-5 pt-8 flex flex-col items-start space-y-5"
                 action="mailto:geral@baseagrodata.com"
                 method="POST"
                 encType="text/plain"

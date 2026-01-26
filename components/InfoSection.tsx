@@ -197,7 +197,7 @@ export function InfoSection() {
                     ) : (
                         <>
                             {activeTab === "categorias" && (
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                                     {categoryCards.map((card, idx) => (
                                         <Link
                                             key={idx}
@@ -278,7 +278,7 @@ export function InfoSection() {
                                                                 {news.type || "Artigo"}
                                                             </div>
                                                         </div>
-                                                        <div className="p-6 flex flex-col flex-1">
+                                                        <div className="p-5 flex flex-col flex-1">
                                                             <div className="space-y-3">
                                                                 <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400">
                                                                     <span>{new Date(news.date).toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' }).replace('.', '').replace(' de ', ' ')}</span>

@@ -148,7 +148,7 @@ export default function SearchResultsPage() {
             <SearchSection isOpen={isSearchOpen} withBottomBorder={true} />
 
             <main className="max-w-[1350px] mx-auto px-4 md:px-[60px] py-12">
-                <div className="flex flex-col lg:flex-row gap-12">
+                <div className="flex flex-col lg:flex-row gap-5">
 
                     {/* Sidebar Filter */}
                     <aside className="w-full lg:w-72 shrink-0">
@@ -162,7 +162,7 @@ export default function SearchResultsPage() {
                             </div>
 
                             {/* Categories */}
-                            <div className="bg-slate-50 p-6 rounded-[10px] space-y-4 border border-slate-100">
+                            <div className="bg-slate-50 p-5 rounded-[10px] space-y-4 border border-slate-100">
                                 <h3 className="text-sm font-bold text-slate-900">Categorias</h3>
                                 <div className="space-y-3">
                                     {[
@@ -205,7 +205,7 @@ export default function SearchResultsPage() {
                             </div>
 
                             {/* Promo Banner */}
-                            <div className="bg-emerald-50 border border-emerald-100 p-6 rounded-[10px] space-y-4">
+                            <div className="bg-emerald-50 border border-emerald-100 p-5 rounded-[10px] space-y-4">
                                 <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Dica Pro</p>
                                 <p className="text-sm text-emerald-900 font-medium">Registe-se como vendedor para listar os seus produtos gratuitamente.</p>
                                 <button className="w-full py-3 bg-emerald-600 text-white text-xs font-bold rounded-[10px] hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-600/20">
@@ -217,9 +217,9 @@ export default function SearchResultsPage() {
 
                     {/* Results Content Area */}
                     <div className="flex-1 min-h-[400px]">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                             {filteredItems.length > 0 ? filteredItems.map((item, i) => (
-                                <div key={i} className={`p-6 rounded-[15px] border ${item.border} ${item.bg} shadow-md hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group flex flex-col items-center text-center gap-6`}>
+                                <div key={i} className={`p-5 rounded-[15px] border ${item.border} ${item.bg} shadow-md hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group flex flex-col items-center text-center gap-5`}>
                                     <div className={`w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm ${item.color} group-hover:scale-110 transition-transform`}>
                                         <item.icon className="w-8 h-8" />
                                     </div>

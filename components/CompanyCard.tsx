@@ -34,7 +34,7 @@ export function CompanyCard({ company }: CompanyCardProps) {
             </div>
 
             {/* Content Section */}
-            <div className="p-4 flex flex-col flex-grow relative bg-white items-center text-center">
+            <div className="p-5 flex flex-col flex-grow relative bg-white items-center text-center">
                 {/* Logo overlapping image */}
                 <div className="absolute -top-8 w-16 h-16 bg-white rounded-xl shadow-lg border border-gray-100 p-2 flex items-center justify-center transform group-hover:-translate-y-1 transition-transform duration-500">
                     <Image

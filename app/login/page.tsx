@@ -138,7 +138,7 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                                     type="text"
                                     required
                                     placeholder="Nome Completo"
-                                    className="pl-11 h-10 bg-slate-50 border-slate-200 focus-candy text-[13px] rounded-md transition-all duration-300"
+                                    className="pl-11 h-10 bg-white border-slate-200 focus-candy text-[13px] rounded-md transition-all duration-300"
                                     value={formData.fullName}
                                     onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                                 />
@@ -151,7 +151,7 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                                 type="email"
                                 required
                                 placeholder="Email"
-                                className="pl-11 h-10 bg-slate-50 border-slate-200 focus-candy text-[13px] rounded-md transition-all duration-300"
+                                className="pl-11 h-10 bg-white border-slate-200 focus-candy text-[13px] rounded-md transition-all duration-300"
                                 value={formData.email}
                                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                             />
@@ -164,7 +164,7 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                                     type={showPassword ? "text" : "password"}
                                     required
                                     placeholder="Senha"
-                                    className="pl-11 pr-10 h-10 bg-slate-50 border-slate-200 focus-candy text-[13px] rounded-md transition-all duration-300"
+                                    className="pl-11 pr-10 h-10 bg-white border-slate-200 focus-candy text-[13px] rounded-md transition-all duration-300"
                                     value={formData.password}
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                 />
@@ -185,7 +185,7 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                                     type={showPassword ? "text" : "password"}
                                     required
                                     placeholder="Senha"
-                                    className="pl-11 pr-10 h-10 bg-slate-50 border-slate-200 focus-candy text-[13px] rounded-md transition-all duration-300"
+                                    className="pl-11 pr-10 h-10 bg-white border-slate-200 focus-candy text-[13px] rounded-md transition-all duration-300"
                                     value={formData.password}
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                 />

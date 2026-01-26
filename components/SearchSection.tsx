@@ -39,20 +39,68 @@ export function SearchSection({ isOpen, withBottomBorder = false }: SearchSectio
     // Buscar todos os dados no início
     useEffect(() => {
         const fetchAll = async () => {
-            const [companies, products, pros, props, arts] = await Promise.all([
-                supabase.from('companies').select('*'),
-                supabase.from('products').select('*'),
+            const [companies, globalProducts, pros, props, arts] = await Promise.all([
+                supabase.from('companies').select('id, name, slug, category, description, logo_url, products'),
+                supabase.from('products').select('id, name, category, image_url'),
                 supabase.from('professionals').select('*'),
                 supabase.from('properties').select('*'),
                 supabase.from('articles').select('*')
             ]);
 
+            // Formatar Empresas
+            const empresasMapped = (companies.data || []).map(c => ({
+                ...c,
+                title: c.name,
+                sub: c.category || c.description,
+                logo: c.logo_url,
+                icon: Building2,
+                type: 'company'
+            }));
+
+            // Formatar Produtos (Global + Nested)
+            const productsList: any[] = [];
+
+            // 1. Produtos Globais (se existirem e tiverem vínculo, ou como genéricos)
+            if (globalProducts.data) {
+                globalProducts.data.forEach(p => {
+                    productsList.push({
+                        ...p,
+                        title: p.name,
+                        sub: p.category,
+                        image: p.image_url,
+                        icon: ShoppingBag,
+                        type: 'product',
+                        // Se não tem company_slug, redireciona para um padrão ou fica inativo
+                        company_slug: 'geral'
+                    });
+                });
+            }
+
+            // 2. Produtos embutidos nas Empresas (JSONB)
+            if (companies.data) {
+                companies.data.forEach(c => {
+                    if (c.products && Array.isArray(c.products)) {
+                        c.products.forEach((p: any) => {
+                            productsList.push({
+                                title: p.name,
+                                sub: p.category || c.name, // Fallback para nome da empresa
+                                image: p.img || p.photo || p.image_url || "/images/Prototipo/caju.webp",
+                                icon: ShoppingBag,
+                                type: 'product',
+                                slug: p.slug || p.name.toLowerCase().replace(/ /g, '-'),
+                                company_slug: c.slug
+                            });
+                        });
+                    }
+                });
+            }
+
             setDbData({
-                empresas: (companies.data || []).map(c => ({ ...c, title: c.name, sub: c.category || c.description, logo: c.logo_url, icon: Building2 })),
-                produtos: (products.data || []).map(p => ({ ...p, title: p.name, sub: p.category, image: p.image_url, icon: ShoppingBag })),
-                profissionais: (pros.data || []).map(p => ({ ...p, title: p.name, sub: p.role, image: p.image_url, icon: Users })),
-                propriedades: (props.data || []).map(p => ({ ...p, title: p.name, sub: p.description, image: p.image_url, icon: LandPlot })),
-                artigos: (arts.data || []).map(a => ({ ...a, sub: a.subtitle || a.type, image: a.image_url, icon: FileText }))
+                empresas: empresasMapped,
+                produtos: productsList,
+                profissionais: (pros.data || []).map(p => ({ ...p, title: p.name, sub: p.role, image: p.image_url, icon: Users, type: 'professional' })),
+                propriedades: (props.data || []).map(p => ({ ...p, title: p.name, sub: p.description, image: p.image_url, icon: LandPlot, type: 'property' })),
+                artigos: (arts.data || []).map(a => ({ ...a, title: a.title, sub: a.subtitle || a.type, image: a.image_url, icon: FileText, type: 'article' }))
             });
         };
         fetchAll();
@@ -75,7 +123,9 @@ export function SearchSection({ isOpen, withBottomBorder = false }: SearchSectio
 
         const filterData = (data: any[]) => data ? data.filter(item =>
             (item.title && item.title.toLowerCase().includes(query)) ||
-            (item.sub && item.sub.toLowerCase().includes(query))
+            (item.sub && item.sub.toLowerCase().includes(query)) ||
+            (item.description && item.description.toLowerCase().includes(query)) ||
+            (item.category && item.category.toLowerCase().includes(query))
         ) : [];
 
         const result: any = {
@@ -113,7 +163,10 @@ export function SearchSection({ isOpen, withBottomBorder = false }: SearchSectio
                                 {/* Category Selector inside Search Bar (RIGHT SIDE) */}
                                 <Popover open={isCategoryOpen} onOpenChange={setIsCategoryOpen}>
                                     <PopoverTrigger asChild>
-                                        <button className="flex items-center gap-2 px-6 h-full border-l border-gray-100 bg-gray-100 hover:bg-gray-200 transition-colors rounded-r-[5px] group">
+                                        <button
+                                            className="flex items-center gap-2 px-6 h-full border-l border-gray-100 bg-gray-100 hover:bg-gray-200 transition-colors rounded-r-[5px] group"
+                                            suppressHydrationWarning
+                                        >
                                             <span className="text-xs font-bold text-gray-400 uppercase tracking-wider hidden sm:block whitespace-nowrap">
                                                 {currentCat.label}
                                             </span>
@@ -222,19 +275,14 @@ function SearchResultCard({ item, colorClass, isRound = false }: { item: any, co
     const Icon = item.icon || Search; // Fallback
 
     // Determine the link based on category or item type
-    // If it has 'slug' and doesn't have 'product_slug' (to distinguish from products), it's likely a company
     let href = "#";
 
-    if (item.slug) {
-        // Checking if it's a company (has name/title but no parent company link in this specific context)
-        // In the search fetch, companies are mapped with the building icon and have a slug.
-        if (item.logo_url || item.category === 'Empresas' || item.icon === Building2) {
-            href = `/empresas/${item.slug}`;
-        } else if (item.subtitle || item.type) { // Likely an article
-            href = `/artigos/${item.slug}`;
-        } else {
-            href = `/detalhes/${item.slug}`;
-        }
+    if (item.type === 'company' && item.slug) {
+        href = `/empresas/${item.slug}`;
+    } else if (item.type === 'product' && item.slug && item.company_slug) {
+        href = `/empresas/${item.company_slug}/produto/${item.slug}`;
+    } else if (item.type === 'article' && item.slug) {
+        href = `/artigos/${item.slug}`;
     } else if (item.id) {
         href = `/detalhes/${item.id}`;
     }

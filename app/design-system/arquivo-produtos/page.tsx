@@ -10,12 +10,12 @@ export default function ProductsArchiveExamplePage() {
     const companyName = "Agro-Indústria Zambézia";
 
     const allProducts = [
-        { id: 1, name: "Castanha de Caju Refinada", price: "500 MT/kg", img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=800", available: true, company: companyName },
-        { id: 2, name: "Algodão em Fardo", price: "Sob Consulta", img: "https://images.unsplash.com/photo-1589923188905-a759330d638d?q=80&w=800", available: true, company: companyName },
-        { id: 3, name: "Óleo Vegetal Natural", price: "120 MT/L", img: "https://images.unsplash.com/photo-1474440692490-2e83afef4841?q=80&w=800", available: true, company: companyName },
+        { id: 1, name: "Castanha de Caju Refinada", price: "500 MT/kg", img: "/images/Prototipo/caju.webp", available: true, company: companyName },
+        { id: 2, name: "Algodão em Fardo", price: "Sob Consulta", img: "/images/Prototipo/algodao.png", available: true, company: companyName },
+        { id: 3, name: "Óleo Vegetal Natural", price: "120 MT/L", img: "/images/Prototipo/oleo.webp", available: true, company: companyName },
         { id: 4, name: "Milho Branco", price: "18 MT/kg", img: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?q=80&w=800", available: true, company: companyName },
-        { id: 5, name: "Feijão Manteiga", price: "65 MT/kg", img: "https://images.unsplash.com/photo-1549488390-bf384ae26d5c?q=80&w=800", available: true, company: companyName },
-        { id: 6, name: "Soja em Grão", price: "45 MT/kg", img: "https://images.unsplash.com/photo-1533237264878-592d3792cb83?q=80&w=800", available: false, company: companyName },
+        { id: 5, name: "Feijão Manteiga", price: "65 MT/kg", img: "/images/Prototipo/feijao.jpg", available: true, company: companyName },
+        { id: 6, name: "Soja em Grão", price: "45 MT/kg", img: "/images/Prototipo/soja.jpg", available: false, company: companyName },
     ];
 
     const [activeShareProduct, setActiveShareProduct] = useState<number | null>(null);
@@ -29,6 +29,7 @@ export default function ProductsArchiveExamplePage() {
     return (
         <StandardBlogTemplate
             title={`Produtos da ${companyName}`}
+            backgroundImage="/images/Prototipo/sala2.jpg"
             breadcrumbs={[
                 { label: "Início", href: "/" },
                 { label: "Directório", href: "/directory" },
@@ -37,7 +38,7 @@ export default function ProductsArchiveExamplePage() {
             ]}
             sidebarComponents={
                 <div className="space-y-agro">
-                    <div className="card-agro">
+                    <div className="card-agro-static">
                         <h4 className="flex items-center gap-2 mb-6">
                             <Filter className="w-4 h-4 text-emerald-600" />
                             Filtrar Produtos
@@ -70,7 +71,7 @@ export default function ProductsArchiveExamplePage() {
                         <input
                             type="text"
                             placeholder={`Pesquisar nos produtos da ${companyName}...`}
-                            className="w-full h-12 pl-12 pr-4 bg-white rounded-xl border border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 transition-all outline-none shadow-sm"
+                            className="w-full h-12 pl-12 pr-4 bg-white rounded-agro border border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 transition-all outline-none shadow-sm"
                         />
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
                     </div>
@@ -78,7 +79,7 @@ export default function ProductsArchiveExamplePage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-agro">
                     {allProducts.map((product, i) => (
-                        <div key={i} className="group relative h-[260px] rounded-[12px] overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer border border-slate-100/50 bg-white">
+                        <div key={i} className="group relative h-[210px] rounded-agro overflow-hidden shadow-md card-interactive transition-all duration-300 cursor-pointer border border-slate-100/50 bg-white">
                             <Image
                                 src={product.img}
                                 alt={product.name}

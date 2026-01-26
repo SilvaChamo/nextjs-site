@@ -8,8 +8,8 @@ import Link from "next/link";
 
 export default function StandardCompanyDetailsPage() {
     const products = [
-        { name: "Castanha de Caju Refinada", price: "500 MT/kg", img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=800", available: true },
-        { name: "Algodão em Fardo", price: "Sob Consulta", img: "https://images.unsplash.com/photo-1589923188905-a759330d638d?q=80&w=800", available: true },
+        { name: "Castanha de Caju Refinada", price: "500 MT/kg", img: "/images/Prototipo/caju.webp", available: true },
+        { name: "Algodão em Fardo", price: "Sob Consulta", img: "/images/Prototipo/algodao.png", available: true },
         { name: "Sementes Selecionadas", price: "250 MT/pk", img: "https://images.unsplash.com/photo-1464226184884-fa280b87c399?q=80&w=800", available: false },
     ];
 
@@ -28,6 +28,7 @@ export default function StandardCompanyDetailsPage() {
     return (
         <StandardBlogTemplate
             title="Agro-Indústria Zambézia"
+            backgroundImage="/images/Prototipo/sala3.jpg"
             breadcrumbs={[
                 { label: "Início", href: "/" },
                 { label: "Directório", href: "/directory" },
@@ -36,7 +37,7 @@ export default function StandardCompanyDetailsPage() {
             sidebarComponents={
                 <div className="space-y-agro">
                     {/* Status Card */}
-                    <div className="card-agro group">
+                    <div className="card-agro-static group">
                         <div className="flex items-center gap-2 mb-4">
                             <CheckCircle2 className="text-emerald-500 w-5 h-5" />
                             <span className="font-bold text-sm text-emerald-700 uppercase tracking-wider">Empresa Verificada</span>
@@ -46,7 +47,7 @@ export default function StandardCompanyDetailsPage() {
                     </div>
 
                     {/* Contacts Card */}
-                    <div className="card-agro group">
+                    <div className="card-agro-static group">
                         <h4 className="mb-4">Contactos Diretos</h4>
                         <ul className="space-y-4">
                             <li className="flex items-start gap-3">
@@ -72,16 +73,16 @@ export default function StandardCompanyDetailsPage() {
         >
             <div className="space-y-agro">
                 {/* Facebook Style Banner (Reduced Height) */}
-                <div className="relative w-full h-[280px] rounded-[20px] overflow-hidden shadow-lg border border-slate-100/50">
+                <div className="relative w-full h-[280px] rounded-agro-lg overflow-hidden shadow-lg border border-slate-100/50">
                     <Image
-                        src="https://images.unsplash.com/photo-1605000797499-95a059e5e4bb?q=80&w=2671&auto=format&fit=crop"
+                        src="/images/Prototipo/sala1.jpg"
                         alt="Company Cover"
                         fill
                         className="object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-8">
                         <div className="flex items-end gap-6 w-full">
-                            <div className="w-24 h-24 bg-white rounded-xl p-2 shadow-2xl shrink-0 border border-slate-100">
+                            <div className="w-24 h-24 bg-white rounded-agro p-2 shadow-2xl shrink-0 border border-slate-100">
                                 <img src="https://placehold.co/100x100/f97316/white?text=LOGO" alt="Logo" className="w-full h-full object-contain" />
                             </div>
                             <div className="text-white mb-2 flex-1 flex items-end justify-between">
@@ -141,7 +142,7 @@ export default function StandardCompanyDetailsPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-agro">
                         {products.map((product, i) => (
-                            <div key={i} className="group relative h-[260px] rounded-[12px] overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer border border-slate-100/50 bg-white">
+                            <div key={i} className="group relative h-[210px] rounded-agro overflow-hidden shadow-md card-interactive transition-all duration-300 cursor-pointer border border-slate-100/50 bg-white">
                                 <Image
                                     src={product.img}
                                     alt={product.name}

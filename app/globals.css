@@ -28,7 +28,7 @@
   --color-popover-foreground: var(--popover-foreground);
 
   /* BASEAGRO DESIGN SYSTEM TOKENS */
-  --radius-agro: 10px;
+  --radius-agro: 12px;
   /* Standard Card Radius */
   --radius-agro-lg: 15px;
   /* Large Container Radius */
@@ -167,11 +167,22 @@
 
   /* STANDARD CARD COMPONENT */
   .card-agro {
-    @apply bg-white p-5 rounded-[15px] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300;
+    @apply bg-white p-5 border border-slate-100 shadow-sm transition-all duration-300;
+    border-radius: var(--radius-agro);
   }
 
   .card-agro-lg {
-    @apply bg-white p-8 rounded-[20px] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300;
+    @apply bg-white p-8 border border-slate-100 shadow-sm transition-all duration-300;
+    border-radius: var(--radius-agro-lg);
+  }
+
+  .card-agro-static {
+    @apply bg-white p-5 border border-slate-100 shadow-sm transition-all duration-300;
+    border-radius: var(--radius-agro);
+  }
+
+  .card-interactive {
+    @apply hover:shadow-xl hover:-translate-y-1 cursor-pointer;
   }
 
   /* STANDARD SECTION SPACING */
@@ -191,6 +202,14 @@
 
   .gap-agro {
     @apply gap-5;
+  }
+
+  .rounded-agro {
+    border-radius: var(--radius-agro);
+  }
+
+  .rounded-agro-lg {
+    border-radius: var(--radius-agro-lg);
   }
 
   .space-y-agro> :not([hidden])~ :not([hidden]) {

@@ -1,189 +1,320 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import {
-    Clock, ThumbsUp, Share2, Search,
-    ArrowRight, Bookmark, MessageSquare,
-    Facebook, Twitter, Linkedin
+    Clock, ThumbsUp, Share2,
+    ArrowRight, Facebook, Twitter, Linkedin,
+    ChevronLeft, Calendar, User, Bookmark,
+    Newspaper, Tag, MessageCircle
 } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
+import { PageHeader } from "@/components/PageHeader";
+import { WeatherSidebar } from "@/components/WeatherSidebar";
+import { NewsletterCard } from "@/components/NewsletterCard";
 
-export default function ArticleReadingPage({ params }: { params: { slug: string } }) {
+export default function ArticleReadingPage() {
+    const params = useParams();
+    const slug = params?.slug as string;
+
+    const [article, setArticle] = useState<any>(null);
+    const [recommended, setRecommended] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [showShareMenu, setShowShareMenu] = useState(false);
+
+    const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
+    const shareTitle = article?.title || '';
+
+    const shareOptions = [
+        {
+            name: 'WhatsApp',
+            icon: (
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" className="w-4 h-4">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                </svg>
+            ),
+            color: 'hover:bg-green-500',
+            url: `https://api.whatsapp.com/send?text=${encodeURIComponent(shareTitle + ' ' + shareUrl)}`
+        },
+        { name: 'Facebook', icon: <Facebook className="w-4 h-4" />, color: 'hover:bg-blue-600', url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}` },
+        { name: 'Twitter', icon: <Twitter className="w-4 h-4" />, color: 'hover:bg-sky-500', url: `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle)}` },
+        { name: 'LinkedIn', icon: <Linkedin className="w-4 h-4" />, color: 'hover:bg-blue-700', url: `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(shareUrl)}` },
+    ];
+
+    useEffect(() => {
+        const fetchArticleData = async () => {
+            if (!slug) return;
+
+            setLoading(true);
+            try {
+                // Fetch main article
+                const { data: articleData, error: articleError } = await supabase
+                    .from('articles')
+                    .select('*')
+                    .eq('slug', slug)
+                    .single();
+
+                if (articleError) throw articleError;
+                setArticle(articleData);
+
+                // Fetch recommended articles (excluding current)
+                const { data: recData } = await supabase
+                    .from('articles')
+                    .select('*')
+                    .neq('slug', slug)
+                    .limit(4);
+
+                setRecommended(recData || []);
+            } catch (error) {
+                console.error("Error fetching article:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchArticleData();
+    }, [slug]);
+
+    if (loading && !article) {
+        return <div className="min-h-screen bg-[#fcfcfd]" />;
+    }
+
+    if (!article) {
+        return (
+            <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+                <div className="text-center space-y-6">
+                    <h2 className="text-2xl font-black text-slate-800">Artigo não encontrado</h2>
+                    <Link href="/" className="inline-flex items-center gap-2 text-emerald-600 font-bold hover:underline">
+                        <ChevronLeft className="w-4 h-4" /> Voltar para a Home
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
     return (
-        <div className="min-h-screen bg-white text-slate-900 font-sans">
+        <div className="min-h-screen bg-[#fcfcfd] selection:bg-emerald-100 selection:text-emerald-900">
+            <PageHeader
+                title={article.type || "Notícia"}
+                icon={Newspaper}
+                backgroundImage={article.image_url || "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?q=80&w=2000&auto=format&fit=crop"}
+                breadcrumbs={[
+                    { label: "Início", href: "/" },
+                    { label: "Blog", href: "/blog" },
+                    { label: article.type || "Notícia", href: undefined }
+                ]}
+            />
 
-            <main className="max-w-[1350px] mx-auto px-[60px] pt-24 pb-12">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-
+            <main className="max-w-[1350px] mx-auto px-4 md:px-[60px] py-16">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                     {/* Main Content Area */}
-                    <article className="lg:col-span-8">
-                        <div className="mb-10">
-                            <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-[#f97316] mb-6">
-                                <Link href="/repositorio" className="hover:underline">Agricultura Sustentável</Link>
-                                <span className="text-slate-200">/</span>
-                                <span className="text-slate-400">Insights de Mercado</span>
-                            </nav>
+                    <div className="lg:col-span-9">
+                        <div className="bg-white rounded-[15px] border border-slate-100 shadow-sm overflow-hidden mb-12">
+                            <div className="p-8 md:p-12">
+                                {/* Dot Category Tag */}
+                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-emerald-600/10 border border-emerald-500/20 mb-6">
+                                    <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
+                                    <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-700">Artigo</span>
+                                </div>
 
-                            <h1 className="text-4xl md:text-5xl font-black leading-[1.1] text-slate-600 mb-8 tracking-tight">
-                                Harnessing Precision Data for Maize Production in Central Mozambique
-                            </h1>
+                                {/* Title */}
+                                <h1 className="text-2xl md:text-4xl font-black text-slate-800 leading-tight mb-4 tracking-tight">
+                                    {article.title}
+                                </h1>
 
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-8 py-8 border-y border-slate-100">
-                                <div className="flex items-center gap-4">
-                                    <div className="size-14 rounded-full bg-slate-100 relative overflow-hidden ring-2 ring-emerald-500/20">
-                                        <Image
-                                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=100"
-                                            alt="Author"
-                                            fill
-                                            className="object-cover"
-                                        />
+                                {/* Metadata below Title */}
+                                <div className="flex flex-wrap items-center gap-4 text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-10 pb-6 border-b border-slate-100">
+                                    <div className="flex items-center gap-2">
+                                        <Calendar className="w-3.5 h-3.5 text-[#f97316]" />
+                                        <span>{new Date(article.date).toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' }).replace('.', '').replace(' de ', ' ')}</span>
                                     </div>
-                                    <div>
-                                        <p className="font-black text-slate-600">Dr. Arnaldo Mabunda</p>
-                                        <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">Agrónomo Chefe • 28 Out, 2023</p>
+                                    <span className="w-1 h-1 rounded-full bg-slate-200"></span>
+                                    <div className="flex items-center gap-2">
+                                        <Clock className="w-3.5 h-3.5 text-[#f97316]" />
+                                        <span>5 min leitura</span>
+                                    </div>
+                                    <span className="w-1 h-1 rounded-full bg-slate-200"></span>
+                                    <div className="relative">
+                                        <button
+                                            onClick={() => setShowShareMenu(!showShareMenu)}
+                                            className="flex items-center gap-2 text-emerald-600 hover:text-emerald-700 transition-colors"
+                                        >
+                                            <Share2 className="w-3.5 h-3.5" />
+                                            <span>Partilhar</span>
+                                        </button>
+
+                                        {showShareMenu && (
+                                            <div className="absolute left-0 top-full mt-2 bg-white border border-slate-100 shadow-xl rounded-xl p-2 z-50 flex gap-1 animate-in fade-in slide-in-from-top-2">
+                                                {shareOptions.map((opt) => (
+                                                    <a
+                                                        key={opt.name}
+                                                        href={opt.url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${opt.color} hover:text-white text-slate-400`}
+                                                        title={opt.name}
+                                                    >
+                                                        {opt.icon}
+                                                    </a>
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-8">
-                                    <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest">
-                                        <Clock className="w-4 h-4" />
-                                        <span>8 min de leitura</span>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <button className="size-9 rounded-full bg-slate-50 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all">
-                                            <Facebook className="w-4 h-4" />
-                                        </button>
-                                        <button className="size-9 rounded-full bg-slate-50 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all">
-                                            <Twitter className="w-4 h-4" />
-                                        </button>
-                                        <button className="size-9 rounded-full bg-slate-50 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all">
-                                            <Linkedin className="w-4 h-4" />
-                                        </button>
-                                    </div>
+
+                                {/* Body Content */}
+                                <div className="prose prose-slate max-w-none prose-p:text-[17px] prose-p:leading-[1.7] prose-p:text-slate-500 prose-headings:text-slate-800 prose-headings:font-black prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-blockquote:border-l-4 prose-blockquote:border-[#f97316] prose-blockquote:bg-orange-50/30 prose-blockquote:p-6 prose-blockquote:rounded-r-[10px] prose-blockquote:italic prose-blockquote:text-lg prose-strong:text-slate-700">
+                                    <div dangerouslySetInnerHTML={{ __html: article.content || article.subtitle }} />
                                 </div>
                             </div>
                         </div>
 
-                        <div className="rounded-[10px] overflow-hidden mb-12 shadow-2xl shadow-emerald-900/10 relative h-[500px]">
-                            <Image
-                                src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80&w=1200"
-                                alt="Agricultural fields"
-                                fill
-                                className="object-cover"
-                            />
-                            <div className="absolute bottom-0 inset-x-0 bg-black/40 backdrop-blur-sm py-4 px-6">
-                                <p className="text-xs text-center text-white/90 italic">Sistemas de monitorização de irrigação avançados implantados na Província de Manica.</p>
-                            </div>
+                        {/* Tags Section */}
+                        <div className="mt-12 flex flex-wrap gap-2.5">
+                            {["Agricultura", article.type, "Moçambique", "Tecnologia"].filter(Boolean).map((tag, i) => (
+                                <Link
+                                    key={i}
+                                    href={`/blog?cat=${tag === article.type ? tag : "Todos"}`}
+                                    className="inline-flex items-center px-4 py-2 bg-slate-50 text-slate-400 text-[10px] font-bold uppercase tracking-widest rounded-[7px] hover:bg-[#f97316] hover:text-white transition-all cursor-pointer border border-slate-100 group"
+                                >
+                                    <Tag className="w-3 h-3 mr-2 text-slate-300 group-hover:text-white transition-colors" />
+                                    {tag}
+                                </Link>
+                            ))}
                         </div>
 
-                        <div className="prose prose-slate max-w-none prose-h2:text-3xl prose-h2:font-black prose-p:text-lg prose-p:leading-relaxed prose-p:text-slate-600 prose-blockquote:border-l-4 prose-blockquote:border-[#f97316] prose-blockquote:bg-[#f97316]/5 prose-blockquote:p-8 prose-blockquote:rounded-r-[10px] prose-blockquote:font-bold prose-blockquote:text-xl">
-                            <p>O sector agrícola em Moçambique está a passar por uma revolução silenciosa. À medida que os padrões climáticos mudam e as exigências do mercado por cereais de alta qualidade aumentam, os agricultores das províncias centrais estão a recorrer à agricultura de precisão baseada em dados para optimizar a sua produção sazonal.</p>
+                        {/* Interaction Footer */}
+                        <div className="mt-12 pt-12 border-t border-slate-200">
+                            <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-12">
+                                <button className="flex items-center gap-3 group font-bold text-slate-600">
+                                    <div className="size-10 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-emerald-50 transition-all border border-slate-200/50">
+                                        <ThumbsUp className="w-4 h-4 text-slate-400 group-hover:text-emerald-600" />
+                                    </div>
+                                    <span className="text-xs font-bold text-slate-500 group-hover:text-slate-800 uppercase tracking-widest">Este artigo foi útil?</span>
+                                </button>
 
-                            <h2>O Poder do Mapeamento de Solos</h2>
-                            <p>Um dos avanços mais significativos dos últimos anos foi a implementação do mapeamento de solos de alta resolução. Ao compreender a composição granular dos nutrientes do solo num único hectare, os produtores podem aplicar fertilizantes com precisão cirúrgica.</p>
+                                <div className="flex items-center gap-3">
+                                    <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.2em] mr-2">Siga-nos</p>
+                                    {[Facebook, Twitter, Linkedin].map((Icon, i) => (
+                                        <button key={i} className="size-9 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-white hover:bg-[#f97316] hover:border-[#f97316] transition-all">
+                                            <Icon className="w-4 h-4" />
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
 
-                            <blockquote>
-                                "A agricultura de precisão já não é um luxo para operações comerciais de grande escala; está a tornar-se uma necessidade para qualquer agricultor que pretenda a sustentabilidade a longo prazo no Corredor da Beira."
-                            </blockquote>
-
-                            <h2>Monitorização por Satélite</h2>
-                            <p>A integração de imagens de satélite com sensores de terreno permite a monitorização em tempo real da saúde das culturas. Através da análise NDVI, podemos agora detectar o stress hídrico e as infestações de pragas até dez dias antes de serem visíveis a olho nu.</p>
-
-                            <div className="bg-emerald-50 rounded-[10px] p-10 my-12 border border-emerald-100 border-l-8 border-l-emerald-500">
-                                <h3 className="text-xl font-black text-emerald-900 mb-6 uppercase tracking-widest">Principais Conclusões para Produtores</h3>
-                                <ul className="space-y-4 text-emerald-800 font-medium">
-                                    <li className="flex gap-3">
-                                        <div className="size-6 rounded-full bg-emerald-200 flex items-center justify-center shrink-0 text-emerald-700 text-xs font-black">1</div>
-                                        <span>Invista em testes periódicos de solo para evitar a saturação excessiva de nutrientes.</span>
-                                    </li>
-                                    <li className="flex gap-3">
-                                        <div className="size-6 rounded-full bg-emerald-200 flex items-center justify-center shrink-0 text-emerald-700 text-xs font-black">2</div>
-                                        <span>Utilize alertas climáticos via telemóvel para planear as janelas de plantio.</span>
-                                    </li>
-                                    <li className="flex gap-3">
-                                        <div className="size-6 rounded-full bg-emerald-200 flex items-center justify-center shrink-0 text-emerald-700 text-xs font-black">3</div>
-                                        <span>Considere a partilha colaborativa de dados para beneficiar de conhecimentos regionais.</span>
-                                    </li>
-                                </ul>
+                            {/* Recommendations Section */}
+                            <div className="pt-12 border-t border-slate-200">
+                                <h3 className="text-[11px] font-black text-slate-800 uppercase tracking-[0.2em] mb-8 flex items-center gap-3">
+                                    Continue a ler <span className="flex-1 h-px bg-slate-100"></span>
+                                </h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {recommended.map((item, i) => {
+                                        const isSpecial = i < 2; // Make 첫 two cards special
+                                        if (isSpecial) {
+                                            return (
+                                                <Link key={i} href={`/artigos/${item.slug}`} className="relative h-[220px] rounded-xl overflow-hidden group shadow-lg">
+                                                    <Image
+                                                        src={item.image_url || [
+                                                            "https://images.unsplash.com/photo-1500937386664-56d1dfef3854",
+                                                            "https://images.unsplash.com/photo-1592982537447-7440770cbfc9",
+                                                            "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2",
+                                                            "https://images.unsplash.com/photo-1625246333195-58197bd47d26"
+                                                        ][i % 4] + "?auto=format&fit=crop&q=80&w=600"}
+                                                        alt={item.title}
+                                                        fill
+                                                        className="object-cover group-hover:scale-110 transition-transform duration-700"
+                                                    />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-6 flex flex-col justify-end">
+                                                        <div className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">{item.type || "Artigo"}</div>
+                                                        <h4 className="font-bold text-base leading-snug text-white group-hover:text-emerald-300 transition-colors line-clamp-2">
+                                                            {item.title}
+                                                        </h4>
+                                                    </div>
+                                                </Link>
+                                            );
+                                        }
+                                        return (
+                                            <Link key={i} href={`/artigos/${item.slug}`} className="flex gap-4 p-4 rounded-xl bg-white border border-slate-100 hover:border-[#f97316] transition-all group">
+                                                <div className="size-20 shrink-0 rounded-lg overflow-hidden relative">
+                                                    <Image
+                                                        src={item.image_url || [
+                                                            "https://images.unsplash.com/photo-1500937386664-56d1dfef3854",
+                                                            "https://images.unsplash.com/photo-1592982537447-7440770cbfc9",
+                                                            "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2",
+                                                            "https://images.unsplash.com/photo-1625246333195-58197bd47d26"
+                                                        ][i % 4] + "?auto=format&fit=crop&q=80&w=200"}
+                                                        alt={item.title}
+                                                        fill
+                                                        className="object-cover group-hover:scale-110 transition-transform duration-700"
+                                                    />
+                                                </div>
+                                                <div className="space-y-1 py-1">
+                                                    <div className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">{item.type || "Artigo"}</div>
+                                                    <h4 className="font-bold text-sm leading-snug text-slate-700 group-hover:text-[#f97316] transition-colors line-clamp-2">
+                                                        {item.title}
+                                                    </h4>
+                                                </div>
+                                            </Link>
+                                        );
+                                    })}
+                                </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div className="mt-16 pt-10 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-8">
-                            <div className="flex flex-wrap gap-2">
-                                {["Agricultura", "Dados", "Moçambique", "Tecnologia"].map(tag => (
-                                    <span key={tag} className="px-4 py-2 bg-slate-50 text-slate-400 text-[10px] font-black rounded-full uppercase tracking-widest">#{tag}</span>
+                    {/* Sidebar */}
+                    <aside className="lg:col-span-3 space-y-6 sticky top-32">
+                        {/* 1. Clima */}
+                        <WeatherSidebar />
+
+                        {/* 2. Categorias */}
+                        <div className="bg-white rounded-[15px] border border-slate-100 shadow-lg p-6">
+                            <h3 className="text-[10px] font-black text-slate-800 uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+                                Categorias <span className="flex-1 h-px bg-slate-50"></span>
+                            </h3>
+                            <div className="space-y-1">
+                                {["Técnico", "Mercado", "Agro-Internacional", "Comunidade", "Institucional"].map((cat, i) => (
+                                    <Link key={i} href={`/blog?cat=${cat}`} className="flex items-center justify-between py-2 group">
+                                        <span className="text-[13px] font-bold text-slate-500 group-hover:text-[#f97316] transition-colors">{cat}</span>
+                                        <ChevronLeft className="w-3.5 h-3.5 text-slate-300 group-hover:text-[#f97316] rotate-180 transition-all" />
+                                    </Link>
                                 ))}
                             </div>
-                            <div className="flex items-center gap-4">
-                                <button className="flex items-center gap-2 bg-white border border-slate-100 px-6 py-3 rounded-[10px] text-sm font-bold hover:bg-slate-50 transition-colors">
-                                    <ThumbsUp className="text-emerald-500 w-4 h-4" />
-                                    Útil
-                                </button>
-                                <button className="flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-[10px] text-sm font-bold hover:bg-emerald-600 transition-all">
-                                    <Share2 className="w-4 h-4" />
-                                    Partilhar
-                                </button>
+                        </div>
+
+                        {/* 3. Espaço Publicitário */}
+                        <div className="relative aspect-[4/5] rounded-[15px] overflow-hidden group shadow-xl border border-emerald-500/20 bg-emerald-600">
+                            <div className="absolute inset-0 opacity-20 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+                            <div className="absolute top-0 right-0 size-32 bg-emerald-400/20 blur-3xl rounded-full -mr-16 -mt-16"></div>
+
+                            <div className="absolute inset-0 p-8 flex flex-col justify-end">
+                                <p className="text-emerald-100 text-[10px] font-black uppercase tracking-widest mb-2">Publicidade</p>
+                                <h4 className="text-white font-black text-xl mb-6 leading-tight">Sua marca aqui em destaque no blog</h4>
+                                <Link href="/contactos">
+                                    <button className="bg-white text-emerald-700 px-8 py-4 rounded-[10px] text-[10px] font-black uppercase tracking-widest hover:bg-emerald-50 transition-all font-bold shadow-lg">Anunciar Agora</button>
+                                </Link>
                             </div>
                         </div>
-                    </article>
 
-                    {/* Sidebar Area */}
-                    <aside className="lg:col-span-4">
-                        <div className="sticky top-24 space-y-12">
-                            <div className="bg-white border border-slate-100 rounded-[10px] p-8 shadow-sm">
-                                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-8">Índice do Artigo</h3>
-                                <nav className="space-y-6">
-                                    {[
-                                        "Introdução",
-                                        "O Poder do Mapeamento",
-                                        "Monitorização por Satélite",
-                                        "Principais Conclusões",
-                                        "Perspectivas Futuras"
-                                    ].map((item, i) => (
-                                        <a key={i} href="#" className={`block text-xs font-bold uppercase tracking-widest ${i === 0 ? 'text-emerald-600 border-l-2 border-emerald-600 pl-4' : 'text-slate-400 hover:text-emerald-600 transition-colors pl-4'}`}>
-                                            {item}
-                                        </a>
-                                    ))}
-                                </nav>
-                            </div>
-
-                            <div className="space-y-8">
-                                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Leituras Recomendadas</h3>
-                                <div className="space-y-8">
-                                    {[1, 2, 3].map(i => (
-                                        <Link key={i} href="#" className="flex gap-4 group">
-                                            <div className="size-20 shrink-0 rounded-[10px] bg-slate-100 relative overflow-hidden">
-                                                <Image
-                                                    src={`https://images.unsplash.com/photo-15${i}523348837708?auto=format&fit=crop&q=80&w=150`}
-                                                    alt="Article thumb"
-                                                    fill
-                                                    className="object-cover group-hover:scale-110 transition-all duration-500"
-                                                />
-                                            </div>
-                                            <div>
-                                                <h4 className="font-bold text-sm leading-tight text-slate-600 group-hover:text-emerald-600 transition-colors mb-1">Práticas de Fertilizantes Orgânicos em Niassa</h4>
-                                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">4 min • Pesquisa</p>
-                                            </div>
-                                        </Link>
-                                    ))}
-                                </div>
-                                <button className="w-full py-4 border-2 border-slate-100 rounded-[10px] text-xs font-black uppercase tracking-[0.2em] text-slate-400 hover:bg-slate-50 hover:text-slate-900 transition-all">
-                                    Ver Arquivo Completo
-                                </button>
-                            </div>
-
-                            <div className="bg-emerald-600 rounded-[10px] p-10 relative overflow-hidden group">
-                                <div className="absolute -right-8 -top-8 size-32 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
-                                <h3 className="text-white text-2xl font-black relative z-10 mb-6 leading-tight">Quer o relatório completo?</h3>
-                                <p className="text-white/80 text-sm mb-8 relative z-10 font-medium leading-relaxed">Obtenha o PDF dos Dados de Culturas de 2023 com métricas regionais detalhadas.</p>
-                                <button className="w-full bg-[#f97316] text-white py-4 rounded-[10px] font-black text-xs uppercase tracking-widest hover:bg-white hover:text-emerald-600 transition-all shadow-xl shadow-black/20">
-                                    Descarregar PDF
-                                </button>
-                            </div>
-                        </div>
+                        {/* 4. Newsletter */}
+                        <NewsletterCard />
                     </aside>
                 </div>
             </main>
+
+            {/* Reading Progress Logic Script (Inline for simplicity in this example) */}
+            <script dangerouslySetInnerHTML={{
+                __html: `
+                window.onscroll = function() {
+                    let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                    let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                    let scrolled = (winScroll / height) * 100;
+                    document.getElementById("reading-progress").style.width = scrolled + "%";
+                };
+            ` }} />
         </div>
     );
 }

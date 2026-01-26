@@ -52,7 +52,7 @@ export function InfoSection() {
             const [cats, stats, arts] = await Promise.all([
                 supabase.from('info_categories').select('*'),
                 supabase.from('agricultural_stats').select('*').limit(3),
-                supabase.from('articles').select('*').limit(6)
+                supabase.from('articles').select('id, title, subtitle, image_url, date, slug, type').order('created_at', { ascending: false }).limit(5)
             ]);
 
             if (cats.data) {
@@ -281,7 +281,7 @@ export function InfoSection() {
                                                         <div className="p-6 flex flex-col flex-1">
                                                             <div className="space-y-3">
                                                                 <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400">
-                                                                    <span>{news.date}</span>
+                                                                    <span>{new Date(news.date).toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' }).replace('.', '').replace(' de ', ' ')}</span>
                                                                 </div>
                                                                 <h3 className="text-lg font-black text-slate-600 group-hover:text-[#f97316] transition-colors line-clamp-2 first-letter:uppercase lowercase my-0" suppressHydrationWarning>
                                                                     <span>{news.title}</span>

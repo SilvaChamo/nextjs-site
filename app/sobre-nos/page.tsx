@@ -55,7 +55,7 @@ export default function SobrePage() {
                             <p className="text-[20px] leading-tight">
                                 A <strong>Base de Dados Agrícola</strong> é mais do que uma plataforma; somos o motor digital que conecta produtores rurais aos mercados globais.
                             </p>
-                            <p className="text-[14px] leading-relaxed">
+                            <p className="text-[12px] leading-relaxed">
                                 Utilizamos tecnologia de ponta para democratizar o acesso à informação, transformar dados brutos em inteligência de mercado e criar um ecossistema onde o pequeno produtor e a grande indústria crescem juntos.
                             </p>
                         </div>
@@ -108,7 +108,7 @@ export default function SobrePage() {
                 <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {/* Missão Card */}
-                        <div className="relative bg-white/5 backdrop-blur-sm p-[20px] rounded-lg border border-white/10 transition-all duration-500 group overflow-hidden flex items-start gap-4 hover:bg-white/10">
+                        <div className="relative bg-white/5 p-[20px] rounded-lg border border-white/10 transition-all duration-500 group overflow-hidden flex items-start gap-4 hover:bg-white/10">
                             {/* Animated Shimmer Bar */}
                             <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-25deg] transition-all duration-1000 group-hover:left-[100%] pointer-events-none z-20"></div>
 
@@ -124,7 +124,7 @@ export default function SobrePage() {
                         </div>
 
                         {/* Visão Card */}
-                        <div className="relative bg-white/5 backdrop-blur-sm p-[20px] rounded-lg border border-white/10 transition-all duration-500 group overflow-hidden flex items-start gap-4 hover:bg-white/10">
+                        <div className="relative bg-white/5 p-[20px] rounded-lg border border-white/10 transition-all duration-500 group overflow-hidden flex items-start gap-4 hover:bg-white/10">
                             {/* Animated Shimmer Bar */}
                             <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-25deg] transition-all duration-1000 group-hover:left-[100%] pointer-events-none z-20"></div>
 
@@ -140,7 +140,7 @@ export default function SobrePage() {
                         </div>
 
                         {/* Valores Card */}
-                        <div className="relative bg-white/5 backdrop-blur-sm p-[20px] rounded-lg border border-white/10 transition-all duration-500 group overflow-hidden flex items-start gap-4 hover:bg-white/10">
+                        <div className="relative bg-white/5 p-[20px] rounded-lg border border-white/10 transition-all duration-500 group overflow-hidden flex items-start gap-4 hover:bg-white/10">
                             {/* Animated Shimmer Bar */}
                             <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-25deg] transition-all duration-1000 group-hover:left-[100%] pointer-events-none z-20"></div>
 

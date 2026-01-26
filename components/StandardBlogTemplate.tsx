@@ -9,6 +9,7 @@ interface StandardBlogTemplateProps {
     sidebarComponents: ReactNode;
     children: ReactNode;
     backgroundImage?: string;
+    isSidebarLeft?: boolean;
 }
 
 export function StandardBlogTemplate({
@@ -16,7 +17,8 @@ export function StandardBlogTemplate({
     breadcrumbs,
     sidebarComponents,
     children,
-    backgroundImage = "https://images.unsplash.com/photo-1495107334309-fcf20504a5ab?q=80&w=2000&auto=format&fit=crop"
+    backgroundImage = "https://images.unsplash.com/photo-1495107334309-fcf20504a5ab?q=80&w=2000&auto=format&fit=crop",
+    isSidebarLeft = false
 }: StandardBlogTemplateProps) {
     return (
         <div className="min-h-screen bg-background text-slate-900 font-sans">
@@ -29,15 +31,31 @@ export function StandardBlogTemplate({
             <main className="container-site pt-12 pb-[70px]">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-agro items-start">
 
-                    {/* Main Content Area */}
-                    <div className="lg:col-span-9">
-                        {children}
-                    </div>
+                    {isSidebarLeft ? (
+                        <>
+                            {/* Sidebar on Left (4/12 columns = 33.3%, approx the 30% requested) */}
+                            <aside className="lg:col-span-4 lg:col-start-1 space-y-agro sticky top-32 hidden lg:block">
+                                {sidebarComponents}
+                            </aside>
 
-                    {/* Sidebar */}
-                    <aside className="lg:col-span-3 space-y-agro sticky top-32 hidden lg:block">
-                        {sidebarComponents}
-                    </aside>
+                            {/* Main Content Area on Right (8/12 columns) */}
+                            <div className="lg:col-span-8 lg:col-start-5">
+                                {children}
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            {/* Main Content Area on Left */}
+                            <div className="lg:col-span-9">
+                                {children}
+                            </div>
+
+                            {/* Sidebar on Right */}
+                            <aside className="lg:col-span-3 space-y-agro sticky top-32 hidden lg:block">
+                                {sidebarComponents}
+                            </aside>
+                        </>
+                    )}
 
                 </div>
             </main>

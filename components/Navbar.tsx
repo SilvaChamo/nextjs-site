@@ -178,19 +178,16 @@ export function Navbar() {
                         <div className="absolute left-1/2 -translate-x-1/2 top-[calc(100%-5px)] pt-4 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-300 z-50">
                             <div className="bg-white border border-slate-200 rounded-lg shadow-[0_10px_40px_rgba(0,0,0,0.06)] py-1.5 min-w-[200px] overflow-hidden">
                                 <Link href="/empresas" className="block px-4 py-2 text-[13px] font-medium text-slate-600 hover:text-[#f97316] hover:bg-slate-50 transition-all font-bold text-[#f97316]">
-                                    Empresas (Empresas)
+                                    Directório de Empresas
                                 </Link>
                                 <Link href="/design-system/detalhes-empresa" className="block px-4 py-2 text-[13px] font-medium text-slate-600 hover:text-[#f97316] hover:bg-slate-50 transition-all">
-                                    Exemplo Detalhes
+                                    Perfil da Empresa (Kit)
                                 </Link>
                                 <Link href="/design-system/arquivo-produtos" className="block px-4 py-2 text-[13px] font-medium text-slate-600 hover:text-[#f97316] hover:bg-slate-50 transition-all font-bold text-emerald-600">
-                                    Arquivo de Produtos
+                                    Arquivo de Produtos (Kit)
                                 </Link>
-                                <Link href="/sobre-nos" className="block px-4 py-2 text-[13px] font-medium text-slate-600 hover:text-[#f97316] hover:bg-slate-50 transition-all">
-                                    Sobre Nós (Refatorado)
-                                </Link>
-                                <Link href="/contactos" className="block px-4 py-2 text-[13px] font-medium text-slate-600 hover:text-[#f97316] hover:bg-slate-50 transition-all">
-                                    Contactos (Refatorado)
+                                <Link href="/empresas/agro-industria-zambezia/produto/castanha-de-caju-refinada" className="block px-4 py-2 text-[13px] font-medium text-emerald-700 bg-emerald-50/50 hover:bg-emerald-50 transition-all font-bold border-l-2 border-emerald-500">
+                                    Página de Detalhes (Nova)
                                 </Link>
                             </div>
                         </div>

@@ -220,8 +220,24 @@ export function SearchSection({ isOpen, withBottomBorder = false }: SearchSectio
 
 function SearchResultCard({ item, colorClass, isRound = false }: { item: any, colorClass: string, isRound?: boolean }) {
     const Icon = item.icon || Search; // Fallback
+
     // Determine the link based on category or item type
-    const href = item.id ? `/detalhes/${item.id}` : "#";
+    // If it has 'slug' and doesn't have 'product_slug' (to distinguish from products), it's likely a company
+    let href = "#";
+
+    if (item.slug) {
+        // Checking if it's a company (has name/title but no parent company link in this specific context)
+        // In the search fetch, companies are mapped with the building icon and have a slug.
+        if (item.logo_url || item.category === 'Empresas' || item.icon === Building2) {
+            href = `/empresas/${item.slug}`;
+        } else if (item.subtitle || item.type) { // Likely an article
+            href = `/artigos/${item.slug}`;
+        } else {
+            href = `/detalhes/${item.slug}`;
+        }
+    } else if (item.id) {
+        href = `/detalhes/${item.id}`;
+    }
 
     return (
         <Link href={href} className="block">

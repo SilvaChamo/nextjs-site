@@ -98,19 +98,18 @@ export default function ArticlesArchivePage() {
                 </div>
             }
         >
-            <div className="grid grid-cols-1 gap-8 max-w-4xl">
+            <div className="grid grid-cols-1 max-w-4xl border-t border-slate-200">
                 {loading ? (
                     Array(4).fill(0).map((_, i) => (
-                        <div key={i} className="animate-pulse bg-white p-4 rounded-lg h-32 w-full" />
+                        <div key={i} className="animate-pulse bg-white p-4 h-32 w-full border-b border-slate-200" />
                     ))
                 ) : filteredArticles.length > 0 ? (
                     filteredArticles.map((article) => (
-                        <Link key={article.id} href={`/artigos/${article.slug}`} className="group block mb-2 font-sans">
-                            <div className="flex flex-col gap-1">
+                        <Link key={article.id} href={`/artigos/${article.slug}`} className="group block py-6 bg-white border-b border-slate-200 hover:bg-slate-50 transition-colors px-4">
+                            <div className="flex flex-col gap-0.5">
                                 {/* URL / Breadcrumb-like line */}
                                 <div className="flex items-center gap-2 text-sm text-[#202124] mb-1">
                                     <div className="bg-slate-100 rounded-full w-7 h-7 flex items-center justify-center shrink-0">
-                                        {/* Small favicon-like icon */}
                                         <BookOpen className="w-3.5 h-3.5 text-slate-500" />
                                     </div>
                                     <div className="flex flex-col leading-tight">
@@ -119,13 +118,13 @@ export default function ArticlesArchivePage() {
                                     </div>
                                 </div>
 
-                                {/* Title - Google Blue */}
-                                <h3 className="text-xl text-[#1a0dab] group-hover:underline font-normal cursor-pointer leading-snug">
+                                {/* Title - Google Blue - Smaller & Bold */}
+                                <h3 className="text-lg font-bold text-[#1a0dab] group-hover:underline cursor-pointer leading-snug tracking-tight mb-0.5">
                                     {article.title}
                                 </h3>
 
                                 {/* Date and Snippet */}
-                                <div className="text-sm text-[#4d5156] leading-relaxed max-w-2xl">
+                                <div className="text-sm text-[#4d5156] leading-relaxed max-w-3xl">
                                     <span className="text-slate-500 text-[12px] mr-2">{new Date(article.date).toLocaleDateString()} —</span>
                                     {article.subtitle || article.content?.substring(0, 160).replace(/<[^>]*>/g, '') + "..."}
                                 </div>

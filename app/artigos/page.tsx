@@ -13,6 +13,9 @@ const FALLBACK_ARTICLES = [
     {
         id: 'a1',
         title: "Impacto do Clima na Produção de Milho no Corredor da Beira",
+        author: "Carlos Mondlane",
+        source: "IIAM - Instituto de Investigação Agrária",
+        source_url: "https://iiam.gov.mz/publicacoes/milho-beira",
         slug: "impacto-clima-milho-beira",
         date: "2024-01-10",
         type: "article",
@@ -22,6 +25,9 @@ const FALLBACK_ARTICLES = [
     {
         id: 'a2',
         title: "Estudo sobre a Eficácia do Biocarvão em Solos Arenosos",
+        author: "Dr. Ana Paula",
+        source: "UEM - Faculdade de Agronomia",
+        source_url: "https://uem.mz/agronomia/estudos/biocarvao",
         slug: "estudo-biocarvao-solos-arenosos",
         date: "2023-11-20",
         type: "article",
@@ -31,6 +37,9 @@ const FALLBACK_ARTICLES = [
     {
         id: 'a3',
         title: "Diversidade Genética do Embondeiro na Região Sul",
+        author: "Samuel Chivambo",
+        source: "Revista Científica de Moçambique",
+        source_url: "https://revistacientifica.org.mz/chivambo-2023",
         slug: "diversidade-genetica-embondeiro-sul",
         date: "2023-09-05",
         type: "article",
@@ -105,20 +114,32 @@ export default function ArticlesArchivePage() {
                     ))
                 ) : filteredArticles.length > 0 ? (
                     filteredArticles.map((article) => (
-                        <Link key={article.id} href={`/artigos/${article.slug}`} className="group block py-6 bg-white border-b border-slate-200 hover:bg-slate-50 transition-colors px-4">
+                        <Link key={article.id} href={`/artigos/${article.slug}`} className="group block py-6 bg-white border-b border-slate-200 hover:bg-slate-50 transition-colors pl-[25px] pr-4">
                             <div className="flex flex-col gap-0.5">
-                                {/* URL / Breadcrumb-like line */}
+                                {/* Identity Line: Icon + Author & Source */}
                                 <div className="flex items-center gap-2 text-sm text-[#202124] mb-1">
-                                    <div className="bg-slate-100 rounded-full w-7 h-7 flex items-center justify-center shrink-0">
-                                        <BookOpen className="w-3.5 h-3.5 text-slate-500" />
+                                    <div className="bg-slate-50 rounded-full w-7 h-7 flex items-center justify-center shrink-0 border border-slate-100 overflow-hidden">
+                                        <Image
+                                            src="/icon.png"
+                                            alt="Icon"
+                                            width={24}
+                                            height={24}
+                                            className="object-contain"
+                                        />
                                     </div>
                                     <div className="flex flex-col leading-tight">
-                                        <span className="font-semibold text-[14px]">BaseAgroData</span>
-                                        <span className="text-xs text-slate-500">https://baseagrodata.com › artigos › {article.slug ? article.slug.substring(0, 15) + "..." : "view"}</span>
+                                        <div className="flex items-center gap-1.5 font-semibold text-[14px]">
+                                            <span>{article.author || "Autor Desconhecido"}</span>
+                                            {article.source && <span className="text-slate-400 font-normal">› {article.source}</span>}
+                                        </div>
+                                        {/* Pure Source URL Link */}
+                                        <span className="text-xs text-slate-500">
+                                            {article.source_url || `https://baseagrodata.com/artigos/${article.slug}`}
+                                        </span>
                                     </div>
                                 </div>
 
-                                {/* Title - Google Blue - Smaller & Bold */}
+                                {/* Title - Google Blue */}
                                 <h3 className="text-lg font-bold text-[#1a0dab] group-hover:underline cursor-pointer leading-snug tracking-tight mb-0.5">
                                     {article.title}
                                 </h3>

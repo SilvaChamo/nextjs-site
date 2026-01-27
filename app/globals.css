@@ -28,11 +28,11 @@
   --color-popover-foreground: var(--popover-foreground);
 
   /* BASEAGRO DESIGN SYSTEM TOKENS */
-  --radius-agro: 20px;
-  /* Standard Card Radius */
+  --radius-agro: 13px;
+  /* Standard Card Radius - Aligned with Project Identity */
   --radius-agro-lg: 30px;
   /* Large Container Radius */
-  --radius-agro-btn: 10px;
+  --radius-agro-btn: 7px;
   /* Button Radius */
   --gap-agro: 20px;
   /* ONE TRUE SPACING */

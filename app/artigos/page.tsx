@@ -56,6 +56,7 @@ export default function ArticlesArchivePage() {
     const [visibleCount, setVisibleCount] = useState(3);
     const [isFetchingMore, setIsFetchingMore] = useState(false);
     const [isScanningGlobal, setIsScanningGlobal] = useState(false);
+    const [isSearchActive, setIsSearchActive] = useState(false);
     const loaderRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -119,8 +120,10 @@ export default function ArticlesArchivePage() {
         }
     };
 
-    const handleSearch = async (e?: React.KeyboardEvent) => {
-        if (e && e.key !== 'Enter') return;
+    const handleSearch = async (e?: React.KeyboardEvent | React.MouseEvent) => {
+        if (e && 'key' in e && e.key !== 'Enter') return;
+
+        setIsSearchActive(true);
         const query = searchQuery.toLowerCase();
         const filteredLocal = localArticles.filter(art =>
             art.title?.toLowerCase().includes(query) ||
@@ -219,88 +222,145 @@ export default function ArticlesArchivePage() {
             </div>
 
             <div className="grid grid-cols-1 border-t border-slate-200">
-                {loading ? (
-                    Array(4).fill(0).map((_, i) => (
-                        <div key={i} className="animate-pulse bg-white p-4 h-32 w-full border-b border-slate-200" />
-                    ))
+                {!isSearchActive ? (
+                    /* Hero Scientific Advertisement */
+                    <div className="py-6 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                        <div className="relative group overflow-hidden rounded-[15px] border border-slate-100 shadow-xl bg-white aspect-[21/9] md:aspect-[3/1]">
+                            <Image
+                                src="/images/scientific-ad.png"
+                                alt="AgroCientífico Moçambique"
+                                fill
+                                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/40 to-transparent flex flex-col justify-center px-10">
+                                <div className="max-w-md space-y-4">
+                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/30 backdrop-blur-md">
+                                        <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">Destaque Científico</span>
+                                    </div>
+                                    <h2 className="text-3xl font-black text-white leading-tight uppercase">O Futuro do Campo é <span className="text-emerald-400">Digital</span></h2>
+                                    <p className="text-slate-200 text-sm font-medium leading-relaxed">
+                                        Accesse o maior repositório de inteligência agrícola de Moçambique. Pesquise teses, relatórios e papers globais validados academicamente.
+                                    </p>
+                                    <button
+                                        onClick={() => handleSearch()}
+                                        className="mt-4 px-8 py-3 bg-emerald-600 hover:bg-[#f97316] text-white rounded-[7px] text-xs font-black uppercase tracking-widest transition-all shadow-lg active:scale-95 flex items-center gap-2 group/btn w-fit"
+                                    >
+                                        Explorar Repositório
+                                        <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Secondary Scientific Cards / Features */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-10">
+                            <div className="bg-emerald-50/50 p-6 rounded-[15px] border border-emerald-100/50 flex gap-4 items-start">
+                                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm shrink-0 border border-emerald-100">
+                                    <BookOpen className="w-6 h-6 text-emerald-600" />
+                                </div>
+                                <div>
+                                    <h4 className="text-sm font-black text-slate-800 uppercase tracking-wider mb-2">Curadoria Nacional</h4>
+                                    <p className="text-xs text-slate-500 font-medium leading-relaxed">Artigos verificados por especialistas do IIAM e UEM focado no solo moçambicano.</p>
+                                </div>
+                            </div>
+                            <div className="bg-orange-50/50 p-6 rounded-[15px] border border-orange-100/50 flex gap-4 items-start">
+                                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm shrink-0 border border-orange-100">
+                                    <Search className="w-6 h-6 text-[#f97316]" />
+                                </div>
+                                <div>
+                                    <h4 className="text-sm font-black text-slate-800 uppercase tracking-wider mb-2">Varredura Global</h4>
+                                    <p className="text-xs text-slate-500 font-medium leading-relaxed">Conexão directa com Semantic Scholar para trazer as últimas inovações do agronegócio mundial.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 ) : (
                     <>
-                        {displayedArticles.length > 0 ? (
-                            displayedArticles.map((article, index) => (
-                                <div key={article.id} className={`group block py-6 bg-white border-b border-slate-200 hover:bg-slate-50 transition-colors pl-[25px] pr-4 ${index === 0 ? 'rounded-t-[10px]' : ''}`}>
-                                    <div className="flex flex-col gap-0.5">
-                                        <div className="flex items-center gap-2 text-sm text-[#202124] mb-1">
-                                            <div className="bg-slate-50 rounded-full w-7 h-7 flex items-center justify-center shrink-0 border border-slate-100 overflow-hidden">
-                                                <Image
-                                                    src="/icon.png"
-                                                    alt="Icon"
-                                                    width={24}
-                                                    height={24}
-                                                    className="object-contain"
-                                                />
-                                            </div>
-                                            <div className="flex flex-col leading-tight">
-                                                <div className="flex items-center gap-1.5 font-semibold text-[14px]">
-                                                    <span>{article.author || "Autor Desconhecido"}</span>
-                                                    {article.source && <span className="text-slate-400 font-normal">› {article.source}</span>}
-                                                </div>
-                                                <a
-                                                    href={article.source_url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="text-xs text-slate-500 hover:underline decoration-slate-300"
-                                                >
-                                                    {article.source_url ? article.source_url.replace(/^https?:\/\/(www\.)?/, '').split('/')[0] + " › ..." : `baseagrodata.com › ...`}
-                                                </a>
-                                            </div>
-                                        </div>
-
-                                        {article.type === 'external_article' ? (
-                                            <a
-                                                href={article.source_url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-lg font-bold text-[#1a0dab] hover:underline cursor-pointer leading-snug tracking-tight mb-0.5"
-                                            >
-                                                {article.title}
-                                            </a>
-                                        ) : (
-                                            <Link
-                                                href={`/artigos/${article.slug}`}
-                                                className="text-lg font-bold text-[#1a0dab] hover:underline cursor-pointer leading-snug tracking-tight mb-0.5"
-                                            >
-                                                {article.title}
-                                            </Link>
-                                        )}
-
-                                        <div className="text-sm text-[#4d5156] leading-relaxed max-w-3xl">
-                                            <span className="text-slate-500 text-[12px] mr-2">{new Date(article.date).getFullYear()} —</span>
-                                            {article.subtitle || (article.content ? article.content.substring(0, 160).replace(/<[^>]*>/g, '') + "..." : "Documento científico.")}
-                                        </div>
-
-                                        {article.type === 'external_article' && (
-                                            <div className="mt-2 inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-[4px] w-fit">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                                                Base de Dados Global
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
+                        {loading ? (
+                            Array(4).fill(0).map((_, i) => (
+                                <div key={i} className="animate-pulse bg-white p-4 h-32 w-full border-b border-slate-200" />
                             ))
                         ) : (
-                            <div className="col-span-full py-20 text-center text-slate-400">
-                                Nenhum artigo encontrado.
-                            </div>
-                        )}
+                            <>
+                                {displayedArticles.length > 0 ? (
+                                    displayedArticles.map((article, index) => (
+                                        <div key={article.id} className={`group block py-6 bg-white border-b border-slate-200 hover:bg-slate-50 transition-colors pl-[25px] pr-4 ${index === 0 ? 'rounded-t-[10px]' : ''}`}>
+                                            <div className="flex flex-col gap-0.5">
+                                                <div className="flex items-center gap-2 text-sm text-[#202124] mb-1">
+                                                    <div className="bg-slate-50 rounded-full w-7 h-7 flex items-center justify-center shrink-0 border border-slate-100 overflow-hidden">
+                                                        <Image
+                                                            src="/icon.png"
+                                                            alt="Icon"
+                                                            width={24}
+                                                            height={24}
+                                                            className="object-contain"
+                                                        />
+                                                    </div>
+                                                    <div className="flex flex-col leading-tight">
+                                                        <div className="flex items-center gap-1.5 font-semibold text-[14px]">
+                                                            <span>{article.author || "Autor Desconhecido"}</span>
+                                                            {article.source && <span className="text-slate-400 font-normal">› {article.source}</span>}
+                                                        </div>
+                                                        <a
+                                                            href={article.source_url}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="text-xs text-slate-500 hover:underline decoration-slate-300"
+                                                        >
+                                                            {article.source_url ? article.source_url.replace(/^https?:\/\/(www\.)?/, '').split('/')[0] + " › ..." : `baseagrodata.com › ...`}
+                                                        </a>
+                                                    </div>
+                                                </div>
 
-                        {/* Automatic Load More Sentinel */}
-                        {visibleCount < articles.length && (
-                            <div ref={loaderRef} className="py-20 flex flex-col items-center justify-center gap-4 text-slate-400">
-                                <div className="animate-spin rounded-full h-8 w-8 border-2 border-emerald-500 border-t-transparent" />
-                                <p className="text-xs font-bold uppercase tracking-widest animate-pulse">
-                                    Carregando mais documentos científicos...
-                                </p>
-                            </div>
+                                                {article.type === 'external_article' ? (
+                                                    <a
+                                                        href={article.source_url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-lg font-bold text-[#1a0dab] hover:underline cursor-pointer leading-snug tracking-tight mb-0.5"
+                                                    >
+                                                        {article.title}
+                                                    </a>
+                                                ) : (
+                                                    <Link
+                                                        href={`/artigos/${article.slug}`}
+                                                        className="text-lg font-bold text-[#1a0dab] hover:underline cursor-pointer leading-snug tracking-tight mb-0.5"
+                                                    >
+                                                        {article.title}
+                                                    </Link>
+                                                )}
+
+                                                <div className="text-sm text-[#4d5156] leading-relaxed max-w-3xl">
+                                                    <span className="text-slate-500 text-[12px] mr-2">{new Date(article.date).getFullYear()} —</span>
+                                                    {article.subtitle || (article.content ? article.content.substring(0, 160).replace(/<[^>]*>/g, '') + "..." : "Documento científico.")}
+                                                </div>
+
+                                                {article.type === 'external_article' && (
+                                                    <div className="mt-2 inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-[4px] w-fit">
+                                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                                                        Base de Dados Global
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="col-span-full py-20 text-center text-slate-400">
+                                        Nenhum artigo encontrado.
+                                    </div>
+                                )}
+
+                                {/* Automatic Load More Sentinel */}
+                                {visibleCount < articles.length && (
+                                    <div ref={loaderRef} className="py-20 flex flex-col items-center justify-center gap-4 text-slate-400">
+                                        <div className="animate-spin rounded-full h-8 w-8 border-2 border-emerald-500 border-t-transparent" />
+                                        <p className="text-xs font-bold uppercase tracking-widest animate-pulse">
+                                            Carregando mais documentos científicos...
+                                        </p>
+                                    </div>
+                                )}
+                            </>
                         )}
                     </>
                 )}

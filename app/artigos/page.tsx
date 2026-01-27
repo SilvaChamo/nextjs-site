@@ -175,6 +175,7 @@ export default function ArticlesArchivePage() {
                 { label: "Repositório", href: "/repositorio" },
                 { label: "Artigos Científicos", href: undefined }
             ]}
+            titleClassName="text-[28px] md:text-[36px] lg:text-[42px] font-black uppercase tracking-tight"
             sidebarComponents={
                 <div className="space-y-agro">
                     <div className="bg-white p-6 rounded-[15px] border border-slate-100 shadow-sm">
@@ -230,7 +231,7 @@ export default function ArticlesArchivePage() {
                     <div className="py-6 animate-in fade-in slide-in-from-bottom-4 duration-1000">
                         <div className="relative group overflow-hidden rounded-[15px] border border-slate-100 shadow-xl bg-white aspect-[21/9] md:aspect-[3/1]">
                             <Image
-                                src="/images/scientific-ad-natural-v2.png"
+                                src="/images/scientific-ad-natural-v3.png"
                                 alt="AgroCientífico Moçambique"
                                 fill
                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -241,7 +242,7 @@ export default function ArticlesArchivePage() {
                                         <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                                         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">Destaque Científico</span>
                                     </div>
-                                    <h2 className="text-2xl font-bold text-white leading-tight">Ciência e Inovação <span className="text-emerald-400">para o campo</span></h2>
+                                    <h2 className="text-3xl font-black text-white leading-tight uppercase">O FUTURO DO CAMPO É <span className="text-emerald-400">DIGITAL</span></h2>
                                     <p className="text-slate-200 text-sm font-medium leading-relaxed">
                                         Accesse o maior repositório de inteligência agrícola de Moçambique. Pesquise teses, relatórios e papers globais validados academicamente.
                                     </p>

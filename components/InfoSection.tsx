@@ -18,19 +18,19 @@ import { AgroCastSection } from "@/components/AgroCastSection";
 const EXEMPLARY_CATEGORIES: CategoryCard[] = [
     {
         title: "Turismo rural",
-        description: "Invista em terras, fazendas e infra-estruturas rurais.",
-        icon: LucideIcons.Tractor, // Representing rural activities
+        description: "Notícias e oportunidades de turismo rural e lazer.",
+        icon: LucideIcons.Tractor,
         iconBg: "bg-red-50",
         iconColor: "text-red-500",
-        href: "/propriedades"
+        href: "/produtos?q=turismo"
     },
     {
         title: "Tecnologias Agrárias",
         description: "Inovações digitais, maquinaria moderna e soluções técnicas.",
         icon: LucideIcons.Cpu,
         dark: true,
-        iconColor: "text-white", // Dark cards usually have white icons
-        href: "/produtos"
+        iconColor: "text-white",
+        href: "/produtos?q=tecnologia"
     },
     {
         title: "Políticas Agrárias",
@@ -46,19 +46,19 @@ const EXEMPLARY_CATEGORIES: CategoryCard[] = [
         icon: LucideIcons.Leaf,
         dark: true,
         iconColor: "text-white",
-        href: "/produtos"
+        href: "/produtos?q=insumo"
     },
     {
         title: "Financiamento agrário",
         description: "Linhas de crédito, fundos de investimento e seguros agrícolas.",
-        icon: LucideIcons.Banknote,
+        icon: LucideIcons.Coins,
         iconBg: "bg-yellow-50",
         iconColor: "text-yellow-500",
-        href: "/servicos"
+        href: "/produtos?q=financiamento"
     },
     {
         title: "Artigos Científicos",
-        description: "Pesquisas, teses e inovações do agronegócio moçambicano.",
+        description: "Resultados de pesquisa e inovações do agronegócio.",
         icon: LucideIcons.BookOpen,
         dark: true,
         iconColor: "text-white",

@@ -11,35 +11,32 @@ import { supabase } from "@/lib/supabaseClient";
 // DEMO FALLBACK DATA
 const FALLBACK_PRODUCTS_MAP: Record<string, any[]> = {
     '99999999-9999-9999-9999-999999999991': [
-        { id: 'f1', nome: "MILHO", preco: "120 MT/kg", category: "INSUMO", image_url: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?q=80&w=800", description: "Descrição de alta qualidade para este insumo agrícola.", available: true },
-        { id: 'f2', nome: "ARROZ", preco: "95.5 MT/kg", category: "INSUMO", image_url: "https://images.unsplash.com/photo-1586201327693-86619dadb279?q=80&w=800", description: "Descrição de alta qualidade para este insumo agrícola.", available: true },
-        { id: 'f3', nome: "FEIJÃO", preco: "150 MT/kg", category: "INSUMO", image_url: "/images/Prototipo/feijao.jpg", description: "Descrição de alta qualidade para este insumo agrícola.", available: true },
-        { id: 'f3b', nome: "CAJU", preco: "450 MT/kg", category: "PROCESSADO", image_url: "/images/Prototipo/caju.webp", description: "Castanha de caju de alta qualidade.", available: true },
+        { id: 'f1', nome: "MILHO HÍBRIDO", preco: "120 MT/kg", category: "INSUMO", image_url: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?q=80&w=800", description: "Sementes de milho de alta produtividade para zonas secas.", available: true },
+        { id: 'f2', nome: "NPK 12-24-12", preco: "3500 MT/50kg", category: "INSUMO", image_url: "https://images.unsplash.com/photo-1628173516104-aa263884cb95?q=80&w=800", description: "Adubo composto para base de culturas alimentares.", available: true },
+        { id: 'f3', nome: "CALCÁRIO", preco: "1500 MT/Tona", category: "INSUMO", image_url: "https://images.unsplash.com/photo-1587049488737-2954a7f92021?q=80&w=800", description: "Corretivo de acidez de solo de acção rápida.", available: true },
     ],
     '99999999-9999-9999-9999-999999999992': [
-        { id: 'f4', nome: "FEIJÃO", preco: "150 MT/kg", category: "INSUMO", image_url: "/images/Prototipo/feijao.jpg", description: "Descrição de alta qualidade para este insumo agrícola.", available: true },
-        { id: 'f5', nome: "MILHO", preco: "120 MT/kg", category: "INSUMO", image_url: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?q=80&w=800", description: "Descrição de alta qualidade para este insumo agrícola.", available: true },
-        { id: 'f5b', nome: "ARROZ", preco: "95.5 MT/kg", category: "INSUMO", image_url: "https://images.unsplash.com/photo-1586201327693-86619dadb279?q=80&w=800", description: "Descrição de alta qualidade para este insumo agrícola.", available: true },
-        { id: 'f5c', nome: "SOJA", preco: "85 MT/kg", category: "CEREAL", image_url: "https://images.unsplash.com/photo-1582284540020-8acaf01f344a?q=80&w=800", description: "Soja de alta qualidade para processamento.", available: true },
+        { id: 't1', nome: "DRONE AGRAS T40", preco: "Sob Consulta", category: "TECNOLOGIA", image_url: "https://images.unsplash.com/photo-1473968512647-3e447244af8f?q=80&w=800", description: "Drone de pulverização e mapeamento agrícola.", available: true },
+        { id: 't2', nome: "SENSOR DE SOLO IOT", preco: "15.000 MT", category: "TECNOLOGIA", image_url: "https://images.unsplash.com/photo-1581093588401-fbb0739829ff?q=80&w=800", description: "Monitoramento em tempo real de humidade e nutrientes.", available: true },
+        { id: 't3', nome: "GPS AGRÍCOLA", preco: "45.000 MT", category: "TECNOLOGIA", image_url: "https://images.unsplash.com/photo-1595166687295-8a24558e8055?q=80&w=800", description: "Sistema de orientação para tratores.", available: true },
     ],
     '99999999-9999-9999-9999-999999999993': [
-        { id: 'f6', nome: "ARROZ", preco: "95.5 MT/kg", category: "INSUMO", image_url: "https://images.unsplash.com/photo-1586201327693-86619dadb279?q=80&w=800", description: "Descrição de alta qualidade para este insumo agrícola.", available: true },
-        { id: 'f6b', nome: "TOMATE", preco: "45 MT/kg", category: "HORTA", image_url: "https://images.unsplash.com/photo-1582284540020-8acaf01f344a?q=80&w=800", description: "Tomates frescos do vale.", available: true },
-        { id: 'f6c', nome: "CEBOLA", preco: "30 MT/kg", category: "HORTA", image_url: "https://images.unsplash.com/photo-1580201092675-a0bc6bd6c317?q=80&w=800", description: "Cebolas selecionadas.", available: true },
-        { id: 'f6d', nome: "PIMENTÃO", preco: "55 MT/kg", category: "HORTA", image_url: "https://images.unsplash.com/photo-1566385101042-1a0f08154b9d?q=80&w=800", description: "Pimentões coloridos e frescos.", available: true },
+        { id: 'fin1', nome: "CRÉDITO CAMPANHA", preco: "Taxa 12%", category: "FINANCIAMENTO", image_url: "https://images.unsplash.com/photo-1554224155-972d256ebe27?q=80&w=800", description: "Financiamento para insumos e sementes.", available: true },
+        { id: 'fin2', nome: "SEGURO COLHEITA", preco: "2% do Valor", category: "FINANCIAMENTO", image_url: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=800", description: "Proteção contra secas e inundações.", available: true },
+        { id: 'tur1', nome: "FAZENDA ECO-RESORT", preco: "5.000 MT/Noite", category: "TURISMO", image_url: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=800", description: "Experiência de agro-turismo em Gaza.", available: true },
     ]
 };
 
 const FALLBACK_COMPANY_NAMES: Record<string, string> = {
-    '99999999-9999-9999-9999-999999999991': "Agro-Indústria Zambézia",
-    '99999999-9999-9999-9999-999999999992': "Cooperativa do Norte",
-    '99999999-9999-9999-9999-999999999993': "Hortas do Vale"
+    '99999999-9999-9999-9999-999999999991': "Casa do Agricultor",
+    '99999999-9999-9999-9999-999999999992': "AgroTech Moz",
+    '99999999-9999-9999-9999-999999999993': "Banco Verde"
 };
 
 const FALLBACK_COMPANY_SLUGS: Record<string, string> = {
-    '99999999-9999-9999-9999-999999999991': "agro-industria-zambezia",
-    '99999999-9999-9999-9999-999999999992': "cooperativa-do-norte",
-    '99999999-9999-9999-9999-999999999993': "hortas-do-vale"
+    '99999999-9999-9999-9999-999999999991': "casa-do-agricultor",
+    '99999999-9999-9999-9999-999999999992': "agrotech-moz",
+    '99999999-9999-9999-9999-999999999993': "banco-verde"
 };
 
 function ProductsContent() {
@@ -148,13 +145,34 @@ function ProductsContent() {
         fetchData();
     }, [empresaId, professionalId]);
 
-    const filteredProducts = products.filter(p =>
-        (p.nome || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (p.category || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (p.description || "").toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredProducts = products.filter(p => {
+        const query = searchQuery.toLowerCase();
+        // Strict category filtering for main navigation links
+        if (query === 'insumo' || query === 'insumos') {
+            return (p.category || "").toLowerCase() === 'insumo';
+        }
+        if (query === 'tecnologia' || query === 'tecnologias') {
+            return (p.category || "").toLowerCase() === 'tecnologia';
+        }
+        if (query === 'financiamento') {
+            return (p.category || "").toLowerCase() === 'financiamento';
+        }
+        if (query === 'turismo') {
+            return (p.category || "").toLowerCase() === 'turismo';
+        }
 
-    const pageTitle = contextName ? `Produtos de ${contextName}` : "Mercado de Produtos";
+        // Default broad search
+        return (p.nome || "").toLowerCase().includes(query) ||
+            (p.category || "").toLowerCase().includes(query) ||
+            (p.description || "").toLowerCase().includes(query);
+    });
+
+    const pageTitle = contextName ? `Produtos de ${contextName}` :
+        (searchQuery === 'insumo' ? 'Insumos Agrários' :
+            searchQuery === 'tecnologia' ? 'Tecnologias Agrárias' :
+                searchQuery === 'financiamento' ? 'Financiamento Agrário' :
+                    searchQuery === 'turismo' ? 'Turismo Rural' :
+                        "Mercado de Produtos");
 
     return (
         <StandardBlogTemplate

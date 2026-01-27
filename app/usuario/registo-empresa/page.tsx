@@ -225,7 +225,7 @@ export default function RegisterCompanyPage() {
                             <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                                 <h2 className="text-2xl font-bold text-slate-800 mb-6">Identidade da Empresa</h2>
 
-                                <div className="space-y-4">
+                                <div className="space-y-6">
                                     <div className="space-y-2">
                                         <label className="text-sm font-bold text-slate-700">Logo da Empresa</label>
                                         <div className="flex items-center gap-6">
@@ -496,7 +496,7 @@ export default function RegisterCompanyPage() {
                             <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                                 <h2 className="text-2xl font-bold text-slate-800 mb-6">Detalhes do Negócio</h2>
 
-                                <div className="space-y-4">
+                                <div className="space-y-6">
                                     <div className="space-y-2">
                                         <label className="text-sm font-bold text-slate-700">Setor de Atividade</label>
                                         <Input
@@ -546,7 +546,7 @@ export default function RegisterCompanyPage() {
                                     </Button>
                                 </div>
 
-                                <div className="space-y-4">
+                                <div className="space-y-6">
                                     {formData.products.length === 0 ? (
                                         <div className="text-center py-12 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
                                             <Save className="w-12 h-12 text-slate-300 mx-auto mb-4" />

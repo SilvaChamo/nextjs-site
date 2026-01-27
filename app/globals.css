@@ -151,7 +151,7 @@
   }
 
   .btn-outline {
-    @apply bg-transparent border border-white/20 text-white hover:bg-white/10 px-8 py-3 rounded-[7px] text-xs font-bold uppercase tracking-widest transition-all backdrop-blur-sm inline-flex items-center justify-center gap-2;
+    @apply bg-transparent border border-white/20 text-white hover:bg-[#f97316]/20 px-8 py-3 rounded-[7px] text-xs font-bold uppercase tracking-widest transition-all backdrop-blur-sm inline-flex items-center justify-center gap-2;
   }
 
   .btn-accent {
@@ -166,7 +166,7 @@
   textarea:-webkit-autofill:hover,
   textarea:-webkit-autofill:focus {
     -webkit-text-fill-color: #334155;
-    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
     transition: background-color 5000s ease-in-out 0s;
   }
 }

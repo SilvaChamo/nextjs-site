@@ -130,7 +130,7 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                         </div>
                     )}
 
-                    <form onSubmit={handleAuth} className="space-y-4">
+                    <form onSubmit={handleAuth} className="space-y-6">
                         {!isLogin && (
                             <div className="relative">
                                 <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />

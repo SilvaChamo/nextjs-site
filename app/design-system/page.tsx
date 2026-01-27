@@ -38,18 +38,15 @@ export default function DesignSystem() {
 
             <section className="space-y-4 border-b pb-10">
                 <h2 className="text-2xl font-semibold">Módulos & Páginas (Workspaces)</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <a href="/design-system/podcast" className="block p-6 bg-white border rounded-xl hover:border-emerald-500 hover:shadow-lg transition-all group">
-                        <h3 className="font-bold text-lg mb-2 group-hover:text-emerald-600">AgroCast (Podcast)</h3>
-                        <p className="text-sm text-slate-500">Desenvolvimento do componente de vídeo e podcast.</p>
+                <div className="flex flex-wrap gap-4">
+                    <a href="/design-system/podcast" className="btn-primary">
+                        AgroCast (Podcast)
                     </a>
-                    <a href="/design-system/arquivo-produtos" className="block p-6 bg-white border rounded-xl hover:border-emerald-500 hover:shadow-lg transition-all group">
-                        <h3 className="font-bold text-lg mb-2 group-hover:text-emerald-600">Arquivo de Produtos</h3>
-                        <p className="text-sm text-slate-500">Listagem de produtos das empresas.</p>
+                    <a href="/design-system/arquivo-produtos" className="btn-primary">
+                        Arquivo de Produtos
                     </a>
-                    <a href="/design-system/detalhes-empresa" className="block p-6 bg-white border rounded-xl hover:border-emerald-500 hover:shadow-lg transition-all group">
-                        <h3 className="font-bold text-lg mb-2 group-hover:text-emerald-600">Detalhes da Empresa</h3>
-                        <p className="text-sm text-slate-500">Página de perfil e detalhes.</p>
+                    <a href="/design-system/detalhes-empresa" className="btn-primary">
+                        Detalhes da Empresa
                     </a>
                 </div>
             </section>
@@ -68,7 +65,7 @@ export default function DesignSystem() {
 
             <section className="space-y-4">
                 <h2 className="text-2xl font-semibold">Inputs</h2>
-                <div className="max-w-sm space-y-2">
+                <div className="max-w-sm space-y-[20px]">
                     <Input type="email" placeholder="Email" />
                     <Input type="password" placeholder="Password" />
                 </div>

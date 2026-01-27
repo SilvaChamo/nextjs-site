@@ -25,9 +25,16 @@ export const metadata: Metadata = {
   title: "Baseagrodata",
   description: "O seu repositório agrário",
   manifest: "/manifest.json",
-  themeColor: "#059669",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
 };
+
+export function generateViewport() {
+  return {
+    themeColor: "#059669",
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+  };
+}
 
 export default function RootLayout({
   children,

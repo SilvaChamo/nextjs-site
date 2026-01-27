@@ -230,7 +230,7 @@ export default function ArticlesArchivePage() {
                     <div className="py-6 animate-in fade-in slide-in-from-bottom-4 duration-1000">
                         <div className="relative group overflow-hidden rounded-[15px] border border-slate-100 shadow-xl bg-white aspect-[21/9] md:aspect-[3/1]">
                             <Image
-                                src="/images/scientific-ad-natural.png"
+                                src="/images/scientific-ad-natural-v2.png"
                                 alt="AgroCientífico Moçambique"
                                 fill
                                 className="object-cover transition-transform duration-700 group-hover:scale-105"

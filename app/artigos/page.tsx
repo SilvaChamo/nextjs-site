@@ -52,7 +52,7 @@ export default function ArticlesArchivePage() {
     const [articles, setArticles] = useState<any[]>([]);
     const [localArticles, setLocalArticles] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const [searchQuery, setSearchQuery] = useState("Artigos científicos");
+    const [searchQuery, setSearchQuery] = useState("");
     const [visibleCount, setVisibleCount] = useState(3);
     const [isFetchingMore, setIsFetchingMore] = useState(false);
     const [isScanningGlobal, setIsScanningGlobal] = useState(false);
@@ -207,7 +207,7 @@ export default function ArticlesArchivePage() {
                     {/* Visual Label - Clean Scientific Indicator */}
                     <div className="flex items-center gap-2 px-6 h-full border-l border-gray-100 bg-gray-50 transition-colors">
                         <span className="text-xs font-bold text-slate-400 uppercase tracking-wider hidden sm:block whitespace-nowrap">
-                            {isScanningGlobal ? "Escaneando..." : "Científico"}
+                            {isScanningGlobal ? "Escaneando..." : "Artigos científicos"}
                         </span>
                     </div>
                 </div>

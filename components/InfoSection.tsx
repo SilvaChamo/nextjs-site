@@ -211,7 +211,7 @@ export function InfoSection() {
                                         <Link
                                             key={idx}
                                             href={card.href || "#"}
-                                            className={`p-10 md:p-12 rounded-[10px] text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col gap-4 group cursor-pointer border h-full ${card.dark
+                                            className={`p-10 md:p-12 rounded-agro text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col gap-agro group cursor-pointer border h-full ${card.dark
                                                 ? "bg-[#374151] text-white border-slate-600 shadow-xl shadow-slate-900/20"
                                                 : "bg-white text-[#3a3f47] border-slate-200 shadow-lg shadow-slate-200/50"
                                                 }`}
@@ -241,8 +241,8 @@ export function InfoSection() {
                             )}
 
                             {activeTab === "mercado" && (
-                                <div className="grid grid-cols-1 md:grid-cols-[35%_1fr] gap-[20px] text-left items-start w-full">
-                                    <div className="bg-white p-8 rounded-[15px] shadow-xl shadow-slate-200 border border-slate-100 space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-[35%_1fr] gap-agro text-left items-start w-full">
+                                    <div className="bg-white p-8 rounded-agro shadow-xl shadow-slate-200 border border-slate-100 space-y-6">
                                         <div className="flex items-center gap-4">
                                             <div className="w-12 h-12 rounded-[5px] bg-orange-50 flex items-center justify-center">
                                                 <BarChart3 className="text-[#f97316] h-6 w-6" />

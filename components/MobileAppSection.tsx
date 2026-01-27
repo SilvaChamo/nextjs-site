@@ -29,7 +29,7 @@ export function MobileAppSection() {
                         {/* Two Capabilities as requested */}
                         <div className="grid sm:grid-cols-2 gap-6">
                             {/* Feature 1 */}
-                            <div className="bg-slate-50 p-2 rounded-xl border border-slate-100 hover:border-emerald-200 transition-colors group flex items-start gap-3 text-left">
+                            <div className="bg-slate-50 p-2 rounded-agro border border-slate-100 hover:border-emerald-200 transition-colors group flex items-start gap-3 text-left">
                                 <div className="w-10 h-10 bg-emerald-50 rounded-[5px] border border-slate-200 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                                     <Scan className="w-5 h-5 text-emerald-600" />
                                 </div>
@@ -42,7 +42,7 @@ export function MobileAppSection() {
                             </div>
 
                             {/* Feature 2 */}
-                            <div className="bg-slate-50 p-2 rounded-xl border border-slate-100 hover:border-emerald-200 transition-colors group flex items-start gap-3 text-left">
+                            <div className="bg-slate-50 p-2 rounded-agro border border-slate-100 hover:border-emerald-200 transition-colors group flex items-start gap-3 text-left">
                                 <div className="w-10 h-10 bg-emerald-50 rounded-[5px] border border-slate-200 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                                     <Stethoscope className="w-5 h-5 text-emerald-600" />
                                 </div>
@@ -56,7 +56,7 @@ export function MobileAppSection() {
                         </div>
 
                         {/* Additional Feature Mention (Store Finder) */}
-                        <div className="flex items-start gap-3 p-4 bg-orange-50 rounded-xl border border-orange-100">
+                        <div className="flex items-start gap-3 p-4 bg-orange-50 rounded-agro border border-orange-100">
                             <Store className="w-5 h-5 text-orange-500 mt-0.5 shrink-0" />
                             <p className="text-sm text-slate-600">
                                 <span className="font-bold text-slate-700">Encontre Remédios e Lojas:</span> Localize fornecedores próximos, compare preços e variações na sua região em tempo real.
@@ -107,7 +107,7 @@ export function MobileAppSection() {
                         {/* Floating Badge - "Sobre o aplicativo" */}
                         <Link
                             href="/sobre-aplicativo"
-                            className="absolute z-10 bottom-20 -left-6 md:left-0 lg:-left-12 bg-white py-4 px-6 rounded-2xl shadow-xl animate-bounce delay-1000 duration-3000 border border-slate-50 cursor-pointer hover:scale-105 transition-transform group"
+                            className="absolute z-10 bottom-20 -left-6 md:left-0 lg:-left-12 bg-white py-4 px-6 rounded-agro shadow-xl animate-bounce delay-1000 duration-3000 border border-slate-50 cursor-pointer hover:scale-105 transition-transform group"
                         >
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center group-hover:bg-[#f97316] transition-colors">

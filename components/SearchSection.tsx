@@ -289,19 +289,19 @@ function SearchResultCard({ item, colorClass, isRound = false }: { item: any, co
 
     return (
         <Link href={href} className="block">
-            <div className="bg-white border border-gray-100 p-5 rounded-[10px] shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center gap-5 group">
+            <div className="bg-white border border-gray-100 p-5 rounded-agro shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center gap-agro group">
                 {/* Image or Icon Container */}
                 <div className="shrink-0">
                     {item.logo ? (
-                        <div className="w-12 h-12 rounded-[10px] overflow-hidden border border-gray-100 relative bg-white">
+                        <div className="w-12 h-12 rounded-[5px] overflow-hidden border border-gray-100 relative bg-white">
                             <img src={item.logo} alt={item.title} className="w-full h-full object-contain p-1" />
                         </div>
                     ) : item.image ? (
-                        <div className={`w-12 h-12 overflow-hidden border border-gray-100 relative ${isRound ? 'rounded-full' : 'rounded-[10px]'}`}>
+                        <div className={`w-12 h-12 overflow-hidden border border-gray-100 relative ${isRound ? 'rounded-full' : 'rounded-[5px]'}`}>
                             <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
                         </div>
                     ) : (
-                        <div className={`w-12 h-12 rounded-[10px] flex items-center justify-center transition-colors duration-300 ${colorClass} group-hover:bg-gray-900 group-hover:text-white`}>
+                        <div className={`w-12 h-12 rounded-[5px] flex items-center justify-center transition-colors duration-300 ${colorClass} group-hover:bg-gray-900 group-hover:text-white`}>
                             <Icon className="w-6 h-6" />
                         </div>
                     )}

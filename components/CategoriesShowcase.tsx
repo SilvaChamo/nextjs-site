@@ -84,7 +84,7 @@ export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
                                         className="flex-[0_0_100%] sm:flex-[0_0_50%] lg:flex-[0_0_25%] min-w-0 pr-[15px] pb-10"
                                     >
                                         <Link href={`/empresas/${company.slug || i}`} className="group block h-full">
-                                            <div className="bg-white p-6 rounded-[15px] border border-slate-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-500 flex flex-col h-full relative overflow-hidden">
+                                            <div className="bg-white p-6 rounded-agro border border-slate-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-500 flex flex-col h-full relative overflow-hidden">
 
                                                 <div className="flex justify-between items-start mb-6">
                                                     <div className="shrink-0">

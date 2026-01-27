@@ -18,7 +18,7 @@ import { AgroCastSection } from "@/components/AgroCastSection";
 const EXEMPLARY_CATEGORIES: CategoryCard[] = [
     {
         title: "Turismo rural",
-        description: "Encontre aqui locais de turismo rural, fazendas turísticas, pousadas, estabelecimentos de alojamento e locais históricos.",
+        description: "Invista em terras, fazendas e infra-estruturas rurais.",
         icon: LucideIcons.Tractor, // Representing rural activities
         iconBg: "bg-red-50",
         iconColor: "text-red-500",
@@ -26,7 +26,7 @@ const EXEMPLARY_CATEGORIES: CategoryCard[] = [
     },
     {
         title: "Tecnologias Agrárias",
-        description: "Tecnologia agrária, equipamentos agrícolas, máquinas e informações agrícolas sobre inovações e práticas modernas.",
+        description: "Inovações digitais, maquinaria moderna e soluções técnicas.",
         icon: LucideIcons.Cpu,
         dark: true,
         iconColor: "text-white", // Dark cards usually have white icons
@@ -34,7 +34,7 @@ const EXEMPLARY_CATEGORIES: CategoryCard[] = [
     },
     {
         title: "Políticas Agrárias",
-        description: "Acesse aqui informações essenciais sobre o quadro legal e regulamentação, incluindo política agrária em Moçambique.",
+        description: "Legislação, regulamentos e diretrizes governamentais para o setor.",
         icon: LucideIcons.Scale,
         iconBg: "bg-blue-50",
         iconColor: "text-blue-500",
@@ -42,7 +42,7 @@ const EXEMPLARY_CATEGORIES: CategoryCard[] = [
     },
     {
         title: "Insumos Agrários",
-        description: "Soluções agrícolas, pesticidas, fertilizantes, soluções para doenças de plantas e agro-pecuária.",
+        description: "Explore insumos, maquinaria e produtos agrícolas disponíveis.",
         icon: LucideIcons.Leaf,
         dark: true,
         iconColor: "text-white",
@@ -50,7 +50,7 @@ const EXEMPLARY_CATEGORIES: CategoryCard[] = [
     },
     {
         title: "Financiamento agrário",
-        description: "Descubra as melhores opções de apoio financeiro agrícola e soluções de financiamento para impulsionar sua produção.",
+        description: "Linhas de crédito, fundos de investimento e seguros agrícolas.",
         icon: LucideIcons.Banknote,
         iconBg: "bg-yellow-50",
         iconColor: "text-yellow-500",
@@ -58,7 +58,7 @@ const EXEMPLARY_CATEGORIES: CategoryCard[] = [
     },
     {
         title: "Artigos Científicos",
-        description: "Resultados de pesquisa agricola, estudos de campo, experimentos e projetos técnicos cientificos sobre o sector.",
+        description: "Pesquisas, teses e inovações do agronegócio moçambicano.",
         icon: LucideIcons.BookOpen,
         dark: true,
         iconColor: "text-white",
@@ -263,35 +263,37 @@ export function InfoSection() {
                     ) : (
                         <>
                             {activeTab === "categorias" && (
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-agro">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-agro px-[40px]">
                                     {categoryCards.map((card, idx) => (
                                         <Link
                                             key={idx}
                                             href={card.href || "#"}
-                                            className={`p-[40px] rounded-agro text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col gap-[15px] group cursor-pointer border h-full ${card.dark
+                                            className={`p-[24px] rounded-agro text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex items-start gap-[15px] group cursor-pointer border h-full ${card.dark
                                                 ? "bg-[#374151] text-white border-slate-600 shadow-xl shadow-slate-900/20"
                                                 : "bg-white text-[#3a3f47] border-slate-200 shadow-lg shadow-slate-200/50"
                                                 }`}
                                         >
-                                            <div className="flex items-center gap-[15px]">
-                                                <div className={`w-12 h-12 rounded-[5px] flex items-center justify-center shrink-0 ${card.dark ? "bg-transparent border border-white/20" : "bg-slate-100"} ${card.title.toLowerCase().includes('visibilidade') ||
-                                                    card.title.toLowerCase().includes('crescimento') ||
-                                                    card.title.toLowerCase().includes('scanner') ||
-                                                    card.title.toLowerCase().includes('doctor')
-                                                    ? "border-2 border-[#f97316]"
-                                                    : ""
-                                                    } ${card.iconBg || ""}`}>
-                                                    <card.icon className={`h-6 w-6 ${card.dark ? card.iconColor : "text-slate-600"}`} />
-                                                </div>
-                                                <div className="space-y-0">
-                                                    <h3 className={`text-lg font-black leading-tight first-letter:uppercase lowercase ${card.dark ? "text-white" : "text-[#3a3f47]"}`} suppressHydrationWarning>
-                                                        <span>{card.title}</span>
-                                                    </h3>
+                                            <div className={`w-14 h-14 rounded-[5px] flex items-center justify-center shrink-0 ${card.dark ? "bg-transparent border border-white/20" : "bg-slate-200"} ${card.title.toLowerCase().includes('visibilidade') ||
+                                                card.title.toLowerCase().includes('crescimento') ||
+                                                card.title.toLowerCase().includes('scanner') ||
+                                                card.title.toLowerCase().includes('doctor')
+                                                ? "border-2 border-[#f97316]"
+                                                : ""
+                                                } ${card.iconBg || ""}`}>
+                                                <card.icon className={`h-7 w-7 ${card.dark ? card.iconColor : "text-slate-600"}`} />
+                                            </div>
+                                            <div className="flex flex-col gap-2 h-full">
+                                                <h3 className={`text-lg font-black leading-tight mt-3 first-letter:uppercase lowercase ${card.dark ? "text-white" : "text-[#3a3f47]"}`} suppressHydrationWarning>
+                                                    <span>{card.title}</span>
+                                                </h3>
+                                                <p className={`text-sm leading-relaxed ${card.dark ? "text-slate-300" : "text-slate-500"} line-clamp-4`}>
+                                                    {card.description}
+                                                </p>
+                                                <div className={`mt-auto pt-2 flex items-center gap-2 text-xs font-bold tracking-wide ${card.dark ? "text-white/70 group-hover:text-white" : "text-slate-400 group-hover:text-[#f97316]"} transition-colors`}>
+                                                    Ver detalhes
+                                                    <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
                                                 </div>
                                             </div>
-                                            <p className={`text-sm leading-relaxed ${card.dark ? "text-slate-300" : "text-slate-500"} line-clamp-4`}>
-                                                {card.description}
-                                            </p>
                                         </Link>
                                     ))}
                                 </div>

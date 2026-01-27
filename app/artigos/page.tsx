@@ -185,7 +185,7 @@ export default function ArticlesArchivePage() {
         >
             {/* Scientific Search Input - EXACT Home Style + Enter Trigger */}
             <div className="mb-[20px]">
-                <div className={`relative bg-white rounded-[5px] shadow-sm h-12 flex items-center border transition-all duration-300 overflow-hidden ${isScanningGlobal ? 'border-emerald-300 ring-2 ring-emerald-50' : 'border-gray-200'}`}>
+                <div className={`relative bg-white rounded-[7px] shadow-sm h-12 flex items-center border transition-all duration-300 overflow-hidden ${isScanningGlobal ? 'border-emerald-300 ring-2 ring-emerald-50' : 'border-gray-200'}`}>
                     <button
                         onClick={() => handleSearch()}
                         className="pl-6 text-gray-400 hover:text-emerald-600 transition-colors"

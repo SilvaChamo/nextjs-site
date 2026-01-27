@@ -185,7 +185,7 @@ export default function ArticlesArchivePage() {
         >
             {/* Scientific Search Input - EXACT Home Style + Enter Trigger */}
             <div className="mb-[20px]">
-                <div className={`relative bg-white rounded-[7px] shadow-sm h-12 flex items-center border transition-all duration-300 overflow-hidden ${isScanningGlobal ? 'border-emerald-300 ring-2 ring-emerald-50' : 'border-gray-200'}`}>
+                <div className={`relative bg-white rounded-[10px] shadow-sm h-12 flex items-center border transition-all duration-300 overflow-hidden ${isScanningGlobal ? 'border-emerald-300 ring-2 ring-emerald-50' : 'border-gray-200'}`}>
                     <button
                         onClick={() => handleSearch()}
                         className="pl-6 text-gray-400 hover:text-emerald-600 transition-colors"
@@ -226,8 +226,8 @@ export default function ArticlesArchivePage() {
                 ) : (
                     <>
                         {displayedArticles.length > 0 ? (
-                            displayedArticles.map((article) => (
-                                <div key={article.id} className="group block py-6 bg-white border-b border-slate-200 hover:bg-slate-50 transition-colors pl-[25px] pr-4">
+                            displayedArticles.map((article, index) => (
+                                <div key={article.id} className={`group block py-6 bg-white border-b border-slate-200 hover:bg-slate-50 transition-colors pl-[25px] pr-4 ${index === 0 ? 'rounded-t-[10px]' : ''}`}>
                                     <div className="flex flex-col gap-0.5">
                                         <div className="flex items-center gap-2 text-sm text-[#202124] mb-1">
                                             <div className="bg-slate-50 rounded-full w-7 h-7 flex items-center justify-center shrink-0 border border-slate-100 overflow-hidden">

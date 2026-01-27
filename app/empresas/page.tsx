@@ -104,7 +104,7 @@ export default function EmpresasPage() {
             <div className="space-y-8 pb-10">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-agro">
                     {companies.map((company, i) => (
-                        <div key={i} className="group bg-white rounded-agro-lg border border-slate-200 shadow-md card-interactive transition-all duration-500 flex flex-col relative overflow-hidden">
+                        <div key={i} className="group bg-white rounded-agro border border-slate-200 shadow-md card-interactive transition-all duration-500 flex flex-col relative overflow-hidden">
                             {/* 1. Header Image */}
                             <div className="relative h-[140px] w-full overflow-hidden">
                                 <Image

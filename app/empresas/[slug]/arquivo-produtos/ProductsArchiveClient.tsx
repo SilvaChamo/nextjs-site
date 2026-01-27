@@ -93,7 +93,7 @@ export default function ProductsArchiveClient({ company, slug, products }: { com
                                 <Building2 className="w-8 h-8 text-slate-200" />
                             )}
                         </div>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{company.name}</p>
+                        <p className="text-[10px] font-black text-slate-400 tracking-widest mb-1">{company.name}</p>
                         <Link href={`/empresas/${slug}`} className="text-xs font-bold text-emerald-600 hover:underline">
                             Ver Perfil Completo
                         </Link>
@@ -117,80 +117,91 @@ export default function ProductsArchiveClient({ company, slug, products }: { com
 
                 {filteredProducts.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-agro pb-12">
-                        {filteredProducts.map((product, i) => (
-                            <div key={i} className="group relative h-[210px] rounded-agro overflow-hidden shadow-md card-interactive transition-all duration-300 cursor-pointer border border-slate-100/50 bg-white">
-                                <Image
-                                    src={product.img || product.photo || "/images/Prototipo/caju.webp"}
-                                    alt={product.name}
-                                    fill
-                                    className="object-cover group-hover:scale-110 transition-transform duration-700"
-                                />
-
-                                <div className="absolute top-3 right-3 z-20">
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setActiveProductShare(activeProductShare === i ? null : i);
-                                        }}
-                                        className="bg-white/20 backdrop-blur-md hover:bg-white hover:text-orange-600 text-white w-8 h-8 rounded-full flex items-center justify-center border border-white/30 transition-all opacity-0 group-hover:opacity-100"
-                                    >
-                                        <Share2 className="w-4 h-4" />
-                                    </button>
-
-                                    {activeProductShare === i && (
-                                        <div className="absolute right-0 top-full mt-2 bg-white/90 backdrop-blur-md border border-slate-100 shadow-2xl rounded-full py-0.5 px-1.5 z-50 flex items-center gap-1 animate-in fade-in zoom-in slide-in-from-top-2">
-                                            <button
-                                                onClick={(e) => { e.stopPropagation(); handleShare('whatsapp', shareUrl, product.name); setActiveProductShare(null); }}
-                                                className="w-8 h-8 flex items-center justify-center text-emerald-600 hover:bg-emerald-600 hover:text-white rounded-full transition-all"
-                                            >
-                                                <WhatsAppIcon className="w-4.5 h-4.5" />
-                                            </button>
-                                            <button
-                                                onClick={(e) => { e.stopPropagation(); handleShare('facebook', shareUrl, product.name); setActiveProductShare(null); }}
-                                                className="w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-600 hover:text-white rounded-full transition-all"
-                                            >
-                                                <Facebook className="w-4 h-4" />
-                                            </button>
-                                            <button
-                                                onClick={(e) => { e.stopPropagation(); handleShare('linkedin', shareUrl, product.name); setActiveProductShare(null); }}
-                                                className="w-8 h-8 flex items-center justify-center text-blue-700 hover:bg-blue-700 hover:text-white rounded-full transition-all"
-                                            >
-                                                <Linkedin className="w-4 h-4" />
-                                            </button>
-                                            <button
-                                                onClick={(e) => { e.stopPropagation(); handleShare('twitter', shareUrl, product.name); setActiveProductShare(null); }}
-                                                className="w-8 h-8 flex items-center justify-center text-sky-500 hover:bg-sky-500 hover:text-white rounded-full transition-all"
-                                            >
-                                                <Twitter className="w-4 h-4" />
-                                            </button>
+                        {filteredProducts.map((product: any, i) => (
+                            <Link
+                                key={i}
+                                href={`/empresas/${slug}/produto/${slugify(product.name)}`}
+                                className="group bg-white rounded-agro overflow-hidden shadow-sm border border-slate-100 hover:shadow-md transition-all flex flex-col"
+                            >
+                                {/* Product Image + Category Badge */}
+                                <div className="relative h-44 w-full overflow-hidden">
+                                    <Image
+                                        src={product.img || product.photo || "/images/Prototipo/caju.webp"}
+                                        alt={product.name}
+                                        fill
+                                        className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                    />
+                                    {product.category && (
+                                        <div className="absolute top-3 left-3 z-10">
+                                            <span className="bg-white/95 backdrop-blur-sm text-[10px] font-black text-emerald-600 uppercase tracking-widest px-2 py-1 rounded-md shadow-sm">
+                                                {product.category}
+                                            </span>
                                         </div>
                                     )}
+                                    {/* Share Button Overlay */}
+                                    <div className="absolute top-3 right-3 z-20">
+                                        <button
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                setActiveProductShare(activeProductShare === i ? null : i);
+                                            }}
+                                            className="bg-white/20 backdrop-blur-md hover:bg-white hover:text-orange-600 text-white w-8 h-8 rounded-full flex items-center justify-center border border-white/30 transition-all opacity-0 group-hover:opacity-100"
+                                        >
+                                            <Share2 className="w-4 h-4" />
+                                        </button>
+                                        {activeProductShare === i && (
+                                            <div className="absolute right-0 top-full mt-2 bg-white/90 backdrop-blur-md border border-slate-100 shadow-2xl rounded-full py-0.5 px-1.5 z-50 flex items-center gap-1 animate-in fade-in zoom-in slide-in-from-bottom-2">
+                                                <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleShare('whatsapp', shareUrl, product.name); setActiveProductShare(null); }} className="w-8 h-8 flex items-center justify-center text-emerald-600 hover:bg-emerald-600 hover:text-white rounded-full transition-all">
+                                                    <WhatsAppIcon className="w-4.5 h-4.5" />
+                                                </button>
+                                                <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleShare('facebook', shareUrl, product.name); setActiveProductShare(null); }} className="w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-600 hover:text-white rounded-full transition-all">
+                                                    <Facebook className="w-4 h-4" />
+                                                </button>
+                                                <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleShare('linkedin', shareUrl, product.name); setActiveProductShare(null); }} className="w-8 h-8 flex items-center justify-center text-blue-700 hover:bg-blue-700 hover:text-white rounded-full transition-all">
+                                                    <Linkedin className="w-4 h-4" />
+                                                </button>
+                                                <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleShare('twitter', shareUrl, product.name); setActiveProductShare(null); }} className="w-8 h-8 flex items-center justify-center text-sky-500 hover:bg-sky-500 hover:text-white rounded-full transition-all">
+                                                    <Twitter className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
 
-                                <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex flex-col justify-end h-full">
-                                    <h4 className="text-[17px] font-black text-white mb-1 line-clamp-2 leading-tight uppercase tracking-tight group-hover:mb-2 transition-all">
+                                {/* Product Content */}
+                                <div className="p-5 flex flex-col flex-1">
+                                    <h4 className="text-[17px] font-black text-slate-800 mb-1 uppercase tracking-tight line-clamp-1">
                                         {product.name}
                                     </h4>
-
-                                    <div className="max-h-0 opacity-0 group-hover:max-h-6 group-hover:opacity-100 transition-all duration-300 ease-out overflow-hidden mb-1">
-                                        <span className={`text-[10px] font-bold uppercase tracking-widest ${product.available !== false ? 'text-emerald-400' : 'text-red-400'}`}>
-                                            ● {product.available !== false ? 'Disponível' : 'Indisponível'}
-                                        </span>
-                                    </div>
-
-                                    <p className="text-[#f97316] font-black text-[16px] drop-shadow-sm mb-1">
-                                        {product.price}
+                                    <p className="text-slate-400 text-xs font-medium leading-relaxed mb-4 line-clamp-2">
+                                        {product.description || "Descrição breve do produto disponível sob consulta."}
                                     </p>
 
-                                    <Link
-                                        href={`/empresas/${slug}/produto/${slugify(product.name)}`}
-                                        className="flex items-center gap-1 text-white/90 text-[11px] font-bold mt-2 hover:text-white transition-colors"
-                                    >
-                                        <span>Ver detalhes</span>
-                                        <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-2" />
-                                    </Link>
+                                    <div>
+                                        {/* Price Section */}
+                                        <p className="text-emerald-600 font-black text-[18px] mb-3">
+                                            {product.price}
+                                        </p>
+
+                                        <div className="pt-3 border-t border-slate-50 flex items-center justify-between">
+                                            {/* Details Link */}
+                                            <div className="flex items-center gap-1 text-[#f97316] text-[11px] font-black uppercase tracking-wider group-hover:gap-2 transition-all">
+                                                <span>DETALHES</span>
+                                                <ArrowRight className="w-3.5 h-3.5" />
+                                            </div>
+
+                                            {/* Availability Badge */}
+                                            <div className="flex items-center gap-1.5">
+                                                <div className={`w-1.5 h-1.5 rounded-full ${product.available !== false ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
+                                                <span className={`text-[10px] font-black uppercase tracking-widest ${product.available !== false ? 'text-emerald-500' : 'text-red-500'}`}>
+                                                    {product.available !== false ? 'Disponível' : 'Indisponível'}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            </Link>
                         ))}
                     </div>
                 ) : (

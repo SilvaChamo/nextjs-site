@@ -20,6 +20,7 @@ export default async function CompanyEmpresasPage({ params }: PageProps) {
         // Fallback for demo if DB is not populated with the exact slugs
         const fallbackCompanies: Record<string, any> = {
             'agro-industria-zambezia': {
+                id: '99999999-9999-9999-9999-999999999991',
                 name: "Agro-Indústria Zambézia",
                 activity: "Processamento de Castanha de Caju e Algodão",
                 description: "A Agro-Indústria Zambézia é líder no processamento e exportação de castanha de caju na região centro de Moçambique. Fundada em 2010, nossa missão é agregar valor à produção local e garantir preços justos aos pequenos produtores.",
@@ -32,13 +33,28 @@ export default async function CompanyEmpresasPage({ params }: PageProps) {
                 banner_url: "/images/Prototipo/sala1.jpg",
                 header_bg: "/images/Prototipo/sala3.jpg",
                 is_verified: true,
+                services: ["Processamento de Caju", "Exportação Agrícola", "Apoio ao Produtor", "Consultoria Técnica"],
                 products: [
-                    { name: "Castanha de Caju Refinada", price: "500 MT/kg", img: "/images/Prototipo/caju.webp", available: true },
-                    { name: "Algodão em Fardo", price: "Sob Consulta", img: "/images/Prototipo/algodao.png", available: true },
-                    { name: "Sementes Selecionadas", price: "250 MT/pk", img: "https://images.unsplash.com/photo-1464226184884-fa280b87c399?q=80&w=800", available: false },
+                    {
+                        name: "Castanha de Caju Refinada",
+                        price: "500 MT/kg",
+                        img: "/images/Prototipo/caju.webp",
+                        available: true,
+                        category: "Processados",
+                        description: "Castanha de caju de alta qualidade, processada localmente com rigorosos padrões de higiene."
+                    },
+                    {
+                        name: "Algodão em Fardo",
+                        price: "Sob Consulta",
+                        img: "/images/Prototipo/algodao.png",
+                        available: true,
+                        category: "Fibras",
+                        description: "Algodão de fibra longa, ideal para a indústria têxtil nacional e internacional."
+                    },
                 ]
             },
             'cooperativa-do-norte': {
+                id: '99999999-9999-9999-9999-999999999992',
                 name: "Cooperativa do Norte",
                 activity: "Produção de cereais e leguminosas",
                 description: "Especializada na produção e comercialização de milho, feijão e soja de alta qualidade.",
@@ -51,12 +67,28 @@ export default async function CompanyEmpresasPage({ params }: PageProps) {
                 banner_url: "/images/Prototipo/sala2.jpg",
                 header_bg: "/images/Prototipo/sala5.jpg",
                 is_verified: true,
+                services: ["Processamento de Caju", "Exportação Agrícola", "Apoio ao Produtor", "Consultoria Técnica"],
                 products: [
-                    { name: "Feijão Manteiga", price: "65 MT/kg", img: "/images/Prototipo/feijao.jpg", available: true },
-                    { name: "Milho Branco", price: "18 MT/kg", img: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?q=80&w=800", available: true },
+                    {
+                        name: "Feijão Manteiga",
+                        price: "65 MT/kg",
+                        img: "/images/Prototipo/feijao.jpg",
+                        available: true,
+                        category: "Leguminosas",
+                        description: "Feijão manteiga fresco e nutritivo, ideal para consumo doméstico e industrial."
+                    },
+                    {
+                        name: "Milho Branco",
+                        price: "18 MT/kg",
+                        img: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?q=80&w=800",
+                        available: true,
+                        category: "Cereais",
+                        description: "Milho branco de alta qualidade para consumo e indústria."
+                    },
                 ]
             },
             'hortas-do-vale': {
+                id: '99999999-9999-9999-9999-999999999993',
                 name: "Hortas do Vale",
                 activity: "Horticultura e fruticultura",
                 description: "Produção sustentável de vegetais frescos e frutas tropicais para o mercado nacional.",
@@ -69,6 +101,7 @@ export default async function CompanyEmpresasPage({ params }: PageProps) {
                 banner_url: "/images/Prototipo/sala3.jpg",
                 header_bg: "/images/Prototipo/sala6.jpg",
                 is_verified: false,
+                services: ["Horticultura de Precisão", "Distribuição Nacional", "Sistemas de Irrigação"],
                 products: [
                     { name: "Óleo Vegetal Natural", price: "120 MT/L", img: "/images/Prototipo/oleo.webp", available: true },
                 ]
@@ -103,8 +136,3 @@ export default async function CompanyEmpresasPage({ params }: PageProps) {
         />
     );
 }
-
-
-
-
-

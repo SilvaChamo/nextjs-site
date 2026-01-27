@@ -10,6 +10,7 @@ interface StandardBlogTemplateProps {
     children: ReactNode;
     backgroundImage?: string;
     isSidebarLeft?: boolean;
+    bottomFullWidthContent?: ReactNode;
 }
 
 export function StandardBlogTemplate({
@@ -18,7 +19,8 @@ export function StandardBlogTemplate({
     sidebarComponents,
     children,
     backgroundImage = "https://images.unsplash.com/photo-1495107334309-fcf20504a5ab?q=80&w=2000&auto=format&fit=crop",
-    isSidebarLeft = false
+    isSidebarLeft = false,
+    bottomFullWidthContent
 }: StandardBlogTemplateProps) {
     return (
         <div className="min-h-screen bg-background text-slate-900 font-sans">
@@ -59,6 +61,12 @@ export function StandardBlogTemplate({
 
                 </div>
             </main>
+
+            {bottomFullWidthContent && (
+                <div className="w-full">
+                    {bottomFullWidthContent}
+                </div>
+            )}
         </div>
     );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { SearchSection } from "@/components/SearchSection";
@@ -9,20 +9,63 @@ import {
     User, LandPlot, ShoppingBag, ArrowRight,
     FileText, BookOpen
 } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function SearchResultsPage() {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
-    // Local query state for the static items - kept for future use or if we add a local filter input back
-    // State for category filter
     const [selectedCategory, setSelectedCategory] = useState("Todos os resultados");
-    // State for sorting
-    const [sortOption, setSortOption] = useState("Relevância");
+    const [sortOption, setSortOption] = useState("Ordem Alfabética");
+    const [counts, setCounts] = useState({
+        articles: 0,
+        documents: 0,
+        companies: 0,
+        products: 0,
+        professionals: 0,
+        properties: 0
+    });
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchCounts() {
+            try {
+                const [
+                    articlesCount,
+                    companiesCount,
+                    productsCount,
+                    prosCount,
+                    propsCount,
+                    docsCount
+                ] = await Promise.all([
+                    supabase.from('articles').select('*', { count: 'exact', head: true }).eq('type', 'article'),
+                    supabase.from('companies').select('*', { count: 'exact', head: true }),
+                    supabase.from('produtos').select('*', { count: 'exact', head: true }),
+                    supabase.from('professionals').select('*', { count: 'exact', head: true }),
+                    supabase.from('properties').select('*', { count: 'exact', head: true }),
+                    supabase.from('articles').select('*', { count: 'exact', head: true }).eq('type', 'document')
+                ]);
+
+                setCounts({
+                    articles: articlesCount.count || 0,
+                    companies: companiesCount.count || 0,
+                    products: productsCount.count || 0,
+                    professionals: prosCount.count || 0,
+                    properties: propsCount.count || 0,
+                    documents: docsCount.count || 0
+                });
+            } catch (error) {
+                console.error("Error fetching repository counts:", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchCounts();
+    }, []);
 
     const items = [
         {
             title: "Artigos Científicos",
             description: "Teses, dissertações, revistas científicas e pesquisas académicas sobre o agronegócio.",
-            count: "540 Arquivos",
+            count: `${counts.articles} Arquivos`,
             icon: BookOpen,
             bg: "bg-cyan-50",
             color: "text-cyan-600",
@@ -30,12 +73,13 @@ export default function SearchResultsPage() {
             category: "Artigos",
             date: "2023-12-01",
             price: 0,
-            relevance: 5
+            relevance: 5,
+            href: "/artigos"
         },
         {
             title: "Documentos",
             description: "Relatórios, legislação, políticas agrárias, manuais técnicos e estatísticas governamentais.",
-            count: "920 Arquivos",
+            count: `${counts.documents} Arquivos`,
             icon: FileText,
             bg: "bg-rose-50",
             color: "text-rose-600",
@@ -43,12 +87,13 @@ export default function SearchResultsPage() {
             category: "Documentos",
             date: "2024-01-15",
             price: 0,
-            relevance: 4
+            relevance: 4,
+            href: "/documentos"
         },
         {
             title: "Empresas",
             description: "Fornecedores, distribuidores, instituições públicas e ONGs, associações e cooperativas agrícolas do país.",
-            count: "850 Arquivos",
+            count: `${counts.companies} Arquivos`,
             icon: Building2,
             bg: "bg-blue-50",
             color: "text-blue-600",
@@ -56,46 +101,50 @@ export default function SearchResultsPage() {
             category: "Empresas",
             date: "2023-11-20",
             price: 0,
-            relevance: 6
+            relevance: 6,
+            href: "/empresas"
         },
         {
             title: "Produtos",
             description: "Insumos, maquinaria agrícolas, equipamentos e material de segurança disponível para venda imediata.",
-            count: "2,450 Arquivos",
+            count: `${counts.products} Arquivos`,
             icon: ShoppingBag,
             bg: "bg-emerald-50",
             color: "text-emerald-600",
             border: "border-emerald-100",
             category: "Produtos",
             date: "2024-01-20",
-            price: 1500, // Mock price high
-            relevance: 8
+            price: 1500,
+            relevance: 8,
+            href: "/produtos"
         },
         {
             title: "Profissionais",
             description: "Agrónomos, veterinários, técnicos e especialistas, engenheiros e agricultores prontos para atender as suas necessidades.",
-            count: "1,200 Arquivos",
+            count: `${counts.professionals} Arquivos`,
             icon: User,
             bg: "bg-purple-50",
             color: "text-purple-600",
             border: "border-purple-100",
             category: "Profissionais",
             date: "2023-10-05",
-            price: 500, // Mock price medium
-            relevance: 7
+            price: 500,
+            relevance: 7,
+            href: "/servicos/talentos"
         },
         {
             title: "Propriedades",
             description: "Terrenos, machambas, infra-estruturas rurais, campos arráveis e fazendas prontas para investimento.",
-            count: "320 Arquivos",
+            count: `${counts.properties} Arquivos`,
             icon: LandPlot,
             bg: "bg-orange-50",
             color: "text-orange-600",
             border: "border-orange-100",
             category: "Propriedades",
             date: "2023-09-12",
-            price: 50000, // Mock price very high
-            relevance: 3
+            price: 50000,
+            relevance: 3,
+            href: "/propriedades"
         }
     ];
 
@@ -112,8 +161,11 @@ export default function SearchResultsPage() {
         if (sortOption === "Preço: Maior para Menor") {
             return b.price - a.price;
         }
-        // Default: Relevância
-        return b.relevance - a.relevance;
+        if (sortOption === "Relevância") {
+            return b.relevance - a.relevance;
+        }
+        // Default: Ordem Alfabética (A-Z)
+        return a.title.localeCompare(b.title);
     });
 
     return (
@@ -128,8 +180,6 @@ export default function SearchResultsPage() {
                     ]}
                 />
 
-                {/* Botão de Pesquisa Flutuante - Posicionado no PageHeader */}
-                {/* Botão de Pesquisa Flutuante - Alinhado à Direita do Conteúdo */}
                 <div className="absolute bottom-6 w-full z-20 pointer-events-none">
                     <div className="container-site mx-auto flex justify-end">
                         <button
@@ -150,18 +200,16 @@ export default function SearchResultsPage() {
             <main className="max-w-[1350px] mx-auto px-4 md:px-[60px] py-12">
                 <div className="flex flex-col lg:flex-row gap-5">
 
-                    {/* Sidebar Filter */}
                     <aside className="w-full lg:w-72 shrink-0">
                         <div className="sticky top-24 space-y-8">
                             <div className="flex items-center justify-between">
                                 <h2 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Filtros</h2>
                                 <button className="text-xs font-bold text-[#f97316] hover:underline" onClick={() => {
                                     setSelectedCategory("Todos os resultados");
-                                    setSortOption("Relevância");
+                                    setSortOption("Ordem Alfabética");
                                 }}>Limpar tudo</button>
                             </div>
 
-                            {/* Categories */}
                             <div className="bg-slate-50 p-5 rounded-[10px] space-y-4 border border-slate-100">
                                 <h3 className="text-sm font-bold text-slate-900">Categorias</h3>
                                 <div className="space-y-3">
@@ -189,7 +237,6 @@ export default function SearchResultsPage() {
                                 </div>
                             </div>
 
-                            {/* Sort By */}
                             <div className="space-y-3">
                                 <h3 className="text-sm font-bold text-slate-900">Ordenar por</h3>
                                 <select
@@ -197,6 +244,7 @@ export default function SearchResultsPage() {
                                     value={sortOption}
                                     onChange={(e) => setSortOption(e.target.value)}
                                 >
+                                    <option>Ordem Alfabética</option>
                                     <option>Relevância</option>
                                     <option>Mais recentes</option>
                                     <option>Preço: Menor para Maior</option>
@@ -204,7 +252,6 @@ export default function SearchResultsPage() {
                                 </select>
                             </div>
 
-                            {/* Promo Banner */}
                             <div className="bg-emerald-50 border border-emerald-100 p-5 rounded-[10px] space-y-4">
                                 <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Dica Pro</p>
                                 <p className="text-sm text-emerald-900 font-medium">Registe-se como vendedor para listar os seus produtos gratuitamente.</p>
@@ -215,30 +262,31 @@ export default function SearchResultsPage() {
                         </div>
                     </aside>
 
-                    {/* Results Content Area */}
                     <div className="flex-1 min-h-[400px]">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                             {filteredItems.length > 0 ? filteredItems.map((item, i) => (
-                                <div key={i} className={`p-5 rounded-[15px] border ${item.border} ${item.bg} shadow-md hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group flex flex-col items-center text-center gap-5`}>
-                                    <div className={`w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm ${item.color} group-hover:scale-110 transition-transform`}>
-                                        <item.icon className="w-8 h-8" />
-                                    </div>
-                                    <div className="space-y-2 w-full">
-                                        <h3 className="text-xl font-black text-slate-800 group-hover:text-slate-900 transition-colors">{item.title}</h3>
-                                        <p className="text-sm text-slate-500 font-medium leading-relaxed">{item.description}</p>
-                                    </div>
-                                    <div className="mt-auto pt-2 flex items-center justify-between w-full">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-white px-3 py-1.5 rounded-full shadow-sm border border-slate-100">{item.count}</span>
-                                        <div className="flex items-center gap-1 text-xs font-bold text-slate-700 group-hover:text-[#f97316] hover:text-[#f97316] transition-colors">
-                                            Ver Detalhes
-                                            <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
+                                <Link key={i} href={item.href || "#"} className="block h-full">
+                                    <div className={`p-5 rounded-[15px] border ${item.border} ${item.bg} shadow-md hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group flex flex-col items-center text-center h-full gap-5`}>
+                                        <div className={`w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm ${item.color} group-hover:scale-110 transition-transform`}>
+                                            <item.icon className="w-8 h-8" />
+                                        </div>
+                                        <div className="space-y-2 w-full">
+                                            <h3 className="text-xl font-black text-slate-800 group-hover:text-slate-900 transition-colors uppercase leading-tight">{item.title}</h3>
+                                            <p className="text-sm text-slate-500 font-medium leading-relaxed">{item.description}</p>
+                                        </div>
+                                        <div className="mt-auto pt-2 flex items-center justify-between w-full">
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-white px-3 py-1.5 rounded-full shadow-sm border border-slate-100 italic">{loading ? "Carregando..." : item.count}</span>
+                                            <div className="flex items-center gap-1 text-xs font-bold text-slate-700 group-hover:text-[#f97316] transition-colors">
+                                                Explorar
+                                                <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                </Link>
                             )) : (
                                 <div className="col-span-full py-20 text-center text-gray-400">
                                     <Search className="w-12 h-12 mx-auto mb-4 opacity-20" />
-                                    <p>Nenhum resultado encontrado.</p>
+                                    <p>Nenhum resultado encontrado no repositório.</p>
                                 </div>
                             )}
                         </div>

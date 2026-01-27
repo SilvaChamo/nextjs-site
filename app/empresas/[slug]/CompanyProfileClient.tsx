@@ -54,52 +54,102 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
             ]}
             sidebarComponents={
                 <div className="space-y-agro">
-                    {/* Status Card */}
-                    <div className="card-agro-static group text-left">
-                        <div className="flex items-center gap-2 mb-4">
-                            {company.is_verified && <CheckCircle2 className="text-emerald-500 w-5 h-5" />}
-                            <span className="font-bold text-sm text-emerald-700 uppercase tracking-wider">
-                                {company.is_verified ? "Empresa Verificada" : "Empresa Registada"}
-                            </span>
+                    {/* Status & Contacts Combined Card (including Address) - TOP PRIORITY */}
+                    <div className="card-agro-static text-left space-y-6">
+                        <div>
+                            <div className="flex items-center gap-2 mb-2">
+                                {company.is_verified && <CheckCircle2 className="text-emerald-500 w-5 h-5" />}
+                                <span className="font-bold text-sm text-emerald-700 uppercase tracking-wider">
+                                    {company.is_verified ? "Empresa Verificada" : "Empresa Registada"}
+                                </span>
+                            </div>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-none">Bio-segurança & Qualidade</p>
                         </div>
-                        <p className="text-xs text-slate-400 mb-4">Atualizado recentemente</p>
-                        <button className="btn-primary w-full text-xs">Contactar Empresa</button>
+
+                        <div className="pt-4 border-t border-slate-50 space-y-4">
+                            <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">Dados de Contacto</h4>
+                            <ul className="space-y-4">
+                                <li className="flex items-start gap-3">
+                                    <MapPin className="w-4 h-4 text-emerald-600 mt-1 shrink-0" />
+                                    <div>
+                                        <p className="text-sm font-bold text-slate-700 leading-tight mb-0.5">{company.address || "Endereço não disponível"}</p>
+                                        <p className="text-[11px] font-medium text-slate-400">{company.province}, Moçambique</p>
+                                    </div>
+                                </li>
+                                {company.phone && (
+                                    <li className="flex items-start gap-3">
+                                        <Phone className="w-4 h-4 text-emerald-600 mt-1 shrink-0" />
+                                        <span className="text-sm font-medium text-slate-600">{company.phone}</span>
+                                    </li>
+                                )}
+                                {company.email && (
+                                    <li className="flex items-start gap-3">
+                                        <Mail className="w-4 h-4 text-emerald-600 mt-1 shrink-0" />
+                                        <span className="text-sm font-medium text-slate-600 truncate">{company.email}</span>
+                                    </li>
+                                )}
+                                {company.website && (
+                                    <li className="flex items-start gap-3">
+                                        <Globe className="w-4 h-4 text-emerald-600 mt-1 shrink-0" />
+                                        <span className="text-sm font-medium text-slate-600 truncate">{company.website}</span>
+                                    </li>
+                                )}
+                            </ul>
+                        </div>
+
+                        <a
+                            href={`https://wa.me/${company.phone?.replace(/\s+/g, '') || ''}?text=${encodeURIComponent(`Olá, vi o perfil da ${company.name} no BaseAgroData e gostaria de saber mais.`)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn-primary w-full py-3 flex items-center justify-center gap-2 shadow-lg shadow-emerald-100 hover:scale-[1.02] active:scale-95 transition-all h-auto"
+                        >
+                            <WhatsAppIcon className="w-5 h-5" />
+                            <span className="text-sm font-bold uppercase tracking-tight">Contactar Empresa</span>
+                        </a>
                     </div>
 
-                    {/* Contacts Card */}
-                    <div className="card-agro-static group text-left">
-                        <h4 className="mb-4">Contactos Diretos</h4>
-                        <ul className="space-y-4">
-                            <li className="flex items-start gap-3">
-                                <MapPin className="w-4 h-4 text-slate-400 mt-1" />
-                                <span className="text-sm font-medium">{company.address}, {company.province}</span>
-                            </li>
-                            {company.phone && (
-                                <li className="flex items-start gap-3">
-                                    <Phone className="w-4 h-4 text-slate-400 mt-1" />
-                                    <span className="text-sm font-medium">{company.phone}</span>
-                                </li>
-                            )}
-                            {company.email && (
-                                <li className="flex items-start gap-3">
-                                    <Mail className="w-4 h-4 text-slate-400 mt-1" />
-                                    <span className="text-sm font-medium">{company.email}</span>
-                                </li>
-                            )}
-                            {company.website && (
-                                <li className="flex items-start gap-3">
-                                    <Globe className="w-4 h-4 text-slate-400 mt-1" />
-                                    <span className="text-sm font-medium">{company.website}</span>
-                                </li>
-                            )}
-                        </ul>
+                    {/* QR Code Section - BELOW CONTACTS */}
+                    <div className="card-agro-static text-center py-6">
+                        <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Acesso Rápido</h4>
+                        <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm inline-block mb-3">
+                            <img
+                                src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(shareUrl)}`}
+                                alt="QR Code Empresa"
+                                className="w-28 h-28"
+                            />
+                        </div>
+                        <p className="text-[10px] font-bold text-slate-400 leading-tight px-4 capitalize">Aceda ao perfil digital<br />através do seu smartphone</p>
+                    </div>
+
+                </div>
+            }
+            bottomFullWidthContent={
+                /* Map Section - Stretched at bottom */
+                <div className="card-agro p-0 overflow-hidden h-[220px] md:h-[300px] relative group">
+                    <iframe
+                        width="100%"
+                        height="100%"
+                        frameBorder="0"
+                        style={{ border: 0 }}
+                        src={`https://maps.google.com/maps?q=${encodeURIComponent(company.address + ', ' + company.province + ', Mozambique')}&t=&z=16&ie=UTF8&iwloc=&output=embed`}
+                        allowFullScreen
+                    ></iframe>
+                    <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-md px-3 py-2 rounded-lg border border-slate-100 shadow-xl pointer-events-none group-hover:opacity-0 transition-opacity">
+                        <p className="text-[10px] font-black text-emerald-800 uppercase tracking-widest flex items-center gap-2 mb-1">
+                            <MapPin className="w-3.5 h-3.5" />
+                            Localização Geográfica
+                        </p>
+                        <p className="text-[10px] font-bold text-slate-500 leading-tight">
+                            {company.address}<br />
+                            {company.province}, Moçambique
+                        </p>
                     </div>
                 </div>
             }
         >
             <div className="space-y-agro">
                 {/* Profile Banner */}
-                <div className="relative w-full h-[280px] rounded-agro-lg overflow-hidden shadow-lg border border-slate-100/50">
+                <div className="relative w-full h-[280px] rounded-agro overflow-hidden shadow-lg border border-slate-100/50">
                     <Image
                         src={company.banner_url || "/images/Prototipo/sala1.jpg"}
                         alt="Company Cover"
@@ -109,7 +159,7 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-8 text-left">
                         <div className="flex items-end gap-6 w-full">
-                            <div className="w-24 h-24 bg-white rounded-xl p-2 shadow-2xl shrink-0 border border-slate-100 flex items-center justify-center">
+                            <div className="w-24 h-24 bg-white rounded-agro p-2 shadow-2xl shrink-0 border border-slate-100 flex items-center justify-center">
                                 {company.logo_url ? (
                                     <img src={company.logo_url} alt="Logo" className="w-full h-full object-contain" />
                                 ) : (
@@ -117,11 +167,16 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                                 )}
                             </div>
                             <div className="text-white mb-2 flex-1 flex items-end justify-between">
-                                <div>
-                                    <h1 className="text-3xl md:text-4xl font-black mb-1 text-white leading-tight drop-shadow-md uppercase tracking-tighter">
-                                        {company.name}
-                                    </h1>
-                                    <p className="text-white/90 font-medium drop-shadow-sm">{company.activity}</p>
+                                <div className="w-full">
+                                    <div className="flex items-center gap-3 mb-0.5">
+                                        {company.is_verified && <CheckCircle2 className="text-emerald-400 w-5 h-5 md:w-6 md:h-6 drop-shadow-lg" />}
+                                        <h1 className="text-2xl md:text-4xl font-black mb-0 text-white leading-tight drop-shadow-md">
+                                            {company.name}
+                                        </h1>
+                                    </div>
+                                    <p className="text-white/90 font-bold drop-shadow-sm text-xs md:text-sm opacity-90 capitalize">
+                                        {company.activity}
+                                    </p>
                                 </div>
                                 {showCompanyShare && (
                                     <div className="absolute right-0 bottom-full mb-2 bg-white/90 backdrop-blur-md border border-white/20 shadow-2xl rounded-full py-1 px-2 z-50 flex items-center gap-2 animate-in fade-in zoom-in slide-in-from-bottom-2">
@@ -176,15 +231,45 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                     </div>
                 </div>
 
-                <div className="card-agro-lg text-left">
+                <div className="card-agro text-left">
                     <h2 className="mb-4">Sobre a Empresa</h2>
                     <div className="prose prose-slate max-w-none font-sans text-slate-500">
                         <p>{company.description}</p>
                     </div>
                 </div>
 
+                {/* Services Provided Section */}
+                <div className="card-agro text-left">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center">
+                            <CheckCircle2 className="w-5 h-5" />
+                        </div>
+                        <h2 className="mb-0 text-xl font-black uppercase tracking-tight">Serviços Prestados</h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {company.services ? (
+                            Array.isArray(company.services) ? company.services.map((service: string, i: number) => (
+                                <div key={i} className="flex items-center gap-3 p-4 rounded-xl bg-slate-50/50 border border-slate-100 group hover:border-emerald-200 transition-colors">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 group-hover:scale-125 transition-transform" />
+                                    <span className="text-sm font-bold text-slate-700">{service}</span>
+                                </div>
+                            )) : (
+                                <div className="col-span-full p-4 rounded-xl bg-slate-50/50 border border-slate-100">
+                                    <p className="text-sm font-medium text-slate-600">{company.services}</p>
+                                </div>
+                            )
+                        ) : (
+                            <div className="col-span-full py-8 text-center border border-slate-100 border-dashed rounded-2xl grayscale opacity-60">
+                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Lista de serviços disponível sob consulta</p>
+                                <p className="text-[10px] font-medium text-slate-300 mt-1">Contacte a empresa para mais detalhes sobre soluções personalizadas</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
                 {/* Product Grid Section */}
-                <div className="card-agro-lg text-left">
+                <div className="card-agro text-left">
                     <div className="flex items-center justify-between mb-8">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-orange-50 text-orange-600 rounded-lg flex items-center justify-center">
@@ -193,7 +278,7 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                             <h3 className="mb-0 text-xl font-black uppercase tracking-tight">Catálogo de Produtos</h3>
                         </div>
                         <Link
-                            href={`/empresas/${slug}/arquivo-produtos`}
+                            href={`/produtos?empresa_id=${company.id}`}
                             className="text-sm font-bold text-[#f97316] hover:underline flex items-center gap-1 transition-all"
                         >
                             Ver todos os produtos
@@ -207,86 +292,96 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                                 <Link
                                     key={i}
                                     href={`/empresas/${slug}/produto/${slugify(product.name)}`}
-                                    className="group relative h-[210px] rounded-agro overflow-hidden shadow-md card-interactive transition-all duration-300 cursor-pointer border border-slate-100/50 bg-white"
+                                    className="group bg-white rounded-agro overflow-hidden shadow-sm border border-slate-100 hover:shadow-md transition-all flex flex-col"
                                 >
-                                    <Image
-                                        src={product.img || product.photo || "/images/Prototipo/caju.webp"}
-                                        alt={product.name}
-                                        fill
-                                        className="object-cover group-hover:scale-110 transition-transform duration-700"
-                                    />
-
-                                    <div className="absolute top-3 right-3 z-20">
-                                        <button
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                setActiveProductShare(activeProductShare === i ? null : i);
-                                            }}
-                                            className="bg-white/20 backdrop-blur-md hover:bg-white hover:text-orange-600 text-white w-8 h-8 rounded-full flex items-center justify-center border border-white/30 transition-all opacity-0 group-hover:opacity-100"
-                                        >
-                                            <Share2 className="w-4 h-4" />
-                                        </button>
-
-                                        {activeProductShare === i && (
-                                            <div className="absolute right-0 top-full mt-2 bg-white/90 backdrop-blur-md border border-slate-100 shadow-2xl rounded-full py-0.5 px-1.5 z-50 flex items-center gap-1 animate-in fade-in zoom-in slide-in-from-bottom-2">
-                                                <button
-                                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleShare('whatsapp', shareUrl, product.name); setActiveProductShare(null); }}
-                                                    className="w-8 h-8 flex items-center justify-center text-emerald-600 hover:bg-emerald-600 hover:text-white rounded-full transition-all"
-                                                >
-                                                    <WhatsAppIcon className="w-4.5 h-4.5" />
-                                                </button>
-                                                <button
-                                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleShare('facebook', shareUrl, product.name); setActiveProductShare(null); }}
-                                                    className="w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-600 hover:text-white rounded-full transition-all"
-                                                >
-                                                    <Facebook className="w-4 h-4" />
-                                                </button>
-                                                <button
-                                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleShare('linkedin', shareUrl, product.name); setActiveProductShare(null); }}
-                                                    className="w-8 h-8 flex items-center justify-center text-blue-700 hover:bg-blue-700 hover:text-white rounded-full transition-all"
-                                                >
-                                                    <Linkedin className="w-4 h-4" />
-                                                </button>
-                                                <button
-                                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleShare('twitter', shareUrl, product.name); setActiveProductShare(null); }}
-                                                    className="w-8 h-8 flex items-center justify-center text-sky-500 hover:bg-sky-500 hover:text-white rounded-full transition-all"
-                                                >
-                                                    <Twitter className="w-4 h-4" />
-                                                </button>
+                                    {/* Product Image + Category Badge */}
+                                    <div className="relative h-44 w-full overflow-hidden">
+                                        <Image
+                                            src={product.img || product.photo || "/images/Prototipo/caju.webp"}
+                                            alt={product.name}
+                                            fill
+                                            className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                        />
+                                        {product.category && (
+                                            <div className="absolute top-3 left-3 z-10">
+                                                <span className="bg-white/95 backdrop-blur-sm text-[10px] font-black text-emerald-600 uppercase tracking-widest px-2 py-1 rounded-md shadow-sm">
+                                                    {product.category}
+                                                </span>
                                             </div>
                                         )}
+                                        {/* Share Button Overlay */}
+                                        <div className="absolute top-3 right-3 z-20">
+                                            <button
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    setActiveProductShare(activeProductShare === i ? null : i);
+                                                }}
+                                                className="bg-white/20 backdrop-blur-md hover:bg-white hover:text-orange-600 text-white w-8 h-8 rounded-full flex items-center justify-center border border-white/30 transition-all opacity-0 group-hover:opacity-100"
+                                            >
+                                                <Share2 className="w-4 h-4" />
+                                            </button>
+                                            {activeProductShare === i && (
+                                                <div className="absolute right-0 top-full mt-2 bg-white/90 backdrop-blur-md border border-slate-100 shadow-2xl rounded-full py-0.5 px-1.5 z-50 flex items-center gap-1 animate-in fade-in zoom-in slide-in-from-bottom-2">
+                                                    <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleShare('whatsapp', shareUrl, product.name); setActiveProductShare(null); }} className="w-8 h-8 flex items-center justify-center text-emerald-600 hover:bg-emerald-600 hover:text-white rounded-full transition-all">
+                                                        <WhatsAppIcon className="w-4.5 h-4.5" />
+                                                    </button>
+                                                    <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleShare('facebook', shareUrl, product.name); setActiveProductShare(null); }} className="w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-600 hover:text-white rounded-full transition-all">
+                                                        <Facebook className="w-4 h-4" />
+                                                    </button>
+                                                    <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleShare('linkedin', shareUrl, product.name); setActiveProductShare(null); }} className="w-8 h-8 flex items-center justify-center text-blue-700 hover:bg-blue-700 hover:text-white rounded-full transition-all">
+                                                        <Linkedin className="w-4 h-4" />
+                                                    </button>
+                                                    <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleShare('twitter', shareUrl, product.name); setActiveProductShare(null); }} className="w-8 h-8 flex items-center justify-center text-sky-500 hover:bg-sky-500 hover:text-white rounded-full transition-all">
+                                                        <Twitter className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
 
-                                    <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex flex-col justify-end h-full">
-                                        <h4 className="text-[17px] font-black text-white mb-1 line-clamp-2 leading-tight uppercase tracking-tight group-hover:mb-2 transition-all">
+                                    {/* Product Content */}
+                                    <div className="p-5 flex flex-col flex-1">
+                                        <h4 className="text-[17px] font-black text-slate-800 mb-1 uppercase tracking-tight line-clamp-1">
                                             {product.name}
                                         </h4>
-
-                                        <div className="max-h-0 opacity-0 group-hover:max-h-6 group-hover:opacity-100 transition-all duration-300 ease-out overflow-hidden mb-1">
-                                            <span className={`text-[10px] font-bold uppercase tracking-widest ${product.available ? 'text-emerald-400' : 'text-red-400'}`}>
-                                                ● {product.available ? 'Disponível' : 'Indisponível'}
-                                            </span>
-                                        </div>
-
-                                        <p className="text-[#f97316] font-black text-[16px] drop-shadow-sm mb-1">
-                                            {product.price}
+                                        <p className="text-slate-400 text-xs font-medium leading-relaxed mb-4 line-clamp-2">
+                                            {product.description || "Descrição breve do produto disponível sob consulta."}
                                         </p>
 
-                                        <div className="flex items-center gap-1 text-white/90 text-[11px] font-bold mt-2 hover:text-white transition-colors">
-                                            <span>Ver detalhes</span>
-                                            <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+                                        <div>
+                                            {/* Price Section */}
+                                            <p className="text-emerald-600 font-black text-[18px] mb-3">
+                                                {product.price}
+                                            </p>
+
+                                            <div className="pt-3 border-t border-slate-50 flex items-center justify-between">
+                                                {/* Details Link */}
+                                                <div className="flex items-center gap-1 text-[#f97316] text-[11px] font-black uppercase tracking-wider group-hover:gap-2 transition-all">
+                                                    <span>DETALHES</span>
+                                                    <ArrowRight className="w-3.5 h-3.5" />
+                                                </div>
+
+                                                {/* Availability Badge */}
+                                                <div className="flex items-center gap-1.5">
+                                                    <div className={`w-1.5 h-1.5 rounded-full ${product.available ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
+                                                    <span className={`text-[10px] font-black uppercase tracking-widest ${product.available ? 'text-emerald-500' : 'text-red-500'}`}>
+                                                        {product.available ? 'Disponível' : 'Indisponível'}
+                                                    </span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </Link>
                             ))}
                         </div>
                     ) : (
-                        <div className="py-12 text-center border border-slate-100 border-dashed rounded-2xl">
+                        <div className="py-12 text-center border border-slate-100 border-dashed rounded-agro">
                             <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest">Nenhum produto listado</p>
                         </div>
                     )}
                 </div>
+
             </div>
         </StandardBlogTemplate>
     );

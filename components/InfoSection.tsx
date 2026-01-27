@@ -53,7 +53,7 @@ export function InfoSection() {
             const [cats, stats, arts] = await Promise.all([
                 supabase.from('info_categories').select('*'),
                 supabase.from('agricultural_stats').select('*').limit(3),
-                supabase.from('articles').select('id, title, subtitle, image_url, date, slug, type').order('created_at', { ascending: false }).limit(5)
+                supabase.from('articles').select('id, title, subtitle, image_url, date, slug, type').order('created_at', { ascending: false }).limit(3)
             ]);
 
             if (cats.data) {

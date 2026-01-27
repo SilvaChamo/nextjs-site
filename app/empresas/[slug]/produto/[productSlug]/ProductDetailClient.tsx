@@ -71,7 +71,7 @@ export default function ProductDetailClient({ company, product, companySlug }: {
             sidebarComponents={
                 <div className="space-y-agro">
                     {/* WIDE PRODUCT CARD (LEFT SIDEBAR) - 30% Approx */}
-                    <div className="group bg-white rounded-agro-lg border border-slate-200 shadow-md card-interactive transition-all duration-500 flex flex-col relative overflow-hidden">
+                    <div className="group bg-white rounded-agro border border-slate-200 shadow-md card-interactive transition-all duration-500 flex flex-col relative overflow-hidden">
                         <div className="relative h-[260px] w-full overflow-hidden">
                             <Image
                                 src={product.img || product.photo || "/images/Prototipo/caju.webp"}
@@ -93,6 +93,12 @@ export default function ProductDetailClient({ company, product, companySlug }: {
                             <h2 className="text-2xl font-black text-slate-800 tracking-tighter mb-2 leading-tight">
                                 {product.name}
                             </h2>
+
+                            <div className="flex items-center gap-2 mb-4">
+                                <span className={`text-[9px] font-black uppercase tracking-[0.1em] px-2.5 py-1 rounded-full border ${product.available !== false ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-red-500/10 text-red-500 border-red-500/20'}`}>
+                                    {product.available !== false ? '● Disponível' : '● Indisponível'}
+                                </span>
+                            </div>
 
                             <p className="text-sm font-bold text-slate-400 mb-6 leading-normal">
                                 Disponível para encomenda direta via BaseAgroData em Moçambique.
@@ -132,7 +138,7 @@ export default function ProductDetailClient({ company, product, companySlug }: {
         >
             <div className="space-y-agro pb-20">
                 {/* MAIN CONTENT (RIGHT COLUMN) - Strictly no forced uppercase */}
-                <div className="card-agro-lg bg-white border border-slate-100 shadow-sm min-h-[600px] p-10">
+                <div className="card-agro bg-white border border-slate-100 shadow-sm min-h-[600px] p-10">
                     <h1 className="text-4xl md:text-5xl font-black text-slate-800 tracking-tighter mb-12 pb-8 border-b border-slate-50">
                         Detalhes do produto
                     </h1>

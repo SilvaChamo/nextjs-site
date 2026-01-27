@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
-import { Users, Briefcase, Search, Star, MapPin, CheckCircle2, ArrowRight } from "lucide-react";
+import { Users, Briefcase, Search, Star, MapPin, CheckCircle2, ArrowRight, UserPlus } from "lucide-react";
 
 export default function TalentosPage() {
     const specialists = [
@@ -45,57 +45,62 @@ export default function TalentosPage() {
                 ]}
             />
 
-            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20 mt-[50px] pb-24">
-                {/* Intro Section - White Box */}
-                <div className="bg-white rounded-[15px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] border border-slate-100 px-8 md:px-10 lg:px-12 py-10 md:py-12 mb-12">
-                    <div className="grid grid-cols-1 lg:grid-cols-[7fr_3fr] gap-12">
-                        <div className="space-y-6">
-                            <h2 className="text-2xl md:text-[40px] font-heading font-black text-slate-900 tracking-tight leading-[1.2]">
-                                Encontre os melhores especialistas em <span className="text-[#f97316]">agronomia.</span>
-                            </h2>
-                            <p className="text-sm text-slate-500 font-medium leading-relaxed">
-                                Oferecemos um espaço dedicado para quem procura por serviços profissionais qualificados e para especialistas que desejam oferecer o seu know-how ao sector agrário nacional.
-                            </p>
-                            <div className="flex flex-wrap gap-4 pt-4">
-                                <button className="bg-[#111827] text-white px-8 py-3 rounded-md font-bold transition-all shadow-lg hover:bg-emerald-600 flex items-center gap-2">
-                                    <Search className="w-4 h-4" />
-                                    Procurar Profissional
-                                </button>
-                                <button className="bg-white text-slate-700 border-2 border-slate-200 px-8 py-3 rounded-md font-bold transition-all shadow-sm hover:border-[#f97316]">
-                                    Registar Perfil
-                                </button>
-                            </div>
-                        </div>
+            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20 mt-12 pb-24">
+
+                {/* Simplified Action Bar */}
+                <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12 pb-10 border-b border-slate-200">
+                    <div className="space-y-1 text-center md:text-left">
+                        <h2 className="text-2xl font-black text-slate-800 uppercase tracking-tight leading-tight">Encontre Especialistas</h2>
+                        <p className="text-sm text-slate-500 font-medium max-w-xl">
+                            Conectamos produtores aos melhores talentos técnicos e doutores do agronegócio em Moçambique.
+                        </p>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-4">
+                        <button className="bg-[#111827] text-white px-8 py-3.5 rounded-xl font-bold transition-all shadow-xl hover:bg-emerald-600 flex items-center gap-3 text-xs uppercase tracking-widest group">
+                            <Search className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                            Procurar Talento
+                        </button>
+                        <button className="bg-white text-slate-700 border border-slate-200 px-8 py-3.5 rounded-xl font-bold transition-all shadow-sm hover:border-[#f97316] hover:text-[#f97316] flex items-center gap-3 text-xs uppercase tracking-widest group">
+                            <UserPlus className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                            Registar Perfil
+                        </button>
                     </div>
                 </div>
 
-                {/* Specialists Grid - On Background */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Specialists Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {specialists.map((pro, i) => (
-                        <div key={i} className="p-6 md:p-8 rounded-[12px] bg-white border border-slate-200 shadow-lg shadow-slate-200/50 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col gap-6 group">
-                            <div className="flex items-center gap-4">
-                                <div className="size-20 bg-slate-100 rounded-full relative overflow-hidden shrink-0 border-2 border-slate-50">
-                                    <div className="absolute bottom-0 right-0 size-6 bg-emerald-500 border-4 border-white rounded-full flex items-center justify-center">
-                                        <CheckCircle2 className="w-3 h-3 text-white" />
+                        <div key={i} className="p-8 rounded-[20px] bg-white border border-slate-100 shadow-md text-left transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl flex flex-col gap-6 group relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full -mr-16 -mt-16 opacity-50 group-hover:bg-emerald-50 transition-colors"></div>
+
+                            <div className="flex items-center gap-5 relative z-10">
+                                <div className="size-20 bg-slate-100 rounded-2xl relative overflow-hidden shrink-0 border-2 border-slate-50">
+                                    {/* Placeholder for real images */}
+                                    <div className="absolute inset-0 flex items-center justify-center bg-slate-200 text-slate-400">
+                                        <Users className="w-8 h-8" />
+                                    </div>
+                                    <div className="absolute bottom-1 right-1 size-5 bg-emerald-500 border-2 border-white rounded-full flex items-center justify-center">
+                                        <CheckCircle2 className="w-2.5 h-2.5 text-white" />
                                     </div>
                                 </div>
                                 <div className="space-y-1">
-                                    <h4 className="text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{pro.name}</h4>
-                                    <p className="text-[10px] font-black uppercase text-indigo-500 tracking-widest">{pro.role}</p>
+                                    <h4 className="text-xl font-black text-slate-800 group-hover:text-[#f97316] transition-colors leading-tight uppercase">{pro.name}</h4>
+                                    <p className="text-[10px] font-black uppercase text-emerald-600 tracking-widest">{pro.role}</p>
                                 </div>
                             </div>
 
-                            <div className="space-y-3 flex-1 border-t border-slate-50 pt-4">
-                                <div className="flex items-center gap-2 text-[#f97316]">
+                            <div className="space-y-4 flex-1 border-t border-slate-50 pt-6 relative z-10">
+                                <div className="flex items-center gap-2 text-[#f97316] bg-orange-50 w-fit px-3 py-1 rounded-full">
                                     {[1, 2, 3, 4, 5].map(s => <Star key={s} className={`w-3 h-3 ${pro.rating >= s ? 'fill-current' : 'text-slate-200'}`} />)}
+                                    <span className="text-[10px] font-black ml-1">{pro.rating}.0</span>
                                 </div>
-                                <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-widest">
-                                    <MapPin className="w-3.5 h-3.5" />
+                                <div className="flex items-center gap-2 text-slate-400 text-[10px] font-black uppercase tracking-widest">
+                                    <MapPin className="w-4 h-4 text-rose-500" />
                                     {pro.location}
                                 </div>
                             </div>
 
-                            <button className="w-full py-3 bg-slate-50 text-slate-600 rounded-[8px] text-[10px] font-black uppercase tracking-widest hover:bg-[#111827] hover:text-white transition-all">
+                            <button className="w-full py-4 bg-slate-50 text-slate-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#111827] hover:text-white transition-all shadow-sm relative z-10">
                                 Ver Perfil Completo
                             </button>
                         </div>

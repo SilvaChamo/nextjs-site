@@ -17,39 +17,51 @@ import { AgroCastSection } from "@/components/AgroCastSection";
 
 const EXEMPLARY_CATEGORIES: CategoryCard[] = [
     {
-        title: "Empresas",
-        description: "Encontre fornecedores, parceiros e instituições do agronegócio.",
-        icon: LucideIcons.Building2,
-        href: "/empresas"
-    },
-    {
-        title: "Produtos",
-        description: "Explore insumos, maquinaria e produtos agrícolas disponíveis.",
-        icon: LucideIcons.ShoppingBag,
-        href: "/produtos"
-    },
-    {
-        title: "Profissionais",
-        description: "Contrate especialistas, agrónomos e técnicos qualificados.",
-        icon: LucideIcons.User,
-        href: "/servicos/talentos"
-    },
-    {
-        title: "Propriedades",
-        description: "Invista em terras, fazendas e infra-estruturas rurais.",
-        icon: LucideIcons.LandPlot,
+        title: "Turismo rural",
+        description: "Encontre aqui locais de turismo rural, fazendas turísticas, pousadas, estabelecimentos de alojamento e locais históricos.",
+        icon: LucideIcons.Tractor, // Representing rural activities
+        iconBg: "bg-red-50",
+        iconColor: "text-red-500",
         href: "/propriedades"
     },
     {
-        title: "Documentos",
-        description: "Aceda a legislação, relatórios e manuais técnicos do sector.",
-        icon: LucideIcons.FileText,
+        title: "Tecnologias Agrárias",
+        description: "Tecnologia agrária, equipamentos agrícolas, máquinas e informações agrícolas sobre inovações e práticas modernas.",
+        icon: LucideIcons.Cpu,
+        dark: true,
+        iconColor: "text-white", // Dark cards usually have white icons
+        href: "/produtos"
+    },
+    {
+        title: "Políticas Agrárias",
+        description: "Acesse aqui informações essenciais sobre o quadro legal e regulamentação, incluindo política agrária em Moçambique.",
+        icon: LucideIcons.Scale,
+        iconBg: "bg-blue-50",
+        iconColor: "text-blue-500",
         href: "/documentos"
     },
     {
+        title: "Insumos Agrários",
+        description: "Soluções agrícolas, pesticidas, fertilizantes, soluções para doenças de plantas e agro-pecuária.",
+        icon: LucideIcons.Leaf,
+        dark: true,
+        iconColor: "text-white",
+        href: "/produtos"
+    },
+    {
+        title: "Financiamento agrário",
+        description: "Descubra as melhores opções de apoio financeiro agrícola e soluções de financiamento para impulsionar sua produção.",
+        icon: LucideIcons.Banknote,
+        iconBg: "bg-yellow-50",
+        iconColor: "text-yellow-500",
+        href: "/servicos"
+    },
+    {
         title: "Artigos Científicos",
-        description: "Pesquisas, teses e inovações do agronegócio moçambicano.",
+        description: "Resultados de pesquisa agricola, estudos de campo, experimentos e projetos técnicos cientificos sobre o sector.",
         icon: LucideIcons.BookOpen,
+        dark: true,
+        iconColor: "text-white",
         href: "/artigos"
     }
 ];
@@ -92,7 +104,7 @@ export function InfoSection() {
             const [cats, stats, arts] = await Promise.all([
                 supabase.from('info_categories').select('*'),
                 supabase.from('agricultural_stats').select('*').limit(3),
-                supabase.from('articles').select('id, title, subtitle, image_url, date, slug, type').order('created_at', { ascending: false }).limit(3)
+                supabase.from('articles').select('id, title, subtitle, image_url, date, slug, type').order('created_at', { ascending: false }).limit(5)
             ]);
 
             if (cats.data) {
@@ -242,7 +254,7 @@ export function InfoSection() {
                 </div>
             </div>
 
-            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20 mt-[70px] pb-24">
+            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20 mt-[40px] pb-24">
                 <div className="animate-in fade-in duration-700 slide-in-from-bottom-8">
                     {loading ? (
                         <div className="bg-white p-12 rounded-[4px] shadow-lg text-center text-gray-400 border border-slate-100">
@@ -251,28 +263,28 @@ export function InfoSection() {
                     ) : (
                         <>
                             {activeTab === "categorias" && (
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-agro">
                                     {categoryCards.map((card, idx) => (
                                         <Link
                                             key={idx}
                                             href={card.href || "#"}
-                                            className={`p-10 md:p-12 rounded-agro text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col gap-agro group cursor-pointer border h-full ${card.dark
+                                            className={`p-[40px] rounded-agro text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col gap-[15px] group cursor-pointer border h-full ${card.dark
                                                 ? "bg-[#374151] text-white border-slate-600 shadow-xl shadow-slate-900/20"
                                                 : "bg-white text-[#3a3f47] border-slate-200 shadow-lg shadow-slate-200/50"
                                                 }`}
                                         >
-                                            <div className="flex items-start gap-4">
-                                                <div className={`w-12 h-12 rounded-[5px] flex items-center justify-center shrink-0 ${card.dark ? card.iconBg : "bg-slate-100"} ${card.title.toLowerCase().includes('visibilidade') ||
+                                            <div className="flex items-center gap-[15px]">
+                                                <div className={`w-12 h-12 rounded-[5px] flex items-center justify-center shrink-0 ${card.dark ? "bg-transparent border border-white/20" : "bg-slate-100"} ${card.title.toLowerCase().includes('visibilidade') ||
                                                     card.title.toLowerCase().includes('crescimento') ||
                                                     card.title.toLowerCase().includes('scanner') ||
                                                     card.title.toLowerCase().includes('doctor')
                                                     ? "border-2 border-[#f97316]"
                                                     : ""
-                                                    }`}>
+                                                    } ${card.iconBg || ""}`}>
                                                     <card.icon className={`h-6 w-6 ${card.dark ? card.iconColor : "text-slate-600"}`} />
                                                 </div>
-                                                <div className="space-y-2">
-                                                    <h3 className={`text-xl font-black leading-tight first-letter:uppercase lowercase ${card.dark ? "text-white" : "text-[#3a3f47]"}`} suppressHydrationWarning>
+                                                <div className="space-y-0">
+                                                    <h3 className={`text-lg font-black leading-tight first-letter:uppercase lowercase ${card.dark ? "text-white" : "text-[#3a3f47]"}`} suppressHydrationWarning>
                                                         <span>{card.title}</span>
                                                     </h3>
                                                 </div>
@@ -290,72 +302,80 @@ export function InfoSection() {
                             )}
 
                             {activeTab === "informacoes" && (
-                                <div className="relative group/embla mt-[70px]">
-                                    <div className="overflow-hidden" ref={emblaRef}>
-                                        <div className="flex -mr-[15px]">
-                                            {articlesData.map((news, i) => (
-                                                <div key={i} className="flex-[0_0_100%] md:flex-[0_0_33.33%] min-w-0 pr-[15px]">
-                                                    <Link
-                                                        href={news.slug ? `/artigos/${news.slug}` : "#"}
-                                                        className="bg-white rounded-[12px] shadow-lg border border-slate-100 flex flex-col group cursor-pointer hover:border-[#f97316] transition-all overflow-hidden h-full"
-                                                    >
-                                                        <div className="relative h-48 w-full overflow-hidden">
-                                                            <img
-                                                                src={getArticleImage(news)}
-                                                                alt={news.title}
-                                                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                                            />
-                                                            <div className="absolute top-4 left-4 bg-[#f97316] text-white text-[10px] font-black uppercase px-3 py-1 rounded-[5px]">
-                                                                {news.type || "Artigo"}
-                                                            </div>
-                                                        </div>
-                                                        <div className="p-5 flex flex-col flex-1">
-                                                            <div className="space-y-3">
-                                                                <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400">
-                                                                    <span>{new Date(news.date).toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' }).replace('.', '').replace(' de ', ' ')}</span>
+                                <div className="space-y-6">
+                                    <div className="flex justify-end px-4 md:px-0">
+                                        <Link href="/artigos" className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-[#f97316] transition-colors group">
+                                            Ver mais notícias
+                                            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                                        </Link>
+                                    </div>
+                                    <div className="relative group/embla">
+                                        <div className="overflow-hidden" ref={emblaRef}>
+                                            <div className="flex -mr-[15px]">
+                                                {articlesData.map((news, i) => (
+                                                    <div key={i} className="flex-[0_0_100%] md:flex-[0_0_33.33%] min-w-0 pr-[15px]">
+                                                        <Link
+                                                            href={news.slug ? `/artigos/${news.slug}` : "#"}
+                                                            className="bg-white rounded-[12px] shadow-lg border border-slate-100 flex flex-col group cursor-pointer hover:border-[#f97316] transition-all overflow-hidden h-full"
+                                                        >
+                                                            <div className="relative h-48 w-full overflow-hidden">
+                                                                <img
+                                                                    src={getArticleImage(news)}
+                                                                    alt={news.title}
+                                                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                                                />
+                                                                <div className="absolute top-4 left-4 bg-[#f97316] text-white text-[10px] font-black uppercase px-3 py-1 rounded-[5px]">
+                                                                    {news.type || "Artigo"}
                                                                 </div>
-                                                                <h3 className="text-lg font-black text-slate-600 group-hover:text-[#f97316] transition-colors line-clamp-2 first-letter:uppercase lowercase my-0" suppressHydrationWarning>
-                                                                    <span>{news.title}</span>
-                                                                </h3>
-                                                                <p className="text-xs text-slate-500 leading-relaxed line-clamp-3">
-                                                                    {news.subtitle || news.description}
-                                                                </p>
                                                             </div>
-                                                            <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 group-hover:text-[#f97316] transition-colors mt-auto pt-6">
-                                                                Explorar <ArrowRight className="h-3 w-3" />
+                                                            <div className="p-5 flex flex-col flex-1">
+                                                                <div className="space-y-3">
+                                                                    <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400">
+                                                                        <span>{new Date(news.date).toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' }).replace('.', '').replace(' de ', ' ')}</span>
+                                                                    </div>
+                                                                    <h3 className="text-lg font-black text-slate-600 group-hover:text-[#f97316] transition-colors line-clamp-2 first-letter:uppercase lowercase my-0" suppressHydrationWarning>
+                                                                        <span>{news.title}</span>
+                                                                    </h3>
+                                                                    <p className="text-xs text-slate-500 leading-relaxed line-clamp-3">
+                                                                        {news.subtitle || news.description}
+                                                                    </p>
+                                                                </div>
+                                                                <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 group-hover:text-[#f97316] transition-colors mt-auto pt-6">
+                                                                    Explorar <ArrowRight className="h-3 w-3" />
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </Link>
-                                                </div>
+                                                        </Link>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <button
+                                            onClick={scrollPrev}
+                                            className="absolute top-1/2 -left-4 md:-left-12 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all z-10"
+                                        >
+                                            <ChevronLeft className="h-6 w-6" />
+                                        </button>
+                                        <button
+                                            onClick={scrollNext}
+                                            className="absolute top-1/2 -right-4 md:-right-12 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all z-10"
+                                        >
+                                            <ChevronRight className="h-6 w-6" />
+                                        </button>
+
+                                        <div className="flex justify-center gap-2 mt-10">
+                                            {scrollSnaps.map((_, index) => (
+                                                <button
+                                                    key={index}
+                                                    onClick={() => scrollTo(index)}
+                                                    className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${index === selectedIndex
+                                                        ? "bg-[#f97316] w-12"
+                                                        : "bg-slate-300 hover:bg-slate-400"
+                                                        }`}
+                                                    aria-label={`Ir para notícia ${index + 1}`}
+                                                />
                                             ))}
                                         </div>
-                                    </div>
-
-                                    <button
-                                        onClick={scrollPrev}
-                                        className="absolute top-1/2 -left-4 md:-left-12 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all z-10"
-                                    >
-                                        <ChevronLeft className="h-6 w-6" />
-                                    </button>
-                                    <button
-                                        onClick={scrollNext}
-                                        className="absolute top-1/2 -right-4 md:-right-12 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all z-10"
-                                    >
-                                        <ChevronRight className="h-6 w-6" />
-                                    </button>
-
-                                    <div className="flex justify-center gap-2 mt-10">
-                                        {scrollSnaps.map((_, index) => (
-                                            <button
-                                                key={index}
-                                                onClick={() => scrollTo(index)}
-                                                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${index === selectedIndex
-                                                    ? "bg-[#f97316] w-12"
-                                                    : "bg-slate-300 hover:bg-slate-400"
-                                                    }`}
-                                                aria-label={`Ir para notícia ${index + 1}`}
-                                            />
-                                        ))}
                                     </div>
                                 </div>
                             )}

@@ -14,7 +14,7 @@ export default async function Home() {
   // Parallel Data Fetching
   const [statsResult, companiesResult] = await Promise.all([
     supabase.from('dashboard_indicators').select('slug, value, trend').eq('location', 'hero'),
-    supabase.from('companies').select('id, name, slug, category, location, logo_url').limit(3)
+    supabase.from('companies').select('id, name, slug, category, location, logo_url').limit(6)
   ]);
 
   // Process Stats

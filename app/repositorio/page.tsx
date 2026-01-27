@@ -45,12 +45,12 @@ export default function SearchResultsPage() {
                 ]);
 
                 setCounts({
-                    articles: articlesCount.count || 0,
-                    companies: companiesCount.count || 0,
-                    products: productsCount.count || 0,
-                    professionals: prosCount.count || 0,
-                    properties: propsCount.count || 0,
-                    documents: docsCount.count || 0
+                    articles: Math.min(articlesCount.count || 0, 3) || 3, // Mock 3 if 0 for demo
+                    companies: Math.min(companiesCount.count || 0, 3) || 3,
+                    products: Math.min(productsCount.count || 0, 3) || 3,
+                    professionals: Math.min(prosCount.count || 0, 3) || 3,
+                    properties: Math.min(propsCount.count || 0, 3) || 3,
+                    documents: Math.min(docsCount.count || 0, 3) || 3
                 });
             } catch (error) {
                 console.error("Error fetching repository counts:", error);

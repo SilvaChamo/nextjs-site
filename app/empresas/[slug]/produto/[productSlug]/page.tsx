@@ -16,7 +16,7 @@ export default async function ProductPage({ params }: PageProps) {
         .eq('slug', slug)
         .single();
 
-    const slugify = (text: string) => text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
+    const slugify = (text: string) => (text || "").toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
 
     if (error || !company) {
         // Fallback for demo
@@ -34,15 +34,48 @@ export default async function ProductPage({ params }: PageProps) {
                 name: "Cooperativa do Norte",
                 header_bg: "/images/Prototipo/sala5.jpg",
                 products: [
-                    { name: "Feijão Manteiga", price: "65 MT/kg", img: "/images/Prototipo/feijao.jpg", available: true, description: "Feijão manteiga fresco e nutritivo, colhido nas terras férteis do norte." },
-                    { name: "Milho Branco", price: "18 MT/kg", img: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?q=80&w=800", available: true, description: "Milho branco de grão cheio, perfeito para moagem e consumo directo." },
+                    {
+                        name: "FEIJÃO",
+                        price: "150 MT/kg",
+                        img: "/images/Prototipo/feijao.jpg",
+                        available: true,
+                        category: "INSUMO",
+                        description: "Descrição de alta qualidade para este insumo agrícola."
+                    },
+                    {
+                        name: "MILHO",
+                        price: "120 MT/kg",
+                        img: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?q=80&w=800",
+                        available: true,
+                        category: "INSUMO",
+                        description: "Descrição de alta qualidade para este insumo agrícola."
+                    },
+                    {
+                        name: "ARROZ",
+                        price: "95.5 MT/kg",
+                        img: "https://images.unsplash.com/photo-1586201327693-86619dadb279?q=80&w=800",
+                        available: true,
+                        category: "INSUMO",
+                        description: "Descrição de alta qualidade para este insumo agrícola."
+                    },
+                    {
+                        name: "SOJA",
+                        price: "85 MT/kg",
+                        img: "https://images.unsplash.com/photo-1582284540020-8acaf01f344a?q=80&w=800",
+                        available: true,
+                        category: "CEREAL",
+                        description: "Soja de alta qualidade para processamento."
+                    },
                 ]
             },
             'hortas-do-vale': {
                 name: "Hortas do Vale",
                 header_bg: "/images/Prototipo/sala6.jpg",
                 products: [
-                    { name: "Óleo Vegetal Natural", price: "120 MT/L", img: "/images/Prototipo/oleo.webp", available: true, description: "Óleo vegetal 100% natural, prensado a frio para manter todas as propriedades nutricionais." },
+                    { name: "ARROZ", price: "95.5 MT/kg", img: "https://images.unsplash.com/photo-1586201327693-86619dadb279?q=80&w=800", available: true, category: "INSUMO", description: "Descrição de alta qualidade para este insumo agrícola." },
+                    { name: "TOMATE", price: "45 MT/kg", img: "https://images.unsplash.com/photo-1582284540020-8acaf01f344a?q=80&w=800", available: true, category: "HORTA", description: "Tomates frescos do vale." },
+                    { name: "CEBOLA", price: "30 MT/kg", img: "https://images.unsplash.com/photo-1580201092675-a0bc6bd6c317?q=80&w=800", available: true, category: "HORTA", description: "Cebolas selecionadas." },
+                    { name: "PIMENTÃO", price: "55 MT/kg", img: "https://images.unsplash.com/photo-1566385101042-1a0f08154b9d?q=80&w=800", available: true, category: "HORTA", description: "Pimentões coloridos e frescos." },
                 ]
             }
         };
@@ -50,7 +83,7 @@ export default async function ProductPage({ params }: PageProps) {
         const companyData = fallbackCompanies[slug];
         if (!companyData) notFound();
 
-        const product = companyData.products.find((p: any) => slugify(p.name) === productSlug);
+        const product = companyData.products.find((p: any) => slugify(p.name || p.nome) === productSlug);
         if (!product) notFound();
 
         return (
@@ -63,7 +96,7 @@ export default async function ProductPage({ params }: PageProps) {
     }
 
     const products = company.products || [];
-    const product = products.find((p: any) => slugify(p.name) === productSlug);
+    const product = products.find((p: any) => slugify(p.name || p.nome) === productSlug);
 
     if (!product) notFound();
 

@@ -16,9 +16,15 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
         </svg>
     );
 
-    const shareUrl = typeof window !== 'undefined' ? `${window.location.origin}/empresas/${slug}` : '';
+    const [mounted, setMounted] = React.useState(false);
+    const [shareUrl, setShareUrl] = React.useState('');
 
-    const slugify = (text: string) => text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
+    React.useEffect(() => {
+        setMounted(true);
+        setShareUrl(`${window.location.origin}/empresas/${slug}`);
+    }, [slug]);
+
+    const slugify = (text: string) => (text || "").toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
 
     const handleShare = (type: 'whatsapp' | 'facebook' | 'linkedin' | 'twitter' | 'copy', url: string, title: string) => {
         const text = encodeURIComponent(`Veja esta empresa no BaseAgroData: ${title} - ${url}`);
@@ -111,12 +117,14 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                     {/* QR Code Section - BELOW CONTACTS */}
                     <div className="card-agro-static text-center py-6">
                         <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Acesso Rápido</h4>
-                        <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm inline-block mb-3">
-                            <img
-                                src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(shareUrl)}`}
-                                alt="QR Code Empresa"
-                                className="w-28 h-28"
-                            />
+                        <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm inline-block mb-3 min-w-[112px] min-h-[112px]">
+                            {mounted && (
+                                <img
+                                    src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(shareUrl)}`}
+                                    alt="QR Code Empresa"
+                                    className="w-28 h-28"
+                                />
+                            )}
                         </div>
                         <p className="text-[10px] font-bold text-slate-400 leading-tight px-4 capitalize">Aceda ao perfil digital<br />através do seu smartphone</p>
                     </div>
@@ -271,11 +279,13 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                 {/* Product Grid Section */}
                 <div className="card-agro text-left">
                     <div className="flex items-center justify-between mb-8">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-orange-50 text-orange-600 rounded-lg flex items-center justify-center">
-                                <Package className="w-5 h-5" />
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 bg-orange-50 text-[#f97316] rounded-xl flex items-center justify-center border border-orange-100/50 shadow-sm">
+                                <Package className="w-6 h-6" />
                             </div>
-                            <h3 className="mb-0 text-xl font-black uppercase tracking-tight">Catálogo de Produtos</h3>
+                            <h3 className="text-xl font-black text-slate-800 uppercase tracking-tighter mb-0">
+                                Catálogo de Produtos
+                            </h3>
                         </div>
                         <Link
                             href={`/produtos?empresa_id=${company.id}`}
@@ -287,12 +297,12 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                     </div>
 
                     {company.products && company.products.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-agro">
-                            {company.products.slice(0, 2).map((product: any, i: number) => (
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-agro">
+                            {company.products.slice(0, 3).map((product: any, i: number) => (
                                 <Link
                                     key={i}
-                                    href={`/empresas/${slug}/produto/${slugify(product.name)}`}
-                                    className="group bg-white rounded-agro overflow-hidden shadow-sm border border-slate-100 hover:shadow-md transition-all flex flex-col"
+                                    href={`/empresas/${slug}/produto/${slugify(product.name || product.nome)}`}
+                                    className="group bg-white rounded-agro overflow-hidden shadow-sm border border-slate-100 hover:shadow-md transition-all flex flex-col h-full"
                                 >
                                     {/* Product Image + Category Badge */}
                                     <div className="relative h-44 w-full overflow-hidden">
@@ -300,6 +310,7 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                                             src={product.img || product.photo || "/images/Prototipo/caju.webp"}
                                             alt={product.name}
                                             fill
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                             className="object-cover group-hover:scale-105 transition-transform duration-700"
                                         />
                                         {product.category && (
@@ -309,69 +320,39 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                                                 </span>
                                             </div>
                                         )}
-                                        {/* Share Button Overlay */}
-                                        <div className="absolute top-3 right-3 z-20">
-                                            <button
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    setActiveProductShare(activeProductShare === i ? null : i);
-                                                }}
-                                                className="bg-white/20 backdrop-blur-md hover:bg-white hover:text-orange-600 text-white w-8 h-8 rounded-full flex items-center justify-center border border-white/30 transition-all opacity-0 group-hover:opacity-100"
-                                            >
-                                                <Share2 className="w-4 h-4" />
-                                            </button>
-                                            {activeProductShare === i && (
-                                                <div className="absolute right-0 top-full mt-2 bg-white/90 backdrop-blur-md border border-slate-100 shadow-2xl rounded-full py-0.5 px-1.5 z-50 flex items-center gap-1 animate-in fade-in zoom-in slide-in-from-bottom-2">
-                                                    <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleShare('whatsapp', shareUrl, product.name); setActiveProductShare(null); }} className="w-8 h-8 flex items-center justify-center text-emerald-600 hover:bg-emerald-600 hover:text-white rounded-full transition-all">
-                                                        <WhatsAppIcon className="w-4.5 h-4.5" />
-                                                    </button>
-                                                    <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleShare('facebook', shareUrl, product.name); setActiveProductShare(null); }} className="w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-600 hover:text-white rounded-full transition-all">
-                                                        <Facebook className="w-4 h-4" />
-                                                    </button>
-                                                    <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleShare('linkedin', shareUrl, product.name); setActiveProductShare(null); }} className="w-8 h-8 flex items-center justify-center text-blue-700 hover:bg-blue-700 hover:text-white rounded-full transition-all">
-                                                        <Linkedin className="w-4 h-4" />
-                                                    </button>
-                                                    <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleShare('twitter', shareUrl, product.name); setActiveProductShare(null); }} className="w-8 h-8 flex items-center justify-center text-sky-500 hover:bg-sky-500 hover:text-white rounded-full transition-all">
-                                                        <Twitter className="w-4 h-4" />
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </div>
                                     </div>
+
 
                                     {/* Product Content */}
                                     <div className="p-5 flex flex-col flex-1">
                                         <h4 className="text-[17px] font-black text-slate-800 mb-1 uppercase tracking-tight line-clamp-1">
                                             {product.name}
                                         </h4>
-                                        <p className="text-slate-400 text-xs font-medium leading-relaxed mb-4 line-clamp-2">
+                                        <p className="text-slate-400 text-xs font-medium leading-relaxed mb-2 line-clamp-2">
                                             {product.description || "Descrição breve do produto disponível sob consulta."}
                                         </p>
 
                                         <div>
-                                            {/* Price Section */}
-                                            <p className="text-emerald-600 font-black text-[18px] mb-3">
+                                            <p className="text-emerald-600 font-black text-[18px] mb-1.5">
                                                 {product.price}
                                             </p>
 
-                                            <div className="pt-3 border-t border-slate-50 flex items-center justify-between">
-                                                {/* Details Link */}
+                                            <div className="pt-2 border-t border-slate-50 flex items-center justify-between">
                                                 <div className="flex items-center gap-1 text-[#f97316] text-[11px] font-black uppercase tracking-wider group-hover:gap-2 transition-all">
                                                     <span>DETALHES</span>
                                                     <ArrowRight className="w-3.5 h-3.5" />
                                                 </div>
 
-                                                {/* Availability Badge */}
                                                 <div className="flex items-center gap-1.5">
-                                                    <div className={`w-1.5 h-1.5 rounded-full ${product.available ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
-                                                    <span className={`text-[10px] font-black uppercase tracking-widest ${product.available ? 'text-emerald-500' : 'text-red-500'}`}>
-                                                        {product.available ? 'Disponível' : 'Indisponível'}
+                                                    <div className={`w-1.5 h-1.5 rounded-full ${product.available !== false ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
+                                                    <span className={`text-[10px] font-black uppercase tracking-widest ${product.available !== false ? 'text-emerald-500' : 'text-red-500'}`}>
+                                                        {product.available !== false ? 'Disponível' : 'Indisponível'}
                                                     </span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+
                                 </Link>
                             ))}
                         </div>

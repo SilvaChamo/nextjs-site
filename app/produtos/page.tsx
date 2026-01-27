@@ -11,16 +11,22 @@ import { supabase } from "@/lib/supabaseClient";
 // DEMO FALLBACK DATA
 const FALLBACK_PRODUCTS_MAP: Record<string, any[]> = {
     '99999999-9999-9999-9999-999999999991': [
-        { id: 'f1', nome: "Castanha de Caju Refinada", preco: "500 MT/kg", category: "Processados", image_url: "/images/Prototipo/caju.webp", description: "Castanha de caju de alta qualidade, processada na Zambézia.", available: true },
-        { id: 'f2', nome: "Algodão em Fardo", preco: "Sob Consulta", category: "Fibras", image_url: "/images/Prototipo/algodao.png", description: "Algodão de primeira qualidade pronto para exportação.", available: true },
-        { id: 'f3', nome: "Sementes Selecionadas", preco: "250 MT/pk", category: "Sementes", image_url: "https://images.unsplash.com/photo-1464226184884-fa280b87c399?q=80&w=800", description: "Sementes certificadas para alta produtividade.", available: false },
+        { id: 'f1', nome: "MILHO", preco: "120 MT/kg", category: "INSUMO", image_url: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?q=80&w=800", description: "Descrição de alta qualidade para este insumo agrícola.", available: true },
+        { id: 'f2', nome: "ARROZ", preco: "95.5 MT/kg", category: "INSUMO", image_url: "https://images.unsplash.com/photo-1586201327693-86619dadb279?q=80&w=800", description: "Descrição de alta qualidade para este insumo agrícola.", available: true },
+        { id: 'f3', nome: "FEIJÃO", preco: "150 MT/kg", category: "INSUMO", image_url: "/images/Prototipo/feijao.jpg", description: "Descrição de alta qualidade para este insumo agrícola.", available: true },
+        { id: 'f3b', nome: "CAJU", preco: "450 MT/kg", category: "PROCESSADO", image_url: "/images/Prototipo/caju.webp", description: "Castanha de caju de alta qualidade.", available: true },
     ],
     '99999999-9999-9999-9999-999999999992': [
-        { id: 'f4', nome: "Feijão Manteiga", preco: "65 MT/kg", category: "Leguminosas", image_url: "/images/Prototipo/feijao.jpg", description: "Feijão manteiga fresco e nutritivo.", available: true },
-        { id: 'f5', nome: "Milho Branco", preco: "18 MT/kg", category: "Cereais", image_url: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?q=80&w=800", description: "Milho branco de alta qualidade para consumo e indústria.", available: true },
+        { id: 'f4', nome: "FEIJÃO", preco: "150 MT/kg", category: "INSUMO", image_url: "/images/Prototipo/feijao.jpg", description: "Descrição de alta qualidade para este insumo agrícola.", available: true },
+        { id: 'f5', nome: "MILHO", preco: "120 MT/kg", category: "INSUMO", image_url: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?q=80&w=800", description: "Descrição de alta qualidade para este insumo agrícola.", available: true },
+        { id: 'f5b', nome: "ARROZ", preco: "95.5 MT/kg", category: "INSUMO", image_url: "https://images.unsplash.com/photo-1586201327693-86619dadb279?q=80&w=800", description: "Descrição de alta qualidade para este insumo agrícola.", available: true },
+        { id: 'f5c', nome: "SOJA", preco: "85 MT/kg", category: "CEREAL", image_url: "https://images.unsplash.com/photo-1582284540020-8acaf01f344a?q=80&w=800", description: "Soja de alta qualidade para processamento.", available: true },
     ],
     '99999999-9999-9999-9999-999999999993': [
-        { id: 'f6', nome: "Óleo Vegetal Natural", preco: "120 MT/L", category: "Óleos", image_url: "/images/Prototipo/oleo.webp", description: "Óleo vegetal 100% natural, prensado a frio.", available: true },
+        { id: 'f6', nome: "ARROZ", preco: "95.5 MT/kg", category: "INSUMO", image_url: "https://images.unsplash.com/photo-1586201327693-86619dadb279?q=80&w=800", description: "Descrição de alta qualidade para este insumo agrícola.", available: true },
+        { id: 'f6b', nome: "TOMATE", preco: "45 MT/kg", category: "HORTA", image_url: "https://images.unsplash.com/photo-1582284540020-8acaf01f344a?q=80&w=800", description: "Tomates frescos do vale.", available: true },
+        { id: 'f6c', nome: "CEBOLA", preco: "30 MT/kg", category: "HORTA", image_url: "https://images.unsplash.com/photo-1580201092675-a0bc6bd6c317?q=80&w=800", description: "Cebolas selecionadas.", available: true },
+        { id: 'f6d', nome: "PIMENTÃO", preco: "55 MT/kg", category: "HORTA", image_url: "https://images.unsplash.com/photo-1566385101042-1a0f08154b9d?q=80&w=800", description: "Pimentões coloridos e frescos.", available: true },
     ]
 };
 
@@ -28,6 +34,12 @@ const FALLBACK_COMPANY_NAMES: Record<string, string> = {
     '99999999-9999-9999-9999-999999999991': "Agro-Indústria Zambézia",
     '99999999-9999-9999-9999-999999999992': "Cooperativa do Norte",
     '99999999-9999-9999-9999-999999999993': "Hortas do Vale"
+};
+
+const FALLBACK_COMPANY_SLUGS: Record<string, string> = {
+    '99999999-9999-9999-9999-999999999991': "agro-industria-zambezia",
+    '99999999-9999-9999-9999-999999999992': "cooperativa-do-norte",
+    '99999999-9999-9999-9999-999999999993': "hortas-do-vale"
 };
 
 function ProductsContent() {
@@ -41,6 +53,8 @@ function ProductsContent() {
     const [searchQuery, setSearchQuery] = useState(initialQuery);
     const [contextName, setContextName] = useState<string | null>(null);
 
+    const slugify = (text: string) => (text || "").toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
+
     useEffect(() => {
         async function fetchData() {
             setLoading(true);
@@ -53,12 +67,13 @@ function ProductsContent() {
                     // Check fallbacks first
                     if (FALLBACK_COMPANY_NAMES[empresaId]) {
                         cName = FALLBACK_COMPANY_NAMES[empresaId];
-                        allItems = [...FALLBACK_PRODUCTS_MAP[empresaId]];
+                        const cSlug = FALLBACK_COMPANY_SLUGS[empresaId];
+                        allItems = FALLBACK_PRODUCTS_MAP[empresaId].map(p => ({ ...p, company_slug: cSlug }));
                     } else {
                         // Real DB fetch
                         const { data: company } = await supabase
                             .from('companies')
-                            .select('name, products')
+                            .select('name, slug, products')
                             .eq('id', empresaId)
                             .single();
 
@@ -71,7 +86,8 @@ function ProductsContent() {
                                     nome: p.name || p.nome || "Produto",
                                     preco: p.price || p.preco || "Sob Consulta",
                                     image_url: p.img || p.photo || p.image_url || "https://images.unsplash.com/photo-1595152248447-c93d5006b00b?q=80&w=400",
-                                    category: p.category || "Destaque"
+                                    category: p.category || "Destaque",
+                                    company_slug: company.slug
                                 }));
                                 allItems = [...allItems, ...jsonProducts];
                             }
@@ -84,12 +100,22 @@ function ProductsContent() {
                         .eq('id', professionalId)
                         .single();
                     if (pro) cName = pro.name;
+                } else {
+                    // Global Marketplace - Add all fallbacks for demo purposes
+                    Object.keys(FALLBACK_PRODUCTS_MAP).forEach(cId => {
+                        const cSlug = FALLBACK_COMPANY_SLUGS[cId];
+                        const productsWithSlug = FALLBACK_PRODUCTS_MAP[cId].map(p => ({
+                            ...p,
+                            company_slug: cSlug
+                        }));
+                        allItems = [...allItems, ...productsWithSlug];
+                    });
                 }
 
                 setContextName(cName);
 
                 // 2. Fetch Products from main DB table
-                let query = supabase.from('produtos').select('*');
+                let query = supabase.from('produtos').select('*, companies(slug)');
 
                 if (empresaId) {
                     query = query.eq('empresa_id', empresaId);
@@ -104,14 +130,15 @@ function ProductsContent() {
                         ...p,
                         // Ensure key fields are mapped for consistency
                         nome: p.nome || p.name,
-                        preco: p.preco || p.price
+                        preco: p.preco || p.price,
+                        company_slug: Array.isArray(p.companies) ? p.companies[0]?.slug : (p.companies?.slug || p.company_slug)
                     }));
 
                     // Simple merge for now
                     allItems = [...allItems, ...dbProducts];
                 }
 
-                setProducts(allItems.slice(0, 3));
+                setProducts(allItems);
             } catch (error) {
                 console.error("Error fetching products:", error);
             } finally {
@@ -169,46 +196,58 @@ function ProductsContent() {
                         <div key={i} className="animate-pulse bg-white rounded-[15px] h-[300px]" />
                     ))
                 ) : filteredProducts.length > 0 ? (
-                    filteredProducts.map((product, i) => (
-                        <div key={product.id || i} className="group bg-white rounded-agro border border-slate-100 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col h-full">
-                            <div className="relative h-48">
-                                <Image
-                                    src={product.image_url || product.img || product.photo || "https://images.unsplash.com/photo-1595152248447-c93d5006b00b?q=80&w=400"}
-                                    alt={product.nome}
-                                    fill
-                                    className="object-cover group-hover:scale-105 transition-transform duration-700"
-                                />
-                                <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm text-[9px] font-black text-emerald-600 uppercase tracking-widest px-2 py-1 rounded-md shadow-sm">
-                                    {product.category || "Insumo"}
-                                </div>
-                            </div>
-                            <div className="p-5 flex-1 flex flex-col">
-                                <h3 className="text-[17px] font-black text-slate-800 mb-1 uppercase tracking-tight line-clamp-1">{product.nome}</h3>
-                                <p className="text-xs text-slate-400 font-medium leading-relaxed mb-4 line-clamp-2">
-                                    {product.description || "Descrição de alta qualidade para este insumo agrícola."}
-                                </p>
+                    filteredProducts.map((product, i) => {
+                        const resolvedCompanySlug = product.company_slug || (empresaId && FALLBACK_COMPANY_SLUGS[empresaId]);
+                        const prodUrl = resolvedCompanySlug
+                            ? `/empresas/${resolvedCompanySlug}/produto/${slugify(product.nome || product.name)}`
+                            : "#";
 
-                                <div>
-                                    <div className="text-emerald-600 font-black text-[18px] mb-3">
-                                        {product.preco || product.price ? `${product.preco || product.price}` : "Sob Consulta"}
+                        return (
+                            <Link
+                                key={product.id || i}
+                                href={prodUrl}
+                                className="group bg-white rounded-agro border border-slate-100 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col h-full cursor-pointer"
+                            >
+                                <div className="relative h-48">
+                                    <Image
+                                        src={product.image_url || product.img || product.photo || "https://images.unsplash.com/photo-1595152248447-c93d5006b00b?q=80&w=400"}
+                                        alt={product.nome}
+                                        fill
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                        className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                    />
+                                    <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm text-[9px] font-black text-emerald-600 uppercase tracking-widest px-2 py-1 rounded-md shadow-sm">
+                                        {product.category || "Insumo"}
                                     </div>
+                                </div>
+                                <div className="p-5 flex-1 flex flex-col">
+                                    <h3 className="text-[17px] font-black text-slate-800 mb-1 uppercase tracking-tight line-clamp-1">{product.nome}</h3>
+                                    <p className="text-xs text-slate-400 font-medium leading-relaxed mb-2 line-clamp-2">
+                                        {product.description || "Descrição de alta qualidade para este insumo agrícola."}
+                                    </p>
 
-                                    <div className="pt-3 border-t border-slate-50 flex items-center justify-between">
-                                        <button className="text-[11px] font-black uppercase tracking-wider text-[#f97316] hover:underline flex items-center gap-1 group-hover:gap-2 transition-all">
-                                            DETALHES <ArrowRight className="w-3.5 h-3.5" />
-                                        </button>
+                                    <div>
+                                        <div className="text-emerald-600 font-black text-[18px] mb-1.5">
+                                            {product.preco || product.price ? `${product.preco || product.price}` : "Sob Consulta"}
+                                        </div>
 
-                                        <div className="flex items-center gap-1.5">
-                                            <div className={`w-1.5 h-1.5 rounded-full ${product.available !== false ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
-                                            <span className={`text-[10px] font-black uppercase tracking-widest ${product.available !== false ? 'text-emerald-500' : 'text-red-500'}`}>
-                                                {product.available !== false ? 'Disponível' : 'Indisponível'}
-                                            </span>
+                                        <div className="pt-2 border-t border-slate-50 flex items-center justify-between">
+                                            <div className="text-[11px] font-black uppercase tracking-wider text-[#f97316] flex items-center gap-1 group-hover:gap-2 transition-all">
+                                                DETALHES <ArrowRight className="w-3.5 h-3.5" />
+                                            </div>
+
+                                            <div className="flex items-center gap-1.5">
+                                                <div className={`w-1.5 h-1.5 rounded-full ${product.available !== false ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
+                                                <span className={`text-[10px] font-black uppercase tracking-widest ${product.available !== false ? 'text-emerald-500' : 'text-red-500'}`}>
+                                                    {product.available !== false ? 'Disponível' : 'Indisponível'}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    ))
+                            </Link>
+                        );
+                    })
                 ) : (
                     <div className="col-span-full py-20 text-center text-slate-400 bg-white rounded-[20px] border border-dashed border-slate-100">
                         <ShoppingBag className="w-12 h-12 mx-auto mb-4 opacity-20" />

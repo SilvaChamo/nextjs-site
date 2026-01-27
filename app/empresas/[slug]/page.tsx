@@ -36,20 +36,36 @@ export default async function CompanyEmpresasPage({ params }: PageProps) {
                 services: ["Processamento de Caju", "Exportação Agrícola", "Apoio ao Produtor", "Consultoria Técnica"],
                 products: [
                     {
-                        name: "Castanha de Caju Refinada",
-                        price: "500 MT/kg",
-                        img: "/images/Prototipo/caju.webp",
+                        name: "MILHO",
+                        price: "120 MT/kg",
+                        img: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?q=80&w=800",
                         available: true,
-                        category: "Processados",
-                        description: "Castanha de caju de alta qualidade, processada localmente com rigorosos padrões de higiene."
+                        category: "INSUMO",
+                        description: "Descrição de alta qualidade para este insumo agrícola."
                     },
                     {
-                        name: "Algodão em Fardo",
-                        price: "Sob Consulta",
-                        img: "/images/Prototipo/algodao.png",
+                        name: "ARROZ",
+                        price: "95.5 MT/kg",
+                        img: "https://images.unsplash.com/photo-1586201327693-86619dadb279?q=80&w=800",
                         available: true,
-                        category: "Fibras",
-                        description: "Algodão de fibra longa, ideal para a indústria têxtil nacional e internacional."
+                        category: "INSUMO",
+                        description: "Descrição de alta qualidade para este insumo agrícola."
+                    },
+                    {
+                        name: "FEIJÃO",
+                        price: "150 MT/kg",
+                        img: "/images/Prototipo/feijao.jpg",
+                        available: true,
+                        category: "INSUMO",
+                        description: "Descrição de alta qualidade para este insumo agrícola."
+                    },
+                    {
+                        name: "CAJU",
+                        price: "450 MT/kg",
+                        img: "/images/Prototipo/caju.webp",
+                        available: true,
+                        category: "PROCESSADO",
+                        description: "Castanha de caju de alta qualidade."
                     },
                 ]
             },
@@ -70,20 +86,36 @@ export default async function CompanyEmpresasPage({ params }: PageProps) {
                 services: ["Processamento de Caju", "Exportação Agrícola", "Apoio ao Produtor", "Consultoria Técnica"],
                 products: [
                     {
-                        name: "Feijão Manteiga",
-                        price: "65 MT/kg",
+                        name: "FEIJÃO",
+                        price: "150 MT/kg",
                         img: "/images/Prototipo/feijao.jpg",
                         available: true,
-                        category: "Leguminosas",
-                        description: "Feijão manteiga fresco e nutritivo, ideal para consumo doméstico e industrial."
+                        category: "INSUMO",
+                        description: "Descrição de alta qualidade para este insumo agrícola."
                     },
                     {
-                        name: "Milho Branco",
-                        price: "18 MT/kg",
+                        name: "MILHO",
+                        price: "120 MT/kg",
                         img: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?q=80&w=800",
                         available: true,
-                        category: "Cereais",
-                        description: "Milho branco de alta qualidade para consumo e indústria."
+                        category: "INSUMO",
+                        description: "Descrição de alta qualidade para este insumo agrícola."
+                    },
+                    {
+                        name: "ARROZ",
+                        price: "95.5 MT/kg",
+                        img: "https://images.unsplash.com/photo-1586201327693-86619dadb279?q=80&w=800",
+                        available: true,
+                        category: "INSUMO",
+                        description: "Descrição de alta qualidade para este insumo agrícola."
+                    },
+                    {
+                        name: "SOJA",
+                        price: "85 MT/kg",
+                        img: "https://images.unsplash.com/photo-1582284540020-8acaf01f344a?q=80&w=800",
+                        available: true,
+                        category: "CEREAL",
+                        description: "Soja de alta qualidade para processamento."
                     },
                 ]
             },
@@ -103,7 +135,10 @@ export default async function CompanyEmpresasPage({ params }: PageProps) {
                 is_verified: false,
                 services: ["Horticultura de Precisão", "Distribuição Nacional", "Sistemas de Irrigação"],
                 products: [
-                    { name: "Óleo Vegetal Natural", price: "120 MT/L", img: "/images/Prototipo/oleo.webp", available: true },
+                    { name: "ARROZ", price: "95.5 MT/kg", img: "https://images.unsplash.com/photo-1586201327693-86619dadb279?q=80&w=800", available: true, category: "INSUMO", description: "Descrição de alta qualidade para este insumo agrícola." },
+                    { name: "TOMATE", price: "45 MT/kg", img: "https://images.unsplash.com/photo-1582284540020-8acaf01f344a?q=80&w=800", available: true, category: "HORTA", description: "Tomates frescos do vale." },
+                    { name: "CEBOLA", price: "30 MT/kg", img: "https://images.unsplash.com/photo-1580201092675-a0bc6bd6c317?q=80&w=800", available: true, category: "HORTA", description: "Cebolas selecionadas." },
+                    { name: "PIMENTÃO", price: "55 MT/kg", img: "https://images.unsplash.com/photo-1566385101042-1a0f08154b9d?q=80&w=800", available: true, category: "HORTA", description: "Pimentões coloridos e frescos." },
                 ]
             }
         };

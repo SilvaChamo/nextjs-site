@@ -96,7 +96,7 @@ export default function EmpresasPage() {
                     <div className="card-agro-static text-center py-8">
                         <Building2 className="w-12 h-12 text-[#f97316] mx-auto mb-4" />
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Empresas Registadas</p>
-                        <p className="text-3xl font-black text-slate-800 tracking-tighter">450+</p>
+                        <p className="text-3xl font-black text-slate-800 tracking-tighter">3</p>
                     </div>
                 </div>
             }
@@ -111,6 +111,7 @@ export default function EmpresasPage() {
                                     src={company.image}
                                     alt={company.name}
                                     fill
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />

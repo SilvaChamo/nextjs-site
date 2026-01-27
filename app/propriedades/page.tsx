@@ -80,7 +80,8 @@ function PropertiesContent() {
                 const { data, error } = await query.order('created_at', { ascending: false }).limit(3);
 
                 if (error) throw error;
-                setProperties(data || []);
+                const allProps = [...(data || []), ...FALLBACK_PROPERTIES];
+                setProperties(allProps.slice(0, 3));
             } catch (error) {
                 console.error("Error fetching properties:", error);
             } finally {

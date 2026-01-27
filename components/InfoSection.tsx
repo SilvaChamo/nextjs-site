@@ -15,6 +15,45 @@ import { MarketPriceTable } from "./MarketPriceTable";
 import Autoplay from 'embla-carousel-autoplay';
 import { AgroCastSection } from "@/components/AgroCastSection";
 
+const EXEMPLARY_CATEGORIES: CategoryCard[] = [
+    {
+        title: "Empresas",
+        description: "Encontre fornecedores, parceiros e instituições do agronegócio.",
+        icon: LucideIcons.Building2,
+        href: "/empresas"
+    },
+    {
+        title: "Produtos",
+        description: "Explore insumos, maquinaria e produtos agrícolas disponíveis.",
+        icon: LucideIcons.ShoppingBag,
+        href: "/produtos"
+    },
+    {
+        title: "Profissionais",
+        description: "Contrate especialistas, agrónomos e técnicos qualificados.",
+        icon: LucideIcons.User,
+        href: "/servicos/talentos"
+    },
+    {
+        title: "Propriedades",
+        description: "Invista em terras, fazendas e infra-estruturas rurais.",
+        icon: LucideIcons.LandPlot,
+        href: "/propriedades"
+    },
+    {
+        title: "Documentos",
+        description: "Aceda a legislação, relatórios e manuais técnicos do sector.",
+        icon: LucideIcons.FileText,
+        href: "/documentos"
+    },
+    {
+        title: "Artigos Científicos",
+        description: "Pesquisas, teses e inovações do agronegócio moçambicano.",
+        icon: LucideIcons.BookOpen,
+        href: "/artigos"
+    }
+];
+
 type CategoryCard = {
     title: string;
     description: string;
@@ -59,7 +98,7 @@ export function InfoSection() {
             if (cats.data) {
                 const formattedCats = cats.data.map(c => {
                     // @ts-ignore
-                    const Icon = LucideIcons[c.icon_name] || TreePalm;
+                    const Icon = LucideIcons[c.icon_name] || LucideIcons.TreePalm;
                     return {
                         title: c.title,
                         description: c.description,
@@ -70,7 +109,12 @@ export function InfoSection() {
                         href: c.href
                     };
                 });
-                setCategoryCards(formattedCats);
+
+                // Combine with exemplary to ensure all are present, then filter to the 6 we want
+                const allCats = [...EXEMPLARY_CATEGORIES];
+                setCategoryCards(allCats.slice(0, 6));
+            } else {
+                setCategoryCards(EXEMPLARY_CATEGORIES);
             }
 
             if (stats.data) {

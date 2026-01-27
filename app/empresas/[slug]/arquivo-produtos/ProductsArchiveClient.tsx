@@ -174,17 +174,17 @@ export default function ProductsArchiveClient({ company, slug, products }: { com
                                     <h4 className="text-[17px] font-black text-slate-800 mb-1 uppercase tracking-tight line-clamp-1">
                                         {product.name}
                                     </h4>
-                                    <p className="text-slate-400 text-xs font-medium leading-relaxed mb-4 line-clamp-2">
+                                    <p className="text-slate-400 text-xs font-medium leading-relaxed mb-2 line-clamp-2">
                                         {product.description || "Descrição breve do produto disponível sob consulta."}
                                     </p>
 
                                     <div>
                                         {/* Price Section */}
-                                        <p className="text-emerald-600 font-black text-[18px] mb-3">
+                                        <p className="text-emerald-600 font-black text-[18px] mb-1.5">
                                             {product.price}
                                         </p>
 
-                                        <div className="pt-3 border-t border-slate-50 flex items-center justify-between">
+                                        <div className="pt-2 border-t border-slate-50 flex items-center justify-between">
                                             {/* Details Link */}
                                             <div className="flex items-center gap-1 text-[#f97316] text-[11px] font-black uppercase tracking-wider group-hover:gap-2 transition-all">
                                                 <span>DETALHES</span>

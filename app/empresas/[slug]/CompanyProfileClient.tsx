@@ -204,7 +204,11 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                     {company.products && company.products.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-agro">
                             {company.products.slice(0, 2).map((product: any, i: number) => (
-                                <div key={i} className="group relative h-[210px] rounded-agro overflow-hidden shadow-md card-interactive transition-all duration-300 cursor-pointer border border-slate-100/50 bg-white">
+                                <Link
+                                    key={i}
+                                    href={`/empresas/${slug}/produto/${slugify(product.name)}`}
+                                    className="group relative h-[210px] rounded-agro overflow-hidden shadow-md card-interactive transition-all duration-300 cursor-pointer border border-slate-100/50 bg-white"
+                                >
                                     <Image
                                         src={product.img || product.photo || "/images/Prototipo/caju.webp"}
                                         alt={product.name}
@@ -215,6 +219,7 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                                     <div className="absolute top-3 right-3 z-20">
                                         <button
                                             onClick={(e) => {
+                                                e.preventDefault();
                                                 e.stopPropagation();
                                                 setActiveProductShare(activeProductShare === i ? null : i);
                                             }}
@@ -224,27 +229,27 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                                         </button>
 
                                         {activeProductShare === i && (
-                                            <div className="absolute right-0 top-full mt-2 bg-white/90 backdrop-blur-md border border-slate-100 shadow-2xl rounded-full py-0.5 px-1.5 z-50 flex items-center gap-1 animate-in fade-in zoom-in slide-in-from-top-2">
+                                            <div className="absolute right-0 top-full mt-2 bg-white/90 backdrop-blur-md border border-slate-100 shadow-2xl rounded-full py-0.5 px-1.5 z-50 flex items-center gap-1 animate-in fade-in zoom-in slide-in-from-bottom-2">
                                                 <button
-                                                    onClick={(e) => { e.stopPropagation(); handleShare('whatsapp', shareUrl, product.name); setActiveProductShare(null); }}
+                                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleShare('whatsapp', shareUrl, product.name); setActiveProductShare(null); }}
                                                     className="w-8 h-8 flex items-center justify-center text-emerald-600 hover:bg-emerald-600 hover:text-white rounded-full transition-all"
                                                 >
                                                     <WhatsAppIcon className="w-4.5 h-4.5" />
                                                 </button>
                                                 <button
-                                                    onClick={(e) => { e.stopPropagation(); handleShare('facebook', shareUrl, product.name); setActiveProductShare(null); }}
+                                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleShare('facebook', shareUrl, product.name); setActiveProductShare(null); }}
                                                     className="w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-600 hover:text-white rounded-full transition-all"
                                                 >
                                                     <Facebook className="w-4 h-4" />
                                                 </button>
                                                 <button
-                                                    onClick={(e) => { e.stopPropagation(); handleShare('linkedin', shareUrl, product.name); setActiveProductShare(null); }}
+                                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleShare('linkedin', shareUrl, product.name); setActiveProductShare(null); }}
                                                     className="w-8 h-8 flex items-center justify-center text-blue-700 hover:bg-blue-700 hover:text-white rounded-full transition-all"
                                                 >
                                                     <Linkedin className="w-4 h-4" />
                                                 </button>
                                                 <button
-                                                    onClick={(e) => { e.stopPropagation(); handleShare('twitter', shareUrl, product.name); setActiveProductShare(null); }}
+                                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleShare('twitter', shareUrl, product.name); setActiveProductShare(null); }}
                                                     className="w-8 h-8 flex items-center justify-center text-sky-500 hover:bg-sky-500 hover:text-white rounded-full transition-all"
                                                 >
                                                     <Twitter className="w-4 h-4" />
@@ -268,15 +273,12 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                                             {product.price}
                                         </p>
 
-                                        <Link
-                                            href={`/empresas/${slug}/produto/${slugify(product.name)}`}
-                                            className="flex items-center gap-1 text-white/90 text-[11px] font-bold mt-2 hover:text-white transition-colors"
-                                        >
+                                        <div className="flex items-center gap-1 text-white/90 text-[11px] font-bold mt-2 hover:text-white transition-colors">
                                             <span>Ver detalhes</span>
-                                            <ArrowRight className="w-3.5 h-3.5 transition-transform" />
-                                        </Link>
+                                            <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+                                        </div>
                                     </div>
-                                </div>
+                                </Link>
                             ))}
                         </div>
                     ) : (

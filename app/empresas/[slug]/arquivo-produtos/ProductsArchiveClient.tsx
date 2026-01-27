@@ -116,7 +116,7 @@ export default function ProductsArchiveClient({ company, slug, products }: { com
                 </div>
 
                 {filteredProducts.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-agro pb-12">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-agro pb-12">
                         {filteredProducts.map((product, i) => (
                             <div key={i} className="group relative h-[210px] rounded-agro overflow-hidden shadow-md card-interactive transition-all duration-300 cursor-pointer border border-slate-100/50 bg-white">
                                 <Image

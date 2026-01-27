@@ -45,6 +45,8 @@ export function FeaturedCompanies() {
             } catch (err) {
                 console.error("Erro ao carregar empresas:", err);
             } finally {
+                // Add a small delay for smoother transition if it's too fast, 
+                // but here we just set loading false.
                 setLoading(false);
             }
         }

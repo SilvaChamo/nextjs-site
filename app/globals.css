@@ -227,6 +227,75 @@
   .space-y-agro> :not([hidden])~ :not([hidden]) {
     @apply mt-5;
   }
+
+  /* PREMIUM FOCUS EFFECTS */
+  @keyframes candy-spin {
+    from {
+      transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    to {
+      transform: translate(-50%, -50%) rotate(360deg);
+    }
+  }
+
+  .focus-candy {
+    @apply transition-all duration-300;
+  }
+
+  .focus-candy:focus {
+    @apply border-orange-500/50 ring-4 ring-orange-500/10;
+    background-color: #fffaf5 !important;
+    box-shadow: 0 0 15px rgba(249, 115, 22, 0.15), 0 0 30px rgba(5, 150, 105, 0.05);
+  }
+
+  /* Form outer container focus effect (candyburn glow) */
+  .form-premium-card:focus-within {
+    @apply border-orange-200/50 transition-all duration-500;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1), 0 0 40px rgba(249, 115, 22, 0.08);
+  }
+
+  /* Animated border effect wrapper utility */
+  .candy-border-wrapper {
+    position: relative;
+    padding: 1.5px;
+    z-index: 0;
+    overflow: hidden;
+    transition: all 0.3s;
+    background: transparent;
+    border: 1px solid #e2e8f0;
+    /* Default slate-200 border */
+  }
+
+  .candy-border-wrapper::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    left: 50%;
+    top: 50%;
+    width: 250%;
+    height: 250%;
+    background: conic-gradient(from 0deg, transparent, #f97316, #059669, transparent);
+    animation: candy-spin 3s linear infinite;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .candy-border-wrapper:focus-within {
+    border-color: transparent;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  }
+
+  .candy-border-wrapper:focus-within::before {
+    opacity: 1;
+  }
+
+  .candy-border-content {
+    @apply w-full h-full bg-[#F8FAFC];
+    border-radius: inherit;
+    position: relative;
+    z-index: 1;
+  }
 }
 
 /* UTILITY ANIMATIONS */

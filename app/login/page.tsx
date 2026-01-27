@@ -114,7 +114,7 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
             />
 
             <div className="w-full max-w-[380px] px-4 relative z-10">
-                <div className="bg-white/95 backdrop-blur-md rounded-[20px] shadow-[0_20px_50px_rgba(0,0,0,0.1)] p-6 border border-slate-100">
+                <div className="bg-white/95 backdrop-blur-md rounded-[20px] shadow-[0_20px_50px_rgba(0,0,0,0.1)] p-6 border border-slate-100 form-premium-card">
 
                     <div className="text-center mb-7">
                         <Link href="/" className="inline-block transition-transform hover:scale-105 duration-300">
@@ -130,48 +130,54 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                         </div>
                     )}
 
-                    <form onSubmit={handleAuth} className="space-y-5">
+                    <form onSubmit={handleAuth} className="space-y-4">
                         {!isLogin && (
                             <div className="relative">
                                 <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                <Input
-                                    type="text"
-                                    required
-                                    placeholder="Nome Completo"
-                                    className="pl-11 h-10 bg-white border-slate-200 focus-candy text-[13px] rounded-md transition-all duration-300"
-                                    value={formData.fullName}
-                                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                                />
+                                <div className="candy-border-wrapper rounded-md">
+                                    <Input
+                                        type="text"
+                                        required
+                                        placeholder="Nome Completo"
+                                        className="pl-11 h-10 bg-[#F8FAFC] border-none focus-candy text-[13px] rounded-md transition-all duration-300 relative z-10"
+                                        value={formData.fullName}
+                                        onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                                    />
+                                </div>
                             </div>
                         )}
 
                         <div className="relative">
-                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                            <Input
-                                type="email"
-                                required
-                                placeholder="Email"
-                                className="pl-11 h-10 bg-white border-slate-200 focus-candy text-[13px] rounded-md transition-all duration-300"
-                                value={formData.email}
-                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                            />
+                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-20" />
+                            <div className="candy-border-wrapper rounded-md">
+                                <Input
+                                    type="email"
+                                    required
+                                    placeholder="Email"
+                                    className="pl-11 h-10 bg-[#F8FAFC] border-none focus-candy text-[13px] rounded-md transition-all duration-300 relative z-10"
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                />
+                            </div>
                         </div>
 
                         {!isResetPassword && isLogin && (
                             <div className="relative">
-                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                <Input
-                                    type={showPassword ? "text" : "password"}
-                                    required
-                                    placeholder="Senha"
-                                    className="pl-11 pr-10 h-10 bg-white border-slate-200 focus-candy text-[13px] rounded-md transition-all duration-300"
-                                    value={formData.password}
-                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                />
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-20" />
+                                <div className="candy-border-wrapper rounded-md">
+                                    <Input
+                                        type={showPassword ? "text" : "password"}
+                                        required
+                                        placeholder="Senha"
+                                        className="pl-11 pr-10 h-10 bg-[#F8FAFC] border-none focus-candy text-[13px] rounded-md transition-all duration-300 relative z-10"
+                                        value={formData.password}
+                                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                    />
+                                </div>
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none transition-colors z-20"
                                 >
                                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                 </button>
@@ -180,37 +186,39 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
 
                         {!isLogin && !isResetPassword && (
                             <div className="relative">
-                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                <Input
-                                    type={showPassword ? "text" : "password"}
-                                    required
-                                    placeholder="Senha"
-                                    className="pl-11 pr-10 h-10 bg-white border-slate-200 focus-candy text-[13px] rounded-md transition-all duration-300"
-                                    value={formData.password}
-                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                />
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-20" />
+                                <div className="candy-border-wrapper rounded-md">
+                                    <Input
+                                        type={showPassword ? "text" : "password"}
+                                        required
+                                        placeholder="Senha"
+                                        className="pl-11 pr-10 h-10 bg-[#F8FAFC] border-none focus-candy text-[13px] rounded-md transition-all duration-300 relative z-10"
+                                        value={formData.password}
+                                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                    />
+                                </div>
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none transition-colors z-20"
                                 >
                                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                 </button>
                             </div>
                         )}
 
-                        <div className="flex items-center gap-2 mt-6">
+                        <div className="grid grid-cols-2 gap-3 mt-3">
                             <Button
                                 type="submit"
                                 disabled={loading}
-                                className="flex-[1.2] bg-[#f97316] hover:bg-[#ea580c] text-white font-black h-11 rounded-xl shadow-lg transition-all text-xs uppercase tracking-widest group"
+                                className="bg-emerald-600 hover:bg-[#f97316] text-white font-black h-10 rounded-agro-btn shadow-lg transition-all text-[11px] uppercase tracking-wider group"
                             >
                                 {loading ? (
                                     <Loader2 className="w-5 h-5 animate-spin mx-auto" />
                                 ) : (
-                                    <span className="flex items-center justify-center gap-2">
-                                        {isResetPassword ? "Resetar" : isLogin ? "Entrar" : "Criar Conta"}
-                                        <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                                    <span className="flex items-center justify-center gap-1.5">
+                                        {isResetPassword ? "Resetar" : isLogin ? "Entrar" : "Criar"}
+                                        <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
                                     </span>
                                 )}
                             </Button>
@@ -219,10 +227,10 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                                 <button
                                     onClick={(e) => { e.preventDefault(); handleSocialLogin('google'); }}
                                     disabled={loading}
-                                    className="flex-1 flex items-center justify-center gap-2 h-11 rounded-xl border border-slate-200 bg-white text-slate-700 font-bold text-[11px] hover:bg-slate-50 transition-all shadow-sm"
+                                    className="flex items-center justify-center gap-2 h-10 rounded-agro-btn border border-slate-200 bg-white text-slate-700 font-bold text-[10px] hover:border-[#f97316] hover:bg-[#f97316]/5 transition-all shadow-sm uppercase tracking-tight px-4"
                                 >
-                                    <span>Google</span>
-                                    <svg className="w-4 h-4" viewBox="0 0 24 24">
+                                    <span className="opacity-70">Entrar via</span>
+                                    <svg className="w-4.5 h-4.5" viewBox="0 0 24 24">
                                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                                         <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
                                         <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" />
@@ -232,7 +240,15 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                             )}
                         </div>
 
-                        <div className="flex justify-between items-center mt-10 pt-4 border-t border-slate-200">
+                        {!isLogin && (
+                            <div className="text-center">
+                                <Link href="/planos" className="text-[10px] font-bold text-[#f97316] hover:underline uppercase tracking-widest transition-all">
+                                    Registar um plano
+                                </Link>
+                            </div>
+                        )}
+
+                        <div className="flex justify-between items-center mt-2.5 pt-2.5 border-t border-slate-100">
                             <button
                                 type="button"
                                 onClick={() => {

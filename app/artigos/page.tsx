@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { StandardBlogTemplate } from "@/components/StandardBlogTemplate";
-import { BookOpen, Search, ArrowRight, Calendar, User } from "lucide-react";
+import { BookOpen, Search, ArrowRight, Calendar, User, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { supabase } from "@/lib/supabaseClient";
@@ -115,18 +115,25 @@ export default function ArticlesArchivePage() {
                 </div>
             }
         >
-            {/* Scientific Search Input - Home Style */}
-            <div className="max-w-4xl mb-8">
+            {/* Scientific Search Input - EXACT Home Style */}
+            <div className="max-w-4xl mb-[20px]">
                 <div className="relative bg-white rounded-[5px] shadow-sm h-12 flex items-center border border-gray-200 transition-all duration-300 overflow-hidden">
                     <div className="pl-6 text-gray-400">
                         <Search className="h-5 w-5" />
                     </div>
                     <input
-                        className="border-none shadow-none focus:ring-0 text-base h-full bg-transparent placeholder:text-gray-400 flex-1 px-4 outline-none"
+                        className="border-none shadow-none focus-visible:ring-0 text-base h-full bg-transparent placeholder:text-gray-400 flex-1 px-4 outline-none"
                         placeholder="Pesquisar por título, autor ou instituição..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
+                    {/* Visual Category Selector - Home Style */}
+                    <div className="flex items-center gap-2 px-6 h-full border-l border-gray-100 bg-gray-100 transition-colors group">
+                        <span className="text-xs font-bold text-gray-400 uppercase tracking-wider hidden sm:block whitespace-nowrap">
+                            Científico
+                        </span>
+                        <ChevronDown className="h-4 w-4 text-gray-400" />
+                    </div>
                 </div>
             </div>
 
@@ -183,7 +190,7 @@ export default function ArticlesArchivePage() {
                                 <button
                                     onClick={handleLoadMore}
                                     disabled={isFetchingMore}
-                                    className="px-8 py-3 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm flex items-center gap-2 mx-auto disabled:opacity-50"
+                                    className="px-8 py-3 bg-white border border-slate-200 rounded-[7px] text-sm font-bold text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm flex items-center gap-2 mx-auto disabled:opacity-50"
                                 >
                                     {isFetchingMore ? (
                                         <>Carregando mais artigos...</>

@@ -52,6 +52,8 @@ export default function ArticlesArchivePage() {
     const [articles, setArticles] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
+    const [visibleCount, setVisibleCount] = useState(3);
+    const [isFetchingMore, setIsFetchingMore] = useState(false);
 
     useEffect(() => {
         async function fetchArticles() {
@@ -61,14 +63,14 @@ export default function ArticlesArchivePage() {
                     .from('articles')
                     .select('*')
                     .eq('type', 'article')
-                    .order('date', { ascending: false })
-                    .limit(3);
+                    .order('date', { ascending: false });
 
                 if (error) throw error;
                 const allArticles = [...(data || []), ...FALLBACK_ARTICLES];
-                setArticles(allArticles.slice(0, 3));
+                setArticles(allArticles);
             } catch (error) {
                 console.error("Error fetching articles:", error);
+                setArticles(FALLBACK_ARTICLES);
             } finally {
                 setLoading(false);
             }
@@ -77,8 +79,21 @@ export default function ArticlesArchivePage() {
     }, []);
 
     const filteredArticles = articles.filter(art =>
-        art.title?.toLowerCase().includes(searchQuery.toLowerCase())
+        art.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        art.author?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        art.source?.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    const displayedArticles = filteredArticles.slice(0, visibleCount);
+
+    const handleLoadMore = () => {
+        setIsFetchingMore(true);
+        // Simulate network delay for "infinite" feel
+        setTimeout(() => {
+            setVisibleCount(prev => prev + 3);
+            setIsFetchingMore(false);
+        }, 800);
+    };
 
     return (
         <StandardBlogTemplate
@@ -92,66 +107,96 @@ export default function ArticlesArchivePage() {
             sidebarComponents={
                 <div className="space-y-agro">
                     <div className="bg-white p-6 rounded-[15px] border border-slate-100 shadow-sm">
-                        <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-4">Pesquisa</h3>
-                        <div className="relative">
-                            <input
-                                type="text"
-                                placeholder="Procurar artigos..."
-                                className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-[10px] text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                        </div>
+                        <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-4">Informação</h3>
+                        <p className="text-sm text-slate-500 leading-relaxed">
+                            Acesse a maior biblioteca científica do agronegócio em Moçambique, com curadoria local e parcerias globais.
+                        </p>
                     </div>
                 </div>
             }
         >
+            {/* Scientific Search Input - Home Style */}
+            <div className="max-w-4xl mb-8">
+                <div className="relative bg-white rounded-[5px] shadow-sm h-12 flex items-center border border-gray-200 transition-all duration-300 overflow-hidden">
+                    <div className="pl-6 text-gray-400">
+                        <Search className="h-5 w-5" />
+                    </div>
+                    <input
+                        className="border-none shadow-none focus:ring-0 text-base h-full bg-transparent placeholder:text-gray-400 flex-1 px-4 outline-none"
+                        placeholder="Pesquisar por título, autor ou instituição..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                </div>
+            </div>
+
             <div className="grid grid-cols-1 max-w-4xl border-t border-slate-200">
                 {loading ? (
                     Array(4).fill(0).map((_, i) => (
                         <div key={i} className="animate-pulse bg-white p-4 h-32 w-full border-b border-slate-200" />
                     ))
-                ) : filteredArticles.length > 0 ? (
-                    filteredArticles.map((article) => (
-                        <Link key={article.id} href={`/artigos/${article.slug}`} className="group block py-6 bg-white border-b border-slate-200 hover:bg-slate-50 transition-colors pl-[25px] pr-4">
-                            <div className="flex flex-col gap-0.5">
-                                {/* Identity Line: Icon + Author & Source */}
-                                <div className="flex items-center gap-2 text-sm text-[#202124] mb-1">
-                                    <div className="bg-slate-50 rounded-full w-7 h-7 flex items-center justify-center shrink-0 border border-slate-100 overflow-hidden">
-                                        <Image
-                                            src="/icon.png"
-                                            alt="Icon"
-                                            width={24}
-                                            height={24}
-                                            className="object-contain"
-                                        />
-                                    </div>
-                                    <div className="flex flex-col leading-tight">
-                                        <div className="flex items-center gap-1.5 font-semibold text-[14px]">
-                                            <span>{article.author || "Autor Desconhecido"}</span>
-                                            {article.source && <span className="text-slate-400 font-normal">› {article.source}</span>}
+                ) : displayedArticles.length > 0 ? (
+                    <>
+                        {displayedArticles.map((article) => (
+                            <Link key={article.id} href={`/artigos/${article.slug}`} className="group block py-6 bg-white border-b border-slate-200 hover:bg-slate-50 transition-colors pl-[25px] pr-4">
+                                <div className="flex flex-col gap-0.5">
+                                    {/* Identity Line: Icon + Author & Source */}
+                                    <div className="flex items-center gap-2 text-sm text-[#202124] mb-1">
+                                        <div className="bg-slate-50 rounded-full w-7 h-7 flex items-center justify-center shrink-0 border border-slate-100 overflow-hidden">
+                                            <Image
+                                                src="/icon.png"
+                                                alt="Icon"
+                                                width={24}
+                                                height={24}
+                                                className="object-contain"
+                                            />
                                         </div>
-                                        {/* Pure Source URL Link */}
-                                        <span className="text-xs text-slate-500">
-                                            {article.source_url || `https://baseagrodata.com/artigos/${article.slug}`}
-                                        </span>
+                                        <div className="flex flex-col leading-tight">
+                                            <div className="flex items-center gap-1.5 font-semibold text-[14px]">
+                                                <span>{article.author || "Autor Desconhecido"}</span>
+                                                {article.source && <span className="text-slate-400 font-normal">› {article.source}</span>}
+                                            </div>
+                                            {/* Pure Source URL Link */}
+                                            <span className="text-xs text-slate-500">
+                                                {article.source_url || `https://baseagrodata.com/artigos/${article.slug}`}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Title - Google Blue */}
+                                    <h3 className="text-lg font-bold text-[#1a0dab] group-hover:underline cursor-pointer leading-snug tracking-tight mb-0.5">
+                                        {article.title}
+                                    </h3>
+
+                                    {/* Date and Snippet */}
+                                    <div className="text-sm text-[#4d5156] leading-relaxed max-w-3xl">
+                                        <span className="text-slate-500 text-[12px] mr-2">{new Date(article.date).toLocaleDateString()} —</span>
+                                        {article.subtitle || article.content?.substring(0, 160).replace(/<[^>]*>/g, '') + "..."}
                                     </div>
                                 </div>
+                            </Link>
+                        ))}
 
-                                {/* Title - Google Blue */}
-                                <h3 className="text-lg font-bold text-[#1a0dab] group-hover:underline cursor-pointer leading-snug tracking-tight mb-0.5">
-                                    {article.title}
-                                </h3>
-
-                                {/* Date and Snippet */}
-                                <div className="text-sm text-[#4d5156] leading-relaxed max-w-3xl">
-                                    <span className="text-slate-500 text-[12px] mr-2">{new Date(article.date).toLocaleDateString()} —</span>
-                                    {article.subtitle || article.content?.substring(0, 160).replace(/<[^>]*>/g, '') + "..."}
-                                </div>
+                        {/* Load More Trigger / Button */}
+                        {visibleCount < filteredArticles.length && (
+                            <div className="py-10 text-center">
+                                <button
+                                    onClick={handleLoadMore}
+                                    disabled={isFetchingMore}
+                                    className="px-8 py-3 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm flex items-center gap-2 mx-auto disabled:opacity-50"
+                                >
+                                    {isFetchingMore ? (
+                                        <>Carregando mais artigos...</>
+                                    ) : (
+                                        <>
+                                            Ver mais documentos
+                                            <ArrowRight className="w-4 h-4" />
+                                        </>
+                                    )}
+                                </button>
                             </div>
-                        </Link>
-                    ))
+                        )}
+                    </>
                 ) : (
                     <div className="col-span-full py-20 text-center text-slate-400">
                         Nenhum artigo encontrado.

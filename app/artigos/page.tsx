@@ -184,7 +184,7 @@ export default function ArticlesArchivePage() {
             }
         >
             {/* Scientific Search Input - EXACT Home Style + Enter Trigger */}
-            <div className="max-w-4xl mb-[20px]">
+            <div className="mb-[20px]">
                 <div className={`relative bg-white rounded-[5px] shadow-sm h-12 flex items-center border transition-all duration-300 overflow-hidden ${isScanningGlobal ? 'border-emerald-300 ring-2 ring-emerald-50' : 'border-gray-200'}`}>
                     <button
                         onClick={() => handleSearch()}
@@ -218,7 +218,7 @@ export default function ArticlesArchivePage() {
                 )}
             </div>
 
-            <div className="grid grid-cols-1 max-w-4xl border-t border-slate-200">
+            <div className="grid grid-cols-1 border-t border-slate-200">
                 {loading ? (
                     Array(4).fill(0).map((_, i) => (
                         <div key={i} className="animate-pulse bg-white p-4 h-32 w-full border-b border-slate-200" />

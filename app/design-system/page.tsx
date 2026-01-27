@@ -32,9 +32,27 @@ export default function DesignSystem() {
             <div className="space-y-4">
                 <h1 className="text-4xl font-bold tracking-tight">Design System</h1>
                 <p className="text-muted-foreground text-lg">
-                    Shadcn/ui styled components using Tailwind CSS.
+                    Ambiente de desenvolvimento e testes de componentes.
                 </p>
             </div>
+
+            <section className="space-y-4 border-b pb-10">
+                <h2 className="text-2xl font-semibold">Módulos & Páginas (Workspaces)</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <a href="/design-system/podcast" className="block p-6 bg-white border rounded-xl hover:border-emerald-500 hover:shadow-lg transition-all group">
+                        <h3 className="font-bold text-lg mb-2 group-hover:text-emerald-600">AgroCast (Podcast)</h3>
+                        <p className="text-sm text-slate-500">Desenvolvimento do componente de vídeo e podcast.</p>
+                    </a>
+                    <a href="/design-system/arquivo-produtos" className="block p-6 bg-white border rounded-xl hover:border-emerald-500 hover:shadow-lg transition-all group">
+                        <h3 className="font-bold text-lg mb-2 group-hover:text-emerald-600">Arquivo de Produtos</h3>
+                        <p className="text-sm text-slate-500">Listagem de produtos das empresas.</p>
+                    </a>
+                    <a href="/design-system/detalhes-empresa" className="block p-6 bg-white border rounded-xl hover:border-emerald-500 hover:shadow-lg transition-all group">
+                        <h3 className="font-bold text-lg mb-2 group-hover:text-emerald-600">Detalhes da Empresa</h3>
+                        <p className="text-sm text-slate-500">Página de perfil e detalhes.</p>
+                    </a>
+                </div>
+            </section>
 
             <section className="space-y-4">
                 <h2 className="text-2xl font-semibold">Buttons</h2>

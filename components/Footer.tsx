@@ -104,6 +104,7 @@ export function Footer() {
                             <Link href="/politica-privacidade" className="hover:text-[#f97316] transition-colors">Política de privacidade</Link>
                             <Link href="/termos" className="hover:text-[#f97316] transition-colors">Termos e condições</Link>
                             <Link href="/suporte" className="hover:text-[#f97316] transition-colors">Suporte</Link>
+                            <Link href="/design-system" className="hover:text-[#f97316] transition-colors text-emerald-600/50">Kit Padrão</Link>
                         </div>
                         <div className="flex items-center gap-4">
                             <SocialIcon Icon={Facebook} />

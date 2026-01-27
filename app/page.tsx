@@ -44,7 +44,7 @@ export default async function Home() {
       <CommunityBanner />
       <WhyChooseUs />
       <InfoSection />
-      <AgroCastSection />
+      {/* <AgroCastSection /> moved to /design-system/podcast */}
       <MobileAppSection />
     </main>
   );

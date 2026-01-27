@@ -13,6 +13,7 @@ import { supabase } from "@/lib/supabaseClient";
 import useEmblaCarousel from 'embla-carousel-react';
 import { MarketPriceTable } from "./MarketPriceTable";
 import Autoplay from 'embla-carousel-autoplay';
+import { AgroCastSection } from "@/components/AgroCastSection";
 
 type CategoryCard = {
     title: string;
@@ -176,13 +177,13 @@ export function InfoSection() {
                             Informações
                         </button>
                         <button
-                            onClick={() => setActiveTab("mercado")}
-                            className={`px-8 py-[8.5px] rounded-[7px] text-sm font-medium transition-all backdrop-blur-md border transition-all duration-300 ${activeTab === "mercado"
+                            onClick={() => setActiveTab("agrocast")}
+                            className={`px-8 py-[8.5px] rounded-[7px] text-sm font-medium transition-all backdrop-blur-md border transition-all duration-300 ${activeTab === "agrocast"
                                 ? "bg-[#f97316] border-[#f97316] text-white shadow-[0_0_20px_rgba(249,115,22,0.4)]"
                                 : "bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-[#f97316]"
                                 }`}
                         >
-                            Mercado
+                            AgroCast
                         </button>
                         <button
                             onClick={() => setActiveTab("categorias")}
@@ -240,31 +241,8 @@ export function InfoSection() {
                                 </div>
                             )}
 
-                            {activeTab === "mercado" && (
-                                <div className="grid grid-cols-1 md:grid-cols-[35%_1fr] gap-agro text-left items-start w-full">
-                                    <div className="bg-white p-8 rounded-agro shadow-xl shadow-slate-200 border border-slate-100 space-y-6">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 rounded-[5px] bg-orange-50 flex items-center justify-center">
-                                                <BarChart3 className="text-[#f97316] h-6 w-6" />
-                                            </div>
-                                            <h3 className="text-2xl font-bold text-slate-600">Mercado Agrário</h3>
-                                        </div>
-                                        <p className="text-slate-500">Dados em tempo real sobre a flutuação de preços e volume de produção nas principais províncias moçambicanas.</p>
-                                        <div className="space-y-4">
-                                            {statsData.length > 0 ? statsData.map((stat, i) => (
-                                                <div key={i} className="flex justify-between items-center p-4 bg-slate-50 rounded-[10px]">
-                                                    <span className="font-bold text-slate-600" suppressHydrationWarning><span>{stat.label}</span></span>
-                                                    <span className={`font-black ${stat.color}`} suppressHydrationWarning><span>{stat.val}</span></span>
-                                                </div>
-                                            )) : (
-                                                <div className="text-gray-400 text-sm">Sem dados recentes de mercado.</div>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div className="w-full">
-                                        <MarketPriceTable />
-                                    </div>
-                                </div>
+                            {activeTab === "agrocast" && (
+                                <AgroCastSection embedded />
                             )}
 
                             {activeTab === "informacoes" && (
@@ -341,6 +319,6 @@ export function InfoSection() {
                     )}
                 </div>
             </div>
-        </section>
+        </section >
     );
 }

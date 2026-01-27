@@ -228,7 +228,7 @@ export default function ArticlesArchivePage() {
             <div className="grid grid-cols-1 border-t border-slate-200">
                 {!isSearchActive ? (
                     /* Hero Scientific Advertisement */
-                    <div className="py-6 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                    <div className="py-[25px] animate-in fade-in slide-in-from-bottom-4 duration-1000">
                         <div className="relative group overflow-hidden rounded-[15px] border border-slate-100 shadow-xl bg-white aspect-[21/9] md:aspect-[3/1]">
                             <Image
                                 src="/images/scientific-ad-natural-v3.png"

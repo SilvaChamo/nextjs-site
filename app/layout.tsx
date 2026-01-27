@@ -9,6 +9,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { FloatingChatButton } from "@/components/FloatingChatButton";
 
 import { GoogleTranslate } from "@/components/GoogleTranslate";
+import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -72,6 +73,7 @@ export default function RootLayout({
               </main>
               <FloatingChatButton />
               <GoogleTranslate />
+              <PWAInstallPrompt />
             </NavFooterToggle>
           </LanguageProvider>
         </ThemeProvider>

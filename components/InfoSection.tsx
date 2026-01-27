@@ -120,6 +120,15 @@ export function InfoSection() {
         emblaApi.on('reInit', onSelect);
     }, [emblaApi, setScrollSnaps, onSelect]);
 
+    // Helper to get local image overrides for news
+    const getArticleImage = (article: any) => {
+        const title = article.title?.toLowerCase() || "";
+        if (title.includes("brasil") && title.includes("africa")) {
+            return "/images/Prototipo/brasilafrica.jpg";
+        }
+        return article.image_url || "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?q=80&w=800&auto=format&fit=crop";
+    };
+
     return (
         <section className="w-full bg-transparent relative" id="informacao">
             <div className="w-full bg-[#111827] relative h-[320px] overflow-hidden flex items-center">
@@ -270,7 +279,7 @@ export function InfoSection() {
                                                     >
                                                         <div className="relative h-48 w-full overflow-hidden">
                                                             <img
-                                                                src={news.image_url || "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?q=80&w=800&auto=format&fit=crop"}
+                                                                src={getArticleImage(news)}
                                                                 alt={news.title}
                                                                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                                             />

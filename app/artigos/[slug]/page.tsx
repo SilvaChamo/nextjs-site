@@ -99,7 +99,11 @@ export default function ArticleReadingPage() {
             <PageHeader
                 title={article.type || "Notícia"}
                 icon={Newspaper}
-                backgroundImage={article.image_url || "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?q=80&w=2000&auto=format&fit=crop"}
+                backgroundImage={
+                    (article.title?.toLowerCase().includes("brasil") && article.title?.toLowerCase().includes("africa"))
+                        ? "/images/Prototipo/brasilafrica.jpg"
+                        : article.image_url || "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?q=80&w=2000&auto=format&fit=crop"
+                }
                 breadcrumbs={[
                     { label: "Início", href: "/" },
                     { label: "Blog", href: "/blog" },

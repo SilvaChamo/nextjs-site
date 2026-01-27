@@ -23,9 +23,10 @@ interface PageHeaderProps {
     backButton?: BackButton;
     overlayOpacity?: string;
     children?: ReactNode;
+    titleClassName?: string;
 }
 
-export function PageHeader({ title, breadcrumbs, backgroundImage, icon: Icon, backButton, overlayOpacity = "opacity-80", children }: PageHeaderProps) {
+export function PageHeader({ title, breadcrumbs, backgroundImage, icon: Icon, backButton, overlayOpacity = "opacity-80", children, titleClassName }: PageHeaderProps) {
     const [isSticky, setIsSticky] = useState(false);
     const headerRef = useRef<HTMLDivElement>(null);
 
@@ -70,7 +71,7 @@ export function PageHeader({ title, breadcrumbs, backgroundImage, icon: Icon, ba
             )}
 
             <div className="container-site relative z-10 flex flex-col items-center text-center">
-                <h1 className="text-white mb-4">{title}</h1>
+                <h1 className={`text-white mb-4 ${titleClassName || "text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight"}`}>{title}</h1>
                 <nav className="flex items-center justify-center text-xs md:text-sm text-white font-medium">
                     {breadcrumbs.map((item, index) => (
                         <div key={index} className="flex items-center">

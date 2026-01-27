@@ -11,6 +11,7 @@ interface StandardBlogTemplateProps {
     backgroundImage?: string;
     isSidebarLeft?: boolean;
     bottomFullWidthContent?: ReactNode;
+    titleClassName?: string;
 }
 
 export function StandardBlogTemplate({
@@ -20,7 +21,8 @@ export function StandardBlogTemplate({
     children,
     backgroundImage = "https://images.unsplash.com/photo-1495107334309-fcf20504a5ab?q=80&w=2000&auto=format&fit=crop",
     isSidebarLeft = false,
-    bottomFullWidthContent
+    bottomFullWidthContent,
+    titleClassName
 }: StandardBlogTemplateProps) {
     return (
         <div className="min-h-screen bg-background text-slate-900 font-sans">
@@ -28,6 +30,7 @@ export function StandardBlogTemplate({
                 title={title}
                 backgroundImage={backgroundImage}
                 breadcrumbs={breadcrumbs}
+                titleClassName={titleClassName}
             />
 
             <main className="container-site pt-12 pb-[70px]">

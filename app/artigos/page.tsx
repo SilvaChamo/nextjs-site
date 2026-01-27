@@ -175,7 +175,7 @@ export default function ArticlesArchivePage() {
                 { label: "Repositório", href: "/repositorio" },
                 { label: "Artigos científicos", href: undefined }
             ]}
-            titleClassName="text-[22px] md:text-[28px] lg:text-[32px] font-bold tracking-tight"
+            titleClassName="text-[30px] md:text-[38px] lg:text-[46px] font-black tracking-tight"
             sidebarComponents={
                 <div className="space-y-agro">
                     <div className="bg-white p-6 rounded-[15px] border border-slate-100 shadow-sm">

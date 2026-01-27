@@ -17,7 +17,6 @@ export default function SearchResultsPage() {
     const [sortOption, setSortOption] = useState("Ordem Alfabética");
     const [counts, setCounts] = useState({
         articles: 0,
-        documents: 0,
         companies: 0,
         products: 0,
         professionals: 0,
@@ -33,15 +32,13 @@ export default function SearchResultsPage() {
                     companiesCount,
                     productsCount,
                     prosCount,
-                    propsCount,
-                    docsCount
+                    propsCount
                 ] = await Promise.all([
                     supabase.from('articles').select('*', { count: 'exact', head: true }).eq('type', 'article'),
                     supabase.from('companies').select('*', { count: 'exact', head: true }),
                     supabase.from('produtos').select('*', { count: 'exact', head: true }),
                     supabase.from('professionals').select('*', { count: 'exact', head: true }),
-                    supabase.from('properties').select('*', { count: 'exact', head: true }),
-                    supabase.from('articles').select('*', { count: 'exact', head: true }).eq('type', 'document')
+                    supabase.from('properties').select('*', { count: 'exact', head: true })
                 ]);
 
                 setCounts({
@@ -49,8 +46,7 @@ export default function SearchResultsPage() {
                     companies: Math.min(companiesCount.count || 0, 3) || 3,
                     products: Math.min(productsCount.count || 0, 3) || 3,
                     professionals: Math.min(prosCount.count || 0, 3) || 3,
-                    properties: Math.min(propsCount.count || 0, 3) || 3,
-                    documents: Math.min(docsCount.count || 0, 3) || 3
+                    properties: Math.min(propsCount.count || 0, 3) || 3
                 });
             } catch (error) {
                 console.error("Error fetching repository counts:", error);
@@ -75,20 +71,6 @@ export default function SearchResultsPage() {
             price: 0,
             relevance: 5,
             href: "/artigos"
-        },
-        {
-            title: "Documentos",
-            description: "Relatórios, legislação, políticas agrárias, manuais técnicos e estatísticas governamentais.",
-            count: `${counts.documents} Arquivos`,
-            icon: FileText,
-            bg: "bg-rose-50",
-            color: "text-rose-600",
-            border: "border-rose-100",
-            category: "Documentos",
-            date: "2024-01-15",
-            price: 0,
-            relevance: 4,
-            href: "/documentos"
         },
         {
             title: "Empresas",
@@ -219,8 +201,7 @@ export default function SearchResultsPage() {
                                         "Empresas",
                                         "Profissionais",
                                         "Propriedades",
-                                        "Artigos Científicos",
-                                        "Documentos"
+                                        "Artigos Científicos"
                                     ].map((cat, i) => (
                                         <label key={i} className="flex items-center gap-3 cursor-pointer group">
                                             <input

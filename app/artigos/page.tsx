@@ -199,7 +199,7 @@ export default function ArticlesArchivePage() {
                     </button>
                     <input
                         className="border-none shadow-none focus-visible:ring-0 text-base h-full bg-transparent placeholder:text-gray-400 flex-1 px-4 outline-none"
-                        placeholder="Pesquisar e carregar (Enter)..."
+                        placeholder="Em que podemos te ajudar hoje?"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onKeyDown={handleSearch}

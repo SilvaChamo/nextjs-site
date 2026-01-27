@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { StandardBlogTemplate } from "@/components/StandardBlogTemplate";
-import { BookOpen, Search, ArrowRight, Calendar, User, ChevronDown } from "lucide-react";
+import { BookOpen, Search, ArrowRight, Calendar, User, ChevronDown, Info } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { supabase } from "@/lib/supabaseClient";
@@ -178,7 +178,10 @@ export default function ArticlesArchivePage() {
             sidebarComponents={
                 <div className="space-y-agro">
                     <div className="bg-white p-6 rounded-[15px] border border-slate-100 shadow-sm">
-                        <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-4">Informação</h3>
+                        <div className="flex items-center gap-2 mb-4">
+                            <Info className="w-4 h-4 text-emerald-600" />
+                            <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-0">Informação</h3>
+                        </div>
                         <p className="text-sm text-slate-500 leading-relaxed">
                             Acesse a maior biblioteca científica do agronegócio em Moçambique, com curadoria local e parcerias globais.
                         </p>
@@ -227,7 +230,7 @@ export default function ArticlesArchivePage() {
                     <div className="py-6 animate-in fade-in slide-in-from-bottom-4 duration-1000">
                         <div className="relative group overflow-hidden rounded-[15px] border border-slate-100 shadow-xl bg-white aspect-[21/9] md:aspect-[3/1]">
                             <Image
-                                src="/images/scientific-ad.png"
+                                src="/images/scientific-ad-natural.png"
                                 alt="AgroCientífico Moçambique"
                                 fill
                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -238,7 +241,7 @@ export default function ArticlesArchivePage() {
                                         <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                                         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">Destaque Científico</span>
                                     </div>
-                                    <h2 className="text-3xl font-black text-white leading-tight uppercase">O Futuro do Campo é <span className="text-emerald-400">Digital</span></h2>
+                                    <h2 className="text-2xl font-bold text-white leading-tight">Ciência e Inovação <span className="text-emerald-400">para o campo</span></h2>
                                     <p className="text-slate-200 text-sm font-medium leading-relaxed">
                                         Accesse o maior repositório de inteligência agrícola de Moçambique. Pesquise teses, relatórios e papers globais validados academicamente.
                                     </p>

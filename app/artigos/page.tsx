@@ -52,7 +52,7 @@ export default function ArticlesArchivePage() {
     const [articles, setArticles] = useState<any[]>([]);
     const [localArticles, setLocalArticles] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const [searchQuery, setSearchQuery] = useState("");
+    const [searchQuery, setSearchQuery] = useState("Artigos científicos");
     const [visibleCount, setVisibleCount] = useState(3);
     const [isFetchingMore, setIsFetchingMore] = useState(false);
     const [isScanningGlobal, setIsScanningGlobal] = useState(false);

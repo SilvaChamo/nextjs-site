@@ -242,13 +242,13 @@ export default function ArticlesArchivePage() {
                                     <p className="text-slate-200 text-sm font-medium leading-relaxed">
                                         Accesse o maior repositório de inteligência agrícola de Moçambique. Pesquise teses, relatórios e papers globais validados academicamente.
                                     </p>
-                                    <button
-                                        onClick={() => handleSearch()}
+                                    <Link
+                                        href="/repositorio"
                                         className="mt-4 px-8 py-3 bg-emerald-600 hover:bg-[#f97316] text-white rounded-[7px] text-xs font-black uppercase tracking-widest transition-all shadow-lg active:scale-95 flex items-center gap-2 group/btn w-fit"
                                     >
                                         Explorar Repositório
                                         <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
-                                    </button>
+                                    </Link>
                                 </div>
                             </div>
                         </div>

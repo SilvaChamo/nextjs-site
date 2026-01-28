@@ -71,7 +71,7 @@ export function PageHeader({ title, breadcrumbs, backgroundImage, icon: Icon, ba
             )}
 
             <div className="container-site relative z-10 flex flex-col items-center text-center">
-                <h1 className={`text-white mb-4 ${titleClassName || "text-[26px] md:text-[32px] lg:text-[36px] font-extrabold tracking-tight"}`}>{title}</h1>
+                <h1 className={`text-white mb-4 ${titleClassName || "text-[26px] md:text-[32px] lg:text-[35px] font-extrabold tracking-tight"}`}>{title}</h1>
                 <nav className="flex items-center justify-center text-xs md:text-sm text-white font-medium">
                     {breadcrumbs.map((item, index) => (
                         <div key={index} className="flex items-center">

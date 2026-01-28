@@ -173,7 +173,7 @@ export default function SobrePage() {
                             <span className="text-[#f97316] font-bold text-sm uppercase tracking-[0.3em]">nas nossas actividades</span>
                             <div className="w-10 h-[1.5px] bg-[#f97316]"></div>
                         </div>
-                        <h2>
+                        <h2 className="text-[28px] md:text-[35px] font-black text-slate-700 leading-tight">
                             O Que <span className="text-emerald-600">Monitoramos?</span>
                         </h2>
                         <p className="text-slate-500 max-w-2xl mx-auto mt-4 font-medium leading-relaxed">
@@ -258,7 +258,7 @@ export default function SobrePage() {
                 <div className="max-w-[1350px] mx-auto px-4 md:px-[60px]">
                     <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-16 items-center">
                         <div className="space-y-8">
-                            <h2 className="text-[35px] md:text-[48px] font-[900] text-slate-700 leading-[1.1] tracking-tight mb-6">
+                            <h2 className="text-[28px] md:text-[35px] font-[900] text-slate-700 leading-[1.1] tracking-tight mb-6">
                                 Uma base de dados em <span className="text-emerald-600">crescimento</span>
                             </h2>
                             <p className="text-slate-500 text-[14px] leading-relaxed font-medium">

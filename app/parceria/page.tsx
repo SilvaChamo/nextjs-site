@@ -69,7 +69,7 @@ export default function ParceriaPage() {
                         {/* Right Column: Text Content */}
                         <div className="space-y-8 animate-in fade-in slide-in-from-right-8 duration-700">
                             <div className="space-y-4">
-                                <h2 className="text-[35px] md:text-[48px] font-[900] text-slate-700 leading-[1.1] tracking-tight">
+                                <h2 className="text-[28px] md:text-[35px] font-[900] text-slate-700 leading-[1.1] tracking-tight">
                                     {t('parceria.intro_title')} <br />
                                     {t('parceria.intro_subtitle').split(' ').slice(0, -1).join(' ')} <span className="text-emerald-600">{t('parceria.intro_subtitle').split(' ').slice(-1)}</span>
                                 </h2>
@@ -152,7 +152,7 @@ export default function ParceriaPage() {
                                 <span className="text-[#f97316] font-bold text-xs uppercase tracking-wider">Para uma parceria solida</span>
                             </div>
 
-                            <h3 className="text-[35px] md:text-[48px] font-[900] text-slate-700 leading-[1.1] tracking-tight mb-2">
+                            <h3 className="text-[28px] md:text-[35px] font-[900] text-slate-700 leading-[1.1] tracking-tight mb-2">
                                 {t('parceria.who_title').split(' ')[0]} <span className="text-emerald-600">{t('parceria.who_title').split(' ')[1]}</span>
                             </h3>
                             <p className="text-slate-600 mb-6 text-[15px] leading-snug font-medium max-w-xl">
@@ -307,7 +307,7 @@ export default function ParceriaPage() {
                             <span className="text-[#f97316] font-bold text-sm uppercase tracking-[0.3em]">Nossos</span>
                             <div className="w-10 h-[1.5px] bg-[#f97316]"></div>
                         </div>
-                        <h2 className="text-[35px] md:text-[48px] font-[900] text-slate-700 leading-[1.1] tracking-tight mb-4">
+                        <h2 className="text-[28px] md:text-[35px] font-[900] text-slate-700 leading-[1.1] tracking-tight mb-4">
                             {t('parceria.premium_partners').split(' ')[0]} <span className="text-[#f97316]">{t('parceria.premium_partners').split(' ')[1]}</span>
                         </h2>
                         <p className="text-slate-500 text-[15px] leading-snug font-medium max-w-2xl mx-auto">

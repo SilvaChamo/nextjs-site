@@ -40,7 +40,7 @@ export function Hero({ onToggleSearch, isSearchOpen, stats }: HeroProps) {
                 {/* Coluna Esquerda: Texto e Ações */}
                 <div className="space-y-8 animate-in slide-in-from-left-6 duration-700">
                     <div className="space-y-4">
-                        <h1 className="text-[32px] md:text-[50px] font-heading font-black text-white leading-[1.2] tracking-tight">
+                        <h1 className="text-[28px] md:text-[32px] lg:text-[35px] font-heading font-black text-white leading-[1.2] tracking-tight">
                             <span className="block">Cultivando um futuro</span>
                             <span className="block">melhor para</span>
                             <span className="block text-[#22c55e]">Moçambique</span>

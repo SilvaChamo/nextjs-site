@@ -20,7 +20,8 @@ export default function SearchResultsPage() {
         companies: 0,
         products: 0,
         professionals: 0,
-        properties: 0
+        properties: 0,
+        documents: 0
     });
     const [loading, setLoading] = useState(true);
 
@@ -32,13 +33,15 @@ export default function SearchResultsPage() {
                     companiesCount,
                     productsCount,
                     prosCount,
-                    propsCount
+                    propsCount,
+                    docsCount
                 ] = await Promise.all([
                     supabase.from('articles').select('*', { count: 'exact', head: true }).eq('type', 'article'),
                     supabase.from('companies').select('*', { count: 'exact', head: true }),
                     supabase.from('produtos').select('*', { count: 'exact', head: true }),
                     supabase.from('professionals').select('*', { count: 'exact', head: true }),
-                    supabase.from('properties').select('*', { count: 'exact', head: true })
+                    supabase.from('properties').select('*', { count: 'exact', head: true }),
+                    supabase.from('articles').select('*', { count: 'exact', head: true }).eq('type', 'document')
                 ]);
 
                 setCounts({
@@ -46,7 +49,8 @@ export default function SearchResultsPage() {
                     companies: Math.min(companiesCount.count || 0, 3) || 3,
                     products: Math.min(productsCount.count || 0, 3) || 3,
                     professionals: Math.min(prosCount.count || 0, 3) || 3,
-                    properties: Math.min(propsCount.count || 0, 3) || 3
+                    properties: Math.min(propsCount.count || 0, 3) || 3,
+                    documents: Math.min(docsCount.count || 0, 3) || 3
                 });
             } catch (error) {
                 console.error("Error fetching repository counts:", error);
@@ -71,6 +75,20 @@ export default function SearchResultsPage() {
             price: 0,
             relevance: 5,
             href: "/artigos"
+        },
+        {
+            title: "Documentos",
+            description: "Legislação, relatórios, planos estratégicos e outros documentos oficiais.",
+            count: `${counts.documents} Arquivos`,
+            icon: FileText,
+            bg: "bg-rose-50",
+            color: "text-rose-600",
+            border: "border-rose-100",
+            category: "Documentos",
+            date: "2024-01-15",
+            price: 0,
+            relevance: 9,
+            href: "/documentos"
         },
         {
             title: "Empresas",
@@ -201,7 +219,8 @@ export default function SearchResultsPage() {
                                         "Empresas",
                                         "Profissionais",
                                         "Propriedades",
-                                        "Artigos Científicos"
+                                        "Artigos Científicos",
+                                        "Documentos"
                                     ].map((cat, i) => (
                                         <label key={i} className="flex items-center gap-3 cursor-pointer group">
                                             <input

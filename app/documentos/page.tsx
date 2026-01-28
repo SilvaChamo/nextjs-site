@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { StandardBlogTemplate } from "@/components/StandardBlogTemplate";
-import { FileText, Search, ArrowDownToLine, Calendar, ExternalLink } from "lucide-react";
+import { FileText, Search, ArrowDownToLine, Calendar, ExternalLink, Info, Link as LinkIcon } from "lucide-react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
 import { createClient } from "@supabase/supabase-js";
@@ -12,13 +12,19 @@ const FALLBACK_DOCS = [
     {
         id: 'd1',
         title: "Lei de Terras de Moçambique",
+        subtitle: "Legislação fundamental que estabelece os princípios e normas sobre a posse, uso e aproveitamento da terra.",
+        source: "Boletim da República",
+        source_url: "https://www.portaldogoverno.gov.mz/",
         slug: "lei-terras-mocambique",
         date: "2024-01-15",
         type: "document"
     },
     {
         id: 'd2',
-        title: "Plano Estratégico do Sector Agrário (PEDSA II 2020-2029)",
+        title: "Plano Estratégico do Sector Agrário (PEDSA II)",
+        subtitle: "Estratégia nacional para transformar a agricultura familiar em uma agricultura comercial competitiva e sustentável.",
+        source: "Ministério da Agricultura (MADER)",
+        source_url: "https://www.mader.gov.mz/",
         slug: "pedsa-ii-2020-2029",
         date: "2023-11-05",
         type: "document"
@@ -26,6 +32,9 @@ const FALLBACK_DOCS = [
     {
         id: 'd3',
         title: "Anuário de Estatísticas Agrárias 2023",
+        subtitle: "Compilação de dados estatísticos sobre a produção, comercialização e preços de produtos agrícolas.",
+        source: "Instituto Nacional de Estatística",
+        source_url: "https://www.ine.gov.mz/",
         slug: "anuarios-estatisticas-agrarias-2023",
         date: "2023-12-20",
         type: "document"
@@ -60,9 +69,14 @@ export default function DocumentsArchivePage() {
         fetchDocs();
     }, []);
 
-    const filteredDocs = docs.filter(doc =>
-        doc.title?.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+
+
+    const filteredDocs = docs.filter(doc => {
+        const normalize = (text: string) => text ? text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : "";
+        const query = normalize(searchQuery);
+        const content = normalize(`${doc.title} ${doc.subtitle || ''} ${doc.source || ''}`);
+        return content.includes(query);
+    });
 
     return (
         <StandardBlogTemplate
@@ -76,46 +90,82 @@ export default function DocumentsArchivePage() {
             sidebarComponents={
                 <div className="space-y-agro">
                     <div className="bg-white p-6 rounded-[15px] border border-slate-100 shadow-sm">
-                        <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-4">Filtrar</h3>
-                        <div className="relative">
-                            <input
-                                type="text"
-                                placeholder="Procurar documentos..."
-                                className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-[10px] text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <div className="flex items-center gap-2 mb-4">
+                            <Info className="w-4 h-4 text-emerald-600" />
+                            <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-0">Informação</h3>
                         </div>
+                        <p className="text-sm text-slate-500 leading-relaxed">
+                            Acesse documentos oficiais, legislação e relatórios estratégicos do setor agrário em Moçambique.
+                        </p>
                     </div>
                 </div>
             }
         >
-            <div className="space-y-4">
+            <div className="space-y-6">
+                {/* Enhanced Search Input */}
+                <div className="relative bg-white rounded-[10px] shadow-sm h-12 flex items-center border border-gray-200 transition-all duration-300 overflow-hidden focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500">
+                    <div className="pl-6 text-gray-400">
+                        <Search className="h-5 w-5" />
+                    </div>
+                    <input
+                        className="border-none shadow-none focus-visible:ring-0 text-base h-full bg-transparent placeholder:text-gray-400 flex-1 px-4 outline-none"
+                        placeholder="Pesquisar por título, fonte ou contexto..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    <div className="flex items-center gap-2 px-6 h-full border-l border-gray-100 bg-gray-50">
+                        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider hidden sm:block whitespace-nowrap">
+                            Documentos
+                        </span>
+                    </div>
+                </div>
+
                 {loading ? (
                     Array(4).fill(0).map((_, i) => (
-                        <div key={i} className="animate-pulse bg-white rounded-[15px] h-[80px]" />
+                        <div key={i} className="animate-pulse bg-white rounded-[15px] h-[100px]" />
                     ))
                 ) : filteredDocs.length > 0 ? (
                     filteredDocs.map((doc) => (
-                        <div key={doc.id} className="bg-white p-6 rounded-[15px] border border-slate-100 shadow-sm hover:shadow-md transition-all flex items-center justify-between group">
-                            <div className="flex items-center gap-5">
-                                <div className="size-12 rounded-xl bg-rose-50 flex items-center justify-center text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-all">
-                                    <FileText className="w-6 h-6" />
+                        <div key={doc.id} className="bg-white p-6 rounded-[15px] border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row items-start md:items-center justify-between group gap-4">
+                            <div className="flex items-start gap-5">
+                                <div className="size-14 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-rose-500 group-hover:text-white transition-all shrink-0">
+                                    <FileText className="w-7 h-7" />
                                 </div>
-                                <div>
-                                    <h3 className="text-lg font-bold text-slate-800 group-hover:text-rose-600 transition-colors uppercase leading-tight">{doc.title}</h3>
-                                    <div className="flex items-center gap-4 mt-1 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                        <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {new Date(doc.date).toLocaleDateString()}</span>
+                                <div className="space-y-1.5">
+                                    <h3 className="text-lg font-bold text-slate-800 group-hover:text-rose-600 transition-colors leading-tight">
+                                        <Link href={`/artigos/${doc.slug}`}>
+                                            {doc.title}
+                                        </Link>
+                                    </h3>
+                                    {doc.subtitle && (
+                                        <p className="text-xs text-slate-500 max-w-2xl truncate">
+                                            {doc.subtitle}
+                                        </p>
+                                    )}
+                                    <div className="flex flex-wrap items-center gap-4 mt-1">
+                                        <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1">
+                                            <Calendar className="w-3 h-3" /> {new Date(doc.date).getFullYear()}
+                                        </div>
+                                        {doc.source && (
+                                            <a
+                                                href={doc.source_url || '#'}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-[10px] font-bold uppercase tracking-widest text-emerald-600 hover:underline flex items-center gap-1"
+                                                onClick={(e) => !doc.source_url && e.preventDefault()}
+                                            >
+                                                <LinkIcon className="w-3 h-3" /> Fonte: {doc.source}
+                                            </a>
+                                        )}
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-3">
-                                <button className="bg-slate-50 text-slate-400 p-2.5 rounded-lg hover:bg-rose-500 hover:text-white transition-all">
+                            <div className="flex items-center gap-3 w-full md:w-auto justify-end">
+                                <button className="bg-slate-50 text-slate-400 p-2.5 rounded-lg hover:bg-emerald-600 hover:text-white transition-all" title="Baixar PDF">
                                     <ArrowDownToLine className="w-5 h-5" />
                                 </button>
                                 <Link href={`/artigos/${doc.slug}`}>
-                                    <button className="bg-slate-50 text-slate-400 p-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-all">
+                                    <button className="bg-slate-50 text-slate-400 p-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-all" title="Ver Detalhes">
                                         <ExternalLink className="w-5 h-5" />
                                     </button>
                                 </Link>
@@ -124,7 +174,8 @@ export default function DocumentsArchivePage() {
                     ))
                 ) : (
                     <div className="py-20 text-center text-slate-400 bg-white rounded-[20px] border border-dashed border-slate-200">
-                        Nenhum documento disponível no momento.
+                        <Search className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                        <p>Nenhum documento encontrado para "{searchQuery}".</p>
                     </div>
                 )}
             </div>

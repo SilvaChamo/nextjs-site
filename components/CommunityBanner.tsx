@@ -62,7 +62,7 @@ export function CommunityBanner() {
 
                     {/* Left Side */}
                     <div className="text-center md:text-right md:w-1/2">
-                        <h2 className="text-white font-black text-2xl md:text-4xl lg:text-5xl uppercase leading-[1.0] tracking-tight">
+                        <h2 className="text-white font-black text-[48px] uppercase leading-[1.0] tracking-tight">
                             EXISTEM MAIS<br />
                             DE
                         </h2>

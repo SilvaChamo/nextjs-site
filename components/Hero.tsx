@@ -40,7 +40,7 @@ export function Hero({ onToggleSearch, isSearchOpen, stats }: HeroProps) {
                 {/* Coluna Esquerda: Texto e Ações */}
                 <div className="space-y-8 animate-in slide-in-from-left-6 duration-700">
                     <div className="space-y-4">
-                        <h1 className="text-[28px] md:text-[32px] lg:text-[35px] font-heading font-black text-white leading-[1.2] tracking-tight">
+                        <h1 className="text-[28px] md:text-[32px] lg:text-[48px] font-heading font-black text-white leading-[1.2] tracking-tight">
                             <span className="block">Cultivando um futuro</span>
                             <span className="block">melhor para</span>
                             <span className="block text-[#22c55e]">Moçambique</span>
@@ -53,12 +53,12 @@ export function Hero({ onToggleSearch, isSearchOpen, stats }: HeroProps) {
                     <div className="flex flex-wrap gap-4">
                         <Link href="/parceria#secao-parceria">
                             <Button className="bg-emerald-700 hover:bg-[#f97316] text-white px-8 py-6 rounded-[7px] text-base font-bold uppercase tracking-wider shadow-md transition-colors duration-300">
-                                Seja nosso parceiro
+                                SEJA NOSSO PARCEIRO
                             </Button>
                         </Link>
                         <Link href="/sobre-nos">
-                            <Button variant="outline" className="bg-[#f97316]/20 border-[#f97316] text-white hover:bg-[#f97316]/20 hover:border-[#f97316] hover:text-[#f97316] px-8 py-6 rounded-[7px] text-base font-bold uppercase tracking-wider backdrop-blur-sm transition-all duration-300">
-                                Saiba mais
+                            <Button variant="outline" className="bg-[#5c3a1e]/80 border-[#f97316] text-white hover:bg-[#f97316] hover:border-[#f97316] hover:text-white px-8 py-6 rounded-[7px] text-base font-bold uppercase tracking-wider backdrop-blur-sm transition-all duration-300">
+                                SAIBA MAIS
                             </Button>
                         </Link>
                     </div>

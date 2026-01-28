@@ -217,7 +217,7 @@ export function InfoSection() {
                             </span>
                             <span className="w-[20px] h-[1px] bg-white opacity-60"></span>
                         </div>
-                        <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight mt-3">
+                        <h2 className="text-[48px] font-black text-white tracking-tight mt-3">
                             Mantenha-se informado
                         </h2>
                         <p className="text-slate-200 text-sm leading-tight max-w-3xl mx-auto font-medium">

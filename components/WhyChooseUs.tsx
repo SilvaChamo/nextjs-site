@@ -45,7 +45,7 @@ export function WhyChooseUs() {
                 {/* Left Column: Text Content */}
                 <div className="space-y-8 animate-in fade-in slide-in-from-left-8 duration-700 sticky top-24">
                     <div className="space-y-4">
-                        <h2 className="text-[32px] md:text-[50px] font-heading font-black text-slate-600 leading-[1.1] tracking-tight">
+                        <h2 className="text-[48px] font-heading font-black text-slate-600 leading-[1.1] tracking-tight">
                             Porque fazer parte da <br />
                             maior <span className="text-[#f97316]">plataforma agrária</span>
                         </h2>

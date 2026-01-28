@@ -48,8 +48,7 @@ export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
                 {/* Header - Fixed margins as requested: mb-[35px] for card spacing, no top/bottom margin for section/title area */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-[35px] gap-4">
                     <div className="flex items-center gap-4">
-                        <div className="w-1 h-8 bg-[#f97316]"></div>
-                        <h2 className="text-[20px] md:text-[25px] font-heading font-extrabold text-slate-600 uppercase tracking-tight">
+                        <h2 className="text-[32px] leading-none font-heading font-extrabold text-slate-600 uppercase tracking-tight">
                             Empresas em destaque
                         </h2>
                     </div>
@@ -84,17 +83,23 @@ export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
                                         className="flex-[0_0_100%] sm:flex-[0_0_50%] lg:flex-[0_0_25%] min-w-0 pr-[15px] pb-10"
                                     >
                                         <Link href={`/empresas/${company.slug || i}`} className="group block h-full">
-                                            <div className="bg-white p-6 rounded-agro border border-slate-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-500 flex flex-col h-full relative overflow-hidden">
+                                            <div className="bg-white p-4 rounded-agro border border-slate-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-500 flex flex-col h-full relative overflow-hidden">
 
-                                                <div className="flex justify-between items-start mb-6">
+                                                <div className="flex justify-between items-start mb-2">
                                                     <div className="shrink-0">
                                                         {company.logo ? (
-                                                            <div className="w-12 h-12 rounded-[10px] overflow-hidden border border-gray-100 bg-white flex items-center justify-center">
-                                                                <Image src={company.logo} alt={company.title} width={48} height={48} className="w-full h-full object-contain p-1" />
+                                                            <div className="w-[60px] h-[60px] rounded-[10px] overflow-hidden border border-gray-100 bg-white flex items-center justify-center p-1">
+                                                                <Image
+                                                                    src={company.logo}
+                                                                    alt={company.title}
+                                                                    width={60}
+                                                                    height={60}
+                                                                    className="w-full h-full object-contain"
+                                                                />
                                                             </div>
                                                         ) : (
-                                                            <div className="w-12 h-12 rounded-[10px] flex items-center justify-center bg-emerald-50 text-emerald-600 group-hover:bg-[#f97316] group-hover:text-white transition-all duration-500">
-                                                                <Icon className="w-6 h-6" />
+                                                            <div className="w-[60px] h-[60px] rounded-[10px] flex items-center justify-center bg-emerald-50 text-emerald-600 group-hover:bg-[#f97316] group-hover:text-white transition-all duration-500">
+                                                                <Icon className="w-8 h-8" />
                                                             </div>
                                                         )}
                                                     </div>
@@ -109,11 +114,11 @@ export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
                                                     </div>
                                                 </div>
 
-                                                <h3 className="text-[15px] font-bold text-slate-600 mb-[8px] group-hover:text-[#3a3f47] transition-colors whitespace-nowrap overflow-hidden text-ellipsis">
+                                                <h3 className="text-[15px] font-bold text-slate-600 mb-1 group-hover:text-[#3a3f47] transition-colors whitespace-nowrap overflow-hidden text-ellipsis">
                                                     {company.title}
                                                 </h3>
 
-                                                <p className="text-slate-400 text-xs leading-relaxed mb-[8px] flex-1 line-clamp-1">
+                                                <p className="text-slate-400 text-xs leading-relaxed mb-2 flex-1 line-clamp-2">
                                                     {activity}
                                                 </p>
 

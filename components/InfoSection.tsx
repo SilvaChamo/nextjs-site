@@ -19,7 +19,7 @@ const EXEMPLARY_CATEGORIES: CategoryCard[] = [
     {
         title: "Turismo rural",
         description: "Notícias e oportunidades de turismo rural e lazer.",
-        icon: LucideIcons.Tractor,
+        icon: LucideIcons.Luggage,
         iconBg: "bg-red-50",
         iconColor: "text-red-500",
         href: "/produtos?q=turismo"
@@ -179,9 +179,12 @@ export function InfoSection() {
 
     // Helper to get local image overrides for news
     const getArticleImage = (article: any) => {
-        const title = article.title?.toLowerCase() || "";
+        const title = article.title ? article.title.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : "";
         if (title.includes("brasil") && title.includes("africa")) {
             return "/images/Prototipo/brasilafrica.jpg";
+        }
+        if (title.includes("gergelim") || title.includes("sofala")) {
+            return "/images/Prototipo/gergelim.jpg";
         }
         return article.image_url || "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?q=80&w=800&auto=format&fit=crop";
     };

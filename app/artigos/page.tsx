@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { StandardBlogTemplate } from "@/components/StandardBlogTemplate";
-import { BookOpen, Search, ArrowRight, Calendar, User, ChevronDown, Info } from "lucide-react";
+import { BookOpen, Search, ArrowRight, Calendar, User, ChevronDown, Info, Zap, Brain } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { supabase } from "@/lib/supabaseClient";
@@ -57,7 +57,22 @@ export default function ArticlesArchivePage() {
     const [isFetchingMore, setIsFetchingMore] = useState(false);
     const [isScanningGlobal, setIsScanningGlobal] = useState(false);
     const [isSearchActive, setIsSearchActive] = useState(false);
+    const [searchMode, setSearchMode] = useState<'manual' | 'auto'>('manual');
+    const [isModeSelectorOpen, setIsModeSelectorOpen] = useState(false);
     const loaderRef = useRef<HTMLDivElement>(null);
+
+    // Debounced Auto-Search
+    useEffect(() => {
+        if (searchMode === 'manual') return;
+
+        const timeoutId = setTimeout(() => {
+            if (searchQuery.length >= 3) {
+                handleSearch(undefined, true);
+            }
+        }, 800); // 800ms debounce
+
+        return () => clearTimeout(timeoutId);
+    }, [searchQuery, searchMode]);
 
     useEffect(() => {
         async function fetchInitial() {
@@ -151,8 +166,12 @@ export default function ArticlesArchivePage() {
         }
     };
 
-    const handleSearch = async (e?: React.KeyboardEvent | React.MouseEvent) => {
+    const handleSearch = async (e?: React.KeyboardEvent | React.MouseEvent, isAuto = false) => {
         if (e && 'key' in e && e.key !== 'Enter') return;
+
+        // Prevent manual search if auto is on (unless forced or different context) - but here simply allow both
+        // If mode is auto, we ignore Enter key to avoid double-firing, UNLESS it's a specific user intent.
+        // Actually, Enter should always force a search regardless of mode, confirming the action.
 
         setIsSearchActive(true);
 
@@ -248,13 +267,17 @@ export default function ArticlesArchivePage() {
             ]}
             sidebarComponents={
                 <div className="space-y-agro">
-                    <div className="bg-white p-6 rounded-[15px] border border-slate-100 shadow-sm">
+                    <div className="bg-white p-6 rounded-[15px] border border-slate-100 shadow-sm transition-all duration-300">
                         <div className="flex items-center gap-2 mb-4">
-                            <Info className="w-4 h-4 text-emerald-600" />
-                            <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-0">Informação</h3>
+                            {searchMode === 'auto' ? <Zap className="w-4 h-4 text-emerald-500" /> : <Info className="w-4 h-4 text-slate-400" />}
+                            <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-0">
+                                {searchMode === 'auto' ? 'Modo Automático' : 'Modo Intuitivo'}
+                            </h3>
                         </div>
                         <p className="text-sm text-slate-500 leading-relaxed">
-                            Acesse a maior biblioteca científica do agronegócio em Moçambique, com curadoria local e parcerias globais.
+                            {searchMode === 'auto'
+                                ? "O sistema pesquisa em tempo real enquanto você digita, vasculhando bibliotecas globais instantaneamente."
+                                : "A pesquisa é ativada apenas quando você decide, permitindo digitar frases completas com precisão antes de buscar."}
                         </p>
                     </div>
                 </div>
@@ -262,7 +285,7 @@ export default function ArticlesArchivePage() {
         >
             {/* Scientific Search Input - EXACT Home Style + Enter Trigger */}
             <div className="mb-[20px]">
-                <div className={`relative bg-white rounded-[10px] shadow-sm h-12 flex items-center border transition-all duration-300 overflow-hidden ${isScanningGlobal ? 'border-emerald-300 ring-2 ring-emerald-50' : 'border-gray-200'}`}>
+                <div className={`relative bg-white rounded-[15px] shadow-sm h-14 flex items-center border transition-all duration-300 ${isScanningGlobal ? 'border-emerald-300 ring-2 ring-emerald-50' : 'border-gray-200'}`}>
                     <button
                         onClick={() => handleSearch()}
                         className="pl-6 text-gray-400 hover:text-emerald-600 transition-colors"
@@ -281,11 +304,61 @@ export default function ArticlesArchivePage() {
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onKeyDown={handleSearch}
                     />
-                    {/* Visual Label - Clean Scientific Indicator */}
-                    <div className="flex items-center gap-2 px-6 h-full border-l border-gray-100 bg-gray-50 transition-colors">
-                        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider hidden sm:block whitespace-nowrap">
-                            {isScanningGlobal ? "Escaneando..." : "Artigos científicos"}
-                        </span>
+                    {/* Interactive Mode Selector */}
+                    <div className="relative h-full">
+                        <button
+                            onClick={() => setIsModeSelectorOpen(!isModeSelectorOpen)}
+                            className="group flex items-center gap-2 px-6 h-full border-l border-gray-100 bg-gray-50 hover:bg-gray-100 transition-all cursor-pointer relative rounded-r-[15px]"
+                        >
+                            {isScanningGlobal ? (
+                                <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider animate-pulse whitespace-nowrap">
+                                    Escaneando...
+                                </span>
+                            ) : (
+                                <>
+                                    {searchMode === 'auto' ? <Zap className="w-4 h-4 text-emerald-500" /> : <Brain className="w-4 h-4 text-slate-400" />}
+                                    <span className={`text-xs font-bold uppercase tracking-wider hidden sm:block whitespace-nowrap ${searchMode === 'auto' ? 'text-emerald-600' : 'text-slate-500'}`}>
+                                        {searchMode === 'auto' ? "Busca Automática" : "Busca Intuitiva"}
+                                    </span>
+                                    <ChevronDown
+                                        className={`w-3 h-3 text-slate-400 ml-1 transition-all duration-300 ${isModeSelectorOpen ? 'rotate-180' : 'group-hover:translate-y-0.5'}`}
+                                    />
+                                </>
+                            )}
+                        </button>
+
+                        {/* Dropdown Menu */}
+                        {isModeSelectorOpen && (
+                            <div className="absolute top-full right-0 mt-2 w-56 bg-white rounded-[10px] shadow-xl border border-slate-100 p-2 z-50 animate-in fade-in slide-in-from-top-2">
+                                <div className="space-y-1">
+                                    <button
+                                        onClick={() => { setSearchMode('manual'); setIsModeSelectorOpen(false); }}
+                                        className={`w-full flex items-center gap-3 p-3 rounded-lg text-left transition-colors ${searchMode === 'manual' ? 'bg-slate-50 border border-slate-100' : 'hover:bg-slate-50'}`}
+                                    >
+                                        <div className={`p-2 rounded-md ${searchMode === 'manual' ? 'bg-white shadow-sm text-indigo-500' : 'bg-slate-100 text-slate-400'}`}>
+                                            <Brain className="w-4 h-4" />
+                                        </div>
+                                        <div>
+                                            <p className={`text-xs font-bold uppercase tracking-wider ${searchMode === 'manual' ? 'text-slate-800' : 'text-slate-500'}`}>Intuitiva</p>
+                                            <p className="text-[10px] text-slate-400 leading-tight">Enter para pesquisar</p>
+                                        </div>
+                                    </button>
+
+                                    <button
+                                        onClick={() => { setSearchMode('auto'); setIsModeSelectorOpen(false); }}
+                                        className={`w-full flex items-center gap-3 p-3 rounded-lg text-left transition-colors ${searchMode === 'auto' ? 'bg-emerald-50 border border-emerald-100' : 'hover:bg-slate-50'}`}
+                                    >
+                                        <div className={`p-2 rounded-md ${searchMode === 'auto' ? 'bg-white shadow-sm text-emerald-500' : 'bg-slate-100 text-slate-400'}`}>
+                                            <Zap className="w-4 h-4" />
+                                        </div>
+                                        <div>
+                                            <p className={`text-xs font-bold uppercase tracking-wider ${searchMode === 'auto' ? 'text-emerald-700' : 'text-slate-500'}`}>Automática</p>
+                                            <p className="text-[10px] text-slate-400 leading-tight">Pesquisa enquanto digita (Web)</p>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
                 {isScanningGlobal && (

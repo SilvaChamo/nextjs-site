@@ -124,15 +124,41 @@ export default function ArticlesArchivePage() {
         if (e && 'key' in e && e.key !== 'Enter') return;
 
         setIsSearchActive(true);
-        const query = searchQuery.toLowerCase();
+
+        // Advanced Keyword Normalization Map
+        const KEYWORD_MAP: Record<string, string> = {
+            "estencionaista": "extensionista",
+            "extensionistas": "extensionista",
+            "civicultura": "silvicultura",
+            "agropecuario": "agropecuária",
+            "agropecuaria": "agropecuária",
+            "tecnico": "técnico",
+            "tecnica": "técnica",
+            "tecnicas": "técnica",
+            "tecnicos": "técnico",
+            "silvicultor": "silvicultura"
+        };
+
+        let query = searchQuery.toLowerCase().trim();
+
+        // Normalize common typos or variations
+        Object.keys(KEYWORD_MAP).forEach(key => {
+            if (query.includes(key)) {
+                query = query.replace(key, KEYWORD_MAP[key]);
+            }
+        });
+
         const filteredLocal = localArticles.filter(art =>
             art.title?.toLowerCase().includes(query) ||
             art.author?.toLowerCase().includes(query) ||
-            art.source?.toLowerCase().includes(query)
+            art.source?.toLowerCase().includes(query) ||
+            art.subtitle?.toLowerCase().includes(query)
         );
+
         if (query.length >= 3) {
             setArticles(filteredLocal);
-            const external = await fetchExternalArticles(searchQuery);
+            // Search external with normalized query for broader results
+            const external = await fetchExternalArticles(query);
             setArticles([...filteredLocal, ...external]);
         } else {
             setArticles(filteredLocal);
@@ -169,13 +195,13 @@ export default function ArticlesArchivePage() {
     return (
         <StandardBlogTemplate
             title="Artigos científicos"
-            backgroundImage="https://images.unsplash.com/photo-1507842217121-19e871299ee18?q=80&w=2000&auto=format&fit=crop"
+            backgroundImage="https://images.unsplash.com/photo-1507842217121-9e871299ee18?q=80&w=2000&auto=format&fit=crop"
             breadcrumbs={[
                 { label: "Início", href: "/" },
                 { label: "Repositório", href: "/repositorio" },
                 { label: "Artigos científicos", href: undefined }
             ]}
-            titleClassName="text-[24px] md:text-[32px] lg:text-[40px] font-semibold uppercase tracking-tighter"
+            titleClassName="text-[18px] md:text-[24px] lg:text-[28px] font-extrabold tracking-tight"
             sidebarComponents={
                 <div className="space-y-agro">
                     <div className="bg-white p-6 rounded-[15px] border border-slate-100 shadow-sm">

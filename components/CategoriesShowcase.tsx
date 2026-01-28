@@ -88,7 +88,7 @@ export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
                                                 <div className="flex justify-between items-start mb-2">
                                                     <div className="shrink-0">
                                                         {company.logo ? (
-                                                            <div className="w-[60px] h-[60px] rounded-[10px] overflow-hidden border border-gray-100 bg-white flex items-center justify-center p-1">
+                                                            <div className="w-[60px] h-[60px] rounded-[10px] overflow-hidden border-2 border-slate-300 bg-white flex items-center justify-center p-1">
                                                                 <Image
                                                                     src={company.logo}
                                                                     alt={company.title}
@@ -118,7 +118,7 @@ export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
                                                     {company.title}
                                                 </h3>
 
-                                                <p className="text-slate-400 text-xs leading-relaxed mb-2 flex-1 line-clamp-2">
+                                                <p className="text-slate-400 text-xs leading-relaxed mb-2 flex-1 line-clamp-2 min-h-[34px]">
                                                     {activity}
                                                 </p>
 

@@ -169,13 +169,13 @@ export default function ArticlesArchivePage() {
     return (
         <StandardBlogTemplate
             title="Artigos científicos"
-            backgroundImage="https://images.unsplash.com/photo-1507842217121-9e871299ee18?q=80&w=2000&auto=format&fit=crop"
+            backgroundImage="https://images.unsplash.com/photo-1507842217121-19e871299ee18?q=80&w=2000&auto=format&fit=crop"
             breadcrumbs={[
                 { label: "Início", href: "/" },
                 { label: "Repositório", href: "/repositorio" },
                 { label: "Artigos científicos", href: undefined }
             ]}
-            titleClassName="text-[30px] md:text-[38px] lg:text-[46px] font-black tracking-tight"
+            titleClassName="text-[20px] md:text-[28px] lg:text-[34px] font-black uppercase tracking-[0.5em]"
             sidebarComponents={
                 <div className="space-y-agro">
                     <div className="bg-white p-6 rounded-[15px] border border-slate-100 shadow-sm">

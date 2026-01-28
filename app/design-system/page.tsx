@@ -17,7 +17,6 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet";
-import { ArrowRight, History } from "lucide-react";
 import {
     Dialog,
     DialogContent,

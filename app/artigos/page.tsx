@@ -94,8 +94,39 @@ export default function ArticlesArchivePage() {
         if (!query || query.length < 3) return [];
         setIsScanningGlobal(true);
         try {
-            // Updated to use internal proxy to avoid CORS/NetworkErrors
-            const response = await fetch(`/api/articles/search?query=${encodeURIComponent(query)}&limit=10`);
+            // Enhanced Global Search: Try Portuguese query, and if it's a known term or specifically for MOZ, try English too.
+            // Semantic Scholar performs significantly better with English keywords.
+            const translationMap: Record<string, string> = {
+                "mocambique": "Mozambique",
+                "agricultura": "Agriculture",
+                "milho": "Maize",
+                "soja": "Soybean",
+                "agro-alimentar": "Agro-food",
+                "precisao": "Precision",
+                "setor agrario": "Agricultural sector",
+                "sector agrario": "Agricultural sector",
+                "agroindustria": "Agro-industry"
+            };
+
+            let searchQueries = [query];
+            const lowerQuery = query.toLowerCase();
+
+            // Add English version if translation exists
+            Object.keys(translationMap).forEach(pt => {
+                if (lowerQuery.includes(pt)) {
+                    searchQueries.push(translationMap[pt]);
+                }
+            });
+
+            // If query is specifically about Mozambique but in PT, always add Mozambique in EN
+            if (lowerQuery.includes("mocambique") && !searchQueries.includes("Mozambique")) {
+                searchQueries.push("Mozambique");
+            }
+
+            // Execute search with the most robust query (joined for broader coverage)
+            const finalQuery = Array.from(new Set(searchQueries)).join(" ");
+
+            const response = await fetch(`/api/articles/search?query=${encodeURIComponent(finalQuery)}&limit=15`);
             const data = await response.json();
 
             if (data && data.data) {
@@ -125,51 +156,53 @@ export default function ArticlesArchivePage() {
 
         setIsSearchActive(true);
 
-        // Helper to normalize text (remove accents and lowercase) for dialect-robust search
         const normalize = (text: string) =>
             text ? text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim() : "";
 
-        // Advanced Keyword Normalization Map (PT-BR / PT-PT / Typos)
+        // Expanded Keyword Mapping for robust search (PT-PT / PT-BR / Typos)
         const KEYWORD_MAP: Record<string, string> = {
             "estencionaista": "extensionista",
             "extensionistas": "extensionista",
             "civicultura": "silvicultura",
             "agropecuario": "agropecuaria",
-            "agropecuaria": "agropecuaria",
+            "agro-alimentar": "agroalimentar",
+            "agro alimentar": "agroalimentar",
+            "agro-alimenta": "agroalimentar",
+            "agro-industria": "agroindustria",
             "tecnico": "tecnico",
             "tecnica": "tecnica",
-            "tecnicas": "tecnica",
-            "tecnicos": "tecnico",
-            "silvicultor": "silvicultura",
-            "reflorestamento": "reflorestacao",
-            "reflorestacao": "reflorestacao"
+            "mocambique": "mocambique",
+            "mozambique": "mocambique",
+            "reflorestamento": "reflorestacao"
         };
 
         let rawQuery = searchQuery.toLowerCase().trim();
         let normalizedQuery = normalize(searchQuery);
 
-        // Normalize common typos or variations based on raw query
         Object.keys(KEYWORD_MAP).forEach(key => {
             if (rawQuery.includes(key)) {
                 normalizedQuery = normalizedQuery.replace(normalize(key), normalize(KEYWORD_MAP[key]));
             }
         });
 
-        const filteredLocal = localArticles.filter(art => {
-            const title = normalize(art.title);
-            const author = normalize(art.author);
-            const source = normalize(art.source);
-            const subtitle = normalize(art.subtitle);
+        // Split query into keywords for partial matching (Broad search)
+        const keywords = normalizedQuery.split(/\s+/).filter(k => k.length > 2);
 
-            return title.includes(normalizedQuery) ||
-                author.includes(normalizedQuery) ||
-                source.includes(normalizedQuery) ||
-                subtitle.includes(normalizedQuery);
+        const filteredLocal = localArticles.filter(art => {
+            const content = normalize(`${art.title} ${art.author} ${art.source} ${art.subtitle}`);
+
+            // If we have keywords, match if ANY keyword is present (OR logic for robustness)
+            if (keywords.length > 0) {
+                return keywords.some(word => content.includes(word));
+            }
+
+            // Fallback to exact-ish match if no significant keywords
+            return content.includes(normalizedQuery);
         });
 
         if (normalizedQuery.length >= 3) {
             setArticles(filteredLocal);
-            // Search external with normalized query for broader results
+            // Search external with normalized query
             const external = await fetchExternalArticles(normalizedQuery);
             setArticles([...filteredLocal, ...external]);
         } else {

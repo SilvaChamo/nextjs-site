@@ -69,7 +69,7 @@ export default function HistorialPage() {
                             <span className="text-xs font-black uppercase tracking-[0.2em] text-emerald-700">Trajectória de Inovação</span>
                         </div>
 
-                        <h1 className="text-[40px] md:text-[60px] font-[900] text-slate-800/80 leading-[1.1] mb-6 tracking-tight">
+                        <h1 className="text-[28px] md:text-[35px] font-[900] text-slate-800/80 leading-[1.1] mb-6 tracking-tight">
                             O nosso <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f97316] to-orange-600">Historial</span>
                         </h1>
 

@@ -125,40 +125,52 @@ export default function ArticlesArchivePage() {
 
         setIsSearchActive(true);
 
-        // Advanced Keyword Normalization Map
+        // Helper to normalize text (remove accents and lowercase) for dialect-robust search
+        const normalize = (text: string) =>
+            text ? text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim() : "";
+
+        // Advanced Keyword Normalization Map (PT-BR / PT-PT / Typos)
         const KEYWORD_MAP: Record<string, string> = {
             "estencionaista": "extensionista",
             "extensionistas": "extensionista",
             "civicultura": "silvicultura",
-            "agropecuario": "agropecuária",
-            "agropecuaria": "agropecuária",
-            "tecnico": "técnico",
-            "tecnica": "técnica",
-            "tecnicas": "técnica",
-            "tecnicos": "técnico",
-            "silvicultor": "silvicultura"
+            "agropecuario": "agropecuaria",
+            "agropecuaria": "agropecuaria",
+            "tecnico": "tecnico",
+            "tecnica": "tecnica",
+            "tecnicas": "tecnica",
+            "tecnicos": "tecnico",
+            "silvicultor": "silvicultura",
+            "reflorestamento": "reflorestacao",
+            "reflorestacao": "reflorestacao"
         };
 
-        let query = searchQuery.toLowerCase().trim();
+        let rawQuery = searchQuery.toLowerCase().trim();
+        let normalizedQuery = normalize(searchQuery);
 
-        // Normalize common typos or variations
+        // Normalize common typos or variations based on raw query
         Object.keys(KEYWORD_MAP).forEach(key => {
-            if (query.includes(key)) {
-                query = query.replace(key, KEYWORD_MAP[key]);
+            if (rawQuery.includes(key)) {
+                normalizedQuery = normalizedQuery.replace(normalize(key), normalize(KEYWORD_MAP[key]));
             }
         });
 
-        const filteredLocal = localArticles.filter(art =>
-            art.title?.toLowerCase().includes(query) ||
-            art.author?.toLowerCase().includes(query) ||
-            art.source?.toLowerCase().includes(query) ||
-            art.subtitle?.toLowerCase().includes(query)
-        );
+        const filteredLocal = localArticles.filter(art => {
+            const title = normalize(art.title);
+            const author = normalize(art.author);
+            const source = normalize(art.source);
+            const subtitle = normalize(art.subtitle);
 
-        if (query.length >= 3) {
+            return title.includes(normalizedQuery) ||
+                author.includes(normalizedQuery) ||
+                source.includes(normalizedQuery) ||
+                subtitle.includes(normalizedQuery);
+        });
+
+        if (normalizedQuery.length >= 3) {
             setArticles(filteredLocal);
             // Search external with normalized query for broader results
-            const external = await fetchExternalArticles(query);
+            const external = await fetchExternalArticles(normalizedQuery);
             setArticles([...filteredLocal, ...external]);
         } else {
             setArticles(filteredLocal);
@@ -201,7 +213,7 @@ export default function ArticlesArchivePage() {
                 { label: "Repositório", href: "/repositorio" },
                 { label: "Artigos científicos", href: undefined }
             ]}
-            titleClassName="text-[18px] md:text-[24px] lg:text-[28px] font-extrabold tracking-tight"
+            titleClassName="text-[20px] md:text-[26px] lg:text-[30px] font-extrabold tracking-tight"
             sidebarComponents={
                 <div className="space-y-agro">
                     <div className="bg-white p-6 rounded-[15px] border border-slate-100 shadow-sm">

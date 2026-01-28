@@ -1,16 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Package, Building2, ArrowRight, MapPin, Users, Briefcase } from "lucide-react";
+import { Package, MapPin, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { User } from "@supabase/supabase-js";
 
 export default function MeuConteudoPage() {
     const supabase = createClient();
-    const [activeTab, setActiveTab] = useState<"empresa" | "produtos" | "propriedades" | "conexoes">("empresa");
-    const [isRegistered, setIsRegistered] = useState(true); // Simulação de estado de registro
+    const [activeTab, setActiveTab] = useState<"produtos" | "propriedades" | "conexoes">("produtos");
     const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
@@ -21,25 +19,85 @@ export default function MeuConteudoPage() {
         getUser();
     }, []);
 
-    // Helper para obter nome de exibição
-    const getDisplayName = () => {
-        if (!user) return "Usuário";
-        return user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split("@")[0] || "Usuário";
+    // State for Product Form
+    const [isAddingProduct, setIsAddingProduct] = useState(false);
+    const [uploading, setUploading] = useState(false);
+    const [productForm, setProductForm] = useState({
+        name: "",
+        price: "",
+        category: "",
+        description: "",
+        imageUrl: ""
+    });
+
+    // Fetch user products
+    const [products, setProducts] = useState<any[]>([]);
+
+    useEffect(() => {
+        if (user) fetchProducts();
+    }, [user]);
+
+    const fetchProducts = async () => {
+        if (!user) return;
+        const { data, error } = await supabase
+            .from('products')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false });
+
+        if (data) setProducts(data);
     };
 
-    const getUserEmail = () => user?.email || "Sem email";
-    const getUserPhone = () => user?.user_metadata?.phone || user?.phone || "Não informado";
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || e.target.files.length === 0) return;
+        setUploading(true);
+        const file = e.target.files[0];
 
-    // Helper para obter avatar (Metadata ou UI Avatars based on email/name)
-    const getUserAvatar = () => {
-        if (!user) return null;
-        // Tenta pegar do metadata (Google Auth etc)
-        const metadataAvatar = user.user_metadata?.avatar_url || user.user_metadata?.picture;
-        if (metadataAvatar) return metadataAvatar;
+        try {
+            const fileName = `products/${user?.id}-${Date.now()}.jpg`;
+            const { error: uploadError } = await supabase.storage
+                .from('public-assets')
+                .upload(fileName, file);
 
-        // Fallback para UI Avatars com as iniciais do nome
-        const name = getDisplayName();
-        return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&color=fff&size=256`;
+            if (uploadError) throw uploadError;
+
+            const { data: { publicUrl } } = supabase.storage
+                .from('public-assets')
+                .getPublicUrl(fileName);
+
+            setProductForm(prev => ({ ...prev, imageUrl: publicUrl }));
+        } catch (error) {
+            console.error(error);
+            alert("Erro no upload da imagem");
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const handleSaveProduct = async () => {
+        if (!user || !productForm.name || !productForm.price) {
+            alert("Preencha os campos obrigatórios");
+            return;
+        }
+
+        const { error } = await supabase.from('products').insert({
+            user_id: user.id,
+            name: productForm.name,
+            price: productForm.price,
+            category: productForm.category,
+            description: productForm.description,
+            image_url: productForm.imageUrl,
+            company_id: null
+        });
+
+        if (error) {
+            alert("Erro ao salvar: " + error.message);
+        } else {
+            alert("Produto salvo com sucesso!");
+            setIsAddingProduct(false);
+            setProductForm({ name: "", price: "", category: "", description: "", imageUrl: "" });
+            fetchProducts();
+        }
     };
 
     return (
@@ -47,10 +105,13 @@ export default function MeuConteudoPage() {
             <div className="flex items-center justify-between mb-8">
                 <div>
                     <h2 className="text-3xl font-[900] tracking-tight text-[#3a3f47]">Meu Conteúdo</h2>
-                    <p className="text-slate-500">Gerencie todas as suas informações e ativos.</p>
+                    <p className="text-slate-500">Gerencie seus produtos, propriedades e conexões.</p>
                 </div>
                 {activeTab === "produtos" && (
-                    <Button className="px-6 py-2 rounded-md bg-emerald-600 hover:bg-orange-500 text-white font-bold shadow-md transition-all hover:scale-105">
+                    <Button
+                        onClick={() => setIsAddingProduct(true)}
+                        className="px-6 py-2 rounded-md bg-emerald-600 hover:bg-orange-500 text-white font-bold shadow-md transition-all hover:scale-105"
+                    >
                         + Novo Produto
                     </Button>
                 )}
@@ -58,15 +119,6 @@ export default function MeuConteudoPage() {
 
             {/* Tabs Navigation */}
             <div className="flex flex-wrap gap-2 border-b border-slate-300 mb-8">
-                <button
-                    onClick={() => setActiveTab("empresa")}
-                    className={`px-6 py-2 text-sm font-bold rounded-t-md transition-all border-t border-l border-r relative -mb-px ${activeTab === "empresa"
-                        ? "text-orange-600 border-slate-300 border-b-transparent bg-white"
-                        : "text-slate-500 border-transparent hover:text-orange-600"
-                        }`}
-                >
-                    Minha Empresa
-                </button>
                 <button
                     onClick={() => setActiveTab("produtos")}
                     className={`px-6 py-2 text-sm font-bold rounded-t-md transition-all border-t border-l border-r relative -mb-px ${activeTab === "produtos"
@@ -96,120 +148,109 @@ export default function MeuConteudoPage() {
                 </button>
             </div>
 
-            {/* Contéudo das Abas */}
+            {/* Content Area */}
             <div className="min-h-[400px]">
-
-                {/* ABA: EMPRESA */}
-                {activeTab === "empresa" && (
-                    <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-8">
-
-
-
-                        {/* 1. Dados da Empresa (Apenas se Registrado) */}
-                        {isRegistered && (
-                            <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
-                                <div className="bg-white px-6 py-4 border-b border-slate-200 flex justify-between items-center">
-                                    <h3 className="font-bold text-slate-700 flex items-center gap-2">
-                                        <Building2 className="w-5 h-5 text-emerald-600" />
-                                        Dados da Empresa
-                                    </h3>
-                                    <span className="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold uppercase rounded-full tracking-wide">
-                                        Verificada
-                                    </span>
-                                </div>
-                                <div className="p-6 md:p-8">
-                                    <div className="flex flex-col md:flex-row gap-8 items-start">
-                                        {/* Logo Placeholder */}
-                                        <div className="w-32 h-32 bg-slate-100 rounded-lg border border-slate-200 flex items-center justify-center shrink-0">
-                                            <Building2 className="w-12 h-12 text-slate-300" />
-                                        </div>
-
-                                        {/* Info Grid */}
-                                        <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-                                            <div>
-                                                <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Razão Social</p>
-                                                <p className="text-[#3a3f47] font-semibold">Agro Pecuária do Norte, Lda.</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">NUIT</p>
-                                                <p className="text-[#3a3f47] font-semibold">400 123 456</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Localização</p>
-                                                <p className="text-[#3a3f47] font-semibold">Nampula, Moçambique</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Setor</p>
-                                                <p className="text-[#3a3f47] font-semibold">Produção Agrícola</p>
-                                            </div>
-                                            <div className="md:col-span-2">
-                                                <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Descrição</p>
-                                                <p className="text-slate-600 text-sm leading-relaxed">
-                                                    Empresa dedicada à produção e comercialização de milho e soja, com foco em práticas sustentáveis e apoio à comunidade local.
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="mt-8 pt-6 border-t border-slate-100 flex justify-end gap-3">
-                                        <Button variant="outline" className="border-slate-300 text-slate-600 hover:text-slate-800">
-                                            Editar Dados
-                                        </Button>
-                                        <Button className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold">
-                                            Visualizar Perfil Público
-                                        </Button>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* 2. Card de Registro (Apenas se NÃO Registrado ou como Banner Secundário) */}
-                        {!isRegistered && (
-                            <div className="bg-white rounded-lg p-8 md:p-10 shadow-lg shadow-slate-200/50 border border-slate-100 relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50 rounded-full -mr-16 -mt-16 opacity-50 group-hover:scale-110 transition-transform duration-500 pointer-events-none"></div>
-
-                                <div className="relative z-10">
-                                    <div className="w-14 h-14 bg-emerald-100 rounded-lg flex items-center justify-center mb-6 text-emerald-600">
-                                        <Building2 className="w-7 h-7" />
-                                    </div>
-
-                                    <h3 className="text-2xl font-black text-[#3a3f47] mb-3">Registar a minha Empresa</h3>
-                                    <p className="text-slate-500 mb-8 leading-relaxed max-w-lg">
-                                        Junte-se ao maior diretório de empresas do setor agrário em Moçambique.
-                                        Aumente a sua visibilidade, encontre parceiros e expanda os seus negócios.
-                                    </p>
-
-                                    <Link href="/usuario/registo-empresa">
-                                        <Button className="h-12 px-8 bg-[#f97316] hover:bg-[#ea580c] text-white rounded-lg text-sm font-bold uppercase tracking-wider shadow-lg shadow-orange-500/20 transition-all hover:scale-105">
-                                            Começar Registo <ArrowRight className="ml-2 w-5 h-5" />
-                                        </Button>
-                                    </Link>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                )}
-
-
-                {/* ABA: PRODUTOS */}
                 {activeTab === "produtos" && (
                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-                        <div className="border border-dashed border-slate-300 rounded-xl h-80 flex flex-col items-center justify-center bg-slate-50 text-slate-500 space-y-4">
-                            <div className="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center">
-                                <Package className="w-8 h-8 text-slate-400" />
+                        {isAddingProduct ? (
+                            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-lg max-w-2xl mx-auto">
+                                <h3 className="font-bold text-xl mb-6">Novo Produto</h3>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="text-sm font-bold text-slate-700">Nome do Produto</label>
+                                        <input
+                                            className="w-full border p-2 rounded-md focus:ring-2 focus:ring-emerald-500 outline-none"
+                                            value={productForm.name}
+                                            onChange={e => setProductForm({ ...productForm, name: e.target.value })}
+                                            placeholder="Ex: Milho Branco"
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="text-sm font-bold text-slate-700">Preço (MT)</label>
+                                            <input
+                                                className="w-full border p-2 rounded-md focus:ring-2 focus:ring-emerald-500 outline-none"
+                                                value={productForm.price}
+                                                onChange={e => setProductForm({ ...productForm, price: e.target.value })}
+                                                placeholder="0.00"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-sm font-bold text-slate-700">Categoria</label>
+                                            <input
+                                                className="w-full border p-2 rounded-md focus:ring-2 focus:ring-emerald-500 outline-none"
+                                                value={productForm.category}
+                                                onChange={e => setProductForm({ ...productForm, category: e.target.value })}
+                                                placeholder="Ex: Grãos"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="text-sm font-bold text-slate-700">Descrição</label>
+                                        <textarea
+                                            className="w-full border p-2 rounded-md h-24 focus:ring-2 focus:ring-emerald-500 outline-none resize-none"
+                                            value={productForm.description}
+                                            onChange={e => setProductForm({ ...productForm, description: e.target.value })}
+                                            placeholder="Detalhes do produto..."
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-sm font-bold text-slate-700 mb-2 block">Imagem</label>
+                                        <div className="flex items-center gap-4">
+                                            {productForm.imageUrl && <img src={productForm.imageUrl} className="w-16 h-16 object-cover rounded shadow-sm" />}
+                                            <input type="file" onChange={handleImageUpload} disabled={uploading} className="text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
+                                            {uploading && <span className="text-sm text-orange-500 animate-pulse">Enviando...</span>}
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-end gap-2 pt-4">
+                                        <Button variant="outline" onClick={() => setIsAddingProduct(false)}>Cancelar</Button>
+                                        <Button onClick={handleSaveProduct} className="bg-emerald-600 text-white hover:bg-emerald-700">Salvar Produto</Button>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="text-center">
-                                <h3 className="font-bold text-lg text-slate-700">Você ainda não tem produtos</h3>
-                                <p className="text-sm max-w-xs mx-auto mt-1">Comece a adicionar seus produtos para que apareçam no mercado.</p>
-                            </div>
-                            <Button variant="outline" className="mt-4 border-slate-300 hover:bg-white hover:text-orange-600">
-                                Adicionar Primeiro Produto
-                            </Button>
-                        </div>
+                        ) : (
+                            <>
+                                {products.length === 0 ? (
+                                    <div className="border border-dashed border-slate-300 rounded-xl h-80 flex flex-col items-center justify-center bg-slate-50 text-slate-500 space-y-4">
+                                        <div className="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center">
+                                            <Package className="w-8 h-8 text-slate-400" />
+                                        </div>
+                                        <div className="text-center">
+                                            <h3 className="font-bold text-lg text-slate-700">Você ainda não tem produtos</h3>
+                                            <p className="text-sm max-w-xs mx-auto mt-1">Comece a adicionar seus produtos para que apareçam no mercado.</p>
+                                        </div>
+                                        <Button
+                                            onClick={() => setIsAddingProduct(true)}
+                                            variant="outline" className="mt-4 border-slate-300 hover:bg-white hover:text-orange-600 hover:border-orange-200"
+                                        >
+                                            Adicionar Primeiro Produto
+                                        </Button>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        {products.map((p, i) => (
+                                            <div key={i} className="bg-white border border-slate-100 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
+                                                <div className="h-40 bg-slate-100 relative overflow-hidden">
+                                                    {p.image_url ? (
+                                                        <img src={p.image_url} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                                    ) : (
+                                                        <div className="flex items-center justify-center h-full text-slate-300"><Package className="w-8 h-8" /></div>
+                                                    )}
+                                                </div>
+                                                <div className="p-4">
+                                                    <h4 className="font-bold text-slate-800 line-clamp-1">{p.name}</h4>
+                                                    <p className="text-orange-600 font-bold text-base">{p.price} MT</p>
+                                                    <p className="text-slate-500 text-xs mt-1 line-clamp-2 leading-relaxed">{p.description}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </>
+                        )}
                     </div>
                 )}
 
-                {/* ABA: PROPRIEDADES */}
                 {activeTab === "propriedades" && (
                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
                         <div className="border border-dashed border-slate-300 rounded-xl h-80 flex flex-col items-center justify-center bg-slate-50 text-slate-500 space-y-4">
@@ -220,14 +261,13 @@ export default function MeuConteudoPage() {
                                 <h3 className="font-bold text-lg text-slate-700">Nenhuma propriedade cadastrada</h3>
                                 <p className="text-sm max-w-xs mx-auto mt-1">Adicione suas fazendas, terrenos ou instalações.</p>
                             </div>
-                            <Button variant="outline" className="mt-4 border-slate-300 hover:bg-white hover:text-orange-600">
+                            <Button variant="outline" className="mt-4 border-slate-300 hover:bg-white hover:text-orange-600 hover:border-orange-200">
                                 Adicionar Propriedade
                             </Button>
                         </div>
                     </div>
                 )}
 
-                {/* ABA: CONEXÕES */}
                 {activeTab === "conexoes" && (
                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
                         <div className="border border-dashed border-slate-300 rounded-xl h-80 flex flex-col items-center justify-center bg-slate-50 text-slate-500 space-y-4">
@@ -238,14 +278,14 @@ export default function MeuConteudoPage() {
                                 <h3 className="font-bold text-lg text-slate-700">Sem conexões ativas</h3>
                                 <p className="text-sm max-w-xs mx-auto mt-1">Conecte-se com outros produtores e empresas da rede.</p>
                             </div>
-                            <Button variant="outline" className="mt-4 border-slate-300 hover:bg-white hover:text-orange-600">
+                            <Button variant="outline" className="mt-4 border-slate-300 hover:bg-white hover:text-orange-600 hover:border-orange-200">
                                 Buscar Parceiros
                             </Button>
                         </div>
                     </div>
                 )}
-
             </div>
         </div>
     );
 }
+

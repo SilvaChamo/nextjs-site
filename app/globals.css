@@ -130,7 +130,7 @@
   }
 
   h2 {
-    @apply font-heading font-black text-[28px] md:text-[36px] leading-[1.2] tracking-tight mb-4 text-slate-700 dark:text-white;
+    @apply font-heading font-black text-[28px] md:text-[35px] leading-[1.2] tracking-tight mb-4 text-slate-700 dark:text-white;
   }
 
   h3 {

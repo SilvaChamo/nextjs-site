@@ -217,7 +217,7 @@ export default function SobrePage() {
                             <h1 className="text-white mb-2">
                                 Conectando o agro-negócio ao <span className="text-[#f97316]">mercado nacional</span>
                             </h1>
-                            <h3 className="text-2xl md:text-4xl font-heading font-normal text-slate-300 leading-tight mb-8">
+                            <h3 className="text-[20px] font-heading font-normal text-slate-300 leading-relaxed mb-8">
                                 Infra-estrutura que Impulsiona o Desenvolvimento
                             </h3>
 

@@ -28,50 +28,51 @@ import {
 
 export default function DesignSystem() {
     return (
-                <div className="flex items-center gap-6 mb-8 border-b border-slate-200 pb-8">
-                    <img src="/logo_new.png" alt="Base Agro Data Logo" className="h-14 w-auto" />
-                    <div className="space-y-1">
-                        <h1 className="text-[35px] font-black tracking-tight text-slate-800">Design System</h1>
-                        <p className="text-slate-500 text-sm font-medium">
-                            Ambiente de desenvolvimento e kit de padronização de componentes.
-                        </p>
+        <div className="min-h-screen bg-background p-10 space-y-10">
+            <div className="flex items-center gap-6 mb-8 border-b border-slate-200 pb-8">
+                <img src="/logo_new.png" alt="Base Agro Data Logo" className="h-14 w-auto" />
+                <div className="space-y-1">
+                    <h1 className="text-[35px] font-black tracking-tight text-slate-800">Design System</h1>
+                    <p className="text-slate-500 text-sm font-medium">
+                        Ambiente de desenvolvimento e kit de padronização de componentes.
+                    </p>
+                </div>
+            </div>
+
+            <section className="space-y-6 bg-slate-50 p-8 rounded-2xl border border-slate-200">
+                <div className="flex items-center gap-3 mb-4">
+                    <div className="w-8 h-8 bg-[#f97316] rounded-lg flex items-center justify-center">
+                        <span className="text-white font-bold text-xs">Aa</span>
                     </div>
+                    <h2 className="text-xl font-black text-slate-800 uppercase tracking-wider">Kit de Tipografia (Padrão 35px)</h2>
                 </div>
 
-                <section className="space-y-6 bg-slate-50 p-8 rounded-2xl border border-slate-200">
-                    <div className="flex items-center gap-3 mb-4">
-                        <div className="w-8 h-8 bg-[#f97316] rounded-lg flex items-center justify-center">
-                            <span className="text-white font-bold text-xs">Aa</span>
-                        </div>
-                        <h2 className="text-xl font-black text-slate-800 uppercase tracking-wider">Kit de Tipografia (Padrão 35px)</h2>
+                <div className="grid gap-8">
+                    <div className="space-y-2">
+                        <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">H1 - Título de Banner (Desktop)</p>
+                        <h1 className="text-[35px] font-extrabold tracking-tight text-slate-800 leading-none mb-0">
+                            Título Principal do Site
+                        </h1>
+                        <p className="text-[12px] text-emerald-600 font-bold">font-extrabold | 35px | tracking-tight | Sentence case</p>
                     </div>
-                    
-                    <div className="grid gap-8">
-                        <div className="space-y-2">
-                            <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">H1 - Título de Banner (Desktop)</p>
-                            <h1 className="text-[35px] font-extrabold tracking-tight text-slate-800 leading-none mb-0">
-                                Título Principal do Site
-                            </h1>
-                            <p className="text-[12px] text-emerald-600 font-bold">font-extrabold | 35px | tracking-tight | Sentence case</p>
-                        </div>
 
-                        <div className="space-y-2">
-                            <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">H2 - Título de Secção (Desktop)</p>
-                            <h2 className="text-[35px] font-black tracking-tight text-slate-700 leading-none mb-0">
-                                Título de Secção de Conteúdo
-                            </h2>
-                            <p className="text-[12px] text-emerald-600 font-bold">font-black | 35px | tracking-tight | text-slate-700</p>
-                        </div>
-
-                        <div className="space-y-2">
-                            <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">H3 - Subtítulo / Destaque</p>
-                            <h3 className="text-[20px] font-normal text-slate-500 leading-relaxed mb-0">
-                                Infra-estrutura que Impulsiona o Desenvolvimento do Sector Agrário
-                            </h3>
-                            <p className="text-[12px] text-emerald-600 font-bold">font-normal | 20px | leading-relaxed | text-slate-500</p>
-                        </div>
+                    <div className="space-y-2">
+                        <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">H2 - Título de Secção (Desktop)</p>
+                        <h2 className="text-[35px] font-black tracking-tight text-slate-700 leading-none mb-0">
+                            Título de Secção de Conteúdo
+                        </h2>
+                        <p className="text-[12px] text-emerald-600 font-bold">font-black | 35px | tracking-tight | text-slate-700</p>
                     </div>
-                </section>
+
+                    <div className="space-y-2">
+                        <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">H3 - Subtítulo / Destaque</p>
+                        <h3 className="text-[20px] font-normal text-slate-500 leading-relaxed mb-0">
+                            Infra-estrutura que Impulsiona o Desenvolvimento do Sector Agrário
+                        </h3>
+                        <p className="text-[12px] text-emerald-600 font-bold">font-normal | 20px | leading-relaxed | text-slate-500</p>
+                    </div>
+                </div>
+            </section>
 
             <section className="space-y-4 border-b pb-10">
                 <h2 className="text-2xl font-semibold">Módulos & Páginas (Workspaces)</h2>

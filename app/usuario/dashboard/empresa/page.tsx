@@ -16,7 +16,10 @@ export default function EmpresaPage() {
     const [showSuccessPopup, setShowSuccessPopup] = useState(false);
     const [isUploadingLogo, setIsUploadingLogo] = useState(false);
     const [logoError, setLogoError] = useState<string | null>(null);
+    const [isUploadingBanner, setIsUploadingBanner] = useState(false);
+    const [bannerError, setBannerError] = useState<string | null>(null);
     const [companyId, setCompanyId] = useState<string | null>(null);
+    const [products, setProducts] = useState<any[]>([]);
 
     const [companyForm, setCompanyForm] = useState({
         name: "",
@@ -29,8 +32,20 @@ export default function EmpresaPage() {
         description: "",
         address: "",
         logo_url: "",
-        value_chain: ""
+        banner_url: "",
+        value_chain: "",
+        slug: "",
+        mission: "",
+        vision: "",
+        values: "",
+        services: [] as string[]
     });
+
+    // Auto-resize textarea function
+    const autoResize = (target: HTMLTextAreaElement) => {
+        target.style.height = 'auto';
+        target.style.height = `${target.scrollHeight}px`;
+    };
 
     useEffect(() => {
         const getUser = async () => {
@@ -63,8 +78,33 @@ export default function EmpresaPage() {
                     description: data.description || "",
                     address: data.address || "",
                     logo_url: data.logo_url || "",
-                    value_chain: data.value_chain || ""
+                    banner_url: data.banner_url || "",
+                    value_chain: data.value_chain || "",
+                    slug: data.slug || "",
+                    mission: data.mission || "",
+                    vision: data.vision || "",
+                    values: data.values || "",
+                    services: Array.isArray(data.services) ? data.services : []
                 });
+
+                // Fetch Products
+                const { data: productsData } = await supabase
+                    .from('products')
+                    .select('*')
+                    .eq('company_id', data.id)
+                    .order('created_at', { ascending: false });
+
+                if (productsData) setProducts(productsData);
+
+                // Initial resize after a short delay to ensure DOM is ready
+                setTimeout(() => {
+                    const textareas = document.querySelectorAll('textarea');
+                    textareas.forEach(ta => {
+                        if (ta.classList.contains('overflow-hidden')) {
+                            autoResize(ta as HTMLTextAreaElement);
+                        }
+                    });
+                }, 100);
             } else {
                 setIsRegistered(false);
             }
@@ -76,14 +116,14 @@ export default function EmpresaPage() {
         if (!e.target.files || e.target.files.length === 0) return;
         const file = e.target.files[0];
 
-        const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+        const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
         if (!validTypes.includes(file.type)) {
-            setLogoError("Formato inválido. Use JPG ou PNG.");
+            setLogoError("Formato inválido. Use JPG, PNG ou WebP.");
             return;
         }
 
-        if (file.size > 2 * 1024 * 1024) {
-            setLogoError("O arquivo é muito grande. Máximo 2MB.");
+        if (file.size > 1 * 1024 * 1024) {
+            setLogoError("O arquivo é muito grande. Máximo 1MB.");
             return;
         }
 
@@ -106,6 +146,40 @@ export default function EmpresaPage() {
         setIsUploadingLogo(false);
     };
 
+    const handleCompanyBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || e.target.files.length === 0) return;
+        const file = e.target.files[0];
+
+        const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+        if (!validTypes.includes(file.type)) {
+            setBannerError("Formato inválido. Use JPG, PNG ou WebP.");
+            return;
+        }
+
+        if (file.size > 1 * 1024 * 1024) {
+            setBannerError("O arquivo é muito grande. Máximo 1MB.");
+            return;
+        }
+
+        setBannerError(null);
+        setIsUploadingBanner(true);
+        const fileName = `banners/${user?.id}-${Date.now()}.jpg`;
+
+        const { error: uploadError } = await supabase.storage
+            .from('public-assets')
+            .upload(fileName, file);
+
+        if (!uploadError) {
+            const { data: { publicUrl } } = supabase.storage
+                .from('public-assets')
+                .getPublicUrl(fileName);
+            setCompanyForm(prev => ({ ...prev, banner_url: publicUrl }));
+        } else {
+            setBannerError(`Erro no upload: ${uploadError.message}`);
+        }
+        setIsUploadingBanner(false);
+    };
+
     const handleUpdateCompany = async () => {
         if (!user || !companyId) return;
 
@@ -122,7 +196,12 @@ export default function EmpresaPage() {
                 description: companyForm.description,
                 address: companyForm.address,
                 logo_url: companyForm.logo_url,
+                banner_url: companyForm.banner_url,
                 value_chain: companyForm.value_chain,
+                mission: companyForm.mission,
+                vision: companyForm.vision,
+                values: companyForm.values,
+                services: companyForm.services,
                 updated_at: new Date().toISOString()
             })
             .eq('id', companyId);
@@ -158,30 +237,53 @@ export default function EmpresaPage() {
                 </div>
             )}
 
-            <div className="mb-8">
-                <h2 className="text-3xl font-[900] tracking-tight text-[#3a3f47]">Minha Empresa</h2>
-                <p className="text-slate-500">Gerencie os dados e o perfil público da sua empresa.</p>
+            <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <h2 className="text-3xl font-[900] tracking-tight text-[#3a3f47]">Minha Empresa</h2>
+                    <p className="text-slate-500">Gerencie os dados e o perfil público da sua empresa.</p>
+                </div>
+                {isRegistered && (
+                    <Link href={`/empresas/${companyForm.slug}`} target="_blank">
+                        <Button variant="outline" className="border-emerald-600 text-emerald-600 hover:bg-emerald-50 font-bold gap-2">
+                            Visualizar Empresa
+                            <ArrowRight className="w-4 h-4" />
+                        </Button>
+                    </Link>
+                )}
             </div>
 
             <div className="min-h-[400px]">
                 {isRegistered ? (
                     <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
                         <div className="bg-white px-6 py-4 border-b border-slate-200 flex justify-between items-center">
-                            <h3 className="font-bold text-slate-700 flex items-center gap-2">
+                            <h3 className="font-extrabold text-[#3a3f47] flex items-center gap-2">
                                 <Building2 className="w-5 h-5 text-emerald-600" />
-                                Dados da Empresa
+                                PERFIL CORPORATIVO
                             </h3>
-                            <span className="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold uppercase rounded-full tracking-wide">
-                                Verificada
-                            </span>
+                            <div className="flex items-center gap-3">
+                                {isEditingCompany ? (
+                                    <>
+                                        <Button variant="ghost" size="sm" onClick={() => setIsEditingCompany(false)} className="text-slate-400 hover:text-slate-600 font-bold uppercase text-[10px] tracking-widest">
+                                            Cancelar
+                                        </Button>
+                                        <Button size="sm" onClick={handleUpdateCompany} className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase text-[10px] tracking-widest px-4">
+                                            SALVAR ALTERAÇÕES
+                                        </Button>
+                                    </>
+                                ) : (
+                                    <Button size="sm" variant="outline" onClick={() => setIsEditingCompany(true)} className="border-slate-200 text-slate-500 hover:text-emerald-600 hover:border-emerald-600 font-bold uppercase text-[10px] tracking-widest px-4">
+                                        Editar Perfil
+                                    </Button>
+                                )}
+                            </div>
                         </div>
                         <div className="p-6 md:p-8">
                             <div className="space-y-8">
-                                {/* Top Section: Logo & Grid(Info | Description) */}
-                                <div className="flex flex-col md:flex-row gap-8 items-start">
+                                {/* Top Section: Logo & Grid(Info | Banner) */}
+                                <div className="flex flex-col md:flex-row gap-5 items-center">
                                     {/* Logo Section */}
                                     <div className="w-full md:w-auto flex-shrink-0 flex justify-center md:justify-start">
-                                        <div className="w-40 h-40 bg-slate-100 rounded-lg border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden p-[15px] relative group">
+                                        <div className="w-40 h-40 bg-slate-100 rounded-lg border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden p-[20px] relative group">
                                             {isUploadingLogo && (
                                                 <div className="absolute inset-0 bg-black/10 flex items-center justify-center z-10">
                                                     <div className="w-6 h-6 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
@@ -189,7 +291,7 @@ export default function EmpresaPage() {
                                             )}
 
                                             {companyForm.logo_url ? (
-                                                <img src={companyForm.logo_url} alt={companyForm.name} className="w-full h-full object-contain" />
+                                                <img src={companyForm.logo_url} alt={companyForm.name} className="w-full h-full object-cover" />
                                             ) : companyForm.name ? (
                                                 <div className="w-full h-full bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-3xl">
                                                     {companyForm.name.charAt(0)}
@@ -205,134 +307,305 @@ export default function EmpresaPage() {
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-600"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" x2="12" y1="3" y2="15" /></svg>
                                                         </div>
                                                     </label>
-                                                    <input type="file" id="logo-upload" onChange={handleCompanyLogoUpload} className="hidden" accept="image/png, image/jpeg, image/jpg" />
+                                                    <input type="file" id="logo-upload" onChange={handleCompanyLogoUpload} className="hidden" accept="image/png, image/jpeg, image/jpg, image/webp" />
                                                 </>
                                             )}
                                         </div>
                                         {logoError && <p className="text-xs text-red-500 mt-2 text-center md:text-left">{logoError}</p>}
                                     </div>
 
-                                    {/* Info & Description Section */}
-                                    <div className="flex-1 w-full grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    {/* Info & Banner Section */}
+                                    <div className="flex-1 w-full grid grid-cols-1 lg:grid-cols-2 gap-5 items-center h-full">
                                         {/* Left Column: Basic Info */}
-                                        <div className="space-y-4">
+                                        <div className="space-y-3">
                                             <input
-                                                className="w-full border border-slate-200 bg-slate-50 p-2 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-[#3a3f47] font-semibold disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300"
+                                                className="w-full border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-600 font-sans text-sm font-semibold disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300"
                                                 value={companyForm.name}
                                                 onChange={e => setCompanyForm({ ...companyForm, name: e.target.value })}
                                                 disabled={!isEditingCompany}
-                                                placeholder="Razão social"
+                                                placeholder="Razão social / Nome da Empresa"
                                             />
                                             <input
-                                                className="w-full border border-slate-200 bg-slate-50 p-2 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-[#3a3f47] font-semibold disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300"
+                                                className="w-full border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-600 font-sans text-sm font-semibold disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300"
                                                 value={companyForm.contact}
                                                 onChange={e => setCompanyForm({ ...companyForm, contact: e.target.value })}
-                                                placeholder="Telefone"
+                                                placeholder="Telefone de Contacto"
                                                 disabled={!isEditingCompany}
                                             />
                                             <input
-                                                className="w-full border border-slate-200 bg-slate-50 p-2 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-[#3a3f47] font-semibold disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300"
+                                                className="w-full border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-600 font-sans text-sm font-semibold disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300"
                                                 value={companyForm.address}
                                                 onChange={e => setCompanyForm({ ...companyForm, address: e.target.value })}
                                                 disabled={!isEditingCompany}
-                                                placeholder="Endereço/Avenida"
+                                                placeholder="Endereço / Avenida / Rua"
                                             />
                                         </div>
 
-                                        {/* Right Column: Description */}
-                                        <div className="h-full">
-                                            <textarea
-                                                className="w-full h-full min-h-[140px] border border-slate-200 bg-slate-50 p-3 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-sm leading-relaxed resize-none disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300"
-                                                value={companyForm.description}
-                                                onChange={e => setCompanyForm({ ...companyForm, description: e.target.value })}
-                                                disabled={!isEditingCompany}
-                                                placeholder="Descrição"
-                                            />
+                                        {/* Right Column: Banner Upload */}
+                                        <div className="flex flex-col">
+                                            <div className="relative h-40 bg-slate-100 rounded-lg border-2 border-dashed border-slate-200 overflow-hidden group">
+                                                {isUploadingBanner && (
+                                                    <div className="absolute inset-0 bg-black/10 flex items-center justify-center z-10">
+                                                        <div className="w-8 h-8 border-3 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+                                                    </div>
+                                                )}
+
+                                                {companyForm.banner_url ? (
+                                                    <img src={companyForm.banner_url} alt="Banner" className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
+                                                        <svg className="w-8 h-8 text-slate-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                        </svg>
+                                                        <span className="text-xs text-slate-400">Recomendado: 1200x400px (Máx 1MB)</span>
+                                                    </div>
+                                                )}
+
+                                                {isEditingCompany && (
+                                                    <>
+                                                        <label htmlFor="banner-upload" className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors cursor-pointer flex items-center justify-center">
+                                                            <div className="bg-white px-4 py-2 rounded-lg shadow-sm font-bold text-xs text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                {companyForm.banner_url ? 'Alterar Banner' : 'Subir Banner'}
+                                                            </div>
+                                                        </label>
+                                                        <input type="file" id="banner-upload" onChange={handleCompanyBannerUpload} className="hidden" accept="image/png, image/jpeg, image/jpg, image/webp" />
+                                                    </>
+                                                )}
+                                            </div>
+                                            {bannerError && <p className="text-[10px] text-red-500 text-center">{bannerError}</p>}
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Bottom Section: Remaining Fields Grid */}
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-                                    <input
-                                        className="w-full border border-slate-200 bg-slate-50 p-2 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-[#3a3f47] font-semibold disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300"
-                                        value={companyForm.nuit}
-                                        onChange={e => setCompanyForm({ ...companyForm, nuit: e.target.value })}
-                                        disabled={!isEditingCompany}
-                                        placeholder="Nuit"
-                                    />
-                                    <input
-                                        className="w-full border border-slate-200 bg-slate-50 p-2 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-[#3a3f47] font-semibold disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300"
-                                        value={companyForm.email}
-                                        onChange={e => setCompanyForm({ ...companyForm, email: e.target.value })}
-                                        disabled={!isEditingCompany}
-                                        placeholder="Email"
-                                    />
-                                    <select
-                                        className="w-full border border-slate-200 bg-slate-50 p-2 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-[#3a3f47] font-semibold disabled:opacity-100 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300 disabled:appearance-none pr-8"
-                                        value={companyForm.value_chain}
-                                        onChange={e => setCompanyForm({ ...companyForm, value_chain: e.target.value })}
-                                        disabled={!isEditingCompany}
-                                    >
-                                        <option value="">Cadeia de valor</option>
-                                        {VALUE_CHAINS.map(vc => <option key={vc} value={vc}>{vc}</option>)}
-                                    </select>
-                                    <div className="relative">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
+                                    <div className="space-y-3">
+                                        <input
+                                            className="w-full border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-600 font-sans text-sm font-semibold disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300"
+                                            value={companyForm.nuit}
+                                            onChange={e => setCompanyForm({ ...companyForm, nuit: e.target.value })}
+                                            disabled={!isEditingCompany}
+                                            placeholder="NUIT (Número Unificado de Imposto)"
+                                        />
+                                        <input
+                                            className="w-full border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-600 font-sans text-sm font-semibold disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300"
+                                            value={companyForm.email}
+                                            onChange={e => setCompanyForm({ ...companyForm, email: e.target.value })}
+                                            disabled={!isEditingCompany}
+                                            placeholder="Email Institucional / de Contacto"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-3">
                                         <select
-                                            className="w-full border border-slate-200 bg-slate-50 p-2 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-[#3a3f47] font-semibold disabled:opacity-100 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300 disabled:appearance-none pr-8"
-                                            value={SECTORS.includes(companyForm.category) ? companyForm.category : "Outro"}
-                                            onChange={e => {
-                                                if (e.target.value === "Outro") setCompanyForm({ ...companyForm, category: "" });
-                                                else setCompanyForm({ ...companyForm, category: e.target.value });
-                                            }}
+                                            className="w-full border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-600 font-sans text-sm font-semibold disabled:opacity-100 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300 disabled:appearance-none pr-8"
+                                            value={companyForm.value_chain}
+                                            onChange={e => setCompanyForm({ ...companyForm, value_chain: e.target.value })}
                                             disabled={!isEditingCompany}
                                         >
-                                            <option value="">Setor</option>
-                                            {SECTORS.map(s => <option key={s} value={s}>{s}</option>)}
+                                            <option value="">Cadeia de valor</option>
+                                            {VALUE_CHAINS.map(vc => <option key={vc} value={vc}>{vc}</option>)}
                                         </select>
-                                        {((!SECTORS.includes(companyForm.category) && companyForm.category !== "") || (!SECTORS.includes(companyForm.category) && companyForm.category === "")) && (
-                                            <input
-                                                className="w-full border border-slate-200 bg-slate-50 p-2 rounded-lg mt-2 focus:ring-2 focus:ring-emerald-500 outline-none transition-all disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300"
-                                                placeholder="Especifique o setor..."
-                                                value={companyForm.category}
-                                                onChange={e => setCompanyForm({ ...companyForm, category: e.target.value })}
+                                        <div className="relative">
+                                            <select
+                                                className="w-full border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-600 font-sans text-sm font-semibold disabled:opacity-100 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300 disabled:appearance-none pr-8"
+                                                value={SECTORS.includes(companyForm.category) ? companyForm.category : "Outro"}
+                                                onChange={e => {
+                                                    if (e.target.value === "Outro") setCompanyForm({ ...companyForm, category: "" });
+                                                    else setCompanyForm({ ...companyForm, category: e.target.value });
+                                                }}
                                                 disabled={!isEditingCompany}
+                                            >
+                                                <option value="">Setor de Actividade</option>
+                                                {SECTORS.map(s => <option key={s} value={s}>{s}</option>)}
+                                            </select>
+                                            {((!SECTORS.includes(companyForm.category) && companyForm.category !== "") || (!SECTORS.includes(companyForm.category) && companyForm.category === "")) && (
+                                                <input
+                                                    className="w-full border border-slate-200 bg-slate-50 p-[10px] rounded-lg mt-2 focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-600 font-sans text-sm font-semibold disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300"
+                                                    placeholder="Especifique o setor..."
+                                                    value={companyForm.category}
+                                                    onChange={e => setCompanyForm({ ...companyForm, category: e.target.value })}
+                                                    disabled={!isEditingCompany}
+                                                />
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        <select
+                                            className="w-full border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-600 font-sans text-sm font-semibold disabled:opacity-100 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300 disabled:appearance-none pr-8"
+                                            value={companyForm.province}
+                                            onChange={e => setCompanyForm({ ...companyForm, province: e.target.value, district: "" })}
+                                            disabled={!isEditingCompany}
+                                        >
+                                            <option value="">Província</option>
+                                            {Object.keys(MOZ_DATA).map(p => <option key={p} value={p}>{p}</option>)}
+                                        </select>
+                                        <select
+                                            className="w-full border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-600 font-sans text-sm font-semibold disabled:opacity-100 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300 disabled:appearance-none pr-8"
+                                            value={companyForm.district}
+                                            onChange={e => setCompanyForm({ ...companyForm, district: e.target.value })}
+                                            disabled={!companyForm.province || !isEditingCompany}
+                                        >
+                                            <option value="">Distrito</option>
+                                            {companyForm.province && MOZ_DATA[companyForm.province]?.map(d => <option key={d} value={d}>{d}</option>)}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {/* Two-Column Bio and MVV Section */}
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                                    {/* Left Column: Who We Are */}
+                                    <div className="h-full flex flex-col">
+                                        <textarea
+                                            className="w-full flex-1 min-h-[350px] border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-sm font-sans font-semibold leading-relaxed resize-none disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300 text-slate-600 overflow-hidden"
+                                            value={companyForm.description}
+                                            onInput={(e: any) => autoResize(e.target)}
+                                            onChange={e => setCompanyForm({ ...companyForm, description: e.target.value })}
+                                            disabled={!isEditingCompany}
+                                            placeholder="QUEM SOMOS (BIO): Descreva a história, propósito e trajetória da sua empresa..."
+                                        />
+                                    </div>
+
+                                    {/* Right Column: Mission, Vision, Values (Vertical) */}
+                                    <div className="space-y-6 h-full flex flex-col">
+                                        <div className="flex-1 flex flex-col">
+                                            <textarea
+                                                className="w-full flex-1 min-h-[100px] border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-sm font-sans font-semibold leading-relaxed resize-none disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-200 text-slate-600 overflow-hidden"
+                                                value={companyForm.mission}
+                                                onInput={(e: any) => autoResize(e.target)}
+                                                onChange={e => setCompanyForm({ ...companyForm, mission: e.target.value })}
+                                                disabled={!isEditingCompany}
+                                                placeholder="MISSÃO: O propósito fundamental da sua existência..."
                                             />
+                                        </div>
+                                        <div className="flex-1 flex flex-col">
+                                            <textarea
+                                                className="w-full flex-1 min-h-[100px] border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-sm font-sans font-semibold leading-relaxed resize-none disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-200 text-slate-600 overflow-hidden"
+                                                value={companyForm.vision}
+                                                onInput={(e: any) => autoResize(e.target)}
+                                                onChange={e => setCompanyForm({ ...companyForm, vision: e.target.value })}
+                                                disabled={!isEditingCompany}
+                                                placeholder="VISÃO: Onde a empresa pretende chegar nos próximos anos..."
+                                            />
+                                        </div>
+                                        <div className="flex-1 flex flex-col">
+                                            <textarea
+                                                className="w-full flex-1 min-h-[100px] border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-sm font-sans font-semibold leading-relaxed resize-none disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-200 text-slate-600 overflow-hidden"
+                                                value={companyForm.values}
+                                                onInput={(e: any) => autoResize(e.target)}
+                                                onChange={e => setCompanyForm({ ...companyForm, values: e.target.value })}
+                                                disabled={!isEditingCompany}
+                                                placeholder="VALORES: Princípios fundamentais (ex: Ética, Inovação, Qualidade)..."
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Services Management */}
+                                <div className="space-y-4 pt-4 border-t border-slate-100">
+                                    <div className="flex items-center justify-between">
+                                        <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Portfólio de Serviços</h4>
+                                        {isEditingCompany && (
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => setCompanyForm({ ...companyForm, services: [...companyForm.services, ""] })}
+                                                className="text-emerald-600 text-[10px] font-black uppercase tracking-widest hover:bg-emerald-50"
+                                            >
+                                                + Adicionar Serviço
+                                            </Button>
                                         )}
                                     </div>
-                                    <select
-                                        className="w-full border border-slate-200 bg-slate-50 p-2 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-[#3a3f47] font-semibold disabled:opacity-100 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300 disabled:appearance-none pr-8"
-                                        value={companyForm.province}
-                                        onChange={e => setCompanyForm({ ...companyForm, province: e.target.value, district: "" })}
-                                        disabled={!isEditingCompany}
-                                    >
-                                        <option value="">Província</option>
-                                        {Object.keys(MOZ_DATA).map(p => <option key={p} value={p}>{p}</option>)}
-                                    </select>
-                                    <select
-                                        className="w-full border border-slate-200 bg-slate-50 p-2 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-[#3a3f47] font-semibold disabled:opacity-100 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300 disabled:appearance-none pr-8"
-                                        value={companyForm.district}
-                                        onChange={e => setCompanyForm({ ...companyForm, district: e.target.value })}
-                                        disabled={!companyForm.province || !isEditingCompany}
-                                    >
-                                        <option value="">Distrito</option>
-                                        {companyForm.province && MOZ_DATA[companyForm.province]?.map(d => <option key={d} value={d}>{d}</option>)}
-                                    </select>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                                        {companyForm.services.length > 0 ? (
+                                            companyForm.services.map((service, index) => (
+                                                <div key={index} className="flex items-center gap-2 group">
+                                                    <input
+                                                        className="flex-1 border border-slate-200 bg-slate-50 p-2 rounded-lg text-xs font-bold text-slate-600 focus:ring-2 focus:ring-emerald-500 outline-none transition-all disabled:opacity-100 disabled:cursor-default disabled:bg-transparent disabled:border-transparent"
+                                                        value={service}
+                                                        onChange={e => {
+                                                            const newServices = [...companyForm.services];
+                                                            newServices[index] = e.target.value;
+                                                            setCompanyForm({ ...companyForm, services: newServices });
+                                                        }}
+                                                        disabled={!isEditingCompany}
+                                                        placeholder="Ex: Consultoria Técnica"
+                                                    />
+                                                    {isEditingCompany && (
+                                                        <button
+                                                            onClick={() => {
+                                                                const newServices = companyForm.services.filter((_, i) => i !== index);
+                                                                setCompanyForm({ ...companyForm, services: newServices });
+                                                            }}
+                                                            className="p-1.5 text-slate-400 hover:text-red-500 bg-slate-100 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
+                                                        >
+                                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" /></svg>
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest col-span-full py-4 text-center border border-dashed border-slate-200 rounded-xl">Nenhum serviço cadastrado.</p>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Products Management */}
+                                <div className="space-y-4 pt-4 border-t border-slate-100">
+                                    <div className="flex items-center justify-between">
+                                        <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Catálogo de Produtos</h4>
+                                        <Link href="/usuario/dashboard/produtos">
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="text-[#f97316] text-[10px] font-black uppercase tracking-widest hover:bg-orange-50"
+                                            >
+                                                + Gerir Produtos
+                                            </Button>
+                                        </Link>
+                                    </div>
+                                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                                        {products.length > 0 ? (
+                                            products.map((product) => (
+                                                <div key={product.id} className="group relative aspect-square bg-slate-50 rounded-lg border border-slate-100 overflow-hidden">
+                                                    <img
+                                                        src={product.image_url || "/images/Prototipo/caju.webp"}
+                                                        alt={product.name}
+                                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                    />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <p className="text-[8px] font-bold text-white truncate w-full uppercase">{product.name}</p>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest col-span-full py-4 text-center border border-dashed border-slate-200 rounded-xl">Nenhum produto cadastrado.</p>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="mt-8 pt-6 border-t border-slate-100 flex justify-end gap-3">
-                                {isEditingCompany ? (
-                                    <>
-                                        <Button variant="outline" onClick={() => setIsEditingCompany(false)}>Cancelar</Button>
-                                        <Button onClick={handleUpdateCompany} className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold">Salvar Alterações</Button>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Button variant="outline" className="border-slate-300 text-slate-600 hover:text-slate-800" onClick={() => setIsEditingCompany(true)}>Editar Dados</Button>
-                                        <Button className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold">Visualizar Perfil Público</Button>
-                                    </>
-                                )}
+                            <div className="mt-8 pt-6 border-t border-slate-100 flex justify-between items-center">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Sincronizado com Perfil Público</span>
+                                </div>
+                                <div className="flex gap-3">
+                                    {isEditingCompany ? (
+                                        <>
+                                            <Button variant="outline" onClick={() => setIsEditingCompany(false)} className="font-bold border-slate-200">Cancelar</Button>
+                                            <Button onClick={handleUpdateCompany} className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold">SALVAR ALTERAÇÕES</Button>
+                                        </>
+                                    ) : (
+                                        <Link href="/usuario/dashboard/produtos">
+                                            <Button variant="outline" className="border-orange-200 text-[#f97316] hover:bg-orange-50 font-bold gap-2">
+                                                Gerir Produtos
+                                                <ArrowRight className="w-4 h-4" />
+                                            </Button>
+                                        </Link>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -79,7 +79,9 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                                     <MapPin className="w-4 h-4 text-emerald-600 mt-1 shrink-0" />
                                     <div>
                                         <p className="text-sm font-bold text-slate-700 leading-tight mb-0.5">{company.address || "Endereço não disponível"}</p>
-                                        <p className="text-[11px] font-medium text-slate-400">{company.province}, Moçambique</p>
+                                        <p className="text-[11px] font-medium text-slate-400">
+                                            {company.district ? `${company.district}, ` : ''}{company.province}, Moçambique
+                                        </p>
                                     </div>
                                 </li>
                                 {company.phone && (
@@ -183,8 +185,20 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                                         </h1>
                                     </div>
                                     <p className="text-white/90 font-bold drop-shadow-sm text-xs md:text-sm opacity-90 capitalize">
-                                        {company.activity}
+                                        {company.activity || company.category}
                                     </p>
+                                    <div className="flex gap-2 mt-2">
+                                        {company.value_chain && (
+                                            <span className="bg-white/20 backdrop-blur-sm text-[10px] font-black text-white px-2 py-0.5 rounded border border-white/20 uppercase">
+                                                {company.value_chain}
+                                            </span>
+                                        )}
+                                        {company.category && (
+                                            <span className="bg-emerald-500/80 backdrop-blur-sm text-[10px] font-black text-white px-2 py-0.5 rounded border border-emerald-400/50 uppercase">
+                                                {company.category}
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
                                 {showCompanyShare && (
                                     <div className="absolute right-0 bottom-full mb-2 bg-white/90 backdrop-blur-md border border-white/20 shadow-2xl rounded-full py-1 px-2 z-50 flex items-center gap-2 animate-in fade-in zoom-in slide-in-from-bottom-2">
@@ -239,10 +253,38 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                     </div>
                 </div>
 
-                <div className="card-agro text-left">
-                    <h2 className="mb-4">Sobre a Empresa</h2>
-                    <div className="prose prose-slate max-w-none font-sans text-slate-500">
-                        <p>{company.description}</p>
+                {/* Who We Are & MVV Section */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-agro items-stretch">
+                    <div className="card-agro text-left flex flex-col">
+                        <h2 className="mb-4">Quem Somos</h2>
+                        <div className="prose prose-slate max-w-none font-sans text-slate-500 leading-relaxed flex-1">
+                            <p className="whitespace-pre-wrap">{company.description}</p>
+                        </div>
+                    </div>
+
+                    <div className="space-y-agro flex flex-col h-full">
+                        {company.mission && (
+                            <div className="card-agro text-left border-t-4 border-t-emerald-500 flex-1">
+                                <h4 className="text-[11px] font-black text-emerald-600 uppercase tracking-[0.2em] mb-3">Missão</h4>
+                                <p className="text-sm text-slate-500 leading-relaxed">{company.mission}</p>
+                            </div>
+                        )}
+                        {company.vision && (
+                            <div className="card-agro text-left border-t-4 border-t-emerald-500 flex-1">
+                                <h4 className="text-[11px] font-black text-emerald-600 uppercase tracking-[0.2em] mb-3">Visão</h4>
+                                <p className="text-sm text-slate-500 leading-relaxed">{company.vision}</p>
+                            </div>
+                        )}
+                        {company.values && (
+                            <div className="card-agro text-left border-t-4 border-t-emerald-500 flex-1">
+                                <h4 className="text-[11px] font-black text-emerald-600 uppercase tracking-[0.2em] mb-3">Valores</h4>
+                                <div className="text-sm text-slate-500 leading-relaxed space-y-2">
+                                    {company.values.split('\n').map((line: string, i: number) => (
+                                        <p key={i}>{line}</p>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -307,7 +349,7 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                                     {/* Product Image + Category Badge */}
                                     <div className="relative h-44 w-full overflow-hidden">
                                         <Image
-                                            src={product.img || product.photo || "/images/Prototipo/caju.webp"}
+                                            src={product.image_url || product.img || product.photo || "/images/Prototipo/caju.webp"}
                                             alt={product.name}
                                             fill
                                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -334,7 +376,7 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
 
                                         <div>
                                             <p className="text-emerald-600 font-black text-[18px] mb-1.5">
-                                                {product.price}
+                                                {typeof product.price === 'number' ? `${product.price.toLocaleString('pt-MZ')} MT` : product.price}
                                             </p>
 
                                             <div className="pt-2 border-t border-slate-50 flex items-center justify-between">

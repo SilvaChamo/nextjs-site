@@ -80,6 +80,13 @@ export default function RegisterCompanyPage() {
         checkUser();
     }, [router, supabase]);
 
+    // Auto-resize textarea function
+    const autoResize = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        const target = e.target;
+        target.style.height = 'auto';
+        target.style.height = `${target.scrollHeight}px`;
+    };
+
     // Handlers
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -225,95 +232,81 @@ export default function RegisterCompanyPage() {
                             <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                                 <h2 className="text-2xl font-bold text-slate-800 mb-6">Identidade da Empresa</h2>
 
-                                <div className="space-y-6">
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-slate-700">Logo da Empresa</label>
-                                        <div className="flex items-center gap-6">
-                                            <div
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-6 mb-2">
+                                        <div
+                                            onClick={() => fileInputRef.current?.click()}
+                                            className="w-24 h-24 rounded-lg bg-slate-100 border-2 border-dashed border-slate-300 flex items-center justify-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition-colors overflow-hidden relative"
+                                        >
+                                            {formData.logoUrl ? (
+                                                // eslint-disable-next-line @next/next/no-img-element
+                                                <img src={formData.logoUrl} alt="Logo" className="w-full h-full object-cover" />
+                                            ) : (
+                                                <Upload className="w-8 h-8 text-slate-400" />
+                                            )}
+                                            {uploading && <div className="absolute inset-0 bg-white/80 flex items-center justify-center"><Loader2 className="animate-spin w-6 h-6 text-emerald-600" /></div>}
+                                        </div>
+                                        <div className="flex-1">
+                                            <Button
+                                                type="button"
+                                                variant="outline"
                                                 onClick={() => fileInputRef.current?.click()}
-                                                className="w-24 h-24 rounded-lg bg-slate-100 border-2 border-dashed border-slate-300 flex items-center justify-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition-colors overflow-hidden relative"
+                                                disabled={uploading}
+                                                className="text-xs font-bold"
                                             >
-                                                {formData.logoUrl ? (
-                                                    // eslint-disable-next-line @next/next/no-img-element
-                                                    <img src={formData.logoUrl} alt="Logo" className="w-full h-full object-cover" />
-                                                ) : (
-                                                    <Upload className="w-8 h-8 text-slate-400" />
-                                                )}
-                                                {uploading && <div className="absolute inset-0 bg-white/80 flex items-center justify-center"><Loader2 className="animate-spin w-6 h-6 text-emerald-600" /></div>}
-                                            </div>
-                                            <div className="flex-1">
-                                                <Button
-                                                    type="button"
-                                                    variant="outline"
-                                                    onClick={() => fileInputRef.current?.click()}
-                                                    disabled={uploading}
-                                                >
-                                                    Escolher Imagem
-                                                </Button>
-                                                <p className="text-xs text-slate-500 mt-2">Recomendado: 500x500px, JPG ou PNG.</p>
-                                                <input ref={fileInputRef} type="file" className="hidden" accept="image/*" onChange={handleLogoUpload} />
-                                            </div>
+                                                Escolher Logo da Empresa
+                                            </Button>
+                                            <p className="text-[10px] text-slate-400 mt-2 font-medium">Recomendado: 500x500px, JPG ou PNG.</p>
+                                            <input ref={fileInputRef} type="file" className="hidden" accept="image/*" onChange={handleLogoUpload} />
                                         </div>
                                     </div>
 
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-slate-700">Nome da Empresa</label>
-                                        <Input
-                                            name="companyName"
-                                            value={formData.companyName}
-                                            onChange={handleInputChange}
-                                            placeholder="Ex: Agro Pecuária do Norte, Lda."
-                                            className="h-12 border-slate-200"
-                                        />
-                                    </div>
+                                    <Input
+                                        name="companyName"
+                                        value={formData.companyName}
+                                        onChange={handleInputChange}
+                                        placeholder="NOME DA EMPRESA: Ex: Agro Pecuária do Norte, Lda."
+                                        className="h-12 border-slate-200 p-[10px] text-sm font-sans font-semibold text-slate-600 bg-slate-50"
+                                    />
+                                </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-bold text-slate-700">Actividade Principal</label>
-                                            <Input
-                                                name="activity"
-                                                value={formData.activity}
-                                                onChange={handleInputChange}
-                                                placeholder="Ex: Produção de Milho"
-                                                className="h-12 border-slate-200"
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-bold text-slate-700">Telefone / Contacto</label>
-                                            <Input
-                                                name="contact"
-                                                value={formData.contact}
-                                                onChange={handleInputChange}
-                                                placeholder="+258 ..."
-                                                className="h-12 border-slate-200"
-                                            />
-                                        </div>
-                                    </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <Input
+                                        name="activity"
+                                        value={formData.activity}
+                                        onChange={handleInputChange}
+                                        placeholder="ACTIVIDADE PRINCIPAL: Ex: Produção de Milho"
+                                        className="h-12 border-slate-200 p-[10px] text-sm font-sans font-semibold text-slate-600 bg-slate-50"
+                                    />
+                                    <Input
+                                        name="contact"
+                                        value={formData.contact}
+                                        onChange={handleInputChange}
+                                        placeholder="TELEFONE / CONTACTO: +258 ..."
+                                        className="h-12 border-slate-200 p-[10px] text-sm font-sans font-semibold text-slate-600 bg-slate-50"
+                                    />
+                                </div>
 
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-slate-700">E-mail Corporativo</label>
-                                        <Input
-                                            name="email"
-                                            type="email"
-                                            value={formData.email}
-                                            onChange={handleInputChange}
-                                            placeholder="empresa@exemplo.com"
-                                            className="h-12 border-slate-200"
-                                        />
-                                    </div>
+                                <Input
+                                    name="email"
+                                    type="email"
+                                    value={formData.email}
+                                    onChange={handleInputChange}
+                                    placeholder="E-MAIL CORPORATIVO: empresa@exemplo.com"
+                                    className="h-12 border-slate-200 p-[10px] text-sm font-sans font-semibold text-slate-600 bg-slate-50"
+                                />
 
-                                    <div className="flex items-center gap-3 pt-2">
-                                        <input
-                                            type="checkbox"
-                                            id="newsletter"
-                                            checked={formData.newsletter}
-                                            onChange={(e) => setFormData(p => ({ ...p, newsletter: e.target.checked }))}
-                                            className="w-5 h-5 accent-emerald-600 rounded"
-                                        />
-                                        <label htmlFor="newsletter" className="text-xs font-bold text-slate-600 cursor-pointer">
-                                            Subscrever à nossa Newsletter para actualizações do sector
-                                        </label>
-                                    </div>
+                                <div className="flex items-center gap-3 pt-2">
+                                    <input
+                                        type="checkbox"
+                                        id="newsletter"
+                                        checked={formData.newsletter}
+                                        onChange={(e) => setFormData(p => ({ ...p, newsletter: e.target.checked }))}
+                                        className="w-5 h-5 accent-emerald-600 rounded"
+                                    />
+                                    <label htmlFor="newsletter" className="text-xs font-bold text-slate-600 cursor-pointer">
+                                        Subscrever à nossa Newsletter para actualizações do sector
+                                    </label>
                                 </div>
                             </div>
                         )}
@@ -457,34 +450,27 @@ export default function RegisterCompanyPage() {
                                 <h2 className="text-2xl font-bold text-slate-800 mb-6">Onde sua empresa está?</h2>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-slate-700">Província</label>
-                                        <Input
-                                            name="province"
-                                            value={formData.province}
-                                            onChange={handleInputChange}
-                                            placeholder="Ex: Maputo, Nampula..."
-                                            className="h-12 border-slate-200"
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-slate-700">Distrito</label>
-                                        <Input
-                                            name="district"
-                                            value={formData.district}
-                                            onChange={handleInputChange}
-                                            placeholder="Digite o distrito"
-                                            className="h-12 border-slate-200"
-                                        />
-                                    </div>
-                                    <div className="col-span-1 md:col-span-2 space-y-2">
-                                        <label className="text-sm font-bold text-slate-700">Endereço Completo</label>
+                                    <Input
+                                        name="province"
+                                        value={formData.province}
+                                        onChange={handleInputChange}
+                                        placeholder="PROVÍNCIA: Ex: Maputo, Nampula..."
+                                        className="h-12 border-slate-200 p-[10px] text-sm font-sans font-semibold text-slate-600 bg-slate-50"
+                                    />
+                                    <Input
+                                        name="district"
+                                        value={formData.district}
+                                        onChange={handleInputChange}
+                                        placeholder="DISTRITO: Digite o distrito"
+                                        className="h-12 border-slate-200 p-[10px] text-sm font-sans font-semibold text-slate-600 bg-slate-50"
+                                    />
+                                    <div className="col-span-1 md:col-span-2">
                                         <Input
                                             name="address"
                                             value={formData.address}
                                             onChange={handleInputChange}
-                                            placeholder="Rua, Bairro, Número..."
-                                            className="h-12 border-slate-200"
+                                            placeholder="ENDEREÇO COMPLETO: Rua, Bairro, Número..."
+                                            className="h-12 border-slate-200 p-[10px] text-sm font-sans font-semibold text-slate-600 bg-slate-50"
                                         />
                                     </div>
                                 </div>
@@ -496,39 +482,31 @@ export default function RegisterCompanyPage() {
                             <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                                 <h2 className="text-2xl font-bold text-slate-800 mb-6">Detalhes do Negócio</h2>
 
-                                <div className="space-y-6">
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-slate-700">Setor de Atividade</label>
-                                        <Input
-                                            name="sector"
-                                            value={formData.sector}
-                                            onChange={handleInputChange}
-                                            placeholder="Ex: Produção Agrícola, Pecuária, Equipamentos..."
-                                            className="h-12 border-slate-200"
-                                        />
-                                    </div>
+                                <div className="space-y-4">
+                                    <Input
+                                        name="sector"
+                                        value={formData.sector}
+                                        onChange={handleInputChange}
+                                        placeholder="SETOR DE ATIVIDADE: Ex: Produção Agrícola, Pecuária..."
+                                        className="h-12 border-slate-200 p-[10px] text-sm font-sans font-semibold text-slate-600 bg-slate-50"
+                                    />
 
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-slate-700">Descrição da Empresa</label>
-                                        <Textarea
-                                            name="description"
-                                            value={formData.description}
-                                            onChange={handleInputChange}
-                                            placeholder="Escreva um breve resumo sobre o que sua empresa faz..."
-                                            className="min-h-[120px] border-slate-200"
-                                        />
-                                    </div>
+                                    <Textarea
+                                        name="description"
+                                        value={formData.description}
+                                        onInput={(e: any) => autoResize(e)}
+                                        onChange={handleInputChange}
+                                        placeholder="DESCRIÇÃO DA EMPRESA: Breve resumo sobre o que sua empresa faz..."
+                                        className="min-h-[120px] border-slate-200 p-[10px] text-sm font-sans font-semibold text-slate-600 bg-slate-50 leading-relaxed overflow-hidden"
+                                    />
 
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-slate-700">Tags (Palavras-chave)</label>
-                                        <Input
-                                            name="tags"
-                                            value={formData.tags}
-                                            onChange={handleInputChange}
-                                            placeholder="Ex: Milho, Soja, Adubos (separados por vírgula)"
-                                            className="h-12 border-slate-200"
-                                        />
-                                    </div>
+                                    <Input
+                                        name="tags"
+                                        value={formData.tags}
+                                        onChange={handleInputChange}
+                                        placeholder="TAGS (PALAVRAS-CHAVE): Ex: Milho, Soja, Adubos..."
+                                        className="h-12 border-slate-200 p-[10px] text-sm font-sans font-semibold text-slate-600 bg-slate-50"
+                                    />
                                 </div>
                             </div>
                         )}
@@ -560,16 +538,26 @@ export default function RegisterCompanyPage() {
                                                     <button onClick={() => setFormData(p => ({ ...p, products: p.products.filter((_, i) => i !== idx) }))} className="text-red-500 hover:text-red-700 text-xs font-bold">Remover</button>
                                                 </div>
                                                 <div className="grid grid-cols-2 gap-4">
-                                                    <Input placeholder="Nome do Produto" value={prod.name} onChange={e => {
-                                                        const newProds = [...formData.products];
-                                                        newProds[idx].name = e.target.value;
-                                                        setFormData(p => ({ ...p, products: newProds }));
-                                                    }} />
-                                                    <Input placeholder="Preço (Ex: 100 MT)" value={prod.price} onChange={e => {
-                                                        const newProds = [...formData.products];
-                                                        newProds[idx].price = e.target.value;
-                                                        setFormData(p => ({ ...p, products: newProds }));
-                                                    }} />
+                                                    <Input
+                                                        placeholder="NOME DO PRODUTO: Ex: Milho Branco"
+                                                        value={prod.name}
+                                                        onChange={e => {
+                                                            const newProds = [...formData.products];
+                                                            newProds[idx].name = e.target.value;
+                                                            setFormData(p => ({ ...p, products: newProds }));
+                                                        }}
+                                                        className="h-12 border-slate-200 p-[10px] text-sm font-sans font-semibold text-slate-600 bg-slate-50"
+                                                    />
+                                                    <Input
+                                                        placeholder="PREÇO: Ex: 100 MT"
+                                                        value={prod.price}
+                                                        onChange={e => {
+                                                            const newProds = [...formData.products];
+                                                            newProds[idx].price = e.target.value;
+                                                            setFormData(p => ({ ...p, products: newProds }));
+                                                        }}
+                                                        className="h-12 border-slate-200 p-[10px] text-sm font-sans font-semibold text-slate-600 bg-slate-50"
+                                                    />
                                                 </div>
                                             </div>
                                         ))

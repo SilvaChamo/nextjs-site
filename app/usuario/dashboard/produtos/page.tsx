@@ -10,6 +10,7 @@ export default function MeuConteudoPage() {
     const supabase = createClient();
     const [activeTab, setActiveTab] = useState<"produtos" | "propriedades" | "conexoes">("produtos");
     const [user, setUser] = useState<User | null>(null);
+    const [companyId, setCompanyId] = useState<string | null>(null);
 
     useEffect(() => {
         const getUser = async () => {
@@ -46,6 +47,15 @@ export default function MeuConteudoPage() {
             .order('created_at', { ascending: false });
 
         if (data) setProducts(data);
+
+        // Also fetch company_id
+        const { data: companyData } = await supabase
+            .from('companies')
+            .select('id')
+            .eq('user_id', user.id)
+            .single();
+
+        if (companyData) setCompanyId(companyData.id);
     };
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,7 +97,7 @@ export default function MeuConteudoPage() {
             category: productForm.category,
             description: productForm.description,
             image_url: productForm.imageUrl,
-            company_id: null
+            company_id: companyId
         });
 
         if (error) {
@@ -156,44 +166,32 @@ export default function MeuConteudoPage() {
                             <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-lg max-w-2xl mx-auto">
                                 <h3 className="font-bold text-xl mb-6">Novo Produto</h3>
                                 <div className="space-y-4">
-                                    <div>
-                                        <label className="text-sm font-bold text-slate-700">Nome do Produto</label>
-                                        <input
-                                            className="w-full border p-2 rounded-md focus:ring-2 focus:ring-emerald-500 outline-none"
-                                            value={productForm.name}
-                                            onChange={e => setProductForm({ ...productForm, name: e.target.value })}
-                                            placeholder="Ex: Milho Branco"
-                                        />
-                                    </div>
+                                    <input
+                                        className="w-full border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-sm font-sans font-semibold text-slate-600"
+                                        value={productForm.name}
+                                        onChange={e => setProductForm({ ...productForm, name: e.target.value })}
+                                        placeholder="NOME DO PRODUTO: Ex: Milho Branco"
+                                    />
                                     <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="text-sm font-bold text-slate-700">Preço (MT)</label>
-                                            <input
-                                                className="w-full border p-2 rounded-md focus:ring-2 focus:ring-emerald-500 outline-none"
-                                                value={productForm.price}
-                                                onChange={e => setProductForm({ ...productForm, price: e.target.value })}
-                                                placeholder="0.00"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="text-sm font-bold text-slate-700">Categoria</label>
-                                            <input
-                                                className="w-full border p-2 rounded-md focus:ring-2 focus:ring-emerald-500 outline-none"
-                                                value={productForm.category}
-                                                onChange={e => setProductForm({ ...productForm, category: e.target.value })}
-                                                placeholder="Ex: Grãos"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label className="text-sm font-bold text-slate-700">Descrição</label>
-                                        <textarea
-                                            className="w-full border p-2 rounded-md h-24 focus:ring-2 focus:ring-emerald-500 outline-none resize-none"
-                                            value={productForm.description}
-                                            onChange={e => setProductForm({ ...productForm, description: e.target.value })}
-                                            placeholder="Detalhes do produto..."
+                                        <input
+                                            className="w-full border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-sm font-sans font-semibold text-slate-600"
+                                            value={productForm.price}
+                                            onChange={e => setProductForm({ ...productForm, price: e.target.value })}
+                                            placeholder="PREÇO (MT): Ex: 0.00"
+                                        />
+                                        <input
+                                            className="w-full border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-sm font-sans font-semibold text-slate-600"
+                                            value={productForm.category}
+                                            onChange={e => setProductForm({ ...productForm, category: e.target.value })}
+                                            placeholder="CATEGORIA: Ex: Grãos"
                                         />
                                     </div>
+                                    <textarea
+                                        className="w-full border border-slate-200 bg-slate-50 p-[10px] rounded-lg h-32 focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-sm font-sans font-semibold text-slate-600 leading-relaxed resize-none"
+                                        value={productForm.description}
+                                        onChange={e => setProductForm({ ...productForm, description: e.target.value })}
+                                        placeholder="DESCRIÇÃO: Detalhes, qualidade, origem do produto..."
+                                    />
                                     <div>
                                         <label className="text-sm font-bold text-slate-700 mb-2 block">Imagem</label>
                                         <div className="flex items-center gap-4">

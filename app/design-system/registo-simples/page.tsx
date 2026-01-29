@@ -4,7 +4,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, ShoppingBag, Plus, Trash2, CheckCircle2, X, Pencil, Lock } from "lucide-react";
+import Image from "next/image";
+import { Upload, ShoppingBag, Plus, Trash2, CheckCircle2, X, Pencil, Lock, CreditCard } from "lucide-react";
 import {
     Dialog,
     DialogContent,
@@ -53,6 +54,17 @@ export default function SimpleRegistrationPage() {
     // Data States
     const [fetchedCategories, setFetchedCategories] = useState<string[]>(COMPANY_CATEGORIES);
     const [bio, setBio] = useState("");
+
+    // Mandatory Free Fields State
+    const [companyName, setCompanyName] = useState("");
+    const [address, setAddress] = useState("");
+    const [province, setProvince] = useState("");
+    const [activity, setActivity] = useState("");
+    const [highlightCompany, setHighlightCompany] = useState(false);
+
+    // Payment State
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'mpesa' | 'emola' | 'visa' | null>(null);
+    const [paymentPhoneNumber, setPaymentPhoneNumber] = useState("");
 
     // Fetch Categories (Removed in favor of static constant)
     useEffect(() => {
@@ -193,6 +205,24 @@ export default function SimpleRegistrationPage() {
         setServices(services.filter(s => s !== serviceToRemove));
     };
 
+    const handlePublish = () => {
+        const errors: string[] = [];
+        if (!companyName.trim()) errors.push("Nome da empresa");
+        if (!address.trim()) errors.push("Endereço físico");
+        if (!province.trim()) errors.push("Província");
+        if (!activity.trim()) errors.push("Actividade Principal");
+        if (!bio.trim()) errors.push("Descrição geral da empresa (Bio)");
+
+        if (errors.length > 0) {
+            alert(`Por favor, preencha os seguintes campos obrigatórios:\n- ${errors.join('\n- ')}`);
+            return;
+        }
+
+        // Proceed with submission (mock for now)
+        alert("Empresa publicada com sucesso!");
+    };
+
+
     return (
         <div className="min-h-screen bg-slate-100 font-sans pt-[80px] pb-20">
             <div className="container-site flex flex-col lg:flex-row gap-[20px]">
@@ -213,7 +243,7 @@ export default function SimpleRegistrationPage() {
                                             e.stopPropagation();
                                             bannerInputRef.current?.click();
                                         }}
-                                        className="p-2 bg-white/90 backdrop-blur-sm text-slate-700 hover:text-blue-600 rounded-full shadow-lg border border-slate-100 transition-colors"
+                                        className="p-2 bg-white/90 backdrop-blur-sm text-slate-700 hover:text-white hover:bg-[#f97316] rounded-full shadow-lg border border-slate-100 transition-colors"
                                         title="Trocar Imagem"
                                     >
                                         <Pencil className="w-4 h-4" />
@@ -223,7 +253,7 @@ export default function SimpleRegistrationPage() {
                                             e.stopPropagation();
                                             setBannerImage(null);
                                         }}
-                                        className="p-2 bg-white/90 backdrop-blur-sm text-slate-700 hover:text-rose-600 rounded-full shadow-lg border border-slate-100 transition-colors"
+                                        className="p-2 bg-white/90 backdrop-blur-sm text-slate-700 hover:text-white hover:bg-[#f97316] rounded-full shadow-lg border border-slate-100 transition-colors"
                                         title="Remover Imagem"
                                     >
                                         <Trash2 className="w-4 h-4" />
@@ -264,7 +294,7 @@ export default function SimpleRegistrationPage() {
                                                     e.stopPropagation();
                                                     logoInputRef.current?.click();
                                                 }}
-                                                className="p-1.5 bg-white/90 backdrop-blur-sm text-slate-700 hover:text-blue-600 rounded-full shadow-sm border border-slate-100 transition-colors"
+                                                className="p-1.5 bg-white/90 backdrop-blur-sm text-slate-700 hover:text-white hover:bg-[#f97316] rounded-full shadow-sm border border-slate-100 transition-colors"
                                                 title="Trocar Logo"
                                             >
                                                 <Pencil className="w-3.5 h-3.5" />
@@ -274,7 +304,7 @@ export default function SimpleRegistrationPage() {
                                                     e.stopPropagation();
                                                     setLogoImage(null);
                                                 }}
-                                                className="p-1.5 bg-white/90 backdrop-blur-sm text-slate-700 hover:text-rose-600 rounded-full shadow-sm border border-slate-100 transition-colors"
+                                                className="p-1.5 bg-white/90 backdrop-blur-sm text-slate-700 hover:text-white hover:bg-[#f97316] rounded-full shadow-sm border border-slate-100 transition-colors"
                                                 title="Remover Logo"
                                             >
                                                 <Trash2 className="w-3.5 h-3.5" />
@@ -303,6 +333,8 @@ export default function SimpleRegistrationPage() {
                                     className="h-12 border-slate-200 px-4 text-sm font-semibold text-slate-600 placeholder:text-slate-400 bg-white"
                                     style={{ borderRadius: '8px' }}
                                     required
+                                    value={companyName}
+                                    onChange={(e) => setCompanyName(e.target.value)}
                                 />
 
 
@@ -343,22 +375,28 @@ export default function SimpleRegistrationPage() {
                             {/* Address & Province */}
                             <div className="grid grid-cols-1 md:grid-cols-[65fr_35fr] gap-[10px]">
                                 <Input
-                                    placeholder="Endereço físico"
+                                    placeholder="Endereço físico *"
                                     className="h-12 border-slate-200 px-4 text-sm font-semibold text-slate-600 placeholder:text-slate-400 bg-white"
                                     style={{ borderRadius: '8px' }}
+                                    value={address}
+                                    onChange={(e) => setAddress(e.target.value)}
                                 />
                                 <Input
-                                    placeholder="Província"
+                                    placeholder="Província *"
                                     className="h-12 border-slate-200 px-4 text-sm font-semibold text-slate-600 placeholder:text-slate-400 bg-white"
                                     style={{ borderRadius: '8px' }}
+                                    value={province}
+                                    onChange={(e) => setProvince(e.target.value)}
                                 />
                             </div>
 
                             {/* Actividade Principal - Moved Here */}
                             <Input
-                                placeholder="Actividade Principal"
+                                placeholder="Actividade Principal *"
                                 className="h-12 border-slate-200 px-4 text-sm font-semibold text-slate-600 placeholder:text-slate-400 bg-white"
                                 style={{ borderRadius: '8px' }}
+                                value={activity}
+                                onChange={(e) => setActivity(e.target.value)}
                             />
 
                             {/* Bio Editor - Moved Above Selects */}
@@ -434,14 +472,18 @@ export default function SimpleRegistrationPage() {
                                         Adira a um dos nossos planos <strong>Premium</strong> ou <strong>Parceiro</strong> para desbloquear campos exclusivos, obter cotações em tempo real e aumentar sua visibilidade no mercado.
                                     </p>
                                 </div>
-                                <Button className="bg-white text-emerald-900 hover:bg-emerald-50 px-8 h-12 font-black uppercase tracking-widest text-xs shadow-lg transform group-hover:scale-105 transition-all">
+                                <Button className="bg-white text-emerald-900 hover:bg-[#f97316] hover:text-white px-8 h-12 font-black uppercase tracking-widest text-xs shadow-lg transform group-hover:scale-105 transition-all">
                                     Ver Planos e Preços
                                 </Button>
                             </div>
                         </div>
 
                         <div className="pt-6 flex justify-start">
-                            <Button className="w-auto px-8 h-10 bg-emerald-600 hover:bg-[#f97316] text-white font-black uppercase tracking-[0.2em] shadow-xl shadow-emerald-500/20 transition-colors duration-300" style={{ borderRadius: '8px' }}>
+                            <Button
+                                onClick={handlePublish}
+                                className="w-auto px-8 h-10 bg-emerald-600 hover:bg-[#f97316] text-white font-black uppercase tracking-[0.2em] shadow-xl shadow-emerald-500/20 transition-colors duration-300"
+                                style={{ borderRadius: '8px' }}
+                            >
                                 Publicar Empresa
                             </Button>
                         </div>
@@ -450,7 +492,7 @@ export default function SimpleRegistrationPage() {
 
                 {/* SIDEBAR (RIGHT) - Continues to the top */}
                 <aside
-                    className="w-full lg:w-[420px] bg-slate-50 pb-8 pt-0 px-0 shrink-0 sticky right-0 overflow-y-auto space-y-8"
+                    className="w-full lg:w-[420px] pb-8 pt-0 px-0 shrink-0 sticky right-0 overflow-y-auto space-y-8"
                     style={{ top: '80px', height: 'calc(100vh - 80px)' }}
                 >
                     {/* SERVIÇOS - Refactored to single field + list */}
@@ -476,7 +518,7 @@ export default function SimpleRegistrationPage() {
                                 <Button
                                     onClick={addService}
                                     size="sm"
-                                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-10 w-10 flex items-center justify-center"
+                                    className="bg-emerald-600 hover:bg-[#f97316] text-white font-bold h-10 w-10 flex items-center justify-center transition-colors duration-300"
                                     style={{ borderRadius: '8px' }}
                                 >
                                     <Plus className="w-4 h-4" />
@@ -505,6 +547,119 @@ export default function SimpleRegistrationPage() {
                                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Nenhum serviço adicionado</p>
                                     </div>
                                 )}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* HIGHLIGHT OPTION */}
+                    <div
+                        className="bg-emerald-900 p-6 border border-emerald-800 shadow-sm relative overflow-hidden group cursor-pointer transition-all duration-300"
+                        style={{ borderRadius: '15px' }}
+                        onClick={() => setHighlightCompany(!highlightCompany)}
+                    >
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl -mr-8 -mt-8"></div>
+                        <div className="relative z-10 flex items-center justify-between">
+                            <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
+                                <span className={`w-2 h-2 rounded-full ${highlightCompany ? 'bg-emerald-400 animate-pulse' : 'bg-slate-600'}`}></span>
+                                Destacar Empresa
+                            </h3>
+                            <div className={`w-12 h-6 rounded-full p-1 transition-colors duration-300 ${highlightCompany ? 'bg-emerald-500' : 'bg-emerald-950 border border-emerald-700'}`}>
+                                <div className={`w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform duration-300 ${highlightCompany ? 'translate-x-6' : 'translate-x-0'}`}></div>
+                            </div>
+                        </div>
+                        <p className="text-xs text-green-400 mt-3 font-medium leading-relaxed">
+                            Aumente a visibilidade da sua empresa aparecendo em destaque na página inicial e nos motores de google!
+                        </p>
+
+                        {/* SLIDING PAYMENT SECTION */}
+                        <div className={`grid transition-all duration-500 ease-in-out ${highlightCompany ? 'grid-rows-[1fr] opacity-100 mt-6 pt-6 border-t border-emerald-800' : 'grid-rows-[0fr] opacity-0'}`}>
+                            <div className="overflow-hidden min-h-0">
+                                <div className="flex flex-col gap-4">
+                                    <div className="flex justify-between items-end">
+                                        <span className="text-emerald-400 text-xs font-bold uppercase tracking-widest">Custo do Destaque</span>
+                                        <span className="text-2xl font-black text-white">1 500 Mt</span>
+                                    </div>
+
+                                    <div className="flex gap-2">
+                                        {/* M-Pesa */}
+                                        <div
+                                            onClick={(e) => { e.stopPropagation(); setSelectedPaymentMethod('mpesa'); }}
+                                            className={`bg-white p-0 rounded-md border flex items-center justify-center h-8 w-[50px] transition-all cursor-pointer group/mpesa overflow-hidden relative ${selectedPaymentMethod === 'mpesa' ? 'border-[#E60000] ring-2 ring-[#E60000]/30' : 'border-slate-200 hover:border-[#E60000]'}`}
+                                        >
+                                            <Image
+                                                src="/assets/Mpesa.png"
+                                                alt="M-Pesa"
+                                                fill
+                                                className="object-cover"
+                                            />
+                                        </div>
+                                        {/* e-Mola */}
+                                        <div
+                                            onClick={(e) => { e.stopPropagation(); setSelectedPaymentMethod('emola'); }}
+                                            className={`bg-white p-0 rounded-md border flex items-center justify-center h-8 w-[50px] transition-all cursor-pointer group/emola overflow-hidden relative ${selectedPaymentMethod === 'emola' ? 'border-[#4B0082] ring-2 ring-[#4B0082]/30' : 'border-slate-200 hover:border-[#4B0082]'}`}
+                                        >
+                                            <Image
+                                                src="/assets/e-mola.png"
+                                                alt="e-Mola"
+                                                fill
+                                                className="object-cover"
+                                            />
+                                        </div>
+                                        {/* Visa */}
+                                        <div
+                                            onClick={(e) => { e.stopPropagation(); setSelectedPaymentMethod('visa'); }}
+                                            className={`bg-white px-2 py-1 rounded-md border flex items-center justify-center h-8 transition-all cursor-pointer group/visa overflow-hidden ${selectedPaymentMethod === 'visa' ? 'border-[#1A1F71] ring-2 ring-[#1A1F71]/30' : 'border-slate-200 hover:border-[#1A1F71]'}`}
+                                        >
+                                            <Image
+                                                src="/assets/Visa.webp"
+                                                alt="Visa"
+                                                width={50}
+                                                height={25}
+                                                className="h-full w-auto object-contain"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* M-Pesa / e-Mola Phone Input */}
+                                    {(selectedPaymentMethod === 'mpesa' || selectedPaymentMethod === 'emola') && (
+                                        <div className="bg-emerald-950/30 p-3 rounded-lg border border-emerald-500/10 space-y-3 animate-in fade-in slide-in-from-top-2">
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] font-bold text-emerald-200 uppercase tracking-wider">
+                                                    Número {selectedPaymentMethod === 'mpesa' ? 'Vodacom' : 'Movitel'}
+                                                </label>
+                                                <Input
+                                                    placeholder="84/85 xxx xxxx"
+                                                    value={paymentPhoneNumber}
+                                                    onChange={(e) => setPaymentPhoneNumber(e.target.value)}
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    className="h-9 bg-emerald-900/50 border-emerald-800 text-white placeholder:text-emerald-600 text-xs font-mono"
+                                                />
+                                            </div>
+                                            <Button
+                                                size="sm"
+                                                onClick={(e) => { e.stopPropagation(); alert(`Solicitando pagamento ao ${paymentPhoneNumber} via ${selectedPaymentMethod}`); }}
+                                                className={`w-full h-8 text-xs font-black uppercase text-white hover:text-white ${selectedPaymentMethod === 'mpesa' ? 'bg-[#E60000] hover:bg-[#cc0000]' : 'bg-[#4B0082] hover:bg-[#3a0066]'}`}
+                                            >
+                                                Pagar 1 500 Mt
+                                            </Button>
+                                        </div>
+                                    )}
+
+                                    {/* Visa Info */}
+                                    {selectedPaymentMethod === 'visa' && (
+                                        <div className="bg-emerald-950/30 p-3 rounded-lg border border-emerald-500/10 animate-in fade-in slide-in-from-top-2">
+                                            <p className="text-[10px] text-emerald-200 text-center">
+                                                Em breve: Redirecionamento seguro para gateway Visa/Mastercard.
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    <div className="bg-emerald-950/50 p-3 rounded-lg border border-emerald-500/20">
+                                        <p className="text-[10px] text-emerald-300 leading-relaxed text-center">
+                                            <span className="font-bold text-emerald-200">Nota SEO:</span> Sua empresa estará visível e indexada nos motores de busca do Google em aproximadamente <span className="text-white font-bold underline decoration-emerald-500/50">24 a 48 horas</span> após a verificação.
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

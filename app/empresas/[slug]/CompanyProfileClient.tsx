@@ -179,9 +179,9 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                             </div>
                             <div className="text-white mb-2 flex-1 flex items-end justify-between">
                                 <div className="w-full">
-                                    <div className="flex items-center gap-3 mb-0.5">
+                                    <div className="flex items-center gap-2.5 mb-0.5">
                                         {company.is_verified && <CheckCircle2 className="text-emerald-400 w-5 h-5 md:w-6 md:h-6 drop-shadow-lg" />}
-                                        <h1 className="text-2xl md:text-4xl font-black mb-0 text-white leading-tight drop-shadow-md uppercase">
+                                        <h1 className="text-xl md:text-2xl font-black mb-0 text-white leading-tight drop-shadow-md uppercase">
                                             {company.category}
                                         </h1>
                                     </div>
@@ -190,12 +190,12 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                                     </p>
                                     <div className="flex gap-2 mt-2">
                                         {company.is_verified && (
-                                            <span className="bg-emerald-500/80 backdrop-blur-sm text-[10px] font-black text-white px-2 py-0.5 rounded border border-emerald-400/50 uppercase tracking-widest">
-                                                Sinal de Certificação
-                                            </span>
+                                            <div className="bg-emerald-500/80 backdrop-blur-sm p-1 rounded-full border border-emerald-400/50 shadow-lg">
+                                                <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                                            </div>
                                         )}
                                         {company.registration_type && (
-                                            <span className="bg-white/20 backdrop-blur-sm text-[10px] font-black text-white px-2 py-0.5 rounded border border-white/20 uppercase">
+                                            <span className="bg-white/10 backdrop-blur-sm text-[9px] font-black text-white px-2 py-0.5 rounded border border-white/20 uppercase tracking-widest">
                                                 {company.registration_type}
                                             </span>
                                         )}

@@ -11,7 +11,7 @@ interface CompanyCardProps {
 
 export function CompanyCard({ company }: CompanyCardProps) {
     // Display exactly as selected in registration/database
-    const displayCategory = company.tag || company.type || "Agro";
+    const displayCategory = company.tag || company.type || "";
 
     return (
         <div className="group bg-white rounded-agro border border-slate-200 shadow-md card-interactive transition-all duration-500 flex flex-col relative overflow-hidden h-full">
@@ -28,10 +28,11 @@ export function CompanyCard({ company }: CompanyCardProps) {
 
                 {/* CERTIFICATION SIGNAL - TOP RIGHT */}
                 <div className="absolute top-3 right-3 z-30">
-                    <div className="bg-emerald-600/90 backdrop-blur-sm text-white text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded shadow-sm border border-white/10 flex items-center gap-1">
-                        {company.isVerified && <ShieldCheck className="w-2.5 h-2.5" />}
-                        {company.isVerified ? "Certificada" : "Registada"}
-                    </div>
+                    {company.isVerified && (
+                        <div className="bg-emerald-600/90 backdrop-blur-sm text-white p-1 rounded-full shadow-sm border border-white/10 flex items-center justify-center">
+                            <ShieldCheck className="w-3 h-3" />
+                        </div>
+                    )}
                 </div>
 
                 {/* INTERNAL ELEMENTS (LOGO + NAME) */}
@@ -49,13 +50,16 @@ export function CompanyCard({ company }: CompanyCardProps) {
                         </div>
 
                         {/* CATEGORY (WAS NAME) - WHITE TEXT */}
-                        <div className="flex flex-col justify-center min-w-0">
-                            <span className="text-white text-[13px] font-black uppercase tracking-tight leading-tight truncate drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                                {displayCategory}
-                            </span>
-                            <span className="text-white/80 text-[9px] font-bold uppercase tracking-widest drop-shadow-md">
-                                {company.province || "Moçambique"}
-                            </span>
+                        <div className="flex items-center gap-1.5 min-w-0">
+                            {company.isVerified && <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0 drop-shadow-md" />}
+                            <div className="flex flex-col justify-center min-w-0">
+                                <span className="text-white text-[11px] font-black uppercase tracking-tight leading-tight truncate drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                                    {displayCategory}
+                                </span>
+                                <span className="text-white/80 text-[8px] font-bold uppercase tracking-widest drop-shadow-md">
+                                    {company.province || "Moçambique"}
+                                </span>
+                            </div>
                         </div>
                     </div>
 

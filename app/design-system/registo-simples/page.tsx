@@ -65,6 +65,7 @@ export default function SimpleRegistrationPage() {
     // Payment State
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'mpesa' | 'emola' | 'visa' | null>(null);
     const [paymentPhoneNumber, setPaymentPhoneNumber] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Fetch Categories (Removed in favor of static constant)
     useEffect(() => {
@@ -628,7 +629,7 @@ export default function SimpleRegistrationPage() {
                                                     Número {selectedPaymentMethod === 'mpesa' ? 'Vodacom' : 'Movitel'}
                                                 </label>
                                                 <Input
-                                                    placeholder="84/85 xxx xxxx"
+                                                    placeholder="258 84/85 xxx xxxx"
                                                     value={paymentPhoneNumber}
                                                     onChange={(e) => setPaymentPhoneNumber(e.target.value)}
                                                     onClick={(e) => e.stopPropagation()}
@@ -637,10 +638,47 @@ export default function SimpleRegistrationPage() {
                                             </div>
                                             <Button
                                                 size="sm"
-                                                onClick={(e) => { e.stopPropagation(); alert(`Solicitando pagamento ao ${paymentPhoneNumber} via ${selectedPaymentMethod}`); }}
+                                                disabled={isSubmitting}
+                                                onClick={async (e) => {
+                                                    e.stopPropagation();
+
+                                                    // Basic validation
+                                                    if (paymentPhoneNumber.length < 9) {
+                                                        alert("Por favor, insira um número de telefone válido.");
+                                                        return;
+                                                    }
+
+                                                    setIsSubmitting(true);
+
+                                                    try {
+                                                        const res = await fetch('/api/payment/mpesa', {
+                                                            method: 'POST',
+                                                            headers: { 'Content-Type': 'application/json' },
+                                                            body: JSON.stringify({
+                                                                phoneNumber: paymentPhoneNumber.startsWith('258') ? paymentPhoneNumber : `258${paymentPhoneNumber}`,
+                                                                amount: '1500',
+                                                                reference: `REG_${Date.now()}`
+                                                            })
+                                                        });
+
+                                                        const data = await res.json();
+
+                                                        if (data.success) {
+                                                            alert(`Pedido enviado! Verifique o seu telemóvel (${paymentPhoneNumber}) e insira o PIN do M-Pesa.`);
+                                                        } else {
+                                                            // Fallback for mock/error
+                                                            alert(data.message || "Erro ao processar pagamento. Tente novamente.");
+                                                        }
+                                                    } catch (err) {
+                                                        console.error(err);
+                                                        alert("Erro de conexão. Verifique sua internet.");
+                                                    } finally {
+                                                        setIsSubmitting(false);
+                                                    }
+                                                }}
                                                 className={`w-full h-8 text-xs font-black uppercase text-white hover:text-white ${selectedPaymentMethod === 'mpesa' ? 'bg-[#E60000] hover:bg-[#cc0000]' : 'bg-[#4B0082] hover:bg-[#3a0066]'}`}
                                             >
-                                                Pagar 1 500 Mt
+                                                {isSubmitting ? 'Processando...' : 'Pagar 1 500 Mt'}
                                             </Button>
                                         </div>
                                     )}

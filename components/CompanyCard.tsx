@@ -49,7 +49,7 @@ export function CompanyCard({ company }: CompanyCardProps) {
 
                         {/* COMPANY NAME - WHITE TEXT */}
                         <div className="flex flex-col justify-center min-w-0">
-                            <span className="text-white text-[11px] font-black uppercase tracking-tight leading-tight truncate drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]">
+                            <span className="text-white text-[13px] font-black uppercase tracking-tight leading-tight truncate drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                                 {company.name}
                             </span>
                         </div>

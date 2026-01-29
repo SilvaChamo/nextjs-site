@@ -102,7 +102,7 @@ export default function EmpresasPage() {
                                 company={{
                                     id: company.id,
                                     slug: company.slug,
-                                    name: company.company_name,
+                                    name: company.name,
                                     tag: company.category,
                                     description: company.activity || company.bio || "",
                                     logoUrl: company.logo_url || "",

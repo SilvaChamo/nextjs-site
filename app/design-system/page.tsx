@@ -83,6 +83,9 @@ export default function DesignSystem() {
                     <a href="/design-system/arquivo-produtos" className="btn-primary">
                         Arquivo de Produtos
                     </a>
+                    <a href="/design-system/registo-simples" className="btn-primary">
+                        Formulário de Cadastro
+                    </a>
                     <a href="/design-system/detalhes-empresa" className="btn-primary">
                         Detalhes da Empresa
                     </a>

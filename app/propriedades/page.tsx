@@ -9,43 +9,6 @@ import Image from "next/image";
 import { supabase } from "@/lib/supabaseClient";
 import { createClient } from "@supabase/supabase-js";
 
-// DEMO FALLBACK DATA
-const FALLBACK_PROPERTIES = [
-    {
-        id: 'p1',
-        title: "Fazenda Vale do Limpopo",
-        location: "Chókwè, Gaza",
-        type: "Fazenda",
-        size: "250",
-        status: "Venda",
-        price: "15.000.000",
-        image_url: "https://images.unsplash.com/photo-1500382017468-9049fee74a62?q=80&w=800",
-        description: "Excelente fazenda com sistema de irrigação completo e solos altamente férteis."
-    },
-    {
-        id: 'p2',
-        title: "Terreno Agrícola de Alta Produção",
-        location: "Vanduzi, Manica",
-        type: "Terreno",
-        size: "50",
-        status: "Aluguer",
-        price: "45.000",
-        image_url: "https://images.unsplash.com/photo-1464226184884-fa280b87c399?q=80&w=800",
-        description: "Terreno ideal para horticultura com acesso directo a água durante todo o ano."
-    },
-    {
-        id: 'p3',
-        title: "Pomar de Citrinos Boane",
-        location: "Boane, Maputo",
-        type: "Machamba",
-        size: "15",
-        status: "Venda",
-        price: "2.500.000",
-        image_url: "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?q=80&w=800",
-        description: "Pomar em plena produção com variedade de citrinos e infra-estrutura de apoio."
-    }
-];
-
 function PropertiesContent() {
     const searchParams = useSearchParams();
     const empresaId = searchParams.get("empresa_id");
@@ -60,28 +23,27 @@ function PropertiesContent() {
         async function fetchData() {
             setLoading(true);
             try {
-                // Fetch context name (Company) if filtered
+                // 1. Handle Context Name
                 if (empresaId) {
                     const { data: company } = await supabase
                         .from('companies')
-                        .select('name')
+                        .select('company_name')
                         .eq('id', empresaId)
                         .single();
-                    if (company) setContextName(company.name);
+                    if (company) setContextName(company.company_name);
                 }
 
-                // Fetch Properties
+                // 2. Fetch Properties
                 let query = supabase.from('properties').select('*');
 
                 if (empresaId) {
-                    query = query.eq('empresa_id', empresaId);
+                    query = query.eq('id_empresa', empresaId);
                 }
 
-                const { data, error } = await query.order('created_at', { ascending: false }).limit(3);
+                const { data, error } = await query.order('created_at', { ascending: false });
 
                 if (error) throw error;
-                const allProps = [...(data || []), ...FALLBACK_PROPERTIES];
-                setProperties(allProps.slice(0, 3));
+                setProperties(data || []);
             } catch (error) {
                 console.error("Error fetching properties:", error);
             } finally {

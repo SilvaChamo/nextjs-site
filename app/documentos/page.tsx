@@ -7,40 +7,6 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
 import { createClient } from "@supabase/supabase-js";
 
-// DEMO FALLBACK DATA
-const FALLBACK_DOCS = [
-    {
-        id: 'd1',
-        title: "Lei de Terras de Moçambique",
-        subtitle: "Legislação fundamental que estabelece os princípios e normas sobre a posse, uso e aproveitamento da terra.",
-        source: "Boletim da República",
-        source_url: "https://www.portaldogoverno.gov.mz/",
-        slug: "lei-terras-mocambique",
-        date: "2024-01-15",
-        type: "document"
-    },
-    {
-        id: 'd2',
-        title: "Plano Estratégico do Sector Agrário (PEDSA II)",
-        subtitle: "Estratégia nacional para transformar a agricultura familiar em uma agricultura comercial competitiva e sustentável.",
-        source: "Ministério da Agricultura (MADER)",
-        source_url: "https://www.mader.gov.mz/",
-        slug: "pedsa-ii-2020-2029",
-        date: "2023-11-05",
-        type: "document"
-    },
-    {
-        id: 'd3',
-        title: "Anuário de Estatísticas Agrárias 2023",
-        subtitle: "Compilação de dados estatísticos sobre a produção, comercialização e preços de produtos agrícolas.",
-        source: "Instituto Nacional de Estatística",
-        source_url: "https://www.ine.gov.mz/",
-        slug: "anuarios-estatisticas-agrarias-2023",
-        date: "2023-12-20",
-        type: "document"
-    }
-];
-
 export default function DocumentsArchivePage() {
     const [docs, setDocs] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -54,12 +20,10 @@ export default function DocumentsArchivePage() {
                     .from('articles')
                     .select('*')
                     .eq('type', 'document')
-                    .order('date', { ascending: false })
-                    .limit(3);
+                    .order('date', { ascending: false });
 
                 if (error) throw error;
-                const allDocs = [...(data || []), ...FALLBACK_DOCS];
-                setDocs(allDocs.slice(0, 3));
+                setDocs(data || []);
             } catch (error) {
                 console.error("Error fetching documents:", error);
             } finally {

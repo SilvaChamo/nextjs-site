@@ -8,36 +8,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { supabase } from "@/lib/supabaseClient";
 
-// DEMO FALLBACK DATA
-const FALLBACK_PRODUCTS_MAP: Record<string, any[]> = {
-    '99999999-9999-9999-9999-999999999991': [
-        { id: 'f1', nome: "MILHO HÍBRIDO", preco: "120 MT/kg", category: "INSUMO", image_url: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?q=80&w=800", description: "Sementes de milho de alta produtividade para zonas secas.", available: true },
-        { id: 'f2', nome: "NPK 12-24-12", preco: "3500 MT/50kg", category: "INSUMO", image_url: "https://images.unsplash.com/photo-1628173516104-aa263884cb95?q=80&w=800", description: "Adubo composto para base de culturas alimentares.", available: true },
-        { id: 'f3', nome: "CALCÁRIO", preco: "1500 MT/Tona", category: "INSUMO", image_url: "https://images.unsplash.com/photo-1587049488737-2954a7f92021?q=80&w=800", description: "Corretivo de acidez de solo de acção rápida.", available: true },
-    ],
-    '99999999-9999-9999-9999-999999999992': [
-        { id: 't1', nome: "DRONE AGRAS T40", preco: "Sob Consulta", category: "TECNOLOGIA", image_url: "https://images.unsplash.com/photo-1473968512647-3e447244af8f?q=80&w=800", description: "Drone de pulverização e mapeamento agrícola.", available: true },
-        { id: 't2', nome: "SENSOR DE SOLO IOT", preco: "15.000 MT", category: "TECNOLOGIA", image_url: "https://images.unsplash.com/photo-1581093588401-fbb0739829ff?q=80&w=800", description: "Monitoramento em tempo real de humidade e nutrientes.", available: true },
-        { id: 't3', nome: "GPS AGRÍCOLA", preco: "45.000 MT", category: "TECNOLOGIA", image_url: "https://images.unsplash.com/photo-1595166687295-8a24558e8055?q=80&w=800", description: "Sistema de orientação para tratores.", available: true },
-    ],
-    '99999999-9999-9999-9999-999999999993': [
-        { id: 'fin1', nome: "CRÉDITO CAMPANHA", preco: "Taxa 12%", category: "FINANCIAMENTO", image_url: "https://images.unsplash.com/photo-1554224155-972d256ebe27?q=80&w=800", description: "Financiamento para insumos e sementes.", available: true },
-        { id: 'fin2', nome: "SEGURO COLHEITA", preco: "2% do Valor", category: "FINANCIAMENTO", image_url: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=800", description: "Proteção contra secas e inundações.", available: true },
-        { id: 'tur1', nome: "FAZENDA ECO-RESORT", preco: "5.000 MT/Noite", category: "TURISMO", image_url: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=800", description: "Experiência de agro-turismo em Gaza.", available: true },
-    ]
-};
-
-const FALLBACK_COMPANY_NAMES: Record<string, string> = {
-    '99999999-9999-9999-9999-999999999991': "Casa do Agricultor",
-    '99999999-9999-9999-9999-999999999992': "AgroTech Moz",
-    '99999999-9999-9999-9999-999999999993': "Banco Verde"
-};
-
-const FALLBACK_COMPANY_SLUGS: Record<string, string> = {
-    '99999999-9999-9999-9999-999999999991': "casa-do-agricultor",
-    '99999999-9999-9999-9999-999999999992': "agrotech-moz",
-    '99999999-9999-9999-9999-999999999993': "banco-verde"
-};
 
 function ProductsContent() {
     const searchParams = useSearchParams();
@@ -59,36 +29,16 @@ function ProductsContent() {
                 let allItems: any[] = [];
                 let cName: string | null = null;
 
-                // 1. Handle Context Name and JSONB/Fallback data
+                // 1. Handle Context Name
                 if (empresaId) {
-                    // Check fallbacks first
-                    if (FALLBACK_COMPANY_NAMES[empresaId]) {
-                        cName = FALLBACK_COMPANY_NAMES[empresaId];
-                        const cSlug = FALLBACK_COMPANY_SLUGS[empresaId];
-                        allItems = FALLBACK_PRODUCTS_MAP[empresaId].map(p => ({ ...p, company_slug: cSlug }));
-                    } else {
-                        // Real DB fetch
-                        const { data: company } = await supabase
-                            .from('companies')
-                            .select('name, slug, products')
-                            .eq('id', empresaId)
-                            .single();
+                    const { data: company } = await supabase
+                        .from('companies')
+                        .select('company_name, slug')
+                        .eq('id', empresaId)
+                        .single();
 
-                        if (company) {
-                            cName = company.name;
-                            if (Array.isArray(company.products)) {
-                                const jsonProducts = company.products.map((p: any) => ({
-                                    ...p,
-                                    id: `json-${Math.random()}`,
-                                    nome: p.name || p.nome || "Produto",
-                                    preco: p.price || p.preco || "Sob Consulta",
-                                    image_url: p.img || p.photo || p.image_url || "https://images.unsplash.com/photo-1595152248447-c93d5006b00b?q=80&w=400",
-                                    category: p.category || "Destaque",
-                                    company_slug: company.slug
-                                }));
-                                allItems = [...allItems, ...jsonProducts];
-                            }
-                        }
+                    if (company) {
+                        cName = company.company_name;
                     }
                 } else if (professionalId) {
                     const { data: pro } = await supabase
@@ -97,42 +47,31 @@ function ProductsContent() {
                         .eq('id', professionalId)
                         .single();
                     if (pro) cName = pro.name;
-                } else {
-                    // Global Marketplace - Add all fallbacks for demo purposes
-                    Object.keys(FALLBACK_PRODUCTS_MAP).forEach(cId => {
-                        const cSlug = FALLBACK_COMPANY_SLUGS[cId];
-                        const productsWithSlug = FALLBACK_PRODUCTS_MAP[cId].map(p => ({
-                            ...p,
-                            company_slug: cSlug
-                        }));
-                        allItems = [...allItems, ...productsWithSlug];
-                    });
                 }
 
                 setContextName(cName);
 
                 // 2. Fetch Products from main DB table
-                let query = supabase.from('produtos').select('*, companies(slug)');
+                let query = supabase.from('produtos').select('*, companies(slug, company_name)');
 
                 if (empresaId) {
-                    query = query.eq('empresa_id', empresaId);
+                    query = query.eq('id_empresa', empresaId); // Fixed field name based on schema
                 } else if (professionalId) {
-                    query = query.eq('professional_id', professionalId);
+                    query = query.eq('id_profissional', professionalId);
                 }
 
                 const { data, error } = await query;
-                if (!error && data) {
-                    // Merge DB products, avoiding duplicates by name if they came from JSONB too
-                    const dbProducts = data.map(p => ({
-                        ...p,
-                        // Ensure key fields are mapped for consistency
-                        nome: p.nome || p.name,
-                        preco: p.preco || p.price,
-                        company_slug: Array.isArray(p.companies) ? p.companies[0]?.slug : (p.companies?.slug || p.company_slug)
-                    }));
+                if (error) throw error;
 
-                    // Simple merge for now
-                    allItems = [...allItems, ...dbProducts];
+                if (data) {
+                    allItems = data.map(p => ({
+                        ...p,
+                        nome: p.nome || p.name,
+                        preco: p.preco || p.price || "Sob Consulta",
+                        image_url: p.image_url || p.imagem || "https://images.unsplash.com/photo-1595152248447-c93d5006b00b?q=80&w=400",
+                        company_slug: p.companies?.slug || "empresa-desconhecida",
+                        company_name: p.companies?.company_name
+                    }));
                 }
 
                 setProducts(allItems);
@@ -215,7 +154,7 @@ function ProductsContent() {
                     ))
                 ) : filteredProducts.length > 0 ? (
                     filteredProducts.map((product, i) => {
-                        const resolvedCompanySlug = product.company_slug || (empresaId && FALLBACK_COMPANY_SLUGS[empresaId]);
+                        const resolvedCompanySlug = product.company_slug;
                         const prodUrl = resolvedCompanySlug
                             ? `/empresas/${resolvedCompanySlug}/produto/${slugify(product.nome || product.name)}`
                             : "#";

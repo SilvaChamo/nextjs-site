@@ -98,7 +98,7 @@ function BlogContent() {
 
 
                 <div className="flex flex-col md:flex-row gap-6 mb-16 items-center justify-between">
-                    <div className="relative w-full md:max-w-lg group">
+                    <div className="relative w-full md:max-w-2xl group">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-[#f97316] transition-colors" />
                         <input
                             type="text"

@@ -301,7 +301,7 @@ export function InfoSection() {
                             {activeTab === "informacoes" && (
                                 <div className="space-y-6">
                                     <div className="flex justify-end px-4 md:px-0">
-                                        <Link href="/artigos" className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-[#f97316] transition-colors group">
+                                        <Link href="/blog" className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-[#f97316] transition-colors group">
                                             Ver mais notícias
                                             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                                         </Link>

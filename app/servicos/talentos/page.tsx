@@ -37,8 +37,8 @@ export default function TalentosPage() {
                 backgroundImage="https://images.unsplash.com/photo-1595152248447-c93d5006b00b?q=80&w=2000&auto=format&fit=crop"
                 breadcrumbs={[
                     { label: "Início", href: "/" },
-                    { label: "Serviços", href: "/servicos" },
-                    { label: "Talentos", href: undefined }
+                    { label: "Repositório", href: "/repositorio" },
+                    { label: "Profissionais", href: undefined }
                 ]}
             />
 

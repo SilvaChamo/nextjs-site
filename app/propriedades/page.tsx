@@ -91,7 +91,7 @@ function PropertiesContent() {
                 </div>
             }
         >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {loading ? (
                     Array(4).fill(0).map((_, i) => (
                         <div key={i} className="animate-pulse bg-white rounded-[15px] h-[300px]" />

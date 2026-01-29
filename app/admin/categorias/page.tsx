@@ -49,7 +49,7 @@ export default function AdminCategoriesPage() {
             header: "Título",
             key: "title",
             render: (val: string, row: any) => {
-                // @ts-ignore
+                // @ts-expect-error: LucideIcons type indexing
                 const Icon = LucideIcons[row.icon_name] || LucideIcons.Grid2X2;
                 return (
                     <div className="flex items-center gap-3">

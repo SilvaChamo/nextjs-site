@@ -1,0 +1,106 @@
+
+> nextjs@0.1.0 build
+> next build
+
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /Users/macbook/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /Users/macbook/Desktop/APP/baseagrodata.com/package-lock.json
+
+▲ Next.js 16.1.1 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 22.0s
+  Running TypeScript ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/67) ...
+  Generating static pages using 7 workers (16/67) 
+  Generating static pages using 7 workers (33/67) 
+  Generating static pages using 7 workers (50/67) 
+✓ Generating static pages using 7 workers (67/67) in 3.5s
+  Finalizing page optimization ...
+
+Route (app)                                 Revalidate  Expire
+┌ ○ /                                               1m      1y
+├ ○ /_not-found
+├ ○ /admin
+├ ○ /admin/blog
+├ ○ /admin/categorias
+├ ○ /admin/empresas
+├ ○ /admin/estatisticas
+├ ○ /admin/indicadores
+├ ○ /admin/mensagens
+├ ƒ /api/articles/search
+├ ○ /artigos
+├ ƒ /artigos/[slug]
+├ ○ /blog
+├ ○ /contactos
+├ ○ /design-system
+├ ○ /design-system/arquivo-produtos
+├ ○ /design-system/detalhes-empresa
+├ ○ /design-system/kit-padrao
+├ ○ /design-system/podcast
+├ ○ /design-system/registo-simples
+├ ○ /documentos
+├ ○ /empresas
+├ ƒ /empresas/[slug]
+├ ƒ /empresas/[slug]/arquivo-produtos
+├ ƒ /empresas/[slug]/produto/[productSlug]
+├ ● /estatisticas/[slug]
+│ ├ /estatisticas/producao
+│ ├ /estatisticas/economia
+│ ├ /estatisticas/empresas
+│ └ /estatisticas/emprego
+├ ○ /estatisticas/admin
+├ ○ /icon.png
+├ ○ /login
+├ ○ /mercado
+├ ○ /offline
+├ ○ /parceria
+├ ○ /planos
+├ ○ /produtos
+├ ○ /propriedades
+├ ○ /registar
+├ ○ /repositorio
+├ ○ /servicos
+├ ○ /servicos/assistencia
+├ ○ /servicos/consultoria
+├ ○ /servicos/consultoria/detalhes
+├ ○ /servicos/conteudo
+├ ○ /servicos/emprego
+├ ○ /servicos/eventos
+├ ○ /servicos/formacao
+├ ƒ /servicos/formacao/[id]
+├ ○ /servicos/insumos
+├ ○ /servicos/mercado
+├ ○ /servicos/mercado/detalhes
+├ ○ /servicos/talentos
+├ ○ /servicos/transporte
+├ ○ /servicos/transporte/detalhes
+├ ○ /sobre-aplicativo
+├ ○ /sobre-nos
+├ ○ /sobre-nos/historial
+├ ○ /usuario/dashboard
+├ ○ /usuario/dashboard/ajuda
+├ ○ /usuario/dashboard/analises
+├ ○ /usuario/dashboard/configuracoes
+├ ○ /usuario/dashboard/contactos
+├ ○ /usuario/dashboard/emprego
+├ ○ /usuario/dashboard/empresa
+├ ○ /usuario/dashboard/formacao
+├ ○ /usuario/dashboard/mercado
+├ ○ /usuario/dashboard/minha-conta
+├ ○ /usuario/dashboard/produtos
+├ ○ /usuario/dashboard/propriedades
+└ ○ /usuario/registo-empresa
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+

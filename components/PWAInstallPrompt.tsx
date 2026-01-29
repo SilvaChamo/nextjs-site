@@ -32,8 +32,8 @@ export function PWAInstallPrompt() {
         window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
 
         // Check if app is already installed
-        if (window.matchMedia('(display-mode: standalone)').matches) {
-            setIsVisible(false);
+        if (window.matchMedia('(display-mode: standalone)').matches && isVisible) {
+            setTimeout(() => setIsVisible(false), 0);
         }
 
         return () => {
@@ -72,8 +72,8 @@ export function PWAInstallPrompt() {
         const lastDismissed = localStorage.getItem("pwa-prompt-dismissed");
         if (lastDismissed) {
             const sevenDaysInMs = 7 * 24 * 60 * 60 * 1000;
-            if (Date.now() - parseInt(lastDismissed) < sevenDaysInMs) {
-                setIsVisible(false);
+            if (Date.now() - parseInt(lastDismissed) < sevenDaysInMs && isVisible) {
+                setTimeout(() => setIsVisible(false), 0);
             }
         }
     }, [isVisible]);

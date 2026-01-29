@@ -113,7 +113,7 @@ export function InfoSection() {
 
             if (cats.data) {
                 const formattedCats = cats.data.map(c => {
-                    // @ts-ignore
+                    // @ts-expect-error: LucideIcons dynamic indexing
                     const Icon = LucideIcons[c.icon_name] || LucideIcons.TreePalm;
                     return {
                         title: c.title,

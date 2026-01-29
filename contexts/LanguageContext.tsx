@@ -18,10 +18,10 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         const saved = localStorage.getItem('language') as Language;
-        if (saved && (saved === 'PT' || saved === 'EN')) {
-            setLanguageState(saved);
+        if (saved && (saved === 'PT' || saved === 'EN') && saved !== language) {
+            setTimeout(() => setLanguageState(saved), 0);
         }
-        setMounted(true);
+        setTimeout(() => setMounted(true), 0);
     }, []);
 
     const setLanguage = (lang: Language) => {

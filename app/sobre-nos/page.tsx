@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo, useState, useEffect } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import {
     Info, ArrowRight, CheckCircle2, Zap, Globe2,
@@ -94,12 +95,12 @@ export default function SobrePage() {
                             key={i}
                             className="absolute rounded-full bg-emerald-500/20 blur-3xl animate-pulse"
                             style={{
-                                width: `${Math.random() * 300 + 100}px`,
-                                height: `${Math.random() * 300 + 100}px`,
-                                top: `${Math.random() * 100}%`,
-                                left: `${Math.random() * 100}%`,
-                                animationDelay: `${Math.random() * 5}s`,
-                                animationDuration: `${Math.random() * 10 + 5}s`
+                                width: `${(i * 50 + 100) % 300 + 100}px`,
+                                height: `${(i * 70 + 120) % 300 + 100}px`,
+                                top: `${(i * 17) % 100}%`,
+                                left: `${(i * 23) % 100}%`,
+                                animationDelay: `${i * 0.8}s`,
+                                animationDuration: `${i + 7}s`
                             }}
                         />
                     ))}

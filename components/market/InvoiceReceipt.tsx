@@ -16,7 +16,11 @@ interface InvoiceReceiptProps {
 
 const InvoiceReceipt: React.FC<InvoiceReceiptProps> = ({ company, onClose }) => {
     const today = new Date().toLocaleDateString('pt-MZ');
-    const invoiceNumber = `INV-${Math.floor(100000 + Math.random() * 900000)}`;
+    const [invoiceNumber, setInvoiceNumber] = React.useState('');
+
+    React.useEffect(() => {
+        setInvoiceNumber(`INV-${Math.floor(100000 + Math.random() * 900000)}`);
+    }, []);
 
     const getPlanPrice = () => {
         if (!company.plan || company.plan === 'Free') return 0;

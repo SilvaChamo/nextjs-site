@@ -99,11 +99,11 @@ function BlogContent() {
 
                 <div className="flex flex-col md:flex-row gap-6 mb-16 items-center justify-between">
                     <div className="relative w-full md:max-w-md group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-600 transition-colors" />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-[#f97316] transition-colors" />
                         <input
                             type="text"
                             placeholder="Pesquisar artigos..."
-                            className="w-full bg-white border border-slate-100 rounded-[15px] pl-12 pr-4 py-4 text-sm focus:outline-none focus:border-emerald-500 shadow-sm transition-all"
+                            className="w-full bg-white border border-slate-100 rounded-[15px] pl-12 pr-4 py-4 text-sm focus:outline-none focus:border-[#f97316] focus:ring-1 focus:ring-[#f97316] shadow-sm transition-all"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
@@ -114,8 +114,8 @@ function BlogContent() {
                                 key={i}
                                 onClick={() => handleCategoryClick(tag)}
                                 className={`px-6 py-3 rounded-[15px] text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap shadow-sm border ${activeCategory === tag
-                                    ? "bg-slate-900 text-white border-slate-900"
-                                    : "bg-white text-slate-400 border-slate-100 hover:border-emerald-200 hover:text-emerald-600"
+                                    ? "bg-emerald-600 text-white border-emerald-600"
+                                    : "bg-white text-slate-400 border-slate-100 hover:border-[#f97316] hover:text-[#f97316]"
                                     }`}
                             >
                                 {tag}

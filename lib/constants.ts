@@ -54,7 +54,6 @@ export const COMPANY_CATEGORIES = [
     "Pecuária",
     "Pesquisa agrícola",
     "Planeamento agrícola",
-    "Prestação de serviços",
     "Processamento",
     "Produção agrícola",
     "Segurança alimentar",
@@ -65,6 +64,20 @@ export const COMPANY_CATEGORIES = [
     "Tecnologia agrícola",
     "Transporte agrícola",
     "Viveiros"
+];
+
+export const PROVINCES = [
+    "Maputo Cidade",
+    "Maputo Província",
+    "Gaza",
+    "Inhambane",
+    "Manica",
+    "Sofala",
+    "Tete",
+    "Zambézia",
+    "Nampula",
+    "Niassa",
+    "Cabo Delgado"
 ];
 
 export const FEATURED_COMPANIES: Company[] = [

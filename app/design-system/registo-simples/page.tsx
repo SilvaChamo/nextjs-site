@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, ShoppingBag, Plus, Trash2, CheckCircle2, X, Pencil } from "lucide-react";
+import { Upload, ShoppingBag, Plus, Trash2, CheckCircle2, X, Pencil, Lock } from "lucide-react";
 import {
     Dialog,
     DialogContent,
@@ -22,7 +22,24 @@ import {
 } from "@/components/ui/select"
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
-import { COMPANY_CATEGORIES } from "@/lib/constants";
+import { COMPANY_CATEGORIES, PROVINCES } from "@/lib/constants";
+import { RichTextEditor } from "@/components/RichTextEditor";
+
+const PlanBadge = ({ plan }: { plan: 'Basic' | 'Profissional' | 'Premium' | 'Parceiro' }) => {
+    const styles = {
+        Basic: "bg-slate-100 text-slate-600 border-slate-200",
+        Profissional: "bg-orange-50 text-orange-600 border-orange-200",
+        Premium: "bg-blue-50 text-blue-600 border-blue-200",
+        Parceiro: "bg-emerald-50 text-emerald-600 border-emerald-200"
+    };
+
+    return (
+        <div className={`absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 px-2 py-1 rounded-md border ${styles[plan]}`}>
+            <span className="text-[10px] font-black uppercase tracking-widest">{plan}</span>
+            <Lock className="w-3 h-3" />
+        </div>
+    );
+};
 
 export default function SimpleRegistrationPage() {
 
@@ -35,6 +52,7 @@ export default function SimpleRegistrationPage() {
 
     // Data States
     const [fetchedCategories, setFetchedCategories] = useState<string[]>(COMPANY_CATEGORIES);
+    const [bio, setBio] = useState("");
 
     // Fetch Categories (Removed in favor of static constant)
     useEffect(() => {
@@ -282,95 +300,148 @@ export default function SimpleRegistrationPage() {
                             <div className="flex-1 w-full space-y-[10px]">
                                 <Input
                                     placeholder="Nome da empresa *"
-                                    className="h-12 border-slate-200 p-[10px] text-sm font-semibold text-slate-600 placeholder:text-slate-400 bg-white"
+                                    className="h-12 border-slate-200 px-4 text-sm font-semibold text-slate-600 placeholder:text-slate-400 bg-white"
                                     style={{ borderRadius: '8px' }}
                                     required
                                 />
+
+
                                 <div className="grid grid-cols-2 gap-[10px]">
-                                    <Input
-                                        placeholder="Contacto Corporativo"
-                                        className="h-12 border-slate-200 p-[10px] text-sm font-semibold text-slate-600 placeholder:text-slate-400 bg-white"
-                                        style={{ borderRadius: '8px' }}
-                                    />
-                                    <Input
-                                        placeholder="Whatsapp"
-                                        className="h-12 border-slate-200 p-[10px] text-sm font-semibold text-slate-600 placeholder:text-slate-400 bg-white"
-                                        style={{ borderRadius: '8px' }}
-                                    />
+                                    <div className="relative">
+                                        <Input
+                                            placeholder="Contacto Corporativo"
+                                            className="h-12 border-slate-200 px-4 text-sm font-semibold text-slate-400 placeholder:text-slate-400 bg-slate-50 cursor-not-allowed pr-32"
+                                            style={{ borderRadius: '8px' }}
+                                            disabled
+                                        />
+                                        <PlanBadge plan="Profissional" />
+                                    </div>
+                                    <div className="relative">
+                                        <Input
+                                            placeholder="Whatsapp"
+                                            className="h-12 border-slate-200 px-4 text-sm font-semibold text-slate-400 placeholder:text-slate-400 bg-slate-50 cursor-not-allowed pr-32"
+                                            style={{ borderRadius: '8px' }}
+                                            disabled
+                                        />
+                                        <PlanBadge plan="Premium" />
+                                    </div>
                                 </div>
-                                <Input
-                                    placeholder="E-mail corporativo"
-                                    className="h-12 border-slate-200 p-[10px] text-sm font-semibold text-slate-600 placeholder:text-slate-400 bg-white"
-                                    style={{ borderRadius: '8px' }}
-                                />
+                                <div className="relative">
+                                    <Input
+                                        placeholder="E-mail corporativo"
+                                        className="h-12 border-slate-200 px-4 text-sm font-semibold text-slate-400 placeholder:text-slate-400 bg-slate-50 cursor-not-allowed pr-32"
+                                        style={{ borderRadius: '8px' }}
+                                        disabled
+                                    />
+                                    <PlanBadge plan="Basic" />
+                                </div>
                             </div>
                         </div>
 
                         {/* FULL WIDTH FIELDS */}
                         <div className="space-y-[10px]">
-                            {/* Address & Province (Replaces Slogan) */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-[10px]">
+                            {/* Address & Province */}
+                            <div className="grid grid-cols-1 md:grid-cols-[65fr_35fr] gap-[10px]">
                                 <Input
                                     placeholder="Endereço físico"
-                                    className="h-12 border-slate-200 p-[10px] text-sm font-semibold text-slate-600 placeholder:text-slate-400 bg-white"
+                                    className="h-12 border-slate-200 px-4 text-sm font-semibold text-slate-600 placeholder:text-slate-400 bg-white"
                                     style={{ borderRadius: '8px' }}
                                 />
                                 <Input
                                     placeholder="Província"
-                                    className="h-12 border-slate-200 p-[10px] text-sm font-semibold text-slate-600 placeholder:text-slate-400 bg-white"
+                                    className="h-12 border-slate-200 px-4 text-sm font-semibold text-slate-600 placeholder:text-slate-400 bg-white"
                                     style={{ borderRadius: '8px' }}
                                 />
                             </div>
 
-                            {/* Selectors (Replaces Nuit) */}
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-[10px]">
-                                <Select>
-                                    <SelectTrigger className="w-full h-12 border-slate-200 bg-white text-slate-600 font-semibold p-[10px]" style={{ borderRadius: '8px' }}>
-                                        <SelectValue placeholder="Sector de actuação" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="agricola">Agrícola</SelectItem>
-                                        <SelectItem value="pecuaria">Pecuária</SelectItem>
-                                        <SelectItem value="pesca">Pesca</SelectItem>
-                                    </SelectContent>
-                                </Select>
-
-                                <Select>
-                                    <SelectTrigger className="w-full h-12 border-slate-200 bg-white text-slate-600 font-semibold p-[10px]" style={{ borderRadius: '8px' }}>
-                                        <SelectValue placeholder="Cadeia de valor" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="producao">Produção</SelectItem>
-                                        <SelectItem value="processamento">Processamento</SelectItem>
-                                        <SelectItem value="distribuicao">Distribuição</SelectItem>
-                                    </SelectContent>
-                                </Select>
-
-                                <Select>
-                                    <SelectTrigger className="w-full h-12 border-slate-200 bg-white text-slate-600 font-semibold p-[10px]" style={{ borderRadius: '8px' }}>
-                                        <SelectValue placeholder="Categoria" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {fetchedCategories.map((cat: string) => (
-                                            <SelectItem key={cat} value={cat}>
-                                                {cat}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
-                            {/* Remaining Fields */}
-                            <Input placeholder="Link do website" className="h-12 border-slate-200 p-[10px] text-sm font-semibold text-slate-600 placeholder:text-slate-400 bg-white" style={{ borderRadius: '8px' }} />
-                            <Textarea
-                                placeholder="Bio / Descrição da empresa"
-                                className="min-h-[100px] border-slate-200 p-[10px] text-sm font-semibold text-slate-600 placeholder:text-slate-400 bg-white resize-none"
+                            {/* Actividade Principal - Moved Here */}
+                            <Input
+                                placeholder="Actividade Principal"
+                                className="h-12 border-slate-200 px-4 text-sm font-semibold text-slate-600 placeholder:text-slate-400 bg-white"
                                 style={{ borderRadius: '8px' }}
                             />
+
+                            {/* Bio Editor - Moved Above Selects */}
+                            <RichTextEditor
+                                value={bio}
+                                onChange={setBio}
+                                placeholder="Descrição geral da empresa"
+                                className="min-h-[150px]"
+                            />
+
+                            {/* Selectors (Moved Below Bio) */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-[10px]">
+                                {/* 1. Sector de Actuação (Former Categories) */}
+                                <div className="relative">
+                                    <Select disabled>
+                                        <SelectTrigger className="w-full h-12 border-slate-200 bg-slate-50 text-slate-400 font-semibold px-4 cursor-not-allowed" style={{ borderRadius: '8px' }}>
+                                            <SelectValue placeholder="Sector de actuação" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {fetchedCategories.map((cat: string) => (
+                                                <SelectItem key={cat} value={cat}>
+                                                    {cat}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <PlanBadge plan="Parceiro" />
+                                </div>
+
+                                {/* 2. Cadeia de Valor (Updated Options) */}
+                                <div className="relative">
+                                    <Select disabled>
+                                        <SelectTrigger className="w-full h-12 border-slate-200 bg-slate-50 text-slate-400 font-semibold px-4 cursor-not-allowed" style={{ borderRadius: '8px' }}>
+                                            <SelectValue placeholder="Cadeia de valor" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="produtor">Produtor</SelectItem>
+                                            <SelectItem value="consumidor">Consumidor</SelectItem>
+                                            <SelectItem value="fornecedor">Fornecedor</SelectItem>
+                                            <SelectItem value="servicos">Serviços</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <PlanBadge plan="Parceiro" />
+                                </div>
+
+                                {/* 3. Categoria (Updated Options: Size) */}
+                                <div className="relative">
+                                    <Select disabled>
+                                        <SelectTrigger className="w-full h-12 border-slate-200 bg-slate-50 text-slate-400 font-semibold px-4 cursor-not-allowed" style={{ borderRadius: '8px' }}>
+                                            <SelectValue placeholder="Categoria" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="pequena">Pequena empresa</SelectItem>
+                                            <SelectItem value="media">Média empresa</SelectItem>
+                                            <SelectItem value="grande">Grande empresa</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <PlanBadge plan="Parceiro" />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* UPSELL BANNER */}
+                        <div className="bg-gradient-to-r from-emerald-900 via-emerald-800 to-emerald-900 p-6 rounded-xl relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-white/10 transition-colors"></div>
+                            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                                <div>
+                                    <h3 className="text-xl font-black text-white mb-2 flex items-center gap-2">
+                                        <Lock className="w-5 h-5 text-emerald-400" />
+                                        Desbloqueie o Potencial Total
+                                    </h3>
+                                    <p className="text-emerald-100 text-sm max-w-lg">
+                                        Adira a um dos nossos planos <strong>Premium</strong> ou <strong>Parceiro</strong> para desbloquear campos exclusivos, obter cotações em tempo real e aumentar sua visibilidade no mercado.
+                                    </p>
+                                </div>
+                                <Button className="bg-white text-emerald-900 hover:bg-emerald-50 px-8 h-12 font-black uppercase tracking-widest text-xs shadow-lg transform group-hover:scale-105 transition-all">
+                                    Ver Planos e Preços
+                                </Button>
+                            </div>
                         </div>
 
                         <div className="pt-6 flex justify-start">
-                            <Button className="w-auto px-12 h-14 bg-emerald-600 hover:bg-[#f97316] text-white font-black uppercase tracking-[0.2em] shadow-xl shadow-emerald-500/20 transition-colors duration-300" style={{ borderRadius: '8px' }}>
+                            <Button className="w-auto px-8 h-10 bg-emerald-600 hover:bg-[#f97316] text-white font-black uppercase tracking-[0.2em] shadow-xl shadow-emerald-500/20 transition-colors duration-300" style={{ borderRadius: '8px' }}>
                                 Publicar Empresa
                             </Button>
                         </div>

@@ -145,7 +145,7 @@ export default function RegisterCompanyPage() {
                 province: formData.province,
                 district: formData.district,
                 address: formData.address,
-                category: formData.sector,
+                sector: formData.sector,
                 description: formData.description,
                 plan: formData.plan,
                 billing_period: formData.billingPeriod,

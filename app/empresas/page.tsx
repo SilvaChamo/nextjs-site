@@ -109,7 +109,8 @@ export default function EmpresasPage() {
                                     type: company.registration_type || "Empresa",
                                     image: company.banner_url || "",
                                     isVerified: company.verified,
-                                    province: company.province
+                                    province: company.province,
+                                    valueChain: company.value_chain
                                 }}
                             />
                         ))}

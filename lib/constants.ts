@@ -21,6 +21,7 @@ export type Company = {
     bio?: string;
     activity?: string;
     province?: string;
+    valueChain?: string;
 };
 
 export const COMPANY_CATEGORIES = [

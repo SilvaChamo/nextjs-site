@@ -76,12 +76,23 @@ export function CompanyCard({ company }: CompanyCardProps) {
                         </h3>
                     </Link>
 
-                    <p className="text-[11px] font-semibold text-slate-500 mb-4 leading-relaxed line-clamp-2 min-h-[32px]">
+                    <p className="text-[11px] font-semibold text-slate-500 mb-2 leading-relaxed line-clamp-2 min-h-[32px]">
                         {company.description || "Agro-negócio focado no desenvolvimento sustentável e inovação tecnológica no sector agrário em Moçambique."}
                     </p>
+
+                    {/* VALUE CHAIN TAGS */}
+                    {company.valueChain && (
+                        <div className="flex flex-wrap gap-1.5 mb-4">
+                            {company.valueChain.split(',').map((item, idx) => (
+                                <span key={idx} className="bg-slate-50 text-[8.5px] font-black text-slate-400 border border-slate-100 px-1.5 py-0.5 rounded uppercase tracking-wider">
+                                    {item.trim()}
+                                </span>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
-                <div className="flex items-center justify-between mt-2 pt-3 border-t border-slate-50">
+                <div className="flex items-center justify-between mt-auto pt-3 border-t border-slate-50">
                     <Link
                         href={`/empresas/${company.slug || company.id}`}
                         className="text-[10px] font-black uppercase tracking-widest text-[#f97316] hover:text-orange-700 flex items-center gap-1.5 transition-all"
@@ -89,6 +100,11 @@ export function CompanyCard({ company }: CompanyCardProps) {
                         Ver Perfil
                         <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1.5" />
                     </Link>
+
+                    {/* COMPANY ID */}
+                    <span className="text-[8.5px] font-black text-slate-300 uppercase tracking-widest">
+                        ID: {company.id.toString().substring(0, 8)}
+                    </span>
                 </div>
             </div>
         </div>

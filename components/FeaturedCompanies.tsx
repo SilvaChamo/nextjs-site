@@ -39,7 +39,8 @@ export function FeaturedCompanies() {
                         type: d.registration_type || 'Empresa',
                         image: d.banner_url || d.image_url || 'https://images.unsplash.com/photo-1625246333195-58f21a416327',
                         isVerified: d.is_verified || d.is_featured,
-                        province: d.province
+                        province: d.province,
+                        valueChain: d.value_chain
                     }));
                     setCompanies(mapped);
                 }

@@ -113,7 +113,7 @@ function BlogContent() {
                             <button
                                 key={i}
                                 onClick={() => handleCategoryClick(tag)}
-                                className={`px-6 py-3 rounded-[15px] text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap shadow-sm border ${activeCategory === tag
+                                className={`px-6 py-3 rounded-[10px] text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap shadow-sm border ${activeCategory === tag
                                     ? "bg-emerald-600 text-white border-emerald-600"
                                     : "bg-white text-slate-400 border-slate-100 hover:border-[#f97316] hover:text-[#f97316]"
                                     }`}

@@ -8,7 +8,7 @@ import {
     Clock, ThumbsUp, Share2,
     ArrowRight, Facebook, Twitter, Linkedin,
     ChevronLeft, ChevronRight, Calendar, User, Bookmark,
-    Newspaper, Tag, MessageCircle
+    Newspaper, Tag, MessageCircle, ExternalLink
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import { PageHeader } from "@/components/PageHeader";
@@ -153,11 +153,18 @@ export default function ArticleReadingPage() {
                         ? "/images/Prototipo/brasilafrica.jpg"
                         : article.image_url || "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?q=80&w=2000&auto=format&fit=crop"
                 }
-                breadcrumbs={[
-                    { label: "Início", href: "/" },
-                    { label: "Blog", href: "/blog" },
-                    { label: article.type || "Notícia", href: undefined }
-                ]}
+                breadcrumbs={
+                    article.type === 'document' ? [
+                        { label: "Início", href: "/" },
+                        { label: "Repositório", href: "/repositorio" },
+                        { label: "Documentos", href: "/documentos" },
+                        { label: article.type || "Documento", href: undefined }
+                    ] : [
+                        { label: "Início", href: "/" },
+                        { label: "Blog", href: "/blog" },
+                        { label: article.type || "Notícia", href: undefined }
+                    ]
+                }
             />
 
             <main className="max-w-[1350px] mx-auto px-4 md:px-[60px] py-16">
@@ -189,6 +196,23 @@ export default function ArticleReadingPage() {
                                         <span>5 min leitura</span>
                                     </div>
                                     <span className="w-1 h-1 rounded-full bg-slate-200"></span>
+
+                                    {article.source_url && (
+                                        <>
+                                            <a
+                                                href={article.source_url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center gap-2 text-emerald-600 hover:text-emerald-700 transition-colors"
+                                            >
+                                                <ExternalLink className="w-3.5 h-3.5" />
+                                                <span className="hidden sm:inline">Visualizar Documento</span>
+                                                <span className="sm:hidden">Fonte</span>
+                                            </a>
+                                            <span className="w-1 h-1 rounded-full bg-slate-200"></span>
+                                        </>
+                                    )}
+
                                     <div className="relative">
                                         <button
                                             onClick={() => setShowShareMenu(!showShareMenu)}

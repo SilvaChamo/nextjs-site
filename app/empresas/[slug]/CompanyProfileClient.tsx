@@ -55,6 +55,7 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
             backgroundImage={company.header_bg}
             breadcrumbs={[
                 { label: "Início", href: "/" },
+                { label: "Repositório", href: "/repositorio" },
                 { label: "Empresas", href: "/empresas" },
                 { label: company.name }
             ]}

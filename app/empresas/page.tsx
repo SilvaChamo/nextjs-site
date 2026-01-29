@@ -37,7 +37,8 @@ export default function EmpresasPage() {
             title="Empresas"
             breadcrumbs={[
                 { label: "Início", href: "/" },
-                { label: "Empresas" }
+                { label: "Repositório", href: "/repositorio" },
+                { label: "Empresas", href: undefined }
             ]}
             sidebarComponents={
                 <div className="space-y-agro">

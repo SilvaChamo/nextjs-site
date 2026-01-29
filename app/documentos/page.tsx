@@ -125,9 +125,21 @@ export default function DocumentsArchivePage() {
                                 </div>
                             </div>
                             <div className="flex items-center gap-3 w-full md:w-auto justify-end">
-                                <button className="bg-slate-50 text-slate-400 p-2.5 rounded-lg hover:bg-emerald-600 hover:text-white transition-all" title="Baixar PDF">
-                                    <ArrowDownToLine className="w-5 h-5" />
-                                </button>
+                                {doc.source_url ? (
+                                    <a
+                                        href={doc.source_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="bg-slate-50 text-slate-400 p-2.5 rounded-lg hover:bg-emerald-600 hover:text-white transition-all inline-flex items-center justify-center"
+                                        title="Baixar Documento"
+                                    >
+                                        <ArrowDownToLine className="w-5 h-5" />
+                                    </a>
+                                ) : (
+                                    <button className="bg-slate-50 text-slate-400 p-2.5 rounded-lg hover:bg-emerald-600 hover:text-white transition-all opacity-50 cursor-not-allowed" title="Sem link disponível">
+                                        <ArrowDownToLine className="w-5 h-5" />
+                                    </button>
+                                )}
                                 <Link href={`/artigos/${doc.slug}`}>
                                     <button className="bg-slate-50 text-slate-400 p-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-all" title="Ver Detalhes">
                                         <ExternalLink className="w-5 h-5" />

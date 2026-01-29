@@ -37,6 +37,7 @@ function BlogContent() {
                 const { data, error } = await supabase
                     .from('articles')
                     .select('id, title, subtitle, image_url, date, slug, type')
+                    .neq('type', 'document')
                     .order('date', { ascending: false });
 
                 if (error) throw error;

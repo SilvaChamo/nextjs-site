@@ -181,22 +181,22 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                                 <div className="w-full">
                                     <div className="flex items-center gap-3 mb-0.5">
                                         {company.is_verified && <CheckCircle2 className="text-emerald-400 w-5 h-5 md:w-6 md:h-6 drop-shadow-lg" />}
-                                        <h1 className="text-2xl md:text-4xl font-black mb-0 text-white leading-tight drop-shadow-md">
-                                            {company.name}
+                                        <h1 className="text-2xl md:text-4xl font-black mb-0 text-white leading-tight drop-shadow-md uppercase">
+                                            {company.category}
                                         </h1>
                                     </div>
                                     <p className="text-white/90 font-bold drop-shadow-sm text-xs md:text-sm opacity-90 capitalize">
-                                        {company.activity || company.category}
+                                        {company.province}, Moçambique
                                     </p>
                                     <div className="flex gap-2 mt-2">
-                                        {company.value_chain && (
-                                            <span className="bg-white/20 backdrop-blur-sm text-[10px] font-black text-white px-2 py-0.5 rounded border border-white/20 uppercase">
-                                                {company.value_chain}
+                                        {company.is_verified && (
+                                            <span className="bg-emerald-500/80 backdrop-blur-sm text-[10px] font-black text-white px-2 py-0.5 rounded border border-emerald-400/50 uppercase tracking-widest">
+                                                Sinal de Certificação
                                             </span>
                                         )}
-                                        {company.category && (
-                                            <span className="bg-emerald-500/80 backdrop-blur-sm text-[10px] font-black text-white px-2 py-0.5 rounded border border-emerald-400/50 uppercase">
-                                                {company.category}
+                                        {company.registration_type && (
+                                            <span className="bg-white/20 backdrop-blur-sm text-[10px] font-black text-white px-2 py-0.5 rounded border border-white/20 uppercase">
+                                                {company.registration_type}
                                             </span>
                                         )}
                                     </div>

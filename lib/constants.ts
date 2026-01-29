@@ -20,6 +20,7 @@ export type Company = {
     isVerified?: boolean;
     bio?: string;
     activity?: string;
+    province?: string;
 };
 
 export const COMPANY_CATEGORIES = [

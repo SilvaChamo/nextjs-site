@@ -26,10 +26,11 @@ export function CompanyCard({ company }: CompanyCardProps) {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
 
-                {/* CATEGORY TAG - TOP RIGHT */}
+                {/* CERTIFICATION SIGNAL - TOP RIGHT */}
                 <div className="absolute top-3 right-3 z-30">
-                    <div className="bg-emerald-600/90 backdrop-blur-sm text-white text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded shadow-sm border border-white/10">
-                        {displayCategory}
+                    <div className="bg-emerald-600/90 backdrop-blur-sm text-white text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded shadow-sm border border-white/10 flex items-center gap-1">
+                        {company.isVerified && <ShieldCheck className="w-2.5 h-2.5" />}
+                        {company.isVerified ? "Certificada" : "Registada"}
                     </div>
                 </div>
 
@@ -47,20 +48,18 @@ export function CompanyCard({ company }: CompanyCardProps) {
                             />
                         </div>
 
-                        {/* COMPANY NAME - WHITE TEXT */}
+                        {/* CATEGORY (WAS NAME) - WHITE TEXT */}
                         <div className="flex flex-col justify-center min-w-0">
                             <span className="text-white text-[13px] font-black uppercase tracking-tight leading-tight truncate drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                                {company.name}
+                                {displayCategory}
+                            </span>
+                            <span className="text-white/80 text-[9px] font-bold uppercase tracking-widest drop-shadow-md">
+                                {company.province || "Moçambique"}
                             </span>
                         </div>
                     </div>
 
-                    {/* VERIFIED BADGE */}
-                    {company.isVerified && (
-                        <div className="shrink-0 flex items-center gap-1.5 bg-white/10 backdrop-blur-md px-1.5 py-0.5 rounded-md border border-white/10">
-                            <ShieldCheck className="w-3 h-3 text-emerald-400" />
-                        </div>
-                    )}
+                    {/* REMOVED VERIFIED BADGE FROM HERE AS IT IS NOW AT THE TOP */}
                 </div>
             </div>
 

@@ -41,7 +41,7 @@ export default function RepositorioPage() {
                     supabase.from('products').select('*', { count: 'exact', head: true }),
                     supabase.from('professionals').select('*', { count: 'exact', head: true }),
                     supabase.from('properties').select('*', { count: 'exact', head: true }),
-                    supabase.from('articles').select('*', { count: 'exact', head: true }).eq('type', 'document')
+                    supabase.from('articles').select('*', { count: 'exact', head: true }).or('type.eq.document,type.eq.Relatório')
                 ]);
 
                 setCounts({

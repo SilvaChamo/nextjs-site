@@ -38,6 +38,7 @@ function BlogContent() {
                     .from('articles')
                     .select('id, title, subtitle, image_url, date, slug, type')
                     .neq('type', 'document')
+                    .neq('type', 'Relatório')
                     .order('date', { ascending: false });
 
                 if (error) throw error;

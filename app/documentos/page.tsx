@@ -19,7 +19,7 @@ export default function DocumentsArchivePage() {
                 const { data, error } = await supabase
                     .from('articles')
                     .select('*')
-                    .eq('type', 'document')
+                    .or('type.eq.document,type.eq.Relatório')
                     .order('date', { ascending: false });
 
                 if (error) throw error;

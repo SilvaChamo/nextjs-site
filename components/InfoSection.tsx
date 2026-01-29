@@ -308,9 +308,9 @@ export function InfoSection() {
                                     </div>
                                     <div className="relative group/embla">
                                         <div className="overflow-hidden" ref={emblaRef}>
-                                            <div className="flex -mr-[15px]">
+                                            <div className="flex -mr-[20px]">
                                                 {articlesData.map((news, i) => (
-                                                    <div key={i} className="flex-[0_0_100%] md:flex-[0_0_33.33%] min-w-0 pr-[15px]">
+                                                    <div key={i} className="flex-[0_0_100%] md:flex-[0_0_33.33%] min-w-0 pr-[20px]">
                                                         <Link
                                                             href={news.slug ? `/artigos/${news.slug}` : "#"}
                                                             className="bg-white rounded-[12px] shadow-lg border border-slate-100 flex flex-col group cursor-pointer hover:border-[#f97316] transition-all overflow-hidden h-full"
@@ -359,20 +359,20 @@ export function InfoSection() {
                                         >
                                             <ChevronRight className="h-6 w-6" />
                                         </button>
+                                    </div>
 
-                                        <div className="flex justify-center gap-2 mt-10">
-                                            {scrollSnaps.map((_, index) => (
-                                                <button
-                                                    key={index}
-                                                    onClick={() => scrollTo(index)}
-                                                    className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${index === selectedIndex
-                                                        ? "bg-[#f97316] w-12"
-                                                        : "bg-slate-300 hover:bg-slate-400"
-                                                        }`}
-                                                    aria-label={`Ir para notícia ${index + 1}`}
-                                                />
-                                            ))}
-                                        </div>
+                                    <div className="flex justify-center gap-2 mt-10">
+                                        {scrollSnaps.map((_, index) => (
+                                            <button
+                                                key={index}
+                                                onClick={() => scrollTo(index)}
+                                                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${index === selectedIndex
+                                                    ? "bg-[#f97316] w-12"
+                                                    : "bg-slate-300 hover:bg-slate-400"
+                                                    }`}
+                                                aria-label={`Ir para notícia ${index + 1}`}
+                                            />
+                                        ))}
                                     </div>
                                 </div>
                             )}

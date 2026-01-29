@@ -113,7 +113,7 @@ function BlogContent() {
                             <button
                                 key={i}
                                 onClick={() => handleCategoryClick(tag)}
-                                className={`px-6 py-3 rounded-[12px] text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap shadow-sm border ${activeCategory === tag
+                                className={`px-6 py-3 rounded-[15px] text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap shadow-sm border ${activeCategory === tag
                                     ? "bg-slate-900 text-white border-slate-900"
                                     : "bg-white text-slate-400 border-slate-100 hover:border-emerald-200 hover:text-emerald-600"
                                     }`}
@@ -132,7 +132,7 @@ function BlogContent() {
                         {/* Articles Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                             {filteredArticles.map((article, i) => (
-                                <Link key={i} href={`/artigos/${article.slug}`} className="group flex flex-col h-full bg-white rounded-[12px] shadow-lg border border-slate-100 hover:border-[#f97316] transition-all overflow-hidden">
+                                <Link key={i} href={`/artigos/${article.slug}`} className="group flex flex-col h-full bg-white rounded-[15px] shadow-lg border border-slate-100 hover:border-[#f97316] transition-all overflow-hidden">
                                     <div className="relative aspect-[16/10] overflow-hidden">
                                         <Image
                                             src={article.image_url || "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=800&auto=format&fit=crop"}

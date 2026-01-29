@@ -72,9 +72,9 @@ export default function TalentosPage() {
                         ))}
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                         {specialists.map((pro, i) => (
-                            <div key={pro.id} className="p-8 rounded-[20px] bg-white border border-slate-100 shadow-md text-left transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl flex flex-col gap-6 group relative overflow-hidden">
+                            <div key={pro.id} className="p-8 rounded-[15px] bg-white border border-slate-100 shadow-md text-left transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl flex flex-col gap-6 group relative overflow-hidden">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full -mr-16 -mt-16 opacity-50 group-hover:bg-emerald-50 transition-colors"></div>
 
                                 <div className="flex items-center gap-5 relative z-10">

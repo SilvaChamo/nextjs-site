@@ -38,7 +38,7 @@ export default function RepositorioPage() {
                 ] = await Promise.all([
                     supabase.from('articles').select('*', { count: 'exact', head: true }).eq('type', 'article'),
                     supabase.from('companies').select('*', { count: 'exact', head: true }),
-                    supabase.from('produtos').select('*', { count: 'exact', head: true }),
+                    supabase.from('products').select('*', { count: 'exact', head: true }),
                     supabase.from('professionals').select('*', { count: 'exact', head: true }),
                     supabase.from('properties').select('*', { count: 'exact', head: true }),
                     supabase.from('articles').select('*', { count: 'exact', head: true }).eq('type', 'document')
@@ -92,7 +92,7 @@ export default function RepositorioPage() {
         },
         {
             title: "Empresas",
-            description: "Fornecedores, distribuidores, instituições públicas e ONGs, associações e cooperativas agrícolas do país.",
+            description: "Base de dados de empresas, prestadores de serviços, cooperativas, associações e parceiros do sector.",
             count: `${counts.companies} Arquivos`,
             icon: Building2,
             bg: "bg-blue-50",
@@ -169,7 +169,7 @@ export default function RepositorioPage() {
     });
 
     return (
-        <div className="min-h-screen bg-white text-slate-900 font-sans relative">
+        <div className="min-h-screen bg-[#FDFDFD] text-slate-900 font-sans relative">
             <div className="relative">
                 <PageHeader
                     title="Repositório"

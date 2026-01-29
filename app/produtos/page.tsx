@@ -33,12 +33,12 @@ function ProductsContent() {
                 if (empresaId) {
                     const { data: company } = await supabase
                         .from('companies')
-                        .select('company_name, slug')
+                        .select('name, slug')
                         .eq('id', empresaId)
                         .single();
 
                     if (company) {
-                        cName = company.company_name;
+                        cName = company.name;
                     }
                 } else if (professionalId) {
                     const { data: pro } = await supabase
@@ -52,12 +52,12 @@ function ProductsContent() {
                 setContextName(cName);
 
                 // 2. Fetch Products from main DB table
-                let query = supabase.from('produtos').select('*, companies(slug, company_name)');
+                let query = supabase.from('products').select('*, companies(slug, name)');
 
                 if (empresaId) {
-                    query = query.eq('id_empresa', empresaId); // Fixed field name based on schema
+                    query = query.eq('company_id', empresaId);
                 } else if (professionalId) {
-                    query = query.eq('id_profissional', professionalId);
+                    query = query.eq('professional_id', professionalId);
                 }
 
                 const { data, error } = await query;
@@ -66,11 +66,11 @@ function ProductsContent() {
                 if (data) {
                     allItems = data.map(p => ({
                         ...p,
-                        nome: p.nome || p.name,
-                        preco: p.preco || p.price || "Sob Consulta",
+                        nome: p.name || p.nome,
+                        preco: p.price || p.preco || "Sob Consulta",
                         image_url: p.image_url || p.imagem || "https://images.unsplash.com/photo-1595152248447-c93d5006b00b?q=80&w=400",
                         company_slug: p.companies?.slug || "empresa-desconhecida",
-                        company_name: p.companies?.company_name
+                        company_name: p.companies?.name
                     }));
                 }
 

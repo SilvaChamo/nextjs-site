@@ -103,7 +103,7 @@ function BlogContent() {
                         <input
                             type="text"
                             placeholder="Pesquisar artigos..."
-                            className="w-full bg-white border border-slate-200 rounded-[10px] pl-12 pr-4 py-4 text-sm focus:outline-none focus:border-[#f97316] focus:ring-1 focus:ring-[#f97316] shadow-sm transition-all"
+                            className="w-full bg-white border border-slate-200 rounded-[10px] pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-[#f97316] focus:ring-1 focus:ring-[#f97316] shadow-sm transition-all"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />

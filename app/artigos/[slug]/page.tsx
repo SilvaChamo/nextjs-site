@@ -304,11 +304,14 @@ export default function ArticleReadingPage() {
                                                         fill
                                                         className="object-cover group-hover:scale-110 transition-transform duration-700"
                                                     />
-                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-6 flex flex-col justify-end">
-                                                        <div className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">{item.type || "Artigo"}</div>
-                                                        <h4 className="font-bold text-base leading-snug text-white group-hover:text-emerald-300 transition-colors line-clamp-2">
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-6 flex flex-col justify-end space-y-1">
+                                                        <div className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">{item.type || "Artigo"}</div>
+                                                        <h4 className="font-bold text-base leading-tight text-white group-hover:text-emerald-300 transition-colors line-clamp-2">
                                                             {item.title}
                                                         </h4>
+                                                        <p className="text-[11px] text-emerald-50/70 leading-relaxed line-clamp-2 font-medium">
+                                                            {item.subtitle || "Abra este artigo e explore as novidades deste tema importante para o agronegócio."}
+                                                        </p>
                                                     </div>
                                                 </Link>
                                             );

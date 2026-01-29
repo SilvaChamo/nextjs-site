@@ -130,7 +130,7 @@ function BlogContent() {
                     {/* Main Content Area */}
                     <div className="lg:col-span-9">
                         {/* Articles Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                             {filteredArticles.map((article, i) => (
                                 <Link key={i} href={`/artigos/${article.slug}`} className="group flex flex-col h-full bg-white rounded-[12px] shadow-lg border border-slate-100 hover:border-[#f97316] transition-all overflow-hidden">
                                     <div className="relative aspect-[16/10] overflow-hidden">

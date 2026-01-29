@@ -98,12 +98,12 @@ function BlogContent() {
 
 
                 <div className="flex flex-col md:flex-row gap-6 mb-16 items-center justify-between">
-                    <div className="relative w-full md:max-w-md group">
+                    <div className="relative w-full md:max-w-lg group">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-[#f97316] transition-colors" />
                         <input
                             type="text"
                             placeholder="Pesquisar artigos..."
-                            className="w-full bg-white border border-slate-100 rounded-[15px] pl-12 pr-4 py-4 text-sm focus:outline-none focus:border-[#f97316] focus:ring-1 focus:ring-[#f97316] shadow-sm transition-all"
+                            className="w-full bg-white border border-slate-200 rounded-[10px] pl-12 pr-4 py-4 text-sm focus:outline-none focus:border-[#f97316] focus:ring-1 focus:ring-[#f97316] shadow-sm transition-all"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
@@ -113,9 +113,9 @@ function BlogContent() {
                             <button
                                 key={i}
                                 onClick={() => handleCategoryClick(tag)}
-                                className={`px-6 py-3 rounded-[10px] text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap shadow-sm border ${activeCategory === tag
+                                className={`px-5 py-2.5 rounded-[8px] text-[11px] font-black uppercase tracking-wider transition-all whitespace-nowrap shadow-sm border ${activeCategory === tag
                                     ? "bg-emerald-600 text-white border-emerald-600"
-                                    : "bg-white text-slate-400 border-slate-100 hover:border-[#f97316] hover:text-[#f97316]"
+                                    : "bg-white text-slate-500 border-slate-200 hover:border-[#f97316] hover:text-[#f97316]"
                                     }`}
                             >
                                 {tag}
@@ -183,28 +183,6 @@ function BlogContent() {
 
                     {/* Sidebar Area */}
                     <aside className="lg:col-span-3 space-y-5 sticky top-32 hidden lg:block">
-                        {/* 1. Categorias (Back in card) */}
-                        <div className="bg-white rounded-[15px] border border-slate-100 shadow-xl p-5">
-                            <div className="mb-6">
-                                <h3 className="text-sm font-black text-slate-800 uppercase tracking-tight flex items-center gap-3">
-                                    Categorias <span className="flex-1 h-px bg-slate-100"></span>
-                                </h3>
-                            </div>
-                            <div className="space-y-2">
-                                {["Técnico", "Mercado", "Comunidade", "Institucional"].map((cat, i) => (
-                                    <Link
-                                        key={i}
-                                        href={`/blog?cat=${cat}`}
-                                        className="flex items-center gap-3 py-2 group transition-all duration-300 hover:translate-x-2"
-                                    >
-                                        <span className="size-1.5 rounded-full bg-slate-300 group-hover:bg-[#f97316] transition-colors"></span>
-                                        <span className="text-[15px] font-bold text-slate-600 group-hover:text-[#f97316] transition-colors">
-                                            {cat}
-                                        </span>
-                                    </Link>
-                                ))}
-                            </div>
-                        </div>
 
                         {/* 2. Clima */}
                         <WeatherSidebar />

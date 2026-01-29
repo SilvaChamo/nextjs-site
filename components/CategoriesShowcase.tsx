@@ -91,7 +91,7 @@ export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
                                                             <div className="w-[60px] h-[60px] rounded-[10px] overflow-hidden border border-gray-100 bg-white flex items-center justify-center p-1">
                                                                 <Image
                                                                     src={company.logo}
-                                                                    alt={company.title}
+                                                                    alt={company.title || "Empresa"}
                                                                     width={60}
                                                                     height={60}
                                                                     className="w-full h-full object-contain"

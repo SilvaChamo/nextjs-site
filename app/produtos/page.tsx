@@ -168,7 +168,7 @@ function ProductsContent() {
                                 <div className="relative h-48">
                                     <Image
                                         src={product.image_url || product.img || product.photo || "https://images.unsplash.com/photo-1595152248447-c93d5006b00b?q=80&w=400"}
-                                        alt={product.nome}
+                                        alt={product.nome || "Produto"}
                                         fill
                                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                         className="object-cover group-hover:scale-105 transition-transform duration-700"

@@ -19,7 +19,7 @@ export function CompanyCard({ company }: CompanyCardProps) {
             <div className="relative h-[140px] w-full overflow-hidden bg-slate-100">
                 <Image
                     src={company.image || "https://images.unsplash.com/photo-1625246333195-58f21a416327"}
-                    alt={company.name}
+                    alt={company.name || "Empresa"}
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -40,7 +40,7 @@ export function CompanyCard({ company }: CompanyCardProps) {
                         <div className="shrink-0 h-10 w-auto min-w-[40px] max-w-[90px] rounded-lg overflow-hidden border border-white/10 bg-white flex items-center justify-center p-1.5 shadow-2xl">
                             <Image
                                 src={company.logoUrl || "https://placehold.co/100x100/f97316/white?text=LOGO"}
-                                alt={company.name}
+                                alt={company.name || "Empresa"}
                                 width={90}
                                 height={40}
                                 className="h-full w-auto object-contain"

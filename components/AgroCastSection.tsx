@@ -75,7 +75,7 @@ export function AgroCastSection({ embedded = false }: AgroCastSectionProps) {
                         <div className="relative overflow-hidden bg-slate-900 h-[500px] border-[10px] border-slate-900 rounded-[10px] shadow-inner">
                             <Image
                                 src={activeEpisode.image}
-                                alt={activeEpisode.title}
+                                alt={activeEpisode.title || "Episódio AgroCast"}
                                 fill
                                 className="object-cover opacity-90 transition-transform duration-700 group-hover:scale-105"
                             />
@@ -130,7 +130,7 @@ export function AgroCastSection({ embedded = false }: AgroCastSectionProps) {
                         <div className="relative group cursor-pointer overflow-hidden shadow-xl flex-1 border-[6px] border-slate-800 rounded-t-[15px] bg-slate-900 border-b-0 active:scale-[0.99] transition-transform">
                             <Image
                                 src={episodes[1].image}
-                                alt={episodes[1].title}
+                                alt={episodes[1].title || "Próximo Episódio"}
                                 fill
                                 className="object-cover transition-transform duration-1000 group-hover:scale-110"
                             />

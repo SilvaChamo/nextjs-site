@@ -696,7 +696,10 @@ export default function SimpleRegistrationPage() {
                                                 size="sm"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    window.open("https://wa.me/258877575288?text=Ol%C3%A1%2C%20envio%20em%20anexo%20o%20comprovativo%20de%20pagamento%20para%20activa%C3%A7%C3%A3o%20do%20Destaque%20de%20Empresa.", "_blank");
+                                                    // Construct dynamic message
+                                                    const message = `Olá, envio comprovativo de 1.500MT referente ao pagamento do destaque/plano da empresa *${companyName || "[Nome da Empresa]"}*.`;
+                                                    const encodedMessage = encodeURIComponent(message);
+                                                    window.open(`https://wa.me/258877575288?text=${encodedMessage}`, "_blank");
                                                 }}
                                                 className="w-full h-8 text-xs font-black uppercase text-white bg-[#25D366] hover:bg-[#1ebd59] flex items-center justify-center gap-2"
                                             >

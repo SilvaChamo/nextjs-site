@@ -63,7 +63,7 @@ export default function SimpleRegistrationPage() {
     const [highlightCompany, setHighlightCompany] = useState(false);
 
     // Payment State
-    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'mpesa' | 'emola' | 'visa' | null>(null);
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'mpesa' | 'visa' | null>(null);
     const [paymentPhoneNumber, setPaymentPhoneNumber] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -594,19 +594,8 @@ export default function SimpleRegistrationPage() {
                                                 className="object-cover"
                                             />
                                         </div>
-                                        {/* e-Mola */}
-                                        <div
-                                            onClick={(e) => { e.stopPropagation(); setSelectedPaymentMethod('emola'); }}
-                                            className={`bg-white p-0 rounded-md border flex items-center justify-center h-8 w-[50px] transition-all cursor-pointer group/emola overflow-hidden relative ${selectedPaymentMethod === 'emola' ? 'border-[#4B0082] ring-2 ring-[#4B0082]/30' : 'border-slate-200 hover:border-[#4B0082]'}`}
-                                        >
-                                            <Image
-                                                src="/assets/e-mola.png"
-                                                alt="e-Mola"
-                                                fill
-                                                className="object-cover"
-                                            />
-                                        </div>
-                                        {/* Visa */}
+
+                                        {/* Visa / Banco (Manual Transfer) */}
                                         <div
                                             onClick={(e) => { e.stopPropagation(); setSelectedPaymentMethod('visa'); }}
                                             className={`bg-white px-2 py-1 rounded-md border flex items-center justify-center h-8 transition-all cursor-pointer group/visa overflow-hidden ${selectedPaymentMethod === 'visa' ? 'border-[#1A1F71] ring-2 ring-[#1A1F71]/30' : 'border-slate-200 hover:border-[#1A1F71]'}`}
@@ -621,12 +610,110 @@ export default function SimpleRegistrationPage() {
                                         </div>
                                     </div>
 
-                                    {/* M-Pesa / e-Mola Phone Input */}
-                                    {(selectedPaymentMethod === 'mpesa' || selectedPaymentMethod === 'emola') && (
+                                    {/* M-Pesa Phone Input */}
+                                    {selectedPaymentMethod === 'mpesa' && (
                                         <div className="bg-emerald-950/30 p-3 rounded-lg border border-emerald-500/10 space-y-3 animate-in fade-in slide-in-from-top-2">
                                             <div className="space-y-1">
                                                 <label className="text-[10px] font-bold text-emerald-200 uppercase tracking-wider">
-                                                    Número {selectedPaymentMethod === 'mpesa' ? 'Vodacom' : 'Movitel'}
+                                                    Número Vodacom
+                                                </label>
+                                                <Input
+                                                    placeholder="258 84/85 xxx xxxx"
+                                                    value={paymentPhoneNumber}
+                                                    onChange={(e) => setPaymentPhoneNumber(e.target.value)}
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    className="h-9 bg-emerald-900/50 border-emerald-800 text-white placeholder:text-emerald-600 text-xs font-mono"
+                                                />
+                                            </div>
+                                            <Button
+                                                size="sm"
+                                                disabled={isSubmitting}
+                                                onClick={async (e) => {
+                                                    e.stopPropagation();
+
+                                                    // Basic validation
+                                                    if (paymentPhoneNumber.length < 9) {
+                                                        alert("Por favor, insira um número de telefone válido.");
+                                                        return;
+                                                    }
+
+                                                    setIsSubmitting(true);
+
+                                                    try {
+                                                        const res = await fetch('/api/payment/mpesa', {
+                                                            method: 'POST',
+                                                            headers: { 'Content-Type': 'application/json' },
+                                                            body: JSON.stringify({
+                                                                phoneNumber: paymentPhoneNumber.startsWith('258') ? paymentPhoneNumber : `258${paymentPhoneNumber}`,
+                                                                amount: '1500',
+                                                                reference: `REG_${Date.now()}`
+                                                            })
+                                                        });
+
+                                                        const data = await res.json();
+
+                                                        if (data.success) {
+                                                            alert(`Pedido enviado! Verifique o seu telemóvel (${paymentPhoneNumber}) e insira o PIN do M-Pesa.`);
+                                                        } else {
+                                                            alert(data.message || "Erro ao processar pagamento. Tente novamente.");
+                                                        }
+                                                    } catch (err) {
+                                                        console.error(err);
+                                                        alert("Erro de conexão. Verifique sua internet.");
+                                                    } finally {
+                                                        setIsSubmitting(false);
+                                                    }
+                                                }}
+                                                className="w-full h-8 text-xs font-black uppercase text-white bg-[#E60000] hover:bg-[#cc0000] hover:text-white"
+                                            >
+                                                {isSubmitting ? 'Processando...' : 'Pagar 1 500 Mt'}
+                                            </Button>
+                                        </div>
+                                    )}
+
+                                    {/* Visa / Bank Transfer Details */}
+                                    {selectedPaymentMethod === 'visa' && (
+                                        <div className="bg-emerald-950/30 p-3 rounded-lg border border-emerald-500/10 animate-in fade-in slide-in-from-top-2 space-y-3">
+                                            <p className="text-[10px] text-emerald-200 text-center font-bold uppercase tracking-wider mb-2">
+                                                Dados para Transferência (Moza Banco)
+                                            </p>
+                                            <div className="text-xs text-emerald-100 bg-emerald-900/40 p-2 rounded border border-emerald-500/20 space-y-1 font-mono">
+                                                <div className="flex justify-between">
+                                                    <span className="text-emerald-400">Banco:</span>
+                                                    <span>Moza Banco</span>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <span className="text-emerald-400">NIB:</span>
+                                                    <span className="select-all">003400000544672210195</span>
+                                                </div>
+                                                <div className="flex justify-between items-center pt-1 border-t border-emerald-500/10 mt-1">
+                                                    <span className="text-emerald-400">Titular:</span>
+                                                    <span>Visual Design</span>
+                                                </div>
+                                            </div>
+
+                                            <Button
+                                                size="sm"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    window.open("https://wa.me/258877575288?text=Ol%C3%A1%2C%20envio%20em%20anexo%20o%20comprovativo%20de%20pagamento%20para%20activa%C3%A7%C3%A3o%20do%20Destaque%20de%20Empresa.", "_blank");
+                                                }}
+                                                className="w-full h-8 text-xs font-black uppercase text-white bg-[#25D366] hover:bg-[#1ebd59] flex items-center justify-center gap-2"
+                                            >
+                                                <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                                                    <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-2.846-.828-.927-.382-1.545-1.3-1.666-1.473-.12-.171-.397-.534-.403-.603-.099-.54.275-.826.47-.798.156.022.253.111.366.191.246.168.21.05.353.454.12.35.082.602-.016.793-.11.21-.262.31-.476.438-.344.184-1.127.674-1.17.653-.027-.013-.372-.444-.453-.556-.098-.135-.078-.292-.012-.423.1-.197.636-.59.715-.656.095-.081.259-.153.414-.158.125-.005.336-.007.493-.007.157 0 .341.055.518.254.178.199.646.619.646 1.509 0 .89.467 1.493.645 1.701zm-3.392-9.416c-4.966 0-9.006 4.04-9.006 9.007 0 1.948.517 3.738 1.424 5.289l-1.365 4.983 5.093-1.337c1.474.805 3.167 1.282 4.954 1.284 4.965 0 9.006-4.041 9.006-9.007.001-4.967-4.04-9.006-9.016-9.219z" />
+                                                </svg>
+                                                Enviar Comprovativo
+                                            </Button>
+                                        </div>
+                                    )}
+
+                                    {/* M-Pesa Phone Input */}
+                                    {selectedPaymentMethod === 'mpesa' && (
+                                        <div className="bg-emerald-950/30 p-3 rounded-lg border border-emerald-500/10 space-y-3 animate-in fade-in slide-in-from-top-2">
+                                            <div className="space-y-1">
+                                                <label className="text-[10px] font-bold text-emerald-200 uppercase tracking-wider">
+                                                    Número Vodacom
                                                 </label>
                                                 <Input
                                                     placeholder="258 84/85 xxx xxxx"

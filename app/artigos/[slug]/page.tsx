@@ -292,7 +292,7 @@ export default function ArticleReadingPage() {
                                         const isSpecial = i < 2; // Make 첫 two cards special
                                         if (isSpecial) {
                                             return (
-                                                <Link key={i} href={`/artigos/${item.slug}`} className="relative h-[220px] rounded-xl overflow-hidden group shadow-lg">
+                                                <Link key={i} href={`/artigos/${item.slug}`} className="relative h-[220px] rounded-xl overflow-hidden group shadow-lg border border-slate-200">
                                                     <Image
                                                         src={item.image_url || [
                                                             "https://images.unsplash.com/photo-1500937386664-56d1dfef3854",
@@ -314,7 +314,7 @@ export default function ArticleReadingPage() {
                                             );
                                         }
                                         return (
-                                            <Link key={i} href={`/artigos/${item.slug}`} className="flex gap-4 bg-white rounded-xl border border-slate-100 hover:border-[#f97316] transition-all group overflow-hidden">
+                                            <Link key={i} href={`/artigos/${item.slug}`} className="flex gap-4 bg-white rounded-xl border border-slate-200 hover:border-[#f97316] transition-all group overflow-hidden">
                                                 <div className="w-[120px] shrink-0 bg-slate-100 relative">
                                                     <Image
                                                         src={item.image_url || [

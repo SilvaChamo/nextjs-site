@@ -98,6 +98,5 @@ export function CompanyCard({ company }: CompanyCardProps) {
                 </Link>
             </div>
         </div>
-        </div >
     );
 }

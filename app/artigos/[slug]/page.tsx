@@ -314,8 +314,8 @@ export default function ArticleReadingPage() {
                                             );
                                         }
                                         return (
-                                            <Link key={i} href={`/artigos/${item.slug}`} className="flex gap-4 p-4 rounded-xl bg-white border border-slate-100 hover:border-[#f97316] transition-all group">
-                                                <div className="size-20 shrink-0 rounded-lg overflow-hidden relative">
+                                            <Link key={i} href={`/artigos/${item.slug}`} className="flex gap-4 bg-white rounded-xl border border-slate-100 hover:border-[#f97316] transition-all group overflow-hidden">
+                                                <div className="w-[120px] shrink-0 bg-slate-100 relative">
                                                     <Image
                                                         src={item.image_url || [
                                                             "https://images.unsplash.com/photo-1500937386664-56d1dfef3854",
@@ -328,11 +328,14 @@ export default function ArticleReadingPage() {
                                                         className="object-cover group-hover:scale-110 transition-transform duration-700"
                                                     />
                                                 </div>
-                                                <div className="space-y-1 py-1">
+                                                <div className="flex-1 py-4 pr-4 space-y-2">
                                                     <div className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">{item.type || "Artigo"}</div>
                                                     <h4 className="font-bold text-sm leading-snug text-slate-700 group-hover:text-[#f97316] transition-colors line-clamp-2">
                                                         {item.title}
                                                     </h4>
+                                                    <p className="text-[11px] text-slate-400 leading-relaxed line-clamp-3">
+                                                        {item.subtitle || "Leia mais sobre este tópico importante para o desenvolvimento agrícola."}
+                                                    </p>
                                                 </div>
                                             </Link>
                                         );

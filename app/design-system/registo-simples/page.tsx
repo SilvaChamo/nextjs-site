@@ -1,171 +1,485 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, ShoppingBag, Plus, Trash2, CheckCircle2 } from "lucide-react";
+import { Upload, ShoppingBag, Plus, Trash2, CheckCircle2, X, Pencil } from "lucide-react";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import { Loader2 } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
+import { COMPANY_CATEGORIES } from "@/lib/constants";
 
 export default function SimpleRegistrationPage() {
-    const [products, setProducts] = useState([
-        { id: 1, name: "", description: "", price: "", available: true },
-        { id: 2, name: "", description: "", price: "", available: true }
-    ]);
 
-    const addProduct = () => {
-        setProducts([...products, { id: Date.now(), name: "", description: "", price: "", available: true }]);
+
+    // New states for interactive features
+    const [bannerImage, setBannerImage] = useState<string | null>(null);
+    const [logoImage, setLogoImage] = useState<string | null>(null);
+    const [services, setServices] = useState<string[]>([]);
+    const [newService, setNewService] = useState("");
+
+    // Data States
+    const [fetchedCategories, setFetchedCategories] = useState<string[]>(COMPANY_CATEGORIES);
+
+    // Fetch Categories (Removed in favor of static constant)
+    useEffect(() => {
+        setFetchedCategories(COMPANY_CATEGORIES);
+    }, []);
+
+    // Compression Dialog State
+    const [showCompressionDialog, setShowCompressionDialog] = useState(false);
+    const [pendingFile, setPendingFile] = useState<File | null>(null);
+    const [uploadType, setUploadType] = useState<'banner' | 'logo' | null>(null);
+    const [isCompressing, setIsCompressing] = useState(false);
+
+    const bannerInputRef = useRef<HTMLInputElement>(null);
+    const logoInputRef = useRef<HTMLInputElement>(null);
+
+
+
+    // Helper to validate file size (1MB = 1048576 bytes)
+    const isValidFileSize = (file: File) => {
+        return file.size <= 1048576;
     };
 
-    const removeProduct = (id: number) => {
-        setProducts(products.filter(p => p.id !== id));
+
+
+    // IMAGE COMPRESSION UTILITY
+    const compressImage = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target?.result as string;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+
+                    // Simple scaling logic: max 1200px width/height
+                    let width = img.width;
+                    let height = img.height;
+                    const MAX_WIDTH = 1200;
+                    const MAX_HEIGHT = 1200;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx?.drawImage(img, 0, 0, width, height);
+
+                    // Compress to 0.7 quality JPEG
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    resolve(dataUrl);
+                };
+                img.onerror = (err) => reject(err);
+            };
+        });
+    };
+
+    const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            if (!isValidFileSize(file)) {
+                setPendingFile(file);
+                setUploadType('banner');
+                setShowCompressionDialog(true);
+                // Reset input
+                e.target.value = '';
+                return;
+            }
+            const url = URL.createObjectURL(file);
+            setBannerImage(url);
+        }
+    };
+
+    const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            if (!isValidFileSize(file)) {
+                setPendingFile(file);
+                setUploadType('logo');
+                setShowCompressionDialog(true);
+                // Reset input
+                e.target.value = '';
+                return;
+            }
+            const url = URL.createObjectURL(file);
+            setLogoImage(url);
+        }
+    };
+
+    const confirmCompression = async () => {
+        if (!pendingFile || !uploadType) return;
+
+        setIsCompressing(true);
+        try {
+            // Artificial delay to show "Aguarde" if compression is too fast, 
+            // or just rely on actual compression time. 
+            // User asked: "informar o tempo que o usuario deve esperar". 
+            // Since we don't know exact time, "Aguarde..." is standard. 
+            // Let's add a small minimum delay for UX so it doesn't flash.
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            const compressedUrl = await compressImage(pendingFile);
+
+            if (uploadType === 'banner') {
+                setBannerImage(compressedUrl);
+            } else {
+                setLogoImage(compressedUrl);
+            }
+
+            setShowCompressionDialog(false);
+            setPendingFile(null);
+            setUploadType(null);
+        } catch (error) {
+            alert("Erro ao comprimir imagem.");
+        } finally {
+            setIsCompressing(false);
+        }
+    };
+
+    const addService = () => {
+        if (newService.trim() && !services.includes(newService.trim())) {
+            setServices([...services, newService.trim()]);
+            setNewService("");
+        }
+    };
+
+    const removeService = (serviceToRemove: string) => {
+        setServices(services.filter(s => s !== serviceToRemove));
     };
 
     return (
-        <div className="min-h-screen bg-white p-4 md:p-10 font-sans">
-            <div className="max-w-[1200px] mx-auto space-y-6">
+        <div className="min-h-screen bg-slate-100 font-sans pt-[80px] pb-20">
+            <div className="container-site flex flex-col lg:flex-row gap-[20px]">
+                {/* MAIN CONTENT (LEFT) */}
+                <main className="flex-1 w-full space-y-8">
+                    {/* 1. BANNER - Now moved inside and aligned with form */}
+                    <div
+                        onClick={() => bannerInputRef.current?.click()}
+                        className="w-full h-48 md:h-64 bg-white border-2 border-dashed border-slate-200 flex flex-col items-center justify-center group hover:bg-slate-50 transition-all cursor-pointer overflow-hidden relative shadow-sm"
+                        style={{ borderRadius: '15px' }}
+                    >
+                        {bannerImage ? (
+                            <>
+                                <img src={bannerImage} alt="Banner Preview" className="w-full h-full object-cover" />
+                                <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            bannerInputRef.current?.click();
+                                        }}
+                                        className="p-2 bg-white/90 backdrop-blur-sm text-slate-700 hover:text-blue-600 rounded-full shadow-lg border border-slate-100 transition-colors"
+                                        title="Trocar Imagem"
+                                    >
+                                        <Pencil className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setBannerImage(null);
+                                        }}
+                                        className="p-2 bg-white/90 backdrop-blur-sm text-slate-700 hover:text-rose-600 rounded-full shadow-lg border border-slate-100 transition-colors"
+                                        title="Remover Imagem"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <Upload className="w-10 h-10 text-slate-400 mb-2" />
+                                <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">Banner da Empresa</span>
+                                <p className="text-[10px] text-slate-400 mt-1 uppercase font-black">Recomendado: 1200x400px (Max: 1MB)</p>
+                            </>
+                        )}
+                        <input
+                            type="file"
+                            ref={bannerInputRef}
+                            onChange={handleBannerUpload}
+                            className="hidden"
+                            accept="image/*"
+                        />
+                    </div>
 
-                {/* 1. BANNER */}
-                <div className="w-full h-48 md:h-64 bg-slate-100 rounded-[15px] border-2 border-dashed border-slate-300 flex flex-col items-center justify-center group hover:bg-slate-50 transition-all cursor-pointer">
-                    <Upload className="w-10 h-10 text-slate-400 mb-2" />
-                    <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">Banner da Empresa</span>
-                    <p className="text-[10px] text-slate-400 mt-1 uppercase font-black">Recomendado: 1200x400px</p>
-                </div>
-
-                <div className="flex flex-col lg:flex-row gap-10">
-
-                    {/* LEFT CONTENT (MAIN FORM) */}
-                    <div className="flex-1 space-y-4">
-
+                    {/* FORM SECTION */}
+                    <div className="space-y-[10px]">
                         {/* LOGO + TOP FIELDS */}
-                        <div className="flex flex-col md:flex-row gap-6 items-start">
-                            <div className="w-40 h-40 shrink-0 bg-slate-50 rounded-xl border-2 border-dashed border-slate-300 flex flex-col items-center justify-center cursor-pointer hover:bg-white transition-all">
-                                <Upload className="w-8 h-8 text-slate-400 mb-1" />
-                                <span className="text-[10px] font-bold text-slate-500 uppercase">Logo (1:1)</span>
+                        <div className="flex flex-col md:flex-row gap-[10px] items-stretch">
+                            <div
+                                onClick={() => logoInputRef.current?.click()}
+                                className="w-56 shrink-0 bg-white border-2 border-dashed border-slate-200 flex flex-col items-center justify-center cursor-pointer hover:bg-slate-50 transition-all overflow-hidden relative"
+                                style={{ borderRadius: '15px' }}
+                            >
+                                {logoImage ? (
+                                    <>
+                                        <img src={logoImage} alt="Logo Preview" className="w-full h-full object-cover" />
+                                        <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    logoInputRef.current?.click();
+                                                }}
+                                                className="p-1.5 bg-white/90 backdrop-blur-sm text-slate-700 hover:text-blue-600 rounded-full shadow-sm border border-slate-100 transition-colors"
+                                                title="Trocar Logo"
+                                            >
+                                                <Pencil className="w-3.5 h-3.5" />
+                                            </button>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setLogoImage(null);
+                                                }}
+                                                className="p-1.5 bg-white/90 backdrop-blur-sm text-slate-700 hover:text-rose-600 rounded-full shadow-sm border border-slate-100 transition-colors"
+                                                title="Remover Logo"
+                                            >
+                                                <Trash2 className="w-3.5 h-3.5" />
+                                            </button>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Upload className="w-8 h-8 text-slate-400 mb-1" />
+                                        <span className="text-[10px] font-bold text-slate-500 uppercase">Logo (1:1)</span>
+                                        <span className="text-[8px] font-bold text-slate-400 uppercase mt-1">Max: 1MB</span>
+                                    </>
+                                )}
+                                <input
+                                    type="file"
+                                    ref={logoInputRef}
+                                    onChange={handleLogoUpload}
+                                    className="hidden"
+                                    accept="image/*"
+                                />
                             </div>
 
-                            <div className="flex-1 w-full space-y-4">
+                            <div className="flex-1 w-full space-y-[10px]">
                                 <Input
-                                    placeholder="NOME DA EMPRESA"
-                                    className="h-12 border-slate-200 p-[10px] text-sm font-semibold text-slate-600 bg-slate-50"
+                                    placeholder="Nome da empresa *"
+                                    className="h-12 border-slate-200 p-[10px] text-sm font-semibold text-slate-600 placeholder:text-slate-400 bg-white"
+                                    style={{ borderRadius: '8px' }}
+                                    required
                                 />
+                                <div className="grid grid-cols-2 gap-[10px]">
+                                    <Input
+                                        placeholder="Contacto Corporativo"
+                                        className="h-12 border-slate-200 p-[10px] text-sm font-semibold text-slate-600 placeholder:text-slate-400 bg-white"
+                                        style={{ borderRadius: '8px' }}
+                                    />
+                                    <Input
+                                        placeholder="Whatsapp"
+                                        className="h-12 border-slate-200 p-[10px] text-sm font-semibold text-slate-600 placeholder:text-slate-400 bg-white"
+                                        style={{ borderRadius: '8px' }}
+                                    />
+                                </div>
                                 <Input
-                                    placeholder="ACTIVIDADE PRINCIPAL"
-                                    className="h-12 border-slate-200 p-[10px] text-sm font-semibold text-slate-600 bg-slate-50"
-                                />
-                                <Input
-                                    placeholder="E-MAIL CORPORATIVO"
-                                    className="h-12 border-slate-200 p-[10px] text-sm font-semibold text-slate-600 bg-slate-50"
+                                    placeholder="E-mail corporativo"
+                                    className="h-12 border-slate-200 p-[10px] text-sm font-semibold text-slate-600 placeholder:text-slate-400 bg-white"
+                                    style={{ borderRadius: '8px' }}
                                 />
                             </div>
                         </div>
 
                         {/* FULL WIDTH FIELDS */}
-                        <div className="space-y-4">
-                            <Input placeholder="SLOGAN DA EMPRESA" className="h-12 border-slate-200 p-[10px] text-sm font-semibold text-slate-600 bg-slate-50" />
-                            <Input placeholder="NUIT" className="h-12 border-slate-200 p-[10px] text-sm font-semibold text-slate-600 bg-slate-50" />
-                            <Input placeholder="TELEFONE / WHATSAPP" className="h-12 border-slate-200 p-[10px] text-sm font-semibold text-slate-600 bg-slate-50" />
-                            <Input placeholder="PROVÍNCIA" className="h-12 border-slate-200 p-[10px] text-sm font-semibold text-slate-600 bg-slate-50" />
-                            <Input placeholder="DISTRITO" className="h-12 border-slate-200 p-[10px] text-sm font-semibold text-slate-600 bg-slate-50" />
-                            <Input placeholder="ENDEREÇO FÍSICO" className="h-12 border-slate-200 p-[10px] text-sm font-semibold text-slate-600 bg-slate-50" />
+                        <div className="space-y-[10px]">
+                            {/* Address & Province (Replaces Slogan) */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-[10px]">
+                                <Input
+                                    placeholder="Endereço físico"
+                                    className="h-12 border-slate-200 p-[10px] text-sm font-semibold text-slate-600 placeholder:text-slate-400 bg-white"
+                                    style={{ borderRadius: '8px' }}
+                                />
+                                <Input
+                                    placeholder="Província"
+                                    className="h-12 border-slate-200 p-[10px] text-sm font-semibold text-slate-600 placeholder:text-slate-400 bg-white"
+                                    style={{ borderRadius: '8px' }}
+                                />
+                            </div>
+
+                            {/* Selectors (Replaces Nuit) */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-[10px]">
+                                <Select>
+                                    <SelectTrigger className="w-full h-12 border-slate-200 bg-white text-slate-600 font-semibold p-[10px]" style={{ borderRadius: '8px' }}>
+                                        <SelectValue placeholder="Sector de actuação" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="agricola">Agrícola</SelectItem>
+                                        <SelectItem value="pecuaria">Pecuária</SelectItem>
+                                        <SelectItem value="pesca">Pesca</SelectItem>
+                                    </SelectContent>
+                                </Select>
+
+                                <Select>
+                                    <SelectTrigger className="w-full h-12 border-slate-200 bg-white text-slate-600 font-semibold p-[10px]" style={{ borderRadius: '8px' }}>
+                                        <SelectValue placeholder="Cadeia de valor" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="producao">Produção</SelectItem>
+                                        <SelectItem value="processamento">Processamento</SelectItem>
+                                        <SelectItem value="distribuicao">Distribuição</SelectItem>
+                                    </SelectContent>
+                                </Select>
+
+                                <Select>
+                                    <SelectTrigger className="w-full h-12 border-slate-200 bg-white text-slate-600 font-semibold p-[10px]" style={{ borderRadius: '8px' }}>
+                                        <SelectValue placeholder="Categoria" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {fetchedCategories.map((cat: string) => (
+                                            <SelectItem key={cat} value={cat}>
+                                                {cat}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            {/* Remaining Fields */}
+                            <Input placeholder="Link do website" className="h-12 border-slate-200 p-[10px] text-sm font-semibold text-slate-600 placeholder:text-slate-400 bg-white" style={{ borderRadius: '8px' }} />
                             <Textarea
-                                placeholder="BIO / DESCRIÇÃO DA EMPRESA"
-                                className="min-h-[100px] border-slate-200 p-[10px] text-sm font-semibold text-slate-600 bg-slate-50 resize-none"
+                                placeholder="Bio / Descrição da empresa"
+                                className="min-h-[100px] border-slate-200 p-[10px] text-sm font-semibold text-slate-600 placeholder:text-slate-400 bg-white resize-none"
+                                style={{ borderRadius: '8px' }}
                             />
-                            <Input placeholder="LINK DO WEBSITE" className="h-12 border-slate-200 p-[10px] text-sm font-semibold text-slate-600 bg-slate-50" />
                         </div>
 
-                        <div className="pt-6">
-                            <Button className="w-full h-14 bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase tracking-[0.2em] shadow-xl shadow-emerald-500/20 rounded-[10px]">
-                                Confirmar e Mesa para Consumo
+                        <div className="pt-6 flex justify-start">
+                            <Button className="w-auto px-12 h-14 bg-emerald-600 hover:bg-[#f97316] text-white font-black uppercase tracking-[0.2em] shadow-xl shadow-emerald-500/20 transition-colors duration-300" style={{ borderRadius: '8px' }}>
+                                Publicar Empresa
                             </Button>
                         </div>
                     </div>
+                </main>
 
-                    {/* RIGHT SIDEBAR (SERVICES & PRODUCTS) */}
-                    <aside className="w-full lg:w-[400px] shrink-0 space-y-10">
+                {/* SIDEBAR (RIGHT) - Continues to the top */}
+                <aside
+                    className="w-full lg:w-[420px] bg-slate-50 pb-8 pt-0 px-0 shrink-0 sticky right-0 overflow-y-auto space-y-8"
+                    style={{ top: '80px', height: 'calc(100vh - 80px)' }}
+                >
+                    {/* SERVIÇOS - Refactored to single field + list */}
+                    <div
+                        className="bg-white p-6 border border-slate-200 shadow-sm"
+                        style={{ borderRadius: '15px' }}
+                    >
+                        <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-6 flex items-center gap-2">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                            Serviços
+                        </h3>
 
-                        {/* SERVIÇOS */}
-                        <div className="bg-slate-50 p-6 rounded-[20px] border border-slate-200">
-                            <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-6 flex items-center gap-2">
-                                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                                Serviços
-                            </h3>
-                            <div className="grid grid-cols-2 gap-3">
-                                {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-                                    <div key={i} className="h-10 bg-slate-200 rounded-full flex items-center justify-center cursor-pointer hover:bg-slate-300 transition-colors border border-slate-300">
-                                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-tighter">Serviço {i}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* PRODUTOS */}
-                        <div className="bg-slate-50 p-6 rounded-[20px] border border-slate-200">
-                            <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-6 flex items-center gap-2">
-                                <ShoppingBag className="w-4 h-4 text-[#f97316]" />
-                                Produtos
-                            </h3>
-
-                            <div className="space-y-6">
-                                {products.map((p, idx) => (
-                                    <div key={p.id} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-4 relative group">
-                                        <button
-                                            onClick={() => removeProduct(p.id)}
-                                            className="absolute top-2 right-2 p-1.5 text-slate-300 hover:text-rose-500 transition-colors"
-                                        >
-                                            <Trash2 className="w-3.5 h-3.5" />
-                                        </button>
-
-                                        <div className="flex gap-4">
-                                            <div className="w-24 h-24 shrink-0 bg-slate-50 border-2 border-dashed border-slate-200 rounded-lg flex flex-col items-center justify-center text-slate-300 group-hover:bg-slate-100 transition-all cursor-pointer">
-                                                <Upload className="w-6 h-6 mb-1" />
-                                                <span className="text-[8px] font-black uppercase">Imagem</span>
-                                            </div>
-                                            <div className="flex-1 space-y-2">
-                                                <Input
-                                                    placeholder="Nome do produto"
-                                                    className="h-10 border-slate-100 p-[8px] text-xs font-semibold text-slate-600 bg-slate-50"
-                                                />
-                                                <Textarea
-                                                    placeholder="Breve descrição"
-                                                    className="h-12 border-slate-100 p-[8px] text-[10px] font-semibold text-slate-600 bg-slate-50 resize-none leading-tight"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="grid grid-cols-2 gap-2">
-                                            <Input
-                                                placeholder="Preço em MT"
-                                                className="h-9 border-slate-100 p-[8px] text-[10px] font-bold text-emerald-600 bg-slate-50"
-                                            />
-                                            <div className="flex items-center gap-2 justify-end">
-                                                <div className="flex items-center gap-1.5 cursor-pointer">
-                                                    <div className="w-3 h-3 rounded-full border border-slate-300 bg-emerald-500" />
-                                                    <span className="text-[9px] font-bold text-slate-500 uppercase">Disp.</span>
-                                                </div>
-                                                <div className="flex items-center gap-1.5 cursor-pointer opacity-50">
-                                                    <div className="w-3 h-3 rounded-full border border-slate-300" />
-                                                    <span className="text-[9px] font-bold text-slate-500 uppercase">Indisp.</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-
+                        <div className="space-y-4">
+                            <div className="flex gap-2">
+                                <Input
+                                    value={newService}
+                                    onChange={(e) => setNewService(e.target.value)}
+                                    onKeyDown={(e) => e.key === "Enter" && addService()}
+                                    placeholder="Adicionar um serviço..."
+                                    className="flex-1 h-10 border-slate-200 text-xs bg-slate-50 font-bold placeholder:text-slate-400"
+                                    style={{ borderRadius: '8px' }}
+                                />
                                 <Button
-                                    onClick={addProduct}
-                                    variant="outline"
-                                    className="w-full border-dashed border-slate-300 text-slate-400 hover:text-emerald-600 hover:border-emerald-600 transition-all text-[10px] font-bold uppercase tracking-widest"
+                                    onClick={addService}
+                                    size="sm"
+                                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-10 w-10 flex items-center justify-center"
+                                    style={{ borderRadius: '8px' }}
                                 >
-                                    <Plus className="w-3 h-3 mr-2" />
-                                    Adicionar mais produtos
+                                    <Plus className="w-4 h-4" />
                                 </Button>
                             </div>
-                        </div>
 
-                    </aside>
-                </div>
+                            <div className="flex flex-wrap gap-2 pt-2">
+                                {services.length > 0 ? (
+                                    services.map((service, index) => (
+                                        <div
+                                            key={index}
+                                            className="h-9 px-4 bg-emerald-50 text-emerald-700 flex items-center gap-2 border border-emerald-100 group animate-in zoom-in-95 duration-200"
+                                            style={{ borderRadius: '8px' }}
+                                        >
+                                            <span className="text-[10px] font-black uppercase tracking-tighter">{service}</span>
+                                            <button
+                                                onClick={() => removeService(service)}
+                                                className="hover:text-rose-500 transition-colors"
+                                            >
+                                                <X className="w-3 h-3" />
+                                            </button>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="w-full py-4 text-center border border-dashed border-slate-200" style={{ borderRadius: '8px' }}>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Nenhum serviço adicionado</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </aside>
             </div>
+
+            {/* COMPRESSION DIALOG */}
+            <Dialog open={showCompressionDialog} onOpenChange={setShowCompressionDialog}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Imagem muito grande</DialogTitle>
+                        <DialogDescription>
+                            A imagem selecionada excede o limite de 1MB.
+                            Deseja que optimizemos o tamanho automaticamente?
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="py-4">
+                        {isCompressing ? (
+                            <div className="flex flex-col items-center justify-center space-y-3 py-4">
+                                <Loader2 className="w-8 h-8 text-emerald-600 animate-spin" />
+                                <p className="text-sm font-semibold text-slate-600">A comprimir imagem... Por favor aguarde.</p>
+                            </div>
+                        ) : (
+                            <div className="p-4 bg-orange-50 rounded-lg border border-orange-100">
+                                <p className="text-xs text-orange-800 font-medium">
+                                    Nota: A qualidade visual será mantida, mas o tamanho do ficheiro será reduzido para cumprir os requisitos.
+                                </p>
+                            </div>
+                        )}
+                    </div>
+
+                    <DialogFooter>
+                        {!isCompressing && (
+                            <>
+                                <Button variant="outline" onClick={() => setShowCompressionDialog(false)}>
+                                    Cancelar
+                                </Button>
+                                <Button onClick={confirmCompression} className="bg-emerald-600 hover:bg-emerald-700 text-white">
+                                    Sim
+                                </Button>
+                            </>
+                        )}
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

@@ -85,39 +85,38 @@ export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
                                         <Link href={`/empresas/${company.slug || i}`} className="group block h-full">
                                             <div className="bg-white p-4 rounded-agro border border-slate-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-500 flex flex-col h-full relative overflow-hidden">
 
-                                                <div className="flex justify-between items-center mb-4 gap-3">
-                                                    <div className="flex items-center gap-3 min-w-0">
-                                                        <div className="shrink-0">
-                                                            {company.logo ? (
-                                                                <div className="w-[50px] h-[50px] rounded-[10px] overflow-hidden border border-gray-100 bg-white flex items-center justify-center p-1 shadow-sm">
-                                                                    <Image
-                                                                        src={company.logo}
-                                                                        alt={company.title}
-                                                                        width={50}
-                                                                        height={50}
-                                                                        className="w-full h-full object-contain"
-                                                                    />
-                                                                </div>
-                                                            ) : (
-                                                                <div className="w-[50px] h-[50px] rounded-[10px] flex items-center justify-center bg-emerald-50 text-emerald-600 group-hover:bg-[#f97316] group-hover:text-white transition-all duration-500 shadow-sm">
-                                                                    <Icon className="w-6 h-6" />
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                        <h3 className="text-[14px] font-bold text-slate-700 group-hover:text-slate-900 transition-colors truncate">
-                                                            {company.title}
-                                                        </h3>
+                                                <div className="flex justify-between items-start mb-2">
+                                                    <div className="shrink-0">
+                                                        {company.logo ? (
+                                                            <div className="w-[60px] h-[60px] rounded-[10px] overflow-hidden border border-gray-100 bg-white flex items-center justify-center p-1">
+                                                                <Image
+                                                                    src={company.logo}
+                                                                    alt={company.title}
+                                                                    width={60}
+                                                                    height={60}
+                                                                    className="w-full h-full object-contain"
+                                                                />
+                                                            </div>
+                                                        ) : (
+                                                            <div className="w-[60px] h-[60px] rounded-[10px] flex items-center justify-center bg-emerald-50 text-emerald-600 group-hover:bg-[#f97316] group-hover:text-white transition-all duration-500">
+                                                                <Icon className="w-8 h-8" />
+                                                            </div>
+                                                        )}
                                                     </div>
 
-                                                    <div className="flex flex-col items-end shrink-0">
-                                                        <div className="text-[9px] font-black uppercase tracking-wider text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-[4px] border border-emerald-100 shadow-sm">
+                                                    <div className="flex flex-col items-end">
+                                                        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-[#f97316] transition-colors line-clamp-1 text-right">
                                                             {category}
                                                         </div>
-                                                        <div className="text-[9px] text-slate-300 font-medium mt-1">
+                                                        <div className="text-[10px] text-slate-300 font-medium mt-1">
                                                             {location}
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                                <h3 className="text-[15px] font-bold text-slate-600 mb-1 group-hover:text-[#3a3f47] transition-colors whitespace-nowrap overflow-hidden text-ellipsis">
+                                                    {company.title}
+                                                </h3>
 
                                                 <p className="text-slate-400 text-xs leading-relaxed mb-2 flex-1 line-clamp-2">
                                                     {activity}

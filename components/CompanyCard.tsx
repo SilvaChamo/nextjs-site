@@ -66,36 +66,27 @@ export function CompanyCard({ company }: CompanyCardProps) {
 
             {/* 2. Content Region */}
             <div className="p-4 flex-1 flex flex-col justify-between">
-                <div className="flex items-center gap-3 mb-3">
-                    <div className="shrink-0 w-8 h-8 rounded-lg overflow-hidden border border-slate-100 bg-white flex items-center justify-center p-1 shadow-sm">
-                        <Image
-                            src={company.logoUrl || "https://placehold.co/100x100/f97316/white?text=LOGO"}
-                            alt={company.name}
-                            width={32}
-                            height={32}
-                            className="w-full h-full object-contain"
-                        />
-                    </div>
-                    <Link href={`/empresas/${company.slug || company.id}`} className="min-w-0">
-                        <h3 className="text-[13px] font-black text-slate-800 uppercase tracking-tight leading-tight hover:text-[#f97316] transition-colors truncate">
+                <div>
+                    <Link href={`/empresas/${company.slug || company.id}`}>
+                        <h3 className="text-[14px] font-black text-slate-800 uppercase tracking-tight leading-tight hover:text-[#f97316] transition-colors mb-2 line-clamp-1">
                             {company.name}
                         </h3>
                     </Link>
+
+                    <p className="text-[11px] font-semibold text-slate-500 mb-4 leading-relaxed line-clamp-2 min-h-[32px]">
+                        {company.description || "Agro-negócio focado no desenvolvimento sustentável e inovação tecnológica no sector agrário em Moçambique."}
+                    </p>
                 </div>
 
-                <p className="text-[11px] font-semibold text-slate-500 mb-4 leading-relaxed line-clamp-2 min-h-[32px]">
-                    {company.description || "Agro-negócio focado no desenvolvimento sustentável e inovação tecnológica no sector agrário em Moçambique."}
-                </p>
-            </div>
-
-            <div className="flex items-center justify-between mt-2 pt-3 border-t border-slate-50">
-                <Link
-                    href={`/empresas/${company.slug || company.id}`}
-                    className="text-[10px] font-black uppercase tracking-widest text-[#f97316] hover:text-orange-700 flex items-center gap-1.5 transition-all"
-                >
-                    Ver Perfil
-                    <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1.5" />
-                </Link>
+                <div className="flex items-center justify-between mt-2 pt-3 border-t border-slate-50">
+                    <Link
+                        href={`/empresas/${company.slug || company.id}`}
+                        className="text-[10px] font-black uppercase tracking-widest text-[#f97316] hover:text-orange-700 flex items-center gap-1.5 transition-all"
+                    >
+                        Ver Perfil
+                        <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1.5" />
+                    </Link>
+                </div>
             </div>
         </div>
     );

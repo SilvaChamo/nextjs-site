@@ -127,7 +127,7 @@ export default function ArticleReadingPage() {
     }, [slug]);
 
     if (loading && !article) {
-        return <div className="min-h-screen bg-[#fcfcfd]" />;
+        return <div className="min-h-screen bg-slate-50" />;
     }
 
     if (!article) {
@@ -144,7 +144,7 @@ export default function ArticleReadingPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#fcfcfd] selection:bg-emerald-100 selection:text-emerald-900">
+        <div className="min-h-screen bg-slate-50 selection:bg-emerald-100 selection:text-emerald-900">
             <PageHeader
                 title={article.type || "Notícia"}
                 icon={Newspaper}
@@ -333,7 +333,7 @@ export default function ArticleReadingPage() {
                                                     <h4 className="font-bold text-sm leading-snug text-slate-700 group-hover:text-[#f97316] transition-colors line-clamp-2">
                                                         {item.title}
                                                     </h4>
-                                                    <p className="text-[11px] text-slate-400 leading-relaxed line-clamp-3">
+                                                    <p className="text-[11px] text-slate-400 leading-relaxed line-clamp-2">
                                                         {item.subtitle || "Leia mais sobre este tópico importante para o desenvolvimento agrícola."}
                                                     </p>
                                                 </div>

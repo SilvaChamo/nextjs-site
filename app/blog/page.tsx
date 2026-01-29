@@ -140,6 +140,7 @@ function BlogContent() {
                                             src={article.image_url || "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=800&auto=format&fit=crop"}
                                             alt={article.title}
                                             fill
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                             className="object-cover transition-transform duration-500 group-hover:scale-110"
                                         />
                                         <div className="absolute top-4 left-4 bg-[#f97316] text-white text-[10px] font-black uppercase px-3 py-1 rounded-[5px]">

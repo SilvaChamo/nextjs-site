@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
     Cpu, Leaf, Book,
     BarChart3, TrendingUp, ArrowRight,
@@ -316,10 +317,12 @@ export function InfoSection() {
                                                             className="bg-white rounded-[12px] shadow-lg border border-slate-100 flex flex-col group cursor-pointer hover:border-[#f97316] transition-all overflow-hidden h-full"
                                                         >
                                                             <div className="relative h-48 w-full overflow-hidden">
-                                                                <img
+                                                                <Image
                                                                     src={news.image_url || "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?q=80&w=800&auto=format&fit=crop"}
                                                                     alt={news.title}
-                                                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                                                    fill
+                                                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 33vw"
+                                                                    className="object-cover transition-transform duration-500 group-hover:scale-110"
                                                                 />
                                                                 <div className="absolute top-4 left-4 bg-[#f97316] text-white text-[10px] font-black uppercase px-3 py-1 rounded-[5px]">
                                                                     {news.type || "Artigo"}

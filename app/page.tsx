@@ -1,4 +1,3 @@
-
 import { HomeHeaderSection } from "@/components/HomeHeaderSection";
 import { InfoSection } from "@/components/InfoSection";
 import { CategoriesShowcase } from "@/components/CategoriesShowcase";
@@ -6,11 +5,13 @@ import { CommunityBanner } from "@/components/CommunityBanner";
 import { WhyChooseUs } from "@/components/WhyChooseUs";
 import { MobileAppSection } from "@/components/MobileAppSection";
 import { AgroCastSection } from "@/components/AgroCastSection";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/utils/supabase/server";
 
 export const revalidate = 60; // Revalidate every 60 seconds
 
 export default async function Home() {
+  const supabase = await createClient();
+
   // Parallel Data Fetching
   const [statsResult, companiesResult] = await Promise.all([
     supabase.from('dashboard_indicators').select('slug, value, trend').eq('location', 'hero'),

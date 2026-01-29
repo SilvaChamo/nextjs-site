@@ -111,7 +111,7 @@ function BlogContent() {
                         />
                     </div>
                     <div className="flex gap-3 overflow-x-auto w-full md:w-auto pb-2 md:pb-0">
-                        {["Todos", "Técnico", "Mercado", "Comunidade"].map((tag, i) => (
+                        {["Todos", "Guia", "Notícia", "Internacional", "Recursos"].map((tag, i) => (
                             <button
                                 key={i}
                                 onClick={() => handleCategoryClick(tag)}

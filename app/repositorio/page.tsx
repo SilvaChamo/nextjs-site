@@ -11,8 +11,10 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 
-export default function SearchResultsPage() {
+export default function RepositorioPage() {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState("Todos os resultados");
+    const [sortOption, setSortOption] = useState("Ordem Alfabética");
     const [counts, setCounts] = useState({
         articles: 0,
         companies: 0,
@@ -21,61 +23,18 @@ export default function SearchResultsPage() {
         properties: 0,
         documents: 0
     });
-    const [previews, setPreviews] = useState<{
-        articles: any[],
-        companies: any[],
-        products: any[],
-        professionals: any[],
-        properties: any[],
-        documents: any[]
-    }>({
-        articles: [],
-        companies: [],
-        products: [],
-        professionals: [],
-        properties: [],
-        documents: []
-    });
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        async function fetchData() {
-            setLoading(true);
+        async function fetchCounts() {
             try {
                 const [
-                    articlesData,
-                    companiesData,
-                    productsData,
-                    prosData,
-                    propsData,
-                    docsData
-                ] = await Promise.all([
-                    supabase.from('articles').select('*').eq('type', 'article').order('date', { ascending: false }).limit(3),
-                    supabase.from('companies').select('*').order('created_at', { ascending: false }).limit(4),
-                    supabase.from('produtos').select('*, companies(slug)').order('created_at', { ascending: false }).limit(4),
-                    supabase.from('professionals').select('*').order('created_at', { ascending: false }).limit(3),
-                    supabase.from('properties').select('*').order('created_at', { ascending: false }).limit(3),
-                    supabase.from('articles').select('*').eq('type', 'document').order('date', { ascending: false }).limit(3)
-                ]);
-
-                // Map products with slugs
-                const mappedProducts = (productsData.data || []).map(p => ({
-                    ...p,
-                    company_slug: p.companies?.slug
-                }));
-
-                setPreviews({
-                    articles: articlesData.data || [],
-                    companies: companiesData.data || [],
-                    products: mappedProducts,
-                    professionals: prosData.data || [],
-                    properties: propsData.data || [],
-                    documents: docsData.data || []
-                });
-
-                // Fetch real counts
-                const [
-                    cArticles, cCompanies, cProducts, cPros, cProps, cDocs
+                    articlesCount,
+                    companiesCount,
+                    productsCount,
+                    prosCount,
+                    propsCount,
+                    docsCount
                 ] = await Promise.all([
                     supabase.from('articles').select('*', { count: 'exact', head: true }).eq('type', 'article'),
                     supabase.from('companies').select('*', { count: 'exact', head: true }),
@@ -86,20 +45,20 @@ export default function SearchResultsPage() {
                 ]);
 
                 setCounts({
-                    articles: cArticles.count || 0,
-                    companies: cCompanies.count || 0,
-                    products: cProducts.count || 0,
-                    professionals: cPros.count || 0,
-                    properties: cProps.count || 0,
-                    documents: cDocs.count || 0
+                    articles: articlesCount.count || 0,
+                    companies: companiesCount.count || 0,
+                    products: productsCount.count || 0,
+                    professionals: prosCount.count || 0,
+                    properties: propsCount.count || 0,
+                    documents: docsCount.count || 0
                 });
             } catch (error) {
-                console.error("Error fetching repository data:", error);
+                console.error("Error fetching repository counts:", error);
             } finally {
                 setLoading(false);
             }
         }
-        fetchData();
+        fetchCounts();
     }, []);
 
     const items = [
@@ -110,70 +69,110 @@ export default function SearchResultsPage() {
             icon: BookOpen,
             bg: "bg-cyan-50",
             color: "text-cyan-600",
+            border: "border-cyan-100",
+            category: "Artigos",
+            date: "2023-12-01",
+            price: 0,
+            relevance: 5,
             href: "/artigos"
         },
         {
-            title: "Directório",
-            description: "Lista completa de empresas, cooperativas, associações e parceiros do sector.",
-            count: `${counts.companies} Arquivos`,
-            icon: Building2,
-            bg: "bg-indigo-50",
-            color: "text-indigo-600",
-            href: "/empresas"
-        },
-        {
-            title: "Produtos",
-            description: "Insumos, maquinaria agrícolas, equipamentos e material de segurança.",
-            count: `${counts.products} Arquivos`,
-            icon: ShoppingBag,
-            bg: "bg-emerald-50",
-            color: "text-emerald-600",
-            href: "/produtos"
-        },
-        {
-            title: "Profissionais",
-            description: "Agrónomos, veterinários, técnicos e especialistas prontos para atender.",
-            count: `${counts.professionals} Arquivos`,
-            icon: User,
-            bg: "bg-purple-50",
-            color: "text-purple-600",
-            href: "/servicos/talentos"
-        },
-        {
-            title: "Propriedades",
-            description: "Terrenos, machambas e fazendas prontas para investimento.",
-            count: `${counts.properties} Arquivos`,
-            icon: LandPlot,
-            bg: "bg-orange-50",
-            color: "text-orange-600",
-            href: "/propriedades"
-        },
-        {
-            title: "Legislação",
-            description: "Leis, decretos, regulamentos e documentos oficiais do sector.",
+            title: "Documentos",
+            description: "Legislação, relatórios, planos estratégicos e outros documentos oficiais.",
             count: `${counts.documents} Arquivos`,
             icon: FileText,
             bg: "bg-rose-50",
             color: "text-rose-600",
+            border: "border-rose-100",
+            category: "Documentos",
+            date: "2024-01-15",
+            price: 0,
+            relevance: 9,
             href: "/documentos"
+        },
+        {
+            title: "Empresas",
+            description: "Fornecedores, distribuidores, instituições públicas e ONGs, associações e cooperativas agrícolas do país.",
+            count: `${counts.companies} Arquivos`,
+            icon: Building2,
+            bg: "bg-blue-50",
+            color: "text-blue-600",
+            border: "border-blue-100",
+            category: "Empresas",
+            date: "2023-11-20",
+            price: 0,
+            relevance: 6,
+            href: "/empresas"
+        },
+        {
+            title: "Produtos",
+            description: "Insumos, maquinaria agrícolas, equipamentos e material de segurança disponível para venda imediata.",
+            count: `${counts.products} Arquivos`,
+            icon: ShoppingBag,
+            bg: "bg-emerald-50",
+            color: "text-emerald-600",
+            border: "border-emerald-100",
+            category: "Produtos",
+            date: "2024-01-20",
+            price: 1500,
+            relevance: 8,
+            href: "/produtos"
+        },
+        {
+            title: "Profissionais",
+            description: "Agrónomos, veterinários, técnicos e especialistas, engenheiros e agricultores prontos para atender as suas necessidades.",
+            count: `${counts.professionals} Arquivos`,
+            icon: User,
+            bg: "bg-purple-50",
+            color: "text-purple-600",
+            border: "border-purple-100",
+            category: "Profissionais",
+            date: "2023-10-05",
+            price: 500,
+            relevance: 7,
+            href: "/servicos/talentos"
+        },
+        {
+            title: "Propriedades",
+            description: "Terrenos, machambas, infra-estruturas rurais, campos arráveis e fazendas prontas para investimento.",
+            count: `${counts.properties} Arquivos`,
+            icon: LandPlot,
+            bg: "bg-orange-50",
+            color: "text-orange-600",
+            border: "border-orange-100",
+            category: "Propriedades",
+            date: "2023-09-12",
+            price: 50000,
+            relevance: 3,
+            href: "/propriedades"
         }
     ];
 
-    const slugify = (text: string) => {
-        return text
-            .toString()
-            .toLowerCase()
-            .trim()
-            .replace(/\s+/g, '-')
-            .replace(/[^\w-]+/g, '')
-            .replace(/--+/g, '-');
-    };
+    const filteredItems = items.filter(item => {
+        if (selectedCategory === "Todos os resultados") return true;
+        return item.title.includes(selectedCategory);
+    }).sort((a, b) => {
+        if (sortOption === "Mais recentes") {
+            return new Date(b.date).getTime() - new Date(a.date).getTime();
+        }
+        if (sortOption === "Preço: Menor para Maior") {
+            return a.price - b.price;
+        }
+        if (sortOption === "Preço: Maior para Menor") {
+            return b.price - a.price;
+        }
+        if (sortOption === "Relevância") {
+            return b.relevance - a.relevance;
+        }
+        // Default: Ordem Alfabética (A-Z)
+        return a.title.localeCompare(b.title);
+    });
 
     return (
-        <div className="min-h-screen bg-[#FDFDFD] text-slate-900 font-sans relative">
+        <div className="min-h-screen bg-white text-slate-900 font-sans relative">
             <div className="relative">
                 <PageHeader
-                    title="Repositório Digital"
+                    title="Repositório"
                     backgroundImage="https://images.unsplash.com/photo-1507842217121-9e871299ee18?q=80&w=2000&auto=format&fit=crop"
                     breadcrumbs={[
                         { label: "Início", href: "/" },
@@ -199,240 +198,100 @@ export default function SearchResultsPage() {
             <SearchSection isOpen={isSearchOpen} withBottomBorder={true} />
 
             <main className="max-w-[1350px] mx-auto px-4 md:px-[60px] py-12">
+                <div className="flex flex-col lg:flex-row gap-5">
 
-                {/* 1. Quick Directory Section (The Cards) */}
-                <div className="mb-20">
-                    <div className="mb-8 border-b border-slate-100 pb-4">
-                        <h2 className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-2">Directório Rápido</h2>
-                        <h3 className="text-2xl font-black text-slate-800 uppercase tracking-tighter">Categorias de Consulta</h3>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {items.map((item, i) => (
-                            <Link
-                                key={i}
-                                href={item.href}
-                                className={`group p-8 rounded-[15px] bg-white border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden relative flex flex-col justify-between aspect-[4/3] md:aspect-auto`}
-                            >
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full -mr-16 -mt-16 opacity-30 group-hover:bg-emerald-50 transition-colors"></div>
-                                <div className={`size-14 rounded-xl ${item.bg} ${item.color} flex items-center justify-center mb-6 relative z-10 group-hover:scale-110 transition-transform`}>
-                                    <item.icon className="w-7 h-7" />
+                    <aside className="w-full lg:w-72 shrink-0">
+                        <div className="sticky top-24 space-y-8">
+                            <div className="flex items-center justify-between">
+                                <h2 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Filtros</h2>
+                                <button className="text-xs font-bold text-[#f97316] hover:underline" onClick={() => {
+                                    setSelectedCategory("Todos os resultados");
+                                    setSortOption("Ordem Alfabética");
+                                }}>Limpar tudo</button>
+                            </div>
+
+                            <div className="bg-slate-50 p-5 rounded-[10px] space-y-4 border border-slate-100">
+                                <h3 className="text-sm font-bold text-slate-900">Categorias</h3>
+                                <div className="space-y-3">
+                                    {[
+                                        "Todos os resultados",
+                                        "Produtos",
+                                        "Empresas",
+                                        "Profissionais",
+                                        "Propriedades",
+                                        "Artigos Científicos",
+                                        "Documentos"
+                                    ].map((cat, i) => (
+                                        <label key={i} className="flex items-center gap-3 cursor-pointer group">
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedCategory === cat}
+                                                onChange={() => setSelectedCategory(cat)}
+                                                className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 h-4 w-4"
+                                            />
+                                            <span className={`text-sm font-medium transition-colors ${selectedCategory === cat ? "text-emerald-600 font-bold" : "text-slate-600 group-hover:text-emerald-600"}`}>
+                                                {cat}
+                                            </span>
+                                        </label>
+                                    ))}
                                 </div>
-                                <div className="relative z-10">
-                                    <h4 className="text-xl font-black text-slate-800 uppercase tracking-tighter mb-2 group-hover:text-[#f97316] transition-colors">{item.title}</h4>
-                                    <p className="text-xs text-slate-500 font-medium leading-relaxed mb-6 line-clamp-2">
-                                        {item.description}
-                                    </p>
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-[#f97316] bg-orange-50 px-3 py-1 rounded-full">
-                                            {item.count}
-                                        </span>
-                                        <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-[#f97316] group-hover:translate-x-1 transition-all" />
-                                    </div>
-                                </div>
-                            </Link>
-                        ))}
-                    </div>
-                </div>
+                            </div>
 
-                {/* 2. Companies Section - Segmented */}
-                <section className="mb-24 scroll-mt-20" id="empresas">
-                    <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
-                        <div className="space-y-1">
-                            <h2 className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Base de Dados</h2>
-                            <h3 className="text-3xl font-black text-slate-800 uppercase tracking-tighter">Empresas & Parceiros</h3>
-                        </div>
-                        <Link href="/empresas" className="text-xs font-black text-slate-400 hover:text-[#f97316] uppercase tracking-widest flex items-center gap-2 transition-all">
-                            Ver todas as empresas <ArrowRight className="w-4 h-4" />
-                        </Link>
-                    </div>
-                    {loading ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {[1, 2, 3, 4].map(i => <div key={i} className="h-48 bg-white animate-pulse rounded-2xl border border-slate-100" />)}
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {previews.companies.map((company) => (
-                                <Link key={company.id} href={`/empresas/${company.slug}`} className="group p-6 bg-white rounded-2xl border border-slate-100 shadow-md hover:shadow-xl transition-all text-center flex flex-col items-center">
-                                    <div className="size-20 bg-slate-50 rounded-2xl mb-4 p-4 flex items-center justify-center group-hover:scale-105 transition-transform">
-                                        {company.logo_url ? (
-                                            <img src={company.logo_url} alt={company.company_name} className="max-w-full max-h-full object-contain" />
-                                        ) : (
-                                            <Building2 className="w-8 h-8 text-slate-300" />
-                                        )}
-                                    </div>
-                                    <h4 className="text-sm font-black text-slate-800 uppercase tracking-tight mb-1 line-clamp-1">{company.company_name}</h4>
-                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{company.category || "Consultoria"}</p>
-                                </Link>
-                            ))}
-                        </div>
-                    )}
-                </section>
-
-                {/* 3. Products Section - Segmented */}
-                <section className="mb-24 scroll-mt-20" id="produtos">
-                    <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
-                        <div className="space-y-1">
-                            <h2 className="text-[10px] font-black text-[#f97316] uppercase tracking-widest">Catálogo Digital</h2>
-                            <h3 className="text-3xl font-black text-slate-800 uppercase tracking-tighter">Insumos & Equipamentos</h3>
-                        </div>
-                        <Link href="/produtos" className="text-xs font-black text-slate-400 hover:text-emerald-600 uppercase tracking-widest flex items-center gap-2 transition-all">
-                            Explorar marketplace <ArrowRight className="w-4 h-4" />
-                        </Link>
-                    </div>
-                    {loading ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {[1, 2, 3, 4].map(i => <div key={i} className="h-64 bg-white animate-pulse rounded-2xl border border-slate-100" />)}
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {previews.products.map((product) => (
-                                <Link
-                                    key={product.id}
-                                    href={product.company_slug ? `/empresas/${product.company_slug}/produto/${slugify(product.nome || product.name)}` : "/produtos"}
-                                    className="group bg-white rounded-2xl border border-slate-100 shadow-md hover:shadow-xl transition-all overflow-hidden flex flex-col"
+                            <div className="space-y-3">
+                                <h3 className="text-sm font-bold text-slate-900">Ordenar por</h3>
+                                <select
+                                    className="w-full bg-white border border-slate-200 rounded-[10px] py-2.5 px-4 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+                                    value={sortOption}
+                                    onChange={(e) => setSortOption(e.target.value)}
                                 >
-                                    <div className="h-40 relative">
-                                        <img src={product.image_url || "https://images.unsplash.com/photo-1595152248447-c93d5006b00b?q=80&w=400"} alt={product.nome} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                                        <div className="absolute top-3 right-3 bg-white/90 backdrop-blur px-2 py-1 rounded-lg text-[10px] font-black text-emerald-600">
-                                            {product.preco || "Consulta"}
+                                    <option>Ordem Alfabética</option>
+                                    <option>Relevância</option>
+                                    <option>Mais recentes</option>
+                                    <option>Preço: Menor para Maior</option>
+                                    <option>Preço: Maior para Menor</option>
+                                </select>
+                            </div>
+
+                            <div className="bg-emerald-50 border border-emerald-100 p-5 rounded-[10px] space-y-4">
+                                <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Dica Pro</p>
+                                <p className="text-sm text-emerald-900 font-medium">Registe-se como vendedor para listar os seus produtos gratuitamente.</p>
+                                <button className="w-full py-3 bg-emerald-600 text-white text-xs font-bold rounded-[10px] hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-600/20">
+                                    Tornar-se Vendedor
+                                </button>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <div className="flex-1 min-h-[400px]">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            {filteredItems.length > 0 ? filteredItems.map((item, i) => (
+                                <Link key={i} href={item.href || "#"} className="block h-full">
+                                    <div className={`p-5 rounded-[15px] border ${item.border} ${item.bg} shadow-md hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group flex flex-col items-center text-center h-full gap-5`}>
+                                        <div className={`w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm ${item.color} group-hover:scale-110 transition-transform`}>
+                                            <item.icon className="w-8 h-8" />
                                         </div>
-                                    </div>
-                                    <div className="p-4">
-                                        <h4 className="text-sm font-black text-slate-800 uppercase tracking-tight line-clamp-1">{product.nome || product.name}</h4>
-                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{product.category || "Insumo"}</p>
+                                        <div className="space-y-2 w-full">
+                                            <h3 className="text-xl font-black text-slate-800 group-hover:text-slate-900 transition-colors uppercase leading-tight">{item.title}</h3>
+                                            <p className="text-sm text-slate-500 font-medium leading-relaxed">{item.description}</p>
+                                        </div>
+                                        <div className="mt-auto pt-2 flex items-center justify-between w-full">
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-white px-3 py-1.5 rounded-full shadow-sm border border-slate-100 italic">{loading ? "Carregando..." : item.count}</span>
+                                            <div className="flex items-center gap-1 text-xs font-bold text-slate-700 group-hover:text-[#f97316] transition-colors">
+                                                Explorar
+                                                <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
+                                            </div>
+                                        </div>
                                     </div>
                                 </Link>
-                            ))}
-                        </div>
-                    )}
-                </section>
-
-                {/* 4. Professionals Section - Segmented */}
-                <section className="mb-24 scroll-mt-20" id="talentos">
-                    <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
-                        <div className="space-y-1">
-                            <h2 className="text-[10px] font-black text-purple-600 uppercase tracking-widest">Capital Humano</h2>
-                            <h3 className="text-3xl font-black text-slate-800 uppercase tracking-tighter">Especialistas & Técnicos</h3>
-                        </div>
-                        <Link href="/servicos/talentos" className="text-xs font-black text-slate-400 hover:text-purple-600 uppercase tracking-widest flex items-center gap-2 transition-all">
-                            Ver todos os talentos <ArrowRight className="w-4 h-4" />
-                        </Link>
-                    </div>
-                    {loading ? (
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            {[1, 2, 3].map(i => <div key={i} className="h-24 bg-white animate-pulse rounded-2xl border border-slate-100" />)}
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            {previews.professionals.map((pro) => (
-                                <div key={pro.id} className="p-6 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
-                                    <div className="size-16 rounded-full bg-slate-100 overflow-hidden border-2 border-slate-50 shrink-0">
-                                        <img src={pro.photo_url || "https://images.unsplash.com/photo-1595152248447-c93d5006b00b?q=80&w=100"} alt={pro.name} className="w-full h-full object-cover" />
-                                    </div>
-                                    <div className="space-y-1">
-                                        <h4 className="text-sm font-black text-slate-800 uppercase tracking-tight">{pro.name}</h4>
-                                        <p className="text-[9px] font-black uppercase tracking-widest text-[#f97316]">{pro.role || pro.specialty}</p>
-                                        <div className="flex items-center gap-1 text-slate-400 text-[9px] font-bold uppercase tracking-wider">
-                                            <LandPlot className="w-3 h-3 text-rose-500" />
-                                            {pro.location || pro.province}
-                                        </div>
-                                    </div>
+                            )) : (
+                                <div className="col-span-full py-20 text-center text-gray-400">
+                                    <Search className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                                    <p>Nenhum resultado encontrado no repositório.</p>
                                 </div>
-                            ))}
+                            )}
                         </div>
-                    )}
-                </section>
-
-                {/* 5. Scientific Articles Section */}
-                <section className="mb-24 scroll-mt-20" id="artigos">
-                    <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
-                        <div className="space-y-1">
-                            <h2 className="text-[10px] font-black text-cyan-600 uppercase tracking-widest">Inteligência</h2>
-                            <h3 className="text-3xl font-black text-slate-800 uppercase tracking-tighter">Artigos Científicos</h3>
-                        </div>
-                        <Link href="/artigos" className="text-xs font-black text-slate-400 hover:text-cyan-600 uppercase tracking-widest flex items-center gap-2 transition-all">
-                            Portal científico <ArrowRight className="w-4 h-4" />
-                        </Link>
                     </div>
-                    {loading ? (
-                        <div className="space-y-4">
-                            {[1, 2, 3].map(i => <div key={i} className="h-20 bg-white animate-pulse rounded-2xl border border-slate-100" />)}
-                        </div>
-                    ) : (
-                        <div className="space-y-4">
-                            {previews.articles.map((art) => (
-                                <Link key={art.id} href={`/artigos/${art.slug}`} className="group flex flex-col md:flex-row md:items-center justify-between p-6 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all gap-4">
-                                    <div className="flex items-start gap-4">
-                                        <div className="size-12 bg-cyan-50 rounded-xl flex items-center justify-center text-cyan-600 group-hover:bg-cyan-600 group-hover:text-white transition-colors shrink-0">
-                                            <BookOpen className="w-6 h-6" />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <h4 className="text-base font-bold text-slate-800 line-clamp-1 group-hover:text-cyan-600 transition-colors uppercase">{art.title}</h4>
-                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{art.author} — {art.source}</p>
-                                        </div>
-                                    </div>
-                                    <span className="text-[10px] font-black text-slate-400 uppercase px-3 py-1 bg-slate-50 rounded-lg group-hover:bg-slate-100 transition-colors">
-                                        Ver Detalhes
-                                    </span>
-                                </Link>
-                            ))}
-                        </div>
-                    )}
-                </section>
-
-                {/* 6. Documents & Properties Section Combined */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 pt-12 border-t border-slate-100">
-                    <section>
-                        <div className="flex items-end justify-between mb-8">
-                            <h3 className="text-xl font-black text-slate-800 uppercase tracking-tight">Leis & Documentos</h3>
-                            <Link href="/documentos" className="text-[10px] font-black text-[#f97316] uppercase tracking-widest">Ver Todos</Link>
-                        </div>
-                        {loading ? (
-                            <div className="space-y-4">
-                                {[1, 2, 3].map(i => <div key={i} className="h-12 bg-white animate-pulse rounded-xl border border-slate-50" />)}
-                            </div>
-                        ) : (
-                            <div className="space-y-4">
-                                {previews.documents.map(doc => (
-                                    <Link key={doc.id} href={`/artigos/${doc.slug}`} className="flex items-center gap-4 p-4 hover:bg-white hover:shadow-sm rounded-xl transition-all border border-transparent hover:border-slate-100">
-                                        <div className="bg-slate-100 size-10 rounded-lg flex items-center justify-center text-slate-400 shrink-0">
-                                            <FileText className="w-5 h-5" />
-                                        </div>
-                                        <p className="text-xs font-bold text-slate-700 line-clamp-2 uppercase leading-tight font-sans tracking-tight">{doc.title}</p>
-                                    </Link>
-                                ))}
-                            </div>
-                        )}
-                    </section>
-
-                    <section>
-                        <div className="flex items-end justify-between mb-8">
-                            <h3 className="text-xl font-black text-slate-800 uppercase tracking-tight">Imóveis & Terras</h3>
-                            <Link href="/propriedades" className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Ver Todos</Link>
-                        </div>
-                        {loading ? (
-                            <div className="space-y-4">
-                                {[1, 2, 3].map(i => <div key={i} className="h-20 bg-white animate-pulse rounded-xl border border-slate-50" />)}
-                            </div>
-                        ) : (
-                            <div className="grid grid-cols-1 gap-4">
-                                {previews.properties.map(p => (
-                                    <Link key={p.id} href={`/propriedades?q=${encodeURIComponent(p.title)}`} className="flex items-center gap-4 group">
-                                        <div className="size-20 bg-slate-50 rounded-xl overflow-hidden shrink-0">
-                                            <img src={p.image_url || "https://images.unsplash.com/photo-1500382017468-9049fee74a62?q=80&w=200"} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                                        </div>
-                                        <div>
-                                            <p className="text-xs font-black text-slate-800 uppercase line-clamp-1">{p.title}</p>
-                                            <p className="text-[10px] text-slate-400 uppercase font-bold mt-0.5">{p.location || "Gaza"}</p>
-                                            <p className="text-xs font-black text-emerald-600 mt-1">{p.price ? `${p.price} MT` : "Consulta"}</p>
-                                        </div>
-                                    </Link>
-                                ))}
-                            </div>
-                        )}
-                    </section>
                 </div>
-
             </main>
         </div>
     );

@@ -15,7 +15,7 @@ export const MOZ_DATA: Record<string, string[]> = {
 export const SECTORS = [
     "Agricultura", "Pecuária", "Pescas", "Avicultura", "Agro-indústria",
     "Fornecedor de Insumos", "Serviços Financeiros", "Logística",
-    "Consultoria", "Educação/Investigação", "Prestação de serviços de comunicação", "Outro"
+    "Consultoria", "Educação/Investigação", "Prestação de serviços", "Outro"
 ];
 
 export const VALUE_CHAINS = [

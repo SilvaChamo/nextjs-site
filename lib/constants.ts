@@ -18,7 +18,52 @@ export type Company = {
     type: string;
     image?: string;
     isVerified?: boolean;
+    bio?: string;
+    activity?: string;
 };
+
+export const COMPANY_CATEGORIES = [
+    "Insumos agrícolas",
+    "Agricultura orgânica",
+    "Agricultura sustentável",
+    "Agricultura de precisão",
+    "Máquinas/equipamento",
+    "Irrigação",
+    "Produção agrícola",
+    "Pecuária",
+    "Avicultura",
+    "Suinocultura",
+    "Aquicultura",
+    "Apicultura",
+    "Silvicultura",
+    "Horticultura",
+    "Fruticultura",
+    "Floricultura",
+    "Viveiros",
+    "Armazenagem",
+    "Transporte agrícola",
+    "Processamento",
+    "Agroindústria",
+    "Agronegócio",
+    "Exportação",
+    "Cooperativas",
+    "Assistência técnica",
+    "Consultoria agrícola",
+    "Tecnologia agrícola",
+    "Pesquisa agrícola",
+    "Certificação agrícola",
+    "Segurança alimentar",
+    "Financiamento",
+    "Crédito agrícola",
+    "Seguros agrícolas",
+    "Investimento agrícola",
+    "Gestão agrícola",
+    "Planeamento agrícola",
+    "Sustentabilidade agrícola",
+    "Energia renovável",
+    "Agro-industrial",
+    "Prestação de serviços"
+];
 
 export const FEATURED_COMPANIES: Company[] = [
     {

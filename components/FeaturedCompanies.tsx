@@ -32,12 +32,12 @@ export function FeaturedCompanies() {
                     const mapped: Company[] = data.map(d => ({
                         id: d.id,
                         slug: d.slug,
-                        name: d.name,
-                        tag: d.activity,
-                        description: d.description,
+                        name: d.company_name || d.name,
+                        tag: d.category || d.activity,
+                        description: d.activity || d.bio || d.description || "",
                         logoUrl: d.logo_url || 'https://placehold.co/100x100/054a29/fff?text=Logo',
                         type: d.registration_type || 'Empresa',
-                        image: d.image_url || 'https://images.unsplash.com/photo-1625246333195-58f21a416327',
+                        image: d.banner_url || d.image_url || 'https://images.unsplash.com/photo-1625246333195-58f21a416327',
                         isVerified: d.is_verified || d.is_featured
                     }));
                     setCompanies(mapped);

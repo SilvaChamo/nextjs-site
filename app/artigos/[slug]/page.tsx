@@ -254,7 +254,7 @@ export default function ArticleReadingPage() {
                                 <Link
                                     key={i}
                                     href={`/blog?cat=${tag === article.type ? tag : "Todos"}`}
-                                    className="inline-flex items-center px-4 py-2 bg-slate-50 text-slate-400 text-[10px] font-bold uppercase tracking-widest rounded-[7px] hover:bg-[#f97316] hover:text-white transition-all cursor-pointer border border-slate-100 group"
+                                    className="inline-flex items-center px-4 py-2 bg-white text-slate-400 text-[10px] font-bold uppercase tracking-widest rounded-[7px] hover:bg-[#f97316] hover:text-white transition-all cursor-pointer border border-slate-100 shadow-sm group"
                                 >
                                     <Tag className="w-3 h-3 mr-2 text-slate-300 group-hover:text-white transition-colors" />
                                     {tag}
@@ -305,8 +305,12 @@ export default function ArticleReadingPage() {
                                                         className="object-cover group-hover:scale-110 transition-transform duration-700"
                                                     />
                                                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-6 flex flex-col justify-end space-y-1">
-                                                        <div className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">{item.type || "Artigo"}</div>
-                                                        <h4 className="font-bold text-base leading-tight text-white group-hover:text-emerald-300 transition-colors line-clamp-2">
+                                                        <div className="inline-flex">
+                                                            <span className="text-[9px] font-black bg-white text-emerald-700 px-2 py-0.5 rounded-[4px] uppercase tracking-widest shadow-sm border border-emerald-500/10">
+                                                                {item.type || "Artigo"}
+                                                            </span>
+                                                        </div>
+                                                        <h4 className="font-bold text-base leading-tight text-white group-hover:text-[#f97316] transition-colors line-clamp-2">
                                                             {item.title}
                                                         </h4>
                                                         <p className="text-[11px] text-emerald-50/70 leading-relaxed line-clamp-2 font-medium">
@@ -332,7 +336,11 @@ export default function ArticleReadingPage() {
                                                     />
                                                 </div>
                                                 <div className="flex-1 py-4 pr-4 space-y-2">
-                                                    <div className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">{item.type || "Artigo"}</div>
+                                                    <div className="inline-flex">
+                                                        <span className="text-[9px] font-black bg-white text-emerald-600 px-2 py-0.5 rounded-[4px] uppercase tracking-widest border border-slate-100 shadow-sm">
+                                                            {item.type || "Artigo"}
+                                                        </span>
+                                                    </div>
                                                     <h4 className="font-bold text-sm leading-snug text-slate-700 group-hover:text-[#f97316] transition-colors line-clamp-2">
                                                         {item.title}
                                                     </h4>

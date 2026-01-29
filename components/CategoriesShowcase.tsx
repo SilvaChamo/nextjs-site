@@ -137,13 +137,13 @@ export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
                     {/* Navigation Arrows */}
                     <button
                         onClick={scrollPrev}
-                        className="absolute top-1/2 -left-4 md:-left-12 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all z-10"
+                        className="absolute top-[calc(50%-20px)] -left-4 md:-left-12 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all z-10"
                     >
                         <ChevronLeft className="h-6 w-6" />
                     </button>
                     <button
                         onClick={scrollNext}
-                        className="absolute top-1/2 -right-4 md:-right-12 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all z-10"
+                        className="absolute top-[calc(50%-20px)] -right-4 md:-right-12 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all z-10"
                     >
                         <ChevronRight className="h-6 w-6" />
                     </button>

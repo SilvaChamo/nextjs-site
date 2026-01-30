@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Building2, Globe, Mail, MapPin, Phone, Target, Eye, Heart, List, X, Loader2, FileText, Star } from "lucide-react";
+import { ArrowLeft, Building2, Globe, Mail, MapPin, Phone, Target, Eye, Heart, List, X, Loader2, FileText, Star, ShoppingBag, Plus, Trash2, ChevronDown } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import { RichTextEditor } from "../RichTextEditor";
 import { MOZ_DATA, SECTORS, VALUE_CHAINS } from "@/lib/agro-data";
 import { useRouter } from "next/navigation";
@@ -16,6 +17,7 @@ interface CompanyEditorProps {
 }
 
 export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps) {
+    const supabase = createClient();
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
@@ -39,6 +41,79 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
         is_featured: initialData?.is_featured || false,
     });
 
+    // Products State
+    const [products, setProducts] = useState<any[]>([]);
+    const [newProduct, setNewProduct] = useState({ name: "", price: "", category: "", image_url: "", description: "" });
+    const [isAddingProduct, setIsAddingProduct] = useState(false);
+    const [productLoading, setProductLoading] = useState(false);
+
+    useEffect(() => {
+        if (initialData?.id) {
+            fetchProducts();
+        }
+    }, [initialData?.id]);
+
+    const fetchProducts = async () => {
+        const { data, error } = await supabase
+            .from('products')
+            .select('*')
+            .eq('company_id', initialData.id)
+            .order('created_at', { ascending: false });
+
+        if (data) setProducts(data);
+    };
+
+    const handleAddProduct = async () => {
+        if (!newProduct.name) {
+            alert("Por favor, preencha o nome do produto.");
+            return;
+        }
+        if (!initialData?.id) {
+            alert("Erro: ID da empresa não encontrado. Recarregue a página.");
+            return;
+        }
+        setProductLoading(true);
+
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                alert("Erro: Sessão de utilizador não encontrada. Por favor, recarregue a página.");
+                return;
+            }
+
+            const { error } = await supabase.from('products').insert([{
+                company_id: initialData.id,
+                user_id: user.id,
+                name: newProduct.name,
+                price: parseFloat(newProduct.price) || 0,
+                category: newProduct.category,
+                image_url: newProduct.image_url,
+                description: newProduct.description,
+                is_available: newProduct.is_available
+            }]);
+
+            if (error) {
+                console.error("Erro Supabase:", error);
+                throw error;
+            }
+
+            setNewProduct({ name: "", price: "", category: "", image_url: "", description: "", is_available: true });
+            setIsAddingProduct(false);
+            fetchProducts();
+        } catch (err: any) {
+            alert("Erro ao adicionar produto: " + (err.message || err.details || "Erro desconhecido"));
+        } finally {
+            setProductLoading(false);
+        }
+    };
+
+    const handleDeleteProduct = async (id: string) => {
+        if (!confirm("Tem a certeza que deseja eliminar este produto?")) return;
+
+        const { error } = await supabase.from('products').delete().eq('id', id);
+        if (!error) fetchProducts();
+    };
+
     useEffect(() => {
         if (formData.province && !MOZ_DATA[formData.province]?.includes(formData.district)) {
             setFormData(prev => ({ ...prev, district: "" }));
@@ -50,16 +125,26 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
         setLoading(true);
 
         try {
-            const submissionData = { ...formData };
+            // Get current user to ensure RLS compliance
+            const { data: { user } } = await supabase.auth.getUser();
+
+            // Base data without user_id
+            const baseData = { ...formData };
 
             let error;
             if (!isNew && initialData?.id) {
+                // UPDATE: Do not overwrite user_id to preserve ownership (e.g. Admin editing User's company)
                 const { error: err } = await supabase
                     .from('companies')
-                    .update(submissionData)
+                    .update(baseData)
                     .eq('id', initialData.id);
                 error = err;
             } else {
+                const submissionData = {
+                    ...baseData,
+                    user_id: null
+                };
+
                 const { error: err } = await supabase
                     .from('companies')
                     .insert([submissionData]);
@@ -75,6 +160,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
             setLoading(false);
         }
     };
+
 
     const addService = () => {
         setFormData(prev => ({ ...prev, services: [...prev.services, ""] }));
@@ -140,34 +226,32 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                 <div className="space-y-4">
                     <h3 className="text-xs font-black uppercase text-emerald-600 tracking-widest border-b border-emerald-100 pb-2 mb-4">Mídia e Branding</h3>
 
-                    <div className="flex flex-col md:flex-row gap-6">
-                        <div className="w-full md:w-[20%]">
+                    <div className="flex flex-col md:flex-row gap-6 h-auto md:h-48">
+                        <div className="w-full md:w-48 shrink-0 h-48 md:h-full">
                             <ImageUpload
-                                label="Logo da Empresa"
+                                label="Logo"
                                 value={formData.logo_url}
                                 onChange={(url) => setFormData({ ...formData, logo_url: url })}
-                                recommendedSize="400x400 (1:1)"
+                                recommendedSize="400x400"
                                 aspectRatio="square"
-                                maxWidth={800}
-                                maxHeight={800}
                                 bucket="public-assets"
                                 folder="logos"
                                 showRecommendedBadge={false}
+                                className="h-full w-full object-cover"
                             />
                         </div>
-                        <div className="w-full md:w-[78%]">
+                        <div className="flex-1 h-48 md:h-full">
                             <ImageUpload
-                                label="Banner de Capa"
+                                label="Banner (Capa)"
                                 value={formData.banner_url}
                                 onChange={(url) => setFormData({ ...formData, banner_url: url })}
-                                recommendedSize="1200x400 (3:1)"
+                                recommendedSize="1200x400"
                                 aspectRatio="video"
-                                maxWidth={1920}
-                                maxHeight={640}
                                 bucket="public-assets"
                                 folder="banners"
                                 imageClassName="object-cover w-full h-full"
                                 showRecommendedBadge={false}
+                                className="h-full w-full"
                             />
                         </div>
                     </div>
@@ -220,38 +304,21 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                         <div className="flex flex-col gap-2">
                             <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Sector de Actividade</label>
                             <div className="relative">
-                                <div className="space-y-4">
-                                    <select
-                                        value={SECTORS.includes(formData.category) ? formData.category : (formData.category ? "Outro" : "")}
-                                        onChange={(e) => {
-                                            const val = e.target.value;
-                                            if (val !== "Outro") {
-                                                setFormData(prev => ({ ...prev, category: val }));
-                                            } else {
-                                                // If switching to Outro, clear but keep placeholder or state logic?
-                                                // Actually let's just use the select to hold the custom value via option injection
-                                            }
-                                        }}
-                                        className="p-4 bg-slate-100 border-2 border-slate-200 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
-                                    >
-                                        <option value="">Selecione o Sector...</option>
-                                        {SECTORS.map((s: string) => <option key={s} value={s}>{s}</option>)}
-                                        {formData.category && !SECTORS.includes(formData.category) && (
-                                            <option value={formData.category}>{formData.category}</option>
-                                        )}
-                                        <option value="Outro">Outro (digitar)...</option>
-                                    </select>
-
-                                    {(formData.category === "Outro" || (formData.category && !SECTORS.includes(formData.category))) && (
-                                        <input
-                                            value={SECTORS.includes(formData.category) ? "" : formData.category}
-                                            onChange={(e) => setFormData({ ...formData, category: toSentenceCase(e.target.value) })}
-                                            placeholder="Digite o sector personalizado..."
-                                            className="p-4 bg-white border-2 border-emerald-500 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all shadow-sm"
-                                            autoFocus
-                                        />
+                                <select
+                                    value={formData.category}
+                                    onChange={(e) => {
+                                        const val = e.target.value;
+                                        setFormData(prev => ({ ...prev, category: val }));
+                                    }}
+                                    className="p-4 bg-slate-100 border-2 border-slate-200 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
+                                >
+                                    <option value="">Selecione o Sector...</option>
+                                    {SECTORS.map((s: string) => <option key={s} value={s}>{s}</option>)}
+                                    {formData.category && !SECTORS.includes(formData.category) && (
+                                        <option value={formData.category}>{formData.category}</option>
                                     )}
-                                </div>
+                                    {/* Removed redundant input and 'Outro' logic to simplify UI as requested */}
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -435,6 +502,173 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                         )}
                     </div>
                 </div>
+
+                {/* Products Section - Only available for existing companies */}
+                {!isNew && (
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between border-b border-emerald-100 pb-2 mb-4">
+                            <h3 className="text-xs font-black uppercase text-emerald-600 tracking-widest">Produtos e Serviços Premium</h3>
+                            <button
+                                type="button"
+                                onClick={() => setIsAddingProduct(true)}
+                                className="text-[10px] font-black uppercase text-emerald-600 hover:text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full transition-colors flex items-center gap-1"
+                            >
+                                <Plus className="w-3 h-3" /> Adicionar Produto
+                            </button>
+                        </div>
+
+                        {/* Add Product Form */}
+                        {isAddingProduct && (
+                            <div className="bg-slate-50 border border-emerald-100/50 rounded-lg p-6 mb-4 animate-in fade-in slide-in-from-top-2 shadow-sm">
+                                <h4 className="text-xs font-bold text-emerald-600 mb-6 uppercase flex items-center gap-2 tracking-widest border-b border-emerald-100 pb-2">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                                    Novo Produto
+                                </h4>
+
+                                <div className="flex flex-col md:flex-row gap-6 mb-6">
+                                    {/* Left Side: Image */}
+                                    <div className="w-full md:w-48 shrink-0">
+                                        <ImageUpload
+                                            label="Foto"
+                                            value={newProduct.image_url}
+                                            onChange={(url) => setNewProduct({ ...newProduct, image_url: url })}
+                                            recommendedSize="400x400"
+                                            aspectRatio="square"
+                                            bucket="public-assets"
+                                            folder="products"
+                                            imageClassName="w-full h-full rounded-lg object-cover bg-white shadow-sm border border-slate-100"
+                                            showRecommendedBadge={false}
+                                        />
+                                    </div>
+
+                                    {/* Right Side: Inputs */}
+                                    <div className="flex-1 space-y-4">
+                                        <input
+                                            value={newProduct.name}
+                                            onChange={(e) => setNewProduct({ ...newProduct, name: toSentenceCase(e.target.value) })}
+                                            placeholder="Nome do Produto e Marca (Ex: Sementes de Milho Híbrido Pannar)"
+                                            className="px-4 py-3 bg-white border border-slate-200 rounded-lg text-sm font-bold w-full outline-none focus:ring-2 focus:ring-emerald-500 transition-all shadow-sm placeholder:text-slate-400 placeholder:font-normal"
+                                        />
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <input
+                                                type="number"
+                                                value={newProduct.price}
+                                                onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+                                                placeholder="Preço (MZN)"
+                                                className="px-4 py-3 bg-white border border-slate-200 rounded-lg text-sm font-medium w-full outline-none focus:ring-2 focus:ring-emerald-500 transition-all shadow-sm placeholder:text-slate-400 placeholder:font-normal"
+                                            />
+                                            <div className="relative">
+                                                <select
+                                                    value={newProduct.category}
+                                                    onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
+                                                    className={`appearance-none px-4 py-3 bg-white border border-slate-200 rounded-lg text-sm font-medium w-full outline-none focus:ring-2 focus:ring-emerald-500 transition-all shadow-sm ${!newProduct.category ? 'text-slate-400' : 'text-slate-900'}`}
+                                                >
+                                                    <option value="" disabled hidden>Selecione a Categoria de Produto</option>
+                                                    {[
+                                                        "Sementes & Mudas",
+                                                        "Fertilizantes & Adubos",
+                                                        "Defensivos Agrícolas (Pesticidas)",
+                                                        "Maquinaria & Equipamentos",
+                                                        "Sistemas de Rega",
+                                                        "Ração & Nutrição Animal",
+                                                        "Medicamentos Veterinários",
+                                                        "Ferramentas Agrícolas",
+                                                        "Produtos Frescos (Frutas/Legumes)",
+                                                        "Grãos & Cereais",
+                                                        "Processados & Agro-indústria",
+                                                        "Serviços de Consultoria"
+                                                    ].map((cat) => (
+                                                        <option key={cat} value={cat} className="text-slate-900">{cat}</option>
+                                                    ))}
+                                                </select>
+                                                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-lg px-4 py-3">
+                                            <Switch
+                                                checked={newProduct.is_available}
+                                                onCheckedChange={(checked) => setNewProduct({ ...newProduct, is_available: checked })}
+                                            />
+                                            <span className="text-sm font-medium text-slate-700">
+                                                {newProduct.is_available ? "Produto Disponível em Stock" : "Produto Indisponível (Sem Stock)"}
+                                            </span>
+                                        </div>
+
+                                        <textarea
+                                            value={newProduct.description}
+                                            onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
+                                            placeholder="Breve descrição das características do produto..."
+                                            className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg text-sm font-medium outline-none focus:ring-2 focus:ring-emerald-500 resize-none h-24 transition-all shadow-sm placeholder:text-slate-400 placeholder:font-normal"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-end gap-3 pt-4 border-t border-emerald-100/50">
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsAddingProduct(false)}
+                                        className="px-4 py-2 text-xs font-black text-slate-500 hover:bg-slate-200 rounded-lg transition-colors uppercase tracking-wide"
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={handleAddProduct}
+                                        disabled={productLoading}
+                                        className="px-6 py-2 text-xs font-black text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors flex items-center gap-2 uppercase tracking-wide shadow-lg shadow-emerald-900/10"
+                                    >
+                                        {productLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Plus className="w-3 h-3" />}
+                                        Salvar Produto
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Products List */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                            {products.map((product) => (
+                                <div key={product.id} className="bg-white border border-slate-100 rounded-xl p-3 flex gap-3 group hover:border-emerald-200 transition-colors">
+                                    <div className="w-16 h-16 bg-slate-100 rounded-lg shrink-0 overflow-hidden">
+                                        {product.image_url ? (
+                                            <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-slate-300">
+                                                <ShoppingBag className="w-6 h-6" />
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="flex-1 min-w-0 flex flex-col justify-center">
+                                        <h5 className="text-sm font-black text-slate-800 truncate">{product.name}</h5>
+                                        <div className="flex items-center gap-2 text-xs text-slate-500">
+                                            <span className="font-bold text-emerald-600">
+                                                {product.price ? new Intl.NumberFormat('pt-MZ', { style: 'currency', currency: 'MZN' }).format(product.price) : 'Sob Consulta'}
+                                            </span>
+                                            {product.category && <span className="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">{product.category}</span>}
+                                            {/* Availability Badge */}
+                                            <span className={`text-[10px] px-1.5 py-0.5 rounded ${product.is_available !== false ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
+                                                {product.is_available !== false ? 'Disponível' : 'Indisponível'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => handleDeleteProduct(product.id)}
+                                        className="self-start p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            ))}
+                            {products.length === 0 && !isAddingProduct && (
+                                <p className="col-span-full text-center text-slate-400 text-xs italic py-4">
+                                    Nenhum produto registado.
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                )}
 
                 <div className=" pt-8 border-t border-slate-100 flex items-center justify-end gap-3">
                     <Button type="button" variant="outline" onClick={() => router.back()} className="px-8 h-12 rounded-xl text-xs font-black text-slate-500 uppercase tracking-widest">

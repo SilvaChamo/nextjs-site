@@ -39,13 +39,14 @@ export function CompanyCard({ company }: CompanyCardProps) {
                 <div className="absolute bottom-4 left-4 flex items-center justify-between z-20 w-[calc(100%-32px)]">
                     <div className="flex items-center gap-2.5 overflow-hidden">
                         {/* Logo Frame */}
-                        <div className="shrink-0 h-10 w-auto min-w-[40px] max-w-[90px] rounded-lg overflow-hidden border border-white/10 bg-white flex items-center justify-center p-1.5 shadow-2xl">
+                        {/* Logo Frame - Updated to match Editor Style (Square Cover) */}
+                        <div className="shrink-0 h-10 w-10 rounded-lg overflow-hidden border border-white/10 bg-white flex items-center justify-center p-[2px] shadow-2xl">
                             <Image
                                 src={company.logoUrl || "https://placehold.co/100x100/f97316/white?text=LOGO"}
                                 alt={company.name || "Empresa"}
-                                width={90}
-                                height={40}
-                                className="h-full w-auto object-contain"
+                                width={100}
+                                height={100}
+                                className="w-full h-full object-cover rounded-md"
                             />
                         </div>
 

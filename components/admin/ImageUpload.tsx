@@ -29,6 +29,7 @@ interface ImageUploadProps {
     showRecommendedBadge?: boolean;
     maxWidth?: number;
     maxHeight?: number;
+    className?: string; // Container class override
 }
 
 export function ImageUpload({
@@ -44,7 +45,8 @@ export function ImageUpload({
     imageClassName,
     showRecommendedBadge = true,
     maxWidth,
-    maxHeight
+    maxHeight,
+    className
 }: ImageUploadProps) {
     const supabase = createClient();
     const [uploading, setUploading] = useState(false);
@@ -165,9 +167,9 @@ export function ImageUpload({
 
         setError(null);
 
-        // 1MB limit check
-        if (file.size > maxSizeMB * 1024 * 1024) {
-            setError(`O ficheiro excede o limite de ${maxSizeMB}MB.`);
+        // 10MB limit for raw file (we will compress it)
+        if (file.size > 10 * 1024 * 1024) {
+            setError(`O ficheiro excede o limite de 10MB.`);
             return;
         }
 
@@ -181,6 +183,14 @@ export function ImageUpload({
         setUploading(true);
         try {
             const webpBlob = await convertToWebP(file, shouldResize);
+
+            // Re-check size after compression
+            if (webpBlob.size > maxSizeMB * 1024 * 1024) {
+                setError(`A imagem comprimida ainda excede o limite de ${maxSizeMB}MB.`);
+                setUploading(false);
+                return;
+            }
+
             const userPrefix = userId ? `${userId}-` : "";
             const fileName = `${folder}/${userPrefix}${Date.now()}.webp`;
 
@@ -236,8 +246,9 @@ export function ImageUpload({
             <div
                 className={cn(
                     "relative rounded-xl border border-dashed border-slate-200 bg-slate-50/50 hover:bg-slate-50 transition-all cursor-pointer group flex items-center justify-center overflow-hidden w-full",
-                    aspectRatio === "square" ? "aspect-square max-h-[220px] max-w-[220px] mx-auto p-[10px]" : "aspect-[3/1] max-h-[220px]",
-                    error ? "border-red-200 bg-red-50/10" : ""
+                    !className?.includes('aspect-') && (aspectRatio === "square" ? "aspect-square max-h-[220px] max-w-[220px] mx-auto p-[10px]" : "aspect-[3/1] max-h-[220px]"),
+                    error ? "border-red-200 bg-red-50/10" : "",
+                    className
                 )}
                 onClick={() => !uploading && fileInputRef.current?.click()}
             >

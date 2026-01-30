@@ -226,8 +226,8 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                 <div className="space-y-4">
                     <h3 className="text-xs font-black uppercase text-emerald-600 tracking-widest border-b border-emerald-100 pb-2 mb-4">Mídia e Branding</h3>
 
-                    <div className="flex flex-col md:flex-row gap-6 h-auto md:h-48">
-                        <div className="w-full md:w-48 shrink-0 h-48 md:h-full">
+                    <div className="flex flex-col md:flex-row gap-6 h-auto md:h-[170px]">
+                        <div className="w-full md:w-[170px] shrink-0 h-[170px] md:h-full">
                             <ImageUpload
                                 label="Logo"
                                 value={formData.logo_url}
@@ -240,7 +240,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                 className="h-full w-full object-cover"
                             />
                         </div>
-                        <div className="flex-1 h-48 md:h-full">
+                        <div className="flex-1 h-[170px] md:h-full">
                             <ImageUpload
                                 label="Banner (Capa)"
                                 value={formData.banner_url}
@@ -258,7 +258,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                 </div>
 
                 {/* Basic Info Section */}
-                <div className="space-y-4">
+                <div className="space-y-4 pt-5">
                     <h3 className="text-xs font-black uppercase text-emerald-600 tracking-widest border-b border-emerald-100 pb-2 mb-4">Informação Básica</h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

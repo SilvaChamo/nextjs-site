@@ -105,6 +105,7 @@ export function Footer() {
                             <Link href="/termos" className="hover:text-[#f97316] transition-colors">Termos e condições</Link>
                             <Link href="/suporte" className="hover:text-[#f97316] transition-colors">Suporte</Link>
                             <Link href="/design-system" className="hover:text-[#f97316] transition-colors text-emerald-600/50">Kit Padrão</Link>
+                            <Link href="/admin" className="hover:text-[#f97316] transition-colors text-gray-800 hover:text-emerald-600">Cozinha</Link>
                         </div>
                         <div className="flex items-center gap-4">
                             <SocialIcon Icon={Facebook} />

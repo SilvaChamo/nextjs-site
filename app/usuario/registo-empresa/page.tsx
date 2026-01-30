@@ -42,6 +42,11 @@ export default function RegisterCompanyPage() {
         newsletter: true,
         logoUrl: "",
 
+        // Partner Fields
+        website: "",
+        representative: "",
+        nuit: "",
+
         // Passo 2: Plano
         plan: "gratuito", // gratuito | profissional | empresarial | parceiro
         billingPeriod: "monthly",
@@ -148,6 +153,9 @@ export default function RegisterCompanyPage() {
                 sector: formData.sector,
                 description: formData.description,
                 plan: formData.plan,
+                website: formData.website,
+                representative: formData.representative,
+                nuit: formData.nuit,
                 billing_period: formData.billingPeriod,
                 products: formData.products, // Assumindo coluna JSONB
                 payment_method: formData.paymentMethod,
@@ -441,6 +449,36 @@ export default function RegisterCompanyPage() {
                                         </div>
                                     </div>
                                 </div>
+
+                                {/* Partner Additional Fields */}
+                                {formData.plan === 'parceiro' && (
+                                    <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6 mt-6 animate-in fade-in slide-in-from-top-4">
+                                        <h3 className="font-bold text-emerald-800 mb-4">Dados do Parceiro</h3>
+                                        <div className="grid grid-cols-1 gap-4">
+                                            <Input
+                                                name="website"
+                                                value={formData.website}
+                                                onChange={handleInputChange}
+                                                placeholder="Website Oficial / Link"
+                                                className="bg-white border-emerald-200 focus:ring-emerald-500"
+                                            />
+                                            <Input
+                                                name="representative"
+                                                value={formData.representative}
+                                                onChange={handleInputChange}
+                                                placeholder="Nome do Representante"
+                                                className="bg-white border-emerald-200 focus:ring-emerald-500"
+                                            />
+                                            <Input
+                                                name="nuit"
+                                                value={formData.nuit}
+                                                onChange={handleInputChange}
+                                                placeholder="NUIT da Empresa"
+                                                className="bg-white border-emerald-200 focus:ring-emerald-500"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
 
@@ -654,6 +692,6 @@ export default function RegisterCompanyPage() {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

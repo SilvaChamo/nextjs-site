@@ -89,6 +89,9 @@ export default function DesignSystem() {
                     <a href="/design-system/detalhes-empresa" className="btn-primary">
                         Detalhes da Empresa
                     </a>
+                    <a href="/admin" className="btn-primary bg-slate-900 border-slate-900 text-white hover:bg-slate-700">
+                        Painel Admin (Cozinha)
+                    </a>
                 </div>
             </section>
 

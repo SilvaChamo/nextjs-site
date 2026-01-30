@@ -3,39 +3,45 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
-import { Loader2, CheckCircle2, AlertCircle, X, Image as ImageIcon } from "lucide-react";
+import { Loader2, X, Image as ImageIcon, Type, Link as LinkIcon, Calendar } from "lucide-react";
+import { RichTextEditor } from "@/components/RichTextEditor";
+import { Input } from "@/components/ui/input";
 
-interface AdminFormProps {
+interface ArticleFormProps {
     onClose: () => void;
     onSuccess: () => void;
     initialData?: any;
 }
 
-export function ArticleForm({ onClose, onSuccess, initialData }: AdminFormProps) {
+export function ArticleForm({ onClose, onSuccess, initialData }: ArticleFormProps) {
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         title: initialData?.title || "",
+        subtitle: initialData?.subtitle || "",
+        type: initialData?.type || "Notícia",
         content: initialData?.content || "",
-        author: initialData?.author || "",
-        category: initialData?.category || "Agricultura",
         image_url: initialData?.image_url || "",
-        date: initialData?.date || new Date().toLocaleDateString('pt-PT', { day: 'numeric', month: 'short', year: 'numeric' }),
-        slug: initialData?.slug || "",
-        is_featured: initialData?.is_featured || false
+        source: initialData?.source || "",
+        source_url: initialData?.source_url || "",
+        date: initialData?.date ? new Date(initialData.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+        slug: initialData?.slug || ""
     });
 
-    const categories = ["Agricultura", "Tecnologia", "Mercado", "Pecuária", "Sustentabilidade"];
+    const categories = ["Notícia", "Artigo Técnico", "Política Agrária", "Oportunidade", "Evento", "Curiosidade"];
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
         try {
-            const slug = formData.slug || formData.title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
-
-            const payload = { ...formData, slug };
-
             let error;
+            const payload = { ...formData };
+
+            // Auto-generate slug from title if new
+            if (!initialData?.id && !payload.slug) {
+                payload.slug = payload.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            }
+
             if (initialData?.id) {
                 const { error: err } = await supabase
                     .from('articles')
@@ -52,119 +58,157 @@ export function ArticleForm({ onClose, onSuccess, initialData }: AdminFormProps)
             if (error) throw error;
             onSuccess();
             onClose();
-        } catch (error: any) {
-            alert("Erro ao salvar artigo: " + error.message);
+        } catch (err: any) {
+            alert("Erro ao salvar: " + err.message);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
-                <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
+            <div className="bg-white rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+                {/* Header */}
+                <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50">
                     <div>
-                        <h2 className="text-xl font-black text-slate-800 tracking-tight">
+                        <h2 className="text-xl font-bold text-slate-800">
                             {initialData ? "Editar Artigo" : "Novo Artigo"}
                         </h2>
-                        <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Publicação Editorial</p>
+                        <p className="text-xs text-slate-500 font-medium uppercase tracking-wider mt-0.5">Gestão de Conteúdo</p>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-slate-200 rounded-full transition-colors">
-                        <X className="w-5 h-5 text-slate-500" />
+                    <button onClick={onClose} className="p-2 hover:bg-slate-200 rounded-full transition-colors text-slate-500">
+                        <X className="w-5 h-5" />
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-8 space-y-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div className="space-y-6">
-                            <div className="flex flex-col gap-2">
-                                <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Título do Artigo</label>
-                                <input
-                                    required
-                                    value={formData.title}
-                                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                    placeholder="Ex: O Futuro da Rega em Manica"
-                                    className="p-4 bg-slate-50 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="flex flex-col gap-2">
-                                    <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Autor</label>
-                                    <input
+                {/* Body */}
+                <div className="flex-1 overflow-y-auto p-6 bg-slate-50/50">
+                    <form id="article-form" onSubmit={handleSubmit} className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {/* Main Column */}
+                            <div className="md:col-span-2 space-y-5">
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Título Principal</label>
+                                    <Input
+                                        placeholder="Manchete da notícia..."
+                                        value={formData.title}
+                                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                        className="font-bold text-lg h-12"
                                         required
-                                        value={formData.author}
-                                        onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-                                        placeholder="Nome do autor"
-                                        className="p-4 bg-slate-50 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
                                     />
                                 </div>
-                                <div className="flex flex-col gap-2">
-                                    <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Categoria</label>
-                                    <select
-                                        value={formData.category}
-                                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                        className="p-4 bg-slate-50 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
-                                    >
-                                        {categories.map(c => <option key={c} value={c}>{c}</option>)}
-                                    </select>
-                                </div>
-                            </div>
 
-                            <div className="flex flex-col gap-2">
-                                <label className="text-xs font-black uppercase text-slate-500 tracking-widest">URL da Imagem de Capa</label>
-                                <div className="relative">
-                                    <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                    <input
-                                        value={formData.image_url}
-                                        onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                                        placeholder="https://images.unsplash.com/..."
-                                        className="pl-12 pr-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Subtítulo (Opcional)</label>
+                                    <Input
+                                        placeholder="Uma breve descrição ou lead..."
+                                        value={formData.subtitle}
+                                        onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Conteúdo</label>
+                                    <RichTextEditor
+                                        value={formData.content}
+                                        onChange={(val) => setFormData({ ...formData, content: val })}
+                                        placeholder="Escreva o conteúdo do artigo aqui..."
+                                        className="min-h-[300px]"
                                     />
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-3 p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
-                                <input
-                                    type="checkbox"
-                                    id="featured"
-                                    checked={formData.is_featured}
-                                    onChange={(e) => setFormData({ ...formData, is_featured: e.target.checked })}
-                                    className="size-5 rounded border-emerald-200 text-emerald-600 focus:ring-emerald-500"
-                                />
-                                <label htmlFor="featured" className="text-xs font-black uppercase text-emerald-800 tracking-widest cursor-pointer select-none">
-                                    Destacar na Página Inicial
-                                </label>
+                            {/* Sidebar Column */}
+                            <div className="space-y-5">
+                                <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                                    <h3 className="text-sm font-bold text-slate-800 border-b pb-2 mb-2">Meta Dados</h3>
+
+                                    <div className="space-y-1.5">
+                                        <label className="text-[10px] font-bold text-slate-400 uppercase">Categoria</label>
+                                        <select
+                                            value={formData.type}
+                                            onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                                            className="w-full h-9 rounded-md border border-slate-200 bg-white px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
+                                        >
+                                            {categories.map(cat => (
+                                                <option key={cat} value={cat}>{cat}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className="text-[10px] font-bold text-slate-400 uppercase">Data Publicação</label>
+                                        <div className="relative">
+                                            <Calendar className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
+                                            <Input
+                                                type="date"
+                                                value={formData.date}
+                                                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                                                className="pl-9"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                                    <h3 className="text-sm font-bold text-slate-800 border-b pb-2 mb-2">Multimédia</h3>
+
+                                    <div className="space-y-1.5">
+                                        <label className="text-[10px] font-bold text-slate-400 uppercase">URL da Imagem</label>
+                                        <div className="relative">
+                                            <ImageIcon className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
+                                            <Input
+                                                placeholder="https://..."
+                                                value={formData.image_url}
+                                                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                                                className="pl-9"
+                                            />
+                                        </div>
+                                        {formData.image_url && (
+                                            <div className="mt-2 rounded-lg overflow-hidden border border-slate-200 aspect-video bg-slate-100">
+                                                <img src={formData.image_url} alt="Preview" className="w-full h-full object-cover" onError={(e) => e.currentTarget.style.display = 'none'} />
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                                    <h3 className="text-sm font-bold text-slate-800 border-b pb-2 mb-2">Fonte (Opcional)</h3>
+
+                                    <div className="space-y-1.5">
+                                        <label className="text-[10px] font-bold text-slate-400 uppercase">Nome da Fonte</label>
+                                        <Input
+                                            placeholder="Ex: Club of Mozambique"
+                                            value={formData.source}
+                                            onChange={(e) => setFormData({ ...formData, source: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <label className="text-[10px] font-bold text-slate-400 uppercase">Link Original</label>
+                                        <div className="relative">
+                                            <LinkIcon className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
+                                            <Input
+                                                placeholder="https://..."
+                                                value={formData.source_url}
+                                                onChange={(e) => setFormData({ ...formData, source_url: e.target.value })}
+                                                className="pl-9"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                    </form>
+                </div>
 
-                        <div className="flex flex-col gap-2 h-full">
-                            <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Conteúdo do Artigo</label>
-                            <textarea
-                                required
-                                value={formData.content}
-                                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                                placeholder="Escreva o conteúdo aqui... (Suporta texto simples ou HTML básico)"
-                                className="flex-1 p-6 bg-slate-50 border-none rounded-3xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 outline-none resize-none min-h-[300px]"
-                            />
-                        </div>
-                    </div>
-                </form>
-
-                <div className="p-6 border-t border-slate-100 bg-slate-50/50 flex items-center justify-end gap-3">
-                    <Button
-                        variant="outline"
-                        onClick={onClose}
-                        className="px-8 h-12 rounded-xl text-xs font-black uppercase tracking-widest border-slate-200 text-slate-500 hover:bg-white"
-                    >
+                {/* Footer */}
+                <div className="px-6 py-4 bg-white border-t border-slate-100 flex justify-end gap-3">
+                    <Button variant="ghost" type="button" onClick={onClose}>
                         Cancelar
                     </Button>
-                    <Button
-                        onClick={handleSubmit}
-                        disabled={loading}
-                        className="px-10 h-12 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-emerald-900/10"
-                    >
-                        {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (initialData ? "Actualizar Artigo" : "Publicar Artigo")}
+                    <Button type="submit" form="article-form" disabled={loading} className="bg-emerald-600 hover:bg-emerald-700 min-w-[120px]">
+                        {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                        {initialData ? "Actualizar" : "Publicar"}
                     </Button>
                 </div>
             </div>

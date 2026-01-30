@@ -62,6 +62,11 @@ export default function SimpleRegistrationPage() {
     const [activity, setActivity] = useState("");
     const [highlightCompany, setHighlightCompany] = useState(false);
 
+    // Partner Fields State
+    const [website, setWebsite] = useState("");
+    const [representative, setRepresentative] = useState("");
+    const [nuit, setNuit] = useState("");
+
     // Payment State
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'mpesa' | 'visa' | null>(null);
     const [paymentPhoneNumber, setPaymentPhoneNumber] = useState("");
@@ -368,6 +373,43 @@ export default function SimpleRegistrationPage() {
                                     />
                                     <PlanBadge plan="Basic" />
                                 </div>
+                            </div>
+                        </div>
+
+                        {/* PARTNER FIELDS (Locked for Parceiro) */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-[10px]">
+                            <div className="relative">
+                                <Input
+                                    placeholder="Website / Link Oficial"
+                                    className="h-12 border-slate-200 px-4 text-sm font-semibold text-slate-400 placeholder:text-slate-400 bg-slate-50 cursor-not-allowed pr-32"
+                                    style={{ borderRadius: '8px' }}
+                                    disabled
+                                    value={website}
+                                    onChange={(e) => setWebsite(e.target.value)}
+                                />
+                                <PlanBadge plan="Parceiro" />
+                            </div>
+                            <div className="relative">
+                                <Input
+                                    placeholder="NUIT da Empresa"
+                                    className="h-12 border-slate-200 px-4 text-sm font-semibold text-slate-400 placeholder:text-slate-400 bg-slate-50 cursor-not-allowed pr-32"
+                                    style={{ borderRadius: '8px' }}
+                                    disabled
+                                    value={nuit}
+                                    onChange={(e) => setNuit(e.target.value)}
+                                />
+                                <PlanBadge plan="Parceiro" />
+                            </div>
+                            <div className="relative md:col-span-2">
+                                <Input
+                                    placeholder="Nome do Representante"
+                                    className="h-12 border-slate-200 px-4 text-sm font-semibold text-slate-400 placeholder:text-slate-400 bg-slate-50 cursor-not-allowed pr-32"
+                                    style={{ borderRadius: '8px' }}
+                                    disabled
+                                    value={representative}
+                                    onChange={(e) => setRepresentative(e.target.value)}
+                                />
+                                <PlanBadge plan="Parceiro" />
                             </div>
                         </div>
 
@@ -792,10 +834,10 @@ export default function SimpleRegistrationPage() {
                         </div>
                     </div>
                 </aside>
-            </div>
+            </div >
 
             {/* COMPRESSION DIALOG */}
-            <Dialog open={showCompressionDialog} onOpenChange={setShowCompressionDialog}>
+            < Dialog open={showCompressionDialog} onOpenChange={setShowCompressionDialog} >
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Imagem muito grande</DialogTitle>
@@ -833,7 +875,7 @@ export default function SimpleRegistrationPage() {
                         )}
                     </DialogFooter>
                 </DialogContent>
-            </Dialog>
-        </div>
+            </Dialog >
+        </div >
     );
 }

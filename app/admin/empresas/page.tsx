@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { AdminDataTable } from "@/components/admin/AdminDataTable";
-import { Building2, Users, ShoppingCart, Globe, Phone } from "lucide-react";
+import { Building2, Users, ShoppingCart, Globe, Phone, CheckCircle2, Shield, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CompanyForm } from "@/components/admin/CompanyForm";
 import { ProfessionalForm } from "@/components/admin/ProfessionalForm";
@@ -54,6 +54,33 @@ export default function AdminEmpresasPage() {
         }
     };
 
+    const toggleVerify = async (row: any) => {
+        try {
+            const { error } = await supabase
+                .from('companies')
+                .update({ is_verified: !row.is_verified })
+                .eq('id', row.id);
+            if (error) throw error;
+            fetchData();
+        } catch (err: any) {
+            alert("Erro ao verificar: " + err.message);
+        }
+    };
+
+    const activatePremium = async (row: any) => {
+        if (!confirm("Confirmar ativação do plano Profissional?")) return;
+        try {
+            const { error } = await supabase
+                .from('companies')
+                .update({ plan: 'profissional' })
+                .eq('id', row.id);
+            if (error) throw error;
+            fetchData();
+        } catch (err: any) {
+            alert("Erro: " + err.message);
+        }
+    };
+
     const companyColumns = [
         {
             header: "Empresa",
@@ -91,6 +118,54 @@ export default function AdminEmpresasPage() {
                     Link
                 </a>
             ) : null
+        },
+        {
+            header: "Estado",
+            key: "is_verified",
+            render: (val: boolean, row: any) => (
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => toggleVerify(row)}
+                        className={`p-1.5 rounded-full transition-colors ${val ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-300 hover:bg-slate-200'}`}
+                        title="Verificar Empresa"
+                    >
+                        <CheckCircle2 className="w-4 h-4" />
+                    </button>
+                    {row.plan === 'parceiro' && <span className="bg-emerald-950 text-white px-2 py-0.5 rounded text-[10px] font-bold">Parceiro</span>}
+                    {row.plan === 'profissional' && <span className="bg-orange-500 text-white px-2 py-0.5 rounded text-[10px] font-bold">Pro</span>}
+                </div>
+            )
+        },
+        {
+            header: "Acções",
+            key: "id",
+            render: (_: string, row: any) => (
+                <div className="flex items-center gap-2">
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-7 w-7 p-0 rounded-full border-green-200 text-green-600 hover:bg-green-50"
+                        title="Contactar via WhatsApp"
+                        onClick={() => {
+                            const num = row.contact || row.phone;
+                            if (num) window.open(`https://wa.me/${num.replace(/\s+/g, '')}`, '_blank');
+                            else alert("Sem contacto");
+                        }}
+                    >
+                        <MessageCircle className="w-3.5 h-3.5" />
+                    </Button>
+                    {row.plan !== 'profissional' && row.plan !== 'parceiro' && (
+                        <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-7 text-[10px] font-bold uppercase text-orange-500 hover:text-orange-600 hover:bg-orange-50"
+                            onClick={() => activatePremium(row)}
+                        >
+                            Activar Pro
+                        </Button>
+                    )}
+                </div>
+            )
         }
     ];
 

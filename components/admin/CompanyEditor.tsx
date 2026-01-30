@@ -222,14 +222,14 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                 </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="flex-1 p-8 space-y-8">
+            <form onSubmit={handleSubmit} className="flex-1 p-8 space-y-20">
 
                 {/* Branding & Media Section - NOW FIRST */}
                 <div className="space-y-4">
                     <h3 className="text-xs font-black uppercase text-emerald-600 tracking-widest border-b border-emerald-100 pb-2 mb-4">Mídia e Branding</h3>
 
-                    <div className="flex flex-col md:flex-row gap-6 h-auto md:h-[170px]">
-                        <div className="w-full md:w-[170px] shrink-0 h-[170px] md:h-full">
+                    <div className="flex flex-col md:flex-row gap-6 h-auto md:h-[180px]">
+                        <div className="w-full md:w-[180px] shrink-0 h-[180px] md:h-full">
                             <ImageUpload
                                 label="Logo"
                                 value={formData.logo_url}
@@ -242,13 +242,13 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                 className="h-full w-full object-cover"
                             />
                         </div>
-                        <div className="flex-1 h-[170px] md:h-full">
+                        <div className="flex-1 h-[180px] md:h-full">
                             <ImageUpload
                                 label="Banner (Capa)"
                                 value={formData.banner_url}
                                 onChange={(url) => setFormData({ ...formData, banner_url: url })}
                                 recommendedSize="1200x400"
-                                aspectRatio="video"
+                                aspectRatio="any"
                                 bucket="public-assets"
                                 folder="banners"
                                 imageClassName="object-cover w-full h-full"

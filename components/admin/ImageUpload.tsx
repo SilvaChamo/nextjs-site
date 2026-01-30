@@ -246,7 +246,11 @@ export function ImageUpload({
             <div
                 className={cn(
                     "relative rounded-xl border border-dashed border-slate-200 bg-slate-50/50 hover:bg-slate-50 transition-all cursor-pointer group flex items-center justify-center overflow-hidden w-full",
-                    !className?.includes('aspect-') && (aspectRatio === "square" ? "aspect-square max-h-[220px] max-w-[220px] mx-auto p-[10px]" : "aspect-[3/1] max-h-[220px]"),
+                    !className?.includes('aspect-') && !className?.includes('h-') && (
+                        aspectRatio === "square" ? "aspect-square max-h-[220px] max-w-[220px] mx-auto p-[10px]" :
+                            aspectRatio === "video" ? "aspect-video max-h-[220px]" :
+                                aspectRatio === "any" ? "" : "aspect-[3/1] max-h-[220px]"
+                    ),
                     error ? "border-red-200 bg-red-50/10" : "",
                     className
                 )}

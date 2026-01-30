@@ -3,13 +3,13 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
-import { Plus, LayoutGrid, List, Pencil, Trash2, Calendar, Link as LinkIcon, Search, FileText, Globe, BookOpen, Lightbulb } from "lucide-react";
+import { Plus, LayoutGrid, List, Pencil, Trash2, Calendar, Link as LinkIcon, Search, GraduationCap, FileText, BookOpen, Layers } from "lucide-react";
 import { ArticleForm } from "@/components/admin/ArticleForm";
 import { Input } from "@/components/ui/input";
 
-export default function AdminNoticiasPage() {
+export default function AdminArtigosCientificosPage() {
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-    const [activeTab, setActiveTab] = useState('Notícia');
+    const [activeTab, setActiveTab] = useState('Dissertações');
     const [articles, setArticles] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
@@ -17,17 +17,19 @@ export default function AdminNoticiasPage() {
     const [editingArticle, setEditingArticle] = useState<null | any>(null);
 
     const tabs = [
-        { id: 'Notícia', label: 'Notícias', icon: FileText },
-        { id: 'Guia', label: 'Guias', icon: BookOpen },
-        { id: 'Dicas', label: 'Dicas', icon: Lightbulb },
-        { id: 'Internacional', label: 'Internacional', icon: Globe },
+        { id: 'Dissertações', label: 'Dissertações', icon: GraduationCap },
+        { id: 'Artigos', label: 'Artigos Científicos', icon: FileText },
+        { id: 'Livros', label: 'Livros & Manuais', icon: BookOpen },
+        { id: 'Outros', label: 'Outros', icon: Layers },
     ];
 
     const fetchArticles = async () => {
         setLoading(true);
+        // Fetch items where type matches one of our tabs
         const { data, error } = await supabase
             .from('articles')
             .select('*')
+            .in('type', tabs.map(t => t.id))
             .order('created_at', { ascending: false });
 
         if (data) setArticles(data);
@@ -60,12 +62,8 @@ export default function AdminNoticiasPage() {
     };
 
     const filteredArticles = articles.filter(a => {
-        const matchesSearch = a.title.toLowerCase().includes(search.toLowerCase()) ||
-            a.type?.toLowerCase().includes(search.toLowerCase());
-        const matchesType = activeTab === 'Notícia'
-            ? (a.type === 'Notícia' || !a.type) // Default to Notícia if null
-            : a.type === activeTab;
-
+        const matchesSearch = a.title.toLowerCase().includes(search.toLowerCase());
+        const matchesType = a.type === activeTab;
         return matchesSearch && matchesType;
     });
 
@@ -74,12 +72,12 @@ export default function AdminNoticiasPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Gestão de Notícias</h1>
-                    <p className="text-slate-500">Publique e gira conteúdos, artigos e actualizações.</p>
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Artigos Científicos</h1>
+                    <p className="text-slate-500">Gestão de produção científica e académica.</p>
                 </div>
-                <Button onClick={() => { setEditingArticle(null); setIsFormOpen(true); }} className="bg-emerald-600 hover:bg-emerald-700">
+                <Button onClick={() => { setEditingArticle({ type: activeTab }); setIsFormOpen(true); }} className="bg-emerald-600 hover:bg-emerald-700">
                     <Plus className="w-4 h-4 mr-2" />
-                    Novo Artigo
+                    Novo Científico
                 </Button>
             </div>
 
@@ -134,7 +132,7 @@ export default function AdminNoticiasPage() {
                 </div>
             ) : filteredArticles.length === 0 ? (
                 <div className="text-center py-20 text-slate-400">
-                    Nenhum conteúdo encontrado nesta categoria.
+                    Nenhum documento encontrado nesta categoria.
                 </div>
             ) : viewMode === 'grid' ? (
                 // Grid View
@@ -147,13 +145,13 @@ export default function AdminNoticiasPage() {
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center text-slate-300">
                                         <div className="bg-slate-200/50 p-4 rounded-full">
-                                            <LayoutGrid className="w-8 h-8 opacity-50" />
+                                            <GraduationCap className="w-8 h-8 opacity-50" />
                                         </div>
                                     </div>
                                 )}
                                 <div className="absolute top-3 left-3">
                                     <span className="bg-white/90 backdrop-blur text-emerald-800 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider border border-white/20 shadow-sm">
-                                        {article.type || 'Geral'}
+                                        {article.type}
                                     </span>
                                 </div>
                             </div>
@@ -188,8 +186,8 @@ export default function AdminNoticiasPage() {
                     <table className="w-full text-sm text-left">
                         <thead className="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200">
                             <tr>
-                                <th className="px-6 py-4">Artigo</th>
-                                <th className="px-6 py-4">Categoria</th>
+                                <th className="px-6 py-4">Título</th>
+                                <th className="px-6 py-4">Tipo</th>
                                 <th className="px-6 py-4">Data</th>
                                 <th className="px-6 py-4 text-right">Acções</th>
                             </tr>
@@ -201,13 +199,14 @@ export default function AdminNoticiasPage() {
                                         <div className="flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-lg bg-slate-100 overflow-hidden flex-shrink-0 border border-slate-200">
                                                 {article.image_url && <img src={article.image_url} className="w-full h-full object-cover" />}
+                                                {!article.image_url && <div className="w-full h-full flex items-center justify-center"><GraduationCap className="w-4 h-4 text-slate-300" /></div>}
                                             </div>
                                             <span className="font-semibold text-slate-700 line-clamp-1">{article.title}</span>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className="bg-slate-100 text-slate-600 px-2 py-1 rounded text-[10px] font-bold uppercase">
-                                            {article.type || 'Geral'}
+                                            {article.type}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-slate-500 font-medium">

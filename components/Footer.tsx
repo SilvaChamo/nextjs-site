@@ -79,43 +79,66 @@ export function Footer() {
                             </ul>
                         </div>
 
-                        <div className="col-span-1 lg:col-span-3 space-y-4 pt-[30px]">
-                            <h3 className="text-lg font-bold text-gray-200">Newsletter</h3>
-                            <p className="text-gray-400 text-xs leading-tight">
-                                Receba as últimas actualizações e oportunidades do mercado agrário directamente no seu e-mail.
-                            </p>
-                            <div className="flex flex-col gap-[15px]">
-                                <input
-                                    type="email"
-                                    placeholder="E-Mail"
-                                    className="w-full bg-white text-gray-800 px-6 py-3 rounded-[7px] text-xs focus:outline-none focus:ring-2 focus:ring-[#f97316] border border-gray-100 shadow-inner"
-                                />
-                                <button className="w-full bg-[#f97316] text-white font-bold uppercase py-3 rounded-[7px] hover:bg-[#ea580c] transition-colors text-xs tracking-wider shadow-md active:scale-95">
-                                    Subscrever
-                                </button>
-                            </div>
-                        </div>
+                        <h3 className="text-lg font-bold text-gray-200">Newsletter</h3>
+                        <p className="text-gray-400 text-xs leading-tight">
+                            Receba as últimas actualizações e oportunidades do mercado agrário directamente no seu e-mail.
+                        </p>
+                        <form
+                            onSubmit={async (e) => {
+                                e.preventDefault();
+                                const form = e.currentTarget;
+                                const emailInput = form.querySelector('input[type="email"]') as HTMLInputElement;
+                                const email = emailInput.value;
 
+                                if (!email) return;
+
+                                // Dynamic import to avoid server-component issues if this becomes one, though it is "use client"
+                                const { createClient } = await import("@/utils/supabase/client");
+                                const supabase = createClient();
+
+                                const { error } = await supabase.from('newsletter_subscribers').insert([{ email }]);
+
+                                if (error) {
+                                    if (error.code === '23505') alert("Este email já está subscrito!");
+                                    else alert("Erro ao subscrever. Tente novamente.");
+                                } else {
+                                    alert("Subscrição realizada com sucesso!");
+                                    emailInput.value = "";
+                                }
+                            }}
+                            className="flex flex-col gap-[15px]"
+                        >
+                            <input
+                                type="email"
+                                placeholder="E-Mail"
+                                required
+                                className="w-full bg-white text-gray-800 px-6 py-3 rounded-[7px] text-xs focus:outline-none focus:ring-2 focus:ring-[#f97316] border border-gray-100 shadow-inner"
+                            />
+                            <button type="submit" className="w-full bg-[#f97316] text-white font-bold uppercase py-3 rounded-[7px] hover:bg-[#ea580c] transition-colors text-xs tracking-wider shadow-md active:scale-95">
+                                Subscrever
+                            </button>
+                        </form>
                     </div>
+                </div>
 
-                    {/* Bottom Bar: Legal Links & Socials */}
-                    <div className="border-t border-gray-500 py-6 flex flex-col md:flex-row justify-between items-center gap-6">
-                        <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-gray-400 text-[10px] font-black uppercase tracking-widest">
-                            <Link href="/politica-privacidade" className="hover:text-[#f97316] transition-colors">Política de privacidade</Link>
-                            <Link href="/termos" className="hover:text-[#f97316] transition-colors">Termos e condições</Link>
-                            <Link href="/suporte" className="hover:text-[#f97316] transition-colors">Suporte</Link>
-                            <Link href="/design-system" className="hover:text-[#f97316] transition-colors text-emerald-600/50">Kit Padrão</Link>
-                            <Link href="/admin" className="hover:text-[#f97316] transition-colors text-gray-800 hover:text-emerald-600">Cozinha</Link>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <SocialIcon Icon={Facebook} />
-                            <SocialIcon Icon={Linkedin} />
-                            <SocialIcon Icon={Instagram} />
-                            <SocialIcon Icon={Youtube} />
-                        </div>
+                {/* Bottom Bar: Legal Links & Socials */}
+                <div className="border-t border-gray-500 py-6 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-gray-400 text-[10px] font-black uppercase tracking-widest">
+                        <Link href="/politica-privacidade" className="hover:text-[#f97316] transition-colors">Política de privacidade</Link>
+                        <Link href="/termos" className="hover:text-[#f97316] transition-colors">Termos e condições</Link>
+                        <Link href="/suporte" className="hover:text-[#f97316] transition-colors">Suporte</Link>
+                        <Link href="/design-system" className="hover:text-[#f97316] transition-colors text-emerald-600/50">Kit Padrão</Link>
+                        <Link href="/admin" className="hover:text-[#f97316] transition-colors text-gray-800 hover:text-emerald-600">Cozinha</Link>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <SocialIcon Icon={Facebook} />
+                        <SocialIcon Icon={Linkedin} />
+                        <SocialIcon Icon={Instagram} />
+                        <SocialIcon Icon={Youtube} />
                     </div>
                 </div>
             </div>
+
 
             {/* Copyright Bar - Ultra Dark Integrated */}
             <div className="bg-[#000d0a] py-4 border-t border-white/5 relative z-20">
@@ -125,7 +148,7 @@ export function Footer() {
                     </p>
                 </div>
             </div>
-        </footer>
+        </footer >
     );
 }
 

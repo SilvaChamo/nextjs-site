@@ -188,27 +188,28 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                                 )}
                             </div>
                             <div className="text-white mb-2 md:mb-4 flex-1 flex items-end justify-between min-w-0">
-                                <div className="min-w-0 flex-1">
+                                <div className="min-w-0 flex-1 relative">
                                     <h1 className="text-xl md:text-3xl font-black mb-1 text-white leading-tight drop-shadow-lg uppercase truncate">
                                         {company.name}
                                     </h1>
                                     <div className="flex items-center gap-2">
                                         <div className="h-[1px] w-6 bg-[#f97316] opacity-70" />
                                         <p className="text-white/80 font-medium text-[11px] md:text-xs tracking-wider drop-shadow-sm truncate first-letter:uppercase lowercase">
-                                            {company.activity || company.category || "Empresa de agronegócio"}
+                                            {(company.activity || company.category || "Empresa de agronegócio").substring(0, 50)}
                                         </p>
                                     </div>
                                 </div>
-                                <div className="absolute right-0 top-0 z-50 flex flex-col items-center gap-2">
+
+                                <div className="relative z-50 ml-4">
                                     <button
                                         onClick={() => setShowCompanyShare(!showCompanyShare)}
-                                        className={`flex items-center justify-center w-11 h-11 bg-white/10 backdrop-blur-md hover:bg-white hover:text-[#f97316] text-white rounded-full transition-all border border-white/20 shadow-lg ${showCompanyShare ? 'rotate-90 bg-white text-[#f97316]' : ''}`}
+                                        className={`flex items-center justify-center w-10 h-10 bg-white/10 backdrop-blur-md hover:bg-white hover:text-[#f97316] text-white rounded-full transition-all border border-white/20 shadow-lg ${showCompanyShare ? 'rotate-90 bg-white text-[#f97316]' : ''}`}
                                     >
                                         <Share2 className="w-5 h-5" />
                                     </button>
 
                                     {showCompanyShare && (
-                                        <div className="bg-white/95 backdrop-blur-xl border border-slate-100 shadow-2xl rounded-2xl p-1.5 flex flex-col items-center gap-1.5 animate-in fade-in zoom-in slide-in-from-top-2 duration-300">
+                                        <div className="absolute right-0 top-full mt-2 bg-white/95 backdrop-blur-xl border border-slate-100 shadow-2xl rounded-2xl p-1.5 flex flex-col items-center gap-1.5 animate-in fade-in zoom-in slide-in-from-top-2 duration-300">
                                             <button
                                                 onClick={() => handleShare('whatsapp', shareUrl, company.name)}
                                                 className="w-8 h-8 flex items-center justify-center bg-slate-50 text-slate-600 hover:bg-emerald-500 hover:text-white rounded-xl transition-all"

@@ -329,6 +329,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                 value={formData.activity}
                                 onChange={(e) => setFormData({ ...formData, activity: toSentenceCase(e.target.value) })}
                                 placeholder="Actividade Principal"
+                                maxLength={50}
                                 className="pl-12 pr-4 py-[11px] bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-medium text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                             />
                         </div>

@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
-import { Loader2, Globe, Phone, Mail, MapPin, Building2, FileText, Target, Eye, Heart, List, X, ArrowLeft } from "lucide-react";
+import { ArrowLeft, Building2, Globe, Mail, MapPin, Phone, Target, Eye, Heart, List, X, Loader2, FileText, Star } from "lucide-react";
+import { RichTextEditor } from "../RichTextEditor";
 import { MOZ_DATA, SECTORS, VALUE_CHAINS } from "@/lib/agro-data";
 import { useRouter } from "next/navigation";
 
@@ -90,17 +91,17 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
 
     return (
         <div className="bg-white rounded-agro-lg shadow-[0_0_10px_rgba(0,0,0,0.1)] border border-slate-200 overflow-hidden flex flex-col">
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-100">
-                <div className="flex items-center gap-4 w-full">
+            <div className="p-6 border-b border-slate-200 flex items-center justify-between bg-slate-200/50">
+                <div className="flex items-center gap-4 flex-1 min-w-0">
                     <button
                         onClick={() => router.back()}
-                        className="p-2 hover:bg-slate-200 rounded-full transition-colors flex-shrink-0"
+                        className="p-2 hover:bg-slate-300 rounded-full transition-colors flex-shrink-0"
                     >
                         <ArrowLeft className="w-5 h-5 text-slate-500" />
                     </button>
                     <div className="flex items-center gap-3 overflow-hidden">
                         <h1 className="text-lg font-black text-slate-800 uppercase tracking-tight whitespace-nowrap">
-                            Editar Empresa
+                            {isNew ? "Nova Empresa" : "Editar Empresa"}
                         </h1>
                         {!isNew && (
                             <>
@@ -110,6 +111,22 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                 </span>
                             </>
                         )}
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-3 ml-4 flex-shrink-0">
+                    <div
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer transition-all duration-300 border ${formData.is_featured
+                            ? 'bg-emerald-50 border-emerald-200 text-emerald-700 shadow-sm'
+                            : 'bg-slate-50 border-slate-200 text-slate-400 opacity-60 hover:opacity-100'
+                            }`}
+                        onClick={() => setFormData({ ...formData, is_featured: !formData.is_featured })}
+                    >
+                        <Star className={`w-3.5 h-3.5 ${formData.is_featured ? 'fill-emerald-500 text-emerald-500' : ''}`} />
+                        <span className="text-[10px] font-black uppercase tracking-wider">Destacar</span>
+                        <div className={`w-8 h-4 rounded-full p-0.5 transition-colors duration-300 flex items-center ${formData.is_featured ? 'bg-emerald-600' : 'bg-slate-300'}`}>
+                            <div className={`w-3 h-3 rounded-full bg-white shadow-sm transform transition-transform duration-300 ${formData.is_featured ? 'translate-x-4' : 'translate-x-0'}`}></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -187,25 +204,6 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                     </div>
                 </div>
 
-                {/* Status & Visibility */}
-                <div className="space-y-4">
-                    <h3 className="text-xs font-black uppercase text-emerald-600 tracking-widest border-b border-emerald-100 pb-2 mb-4">Status e Visibilidade</h3>
-                    <div className="flex items-center justify-between p-4 bg-emerald-50/50 rounded-2xl border border-emerald-100">
-                        <div className="flex flex-col gap-1">
-                            <div className="flex items-center gap-2">
-                                <span className={`w-2 h-2 rounded-full ${formData.is_featured ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`}></span>
-                                <h4 className="text-sm font-black text-slate-800 uppercase tracking-tight">Destacar Empresa</h4>
-                            </div>
-                            <p className="text-[10px] text-slate-500 font-medium whitespace-pre-wrap">Empresas destacadas aparecem na página inicial e são indexadas pelo Google.</p>
-                        </div>
-                        <div
-                            className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-colors duration-300 flex items-center flex-shrink-0 ${formData.is_featured ? 'bg-emerald-600' : 'bg-slate-200'}`}
-                            onClick={() => setFormData({ ...formData, is_featured: !formData.is_featured })}
-                        >
-                            <div className={`w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform duration-300 ${formData.is_featured ? 'translate-x-6' : 'translate-x-0'}`}></div>
-                        </div>
-                    </div>
-                </div>
 
                 {/* Contact & Location */}
                 <div className="space-y-4">
@@ -323,11 +321,11 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
 
                     <div className="flex flex-col gap-2">
                         <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Descrição / Quem Somos</label>
-                        <textarea
+                        <RichTextEditor
                             value={formData.description}
-                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                            onChange={(val) => setFormData({ ...formData, description: val })}
                             placeholder="Breve descrição dos serviços..."
-                            className="p-4 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none resize-none h-48 transition-all"
+                            className="bg-slate-100"
                         />
                     </div>
 

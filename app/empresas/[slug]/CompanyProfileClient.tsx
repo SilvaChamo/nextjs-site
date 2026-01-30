@@ -160,33 +160,30 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
         >
             <div className="space-y-agro">
                 {/* Profile Banner */}
-                <div className="relative w-full h-[220px] rounded-agro overflow-hidden shadow-lg border border-slate-100/50 group/banner">
-                    {/* CERTIFICATION SEAL - TOP RIGHT */}
-                    {company.is_verified && (
-                        <div className="absolute top-4 right-4 z-40 animate-in fade-in zoom-in duration-700">
-                            <div className="bg-emerald-600/95 backdrop-blur-md text-white px-3 py-1.5 rounded-full shadow-2xl border border-white/20 flex items-center gap-1.5">
-                                <CheckCircle2 className="w-3.5 h-3.5" />
-                                <span className="text-[9px] font-black uppercase tracking-widest whitespace-nowrap">Certificado</span>
-                            </div>
-                        </div>
-                    )}
+                <div className="relative w-full h-[220px] group/banner">
+                    {/* BACKGROUND LAYER WITH CLIPPING */}
+                    <div className="absolute inset-0 rounded-agro overflow-hidden shadow-lg border border-slate-100/50">
+                        <Image
+                            src={company.banner_url || "/images/Prototipo/sala1.jpg"}
+                            alt="Company Cover"
+                            fill
+                            className="object-cover transition-transform duration-700 hover:scale-105"
+                            priority
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent" />
+                    </div>
 
-                    <Image
-                        src={company.banner_url || "/images/Prototipo/sala1.jpg"}
-                        alt="Company Cover"
-                        fill
-                        className="object-cover transition-transform duration-700 group-hover/banner:scale-105"
-                        priority
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent flex items-end p-6 md:p-8 text-left">
-                        <div className="flex items-end gap-4 md:gap-6 w-full translate-y-2 md:translate-y-4">
-                            <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-agro p-2 shadow-2xl shrink-0 border-4 border-white flex items-center justify-center relative z-10">
+                    {/* CONTENT LAYER WITHOUT CLIPPING */}
+                    <div className="absolute inset-0 flex items-end p-6 md:p-8 text-left pointer-events-none">
+                        <div className="flex items-end gap-6 w-full pointer-events-auto">
+                            <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-agro p-[6px] md:p-2 shadow-2xl shrink-0 border border-slate-100 flex items-center justify-center -mb-[30px] relative z-10">
                                 {company.logo_url ? (
                                     <img src={company.logo_url} alt="Logo" className="w-full h-full object-contain" />
                                 ) : (
                                     <Building2 className="w-10 h-10 md:w-14 md:h-14 text-slate-200" />
                                 )}
                             </div>
+
                             <div className="text-white mb-2 md:mb-4 flex-1 flex items-end justify-between min-w-0">
                                 <div className="min-w-0 flex-1 relative">
                                     <h1 className="text-xl md:text-3xl font-black mb-1 text-white leading-tight drop-shadow-lg uppercase truncate">
@@ -202,41 +199,41 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                                 <div className="relative z-50 ml-4">
                                     <button
                                         onClick={() => setShowCompanyShare(!showCompanyShare)}
-                                        className={`flex items-center justify-center w-10 h-10 bg-white/10 backdrop-blur-md hover:bg-white hover:text-[#f97316] text-white rounded-full transition-all border border-white/20 shadow-lg ${showCompanyShare ? 'rotate-90 bg-white text-[#f97316]' : ''}`}
+                                        className={`flex items-center justify-center w-9 h-9 bg-white/10 backdrop-blur-md hover:bg-white hover:text-[#f97316] text-white rounded-full transition-all border border-white/20 shadow-lg ${showCompanyShare ? 'rotate-90 bg-white text-[#f97316]' : ''}`}
                                     >
-                                        <Share2 className="w-5 h-5" />
+                                        <Share2 className="w-4 h-4" />
                                     </button>
 
                                     {showCompanyShare && (
-                                        <div className="absolute right-0 top-full mt-2 bg-white/95 backdrop-blur-xl border border-slate-100 shadow-2xl rounded-2xl p-1.5 flex flex-row items-center gap-1.5 animate-in fade-in zoom-in slide-in-from-top-2 duration-300 z-[100]">
+                                        <div className="absolute right-0 top-full mt-2 bg-white/95 backdrop-blur-xl border border-slate-100 shadow-2xl rounded-2xl p-[5px] flex flex-row items-center gap-1 animate-in fade-in zoom-in slide-in-from-top-2 duration-300 z-[100]">
                                             <button
                                                 onClick={() => handleShare('whatsapp', shareUrl, company.name)}
-                                                className="w-8 h-8 flex items-center justify-center bg-slate-50 text-slate-600 hover:bg-emerald-500 hover:text-white rounded-xl transition-all"
+                                                className="w-7 h-7 flex items-center justify-center bg-slate-50 text-slate-600 hover:bg-emerald-500 hover:text-white rounded-xl transition-all"
                                                 title="WhatsApp"
                                             >
-                                                <WhatsAppIcon className="w-4 h-4" />
+                                                <WhatsAppIcon className="w-3.5 h-3.5" />
                                             </button>
                                             <button
                                                 onClick={() => handleShare('facebook', shareUrl, company.name)}
-                                                className="w-8 h-8 flex items-center justify-center bg-slate-50 text-slate-600 hover:bg-blue-600 hover:text-white rounded-xl transition-all"
+                                                className="w-7 h-7 flex items-center justify-center bg-slate-50 text-slate-600 hover:bg-blue-600 hover:text-white rounded-xl transition-all"
                                                 title="Facebook"
                                             >
-                                                <Facebook className="w-4 h-4" />
+                                                <Facebook className="w-3.5 h-3.5" />
                                             </button>
                                             <button
                                                 onClick={() => handleShare('linkedin', shareUrl, company.name)}
-                                                className="w-8 h-8 flex items-center justify-center bg-slate-50 text-slate-600 hover:bg-blue-700 hover:text-white rounded-xl transition-all"
+                                                className="w-7 h-7 flex items-center justify-center bg-slate-50 text-slate-600 hover:bg-blue-700 hover:text-white rounded-xl transition-all"
                                                 title="LinkedIn"
                                             >
-                                                <Linkedin className="w-4 h-4" />
+                                                <Linkedin className="w-3.5 h-3.5" />
                                             </button>
-                                            <div className="w-px h-6 bg-slate-100 mx-0.5" />
+                                            <div className="w-px h-5 bg-slate-100 mx-0.5" />
                                             <button
                                                 onClick={() => handleShare('copy', shareUrl, company.name)}
-                                                className="w-8 h-8 flex items-center justify-center bg-slate-50 text-slate-400 hover:bg-slate-600 hover:text-white rounded-xl transition-all"
+                                                className="w-7 h-7 flex items-center justify-center bg-slate-50 text-slate-400 hover:bg-slate-600 hover:text-white rounded-xl transition-all"
                                                 title="Copiar Link"
                                             >
-                                                <LinkIcon className="w-4 h-4" />
+                                                <LinkIcon className="w-3.5 h-3.5" />
                                             </button>
                                         </div>
                                     )}
@@ -244,6 +241,16 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                             </div>
                         </div>
                     </div>
+
+                    {/* CERTIFICATION SEAL - TOP RIGHT */}
+                    {company.is_verified && (
+                        <div className="absolute top-4 right-4 z-40 animate-in fade-in zoom-in duration-700">
+                            <div className="bg-emerald-600/90 backdrop-blur-md text-white px-3 py-1.5 rounded-full shadow-2xl border border-white/20 flex items-center gap-1.5">
+                                <CheckCircle2 className="w-3.5 h-3.5" />
+                                <span className="text-[9px] font-black uppercase tracking-widest whitespace-nowrap">Certificado</span>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Who We Are & MVV Section */}

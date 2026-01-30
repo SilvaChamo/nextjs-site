@@ -83,13 +83,25 @@ export function CommunityBanner() {
                             Empresas agrárias identificadas. Não perca tempo, junte se esta comunidade agrícola em constante crescimento
                         </p>
 
-                        {/* Green Button with Orange Hover */}
-                        <Link
-                            href="/registar"
-                            className="inline-block bg-[#22c55e]/10 text-[#22c55e] border border-[#22c55e] hover:bg-transparent hover:text-[#f97316] hover:border-[#f97316] text-xs font-bold px-8 py-3 rounded-[7px] transition-all duration-300 shadow-md"
-                        >
-                            Registe se aqui
-                        </Link>
+                        {/* Action Buttons */}
+                        <div className="flex flex-wrap justify-center md:justify-start gap-4 mb-8">
+                            {/* Green Button with Orange Hover */}
+                            <Link
+                                href="/registar"
+                                className="inline-block bg-[#22c55e]/10 text-[#22c55e] border border-[#22c55e] hover:bg-transparent hover:text-[#f97316] hover:border-[#f97316] text-xs font-bold px-8 py-3 rounded-[7px] transition-all duration-300 shadow-md"
+                            >
+                                Registe se aqui
+                            </Link>
+
+                            {/* Orange Highlight Button */}
+                            <Link
+                                href="/usuario/dashboard/empresa"
+                                className="inline-block bg-[#f97316] text-white border border-[#f97316] hover:bg-transparent hover:text-[#f97316] text-xs font-bold px-8 py-3 rounded-[7px] transition-all duration-300 shadow-md flex items-center gap-2"
+                            >
+                                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+                                Destacar Empresa
+                            </Link>
+                        </div>
                     </div>
 
                 </div>

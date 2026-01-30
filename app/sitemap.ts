@@ -4,11 +4,11 @@ import { createClient } from '@/utils/supabase/server'
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const supabase = await createClient()
 
-    // Fetch verified or featured companies
+    // Fetch only featured companies for indexing
     const { data: companies } = await supabase
         .from('companies')
         .select('slug, updated_at')
-        .or('is_verified.eq.true,is_featured.eq.true')
+        .eq('is_featured', true)
 
     const baseUrl = 'https://baseagrodata.com'
 

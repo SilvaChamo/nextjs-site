@@ -90,7 +90,7 @@ export function CompanyForm({ onClose, onSuccess, initialData }: CompanyFormProp
     };
 
     const removeService = (index: number) => {
-        const newServices = formData.services.filter((_, i) => i !== index);
+        const newServices = formData.services.filter((_: any, i: number) => i !== index);
         setFormData(prev => ({ ...prev, services: newServices }));
     };
 
@@ -358,7 +358,7 @@ export function CompanyForm({ onClose, onSuccess, initialData }: CompanyFormProp
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            {formData.services.map((service, index) => (
+                            {formData.services.map((service: string, index: number) => (
                                 <div key={index} className="flex items-center gap-2">
                                     <div className="relative flex-1">
                                         <List className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />

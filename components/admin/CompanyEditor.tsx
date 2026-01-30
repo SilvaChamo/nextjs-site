@@ -43,7 +43,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
 
     // Products State
     const [products, setProducts] = useState<any[]>([]);
-    const [newProduct, setNewProduct] = useState({ name: "", price: "", category: "", image_url: "", description: "" });
+    const [newProduct, setNewProduct] = useState({ name: "", price: "", category: "", image_url: "", description: "", is_available: true });
     const [isAddingProduct, setIsAddingProduct] = useState(false);
     const [productLoading, setProductLoading] = useState(false);
 

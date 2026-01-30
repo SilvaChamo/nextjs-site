@@ -31,6 +31,7 @@ interface ImageUploadProps {
     maxHeight?: number;
     className?: string; // Container class override
     useBackgroundImage?: boolean; // If true, use background-image instead of img element
+    backgroundSize?: "cover" | "contain"; // Background size mode when useBackgroundImage is true
 }
 
 export function ImageUpload({
@@ -48,7 +49,8 @@ export function ImageUpload({
     maxWidth,
     maxHeight,
     className,
-    useBackgroundImage = false
+    useBackgroundImage = false,
+    backgroundSize = "cover"
 }: ImageUploadProps) {
     const supabase = createClient();
     const [uploading, setUploading] = useState(false);
@@ -277,7 +279,7 @@ export function ImageUpload({
                             className="relative w-full h-full flex items-center justify-center overflow-hidden group"
                             style={{
                                 backgroundImage: `url(${value})`,
-                                backgroundSize: 'cover',
+                                backgroundSize: backgroundSize,
                                 backgroundPosition: 'center',
                                 backgroundRepeat: 'no-repeat'
                             }}

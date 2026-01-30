@@ -241,8 +241,9 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                     bucket="public-assets"
                                     folder="logos"
                                     showRecommendedBadge={false}
-                                    className="h-full w-full object-cover"
+                                    className="h-full w-full"
                                     useBackgroundImage={true}
+                                    backgroundSize="contain"
                                 />
                             </div>
                         </div>

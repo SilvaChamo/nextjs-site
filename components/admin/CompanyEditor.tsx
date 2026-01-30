@@ -38,6 +38,8 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
         vision: initialData?.vision || "",
         values: initialData?.values || "",
         services: Array.isArray(initialData?.services) ? initialData.services : [] as string[],
+        activity: initialData?.activity || "",
+        secondary_contact: initialData?.secondary_contact || "",
         is_featured: initialData?.is_featured || false,
     });
 
@@ -261,8 +263,8 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                 <div className="space-y-4 pt-5">
                     <h3 className="text-xs font-black uppercase text-emerald-600 tracking-widest border-b border-emerald-100 pb-2 mb-4">Informação Básica</h3>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-2">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="md:col-span-1 flex flex-col gap-2">
                             <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Nome da Empresa</label>
                             <div className="relative">
                                 <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -275,14 +277,14 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                 />
                             </div>
                         </div>
-                        <div className="flex flex-col gap-2">
-                            <label className="text-xs font-black uppercase text-slate-500 tracking-widest">NUIT</label>
+                        <div className="md:col-span-2 flex flex-col gap-2">
+                            <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Actividade Principal</label>
                             <div className="relative">
-                                <FileText className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                <List className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                 <input
-                                    value={formData.nuit}
-                                    onChange={(e) => setFormData({ ...formData, nuit: e.target.value })}
-                                    placeholder="Número Unificado de Imposto"
+                                    value={formData.activity}
+                                    onChange={(e) => setFormData({ ...formData, activity: toSentenceCase(e.target.value) })}
+                                    placeholder="Ex: Comercialização e Distribuição de Insumos"
                                     className="pl-12 pr-4 py-3 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                                 />
                             </div>
@@ -322,6 +324,44 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                             </div>
                         </div>
                     </div>
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div className="md:col-span-1 flex flex-col gap-2">
+                            <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Contacto</label>
+                            <div className="relative">
+                                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                <input
+                                    value={formData.contact}
+                                    onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
+                                    placeholder="+258..."
+                                    className="pl-12 pr-4 py-3 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
+                                />
+                            </div>
+                        </div>
+                        <div className="md:col-span-1 flex flex-col gap-2">
+                            <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Número Alternativo</label>
+                            <div className="relative">
+                                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                <input
+                                    value={formData.secondary_contact}
+                                    onChange={(e) => setFormData({ ...formData, secondary_contact: e.target.value })}
+                                    placeholder="+258..."
+                                    className="pl-12 pr-4 py-3 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
+                                />
+                            </div>
+                        </div>
+                        <div className="md:col-span-2 flex flex-col gap-2">
+                            <label className="text-xs font-black uppercase text-slate-500 tracking-widest">NUIT</label>
+                            <div className="relative">
+                                <FileText className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                <input
+                                    value={formData.nuit}
+                                    onChange={(e) => setFormData({ ...formData, nuit: e.target.value })}
+                                    placeholder="Número Unificado de Imposto"
+                                    className="pl-12 pr-4 py-3 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
 
@@ -329,30 +369,16 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                 <div className="space-y-4">
                     <h3 className="text-xs font-black uppercase text-emerald-600 tracking-widest border-b border-emerald-100 pb-2 mb-4">Contactos e Localização</h3>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-2">
-                            <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Telefone</label>
-                            <div className="relative">
-                                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                <input
-                                    value={formData.contact}
-                                    onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
-                                    placeholder="+258 ..."
-                                    className="pl-12 pr-4 py-3 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
-                                />
-                            </div>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Email</label>
-                            <div className="relative">
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                <input
-                                    value={formData.email}
-                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    placeholder="email@empresa.com"
-                                    className="pl-12 pr-4 py-3 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
-                                />
-                            </div>
+                    <div className="flex flex-col gap-2">
+                        <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Email</label>
+                        <div className="relative">
+                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <input
+                                value={formData.email}
+                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                placeholder="email@empresa.com"
+                                className="pl-12 pr-4 py-3 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
+                            />
                         </div>
                     </div>
 

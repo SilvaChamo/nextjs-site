@@ -199,54 +199,48 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                                         </p>
                                     </div>
                                 </div>
-                                {showCompanyShare && (
-                                    <div className="absolute right-0 bottom-full mb-2 bg-white/90 backdrop-blur-md border border-white/20 shadow-2xl rounded-full py-1 px-2 z-50 flex items-center gap-2 animate-in fade-in zoom-in slide-in-from-bottom-2">
-                                        <button
-                                            onClick={() => handleShare('whatsapp', shareUrl, company.name)}
-                                            className="w-10 h-10 flex items-center justify-center text-emerald-600 hover:bg-emerald-600 hover:text-white rounded-full transition-all"
-                                            title="WhatsApp"
-                                        >
-                                            <WhatsAppIcon className="w-5 h-5" />
-                                        </button>
-                                        <button
-                                            onClick={() => handleShare('facebook', shareUrl, company.name)}
-                                            className="w-10 h-10 flex items-center justify-center text-blue-600 hover:bg-blue-600 hover:text-white rounded-full transition-all"
-                                            title="Facebook"
-                                        >
-                                            <Facebook className="w-5 h-5" />
-                                        </button>
-                                        <button
-                                            onClick={() => handleShare('linkedin', shareUrl, company.name)}
-                                            className="w-10 h-10 flex items-center justify-center text-blue-700 hover:bg-blue-700 hover:text-white rounded-full transition-all"
-                                            title="LinkedIn"
-                                        >
-                                            <Linkedin className="w-5 h-5" />
-                                        </button>
-                                        <button
-                                            onClick={() => handleShare('twitter', shareUrl, company.name)}
-                                            className="w-10 h-10 flex items-center justify-center text-sky-500 hover:bg-sky-500 hover:text-white rounded-full transition-all"
-                                            title="Twitter (X)"
-                                        >
-                                            <Twitter className="w-5 h-5" />
-                                        </button>
-                                        <div className="w-px h-6 bg-slate-200 mx-1" />
-                                        <button
-                                            onClick={() => handleShare('copy', shareUrl, company.name)}
-                                            className="w-10 h-10 flex items-center justify-center text-slate-400 hover:bg-slate-600 hover:text-white rounded-full transition-all"
-                                            title="Copiar Link"
-                                        >
-                                            <LinkIcon className="w-5 h-5" />
-                                        </button>
-                                    </div>
-                                )}
+                                <div className="absolute right-0 top-0 z-50 flex flex-col items-center gap-2">
+                                    <button
+                                        onClick={() => setShowCompanyShare(!showCompanyShare)}
+                                        className={`flex items-center justify-center w-11 h-11 bg-white/10 backdrop-blur-md hover:bg-white hover:text-[#f97316] text-white rounded-full transition-all border border-white/20 shadow-lg ${showCompanyShare ? 'rotate-90 bg-white text-[#f97316]' : ''}`}
+                                    >
+                                        <Share2 className="w-5 h-5" />
+                                    </button>
 
-                                <button
-                                    onClick={() => setShowCompanyShare(!showCompanyShare)}
-                                    className={`flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-md hover:bg-white hover:text-orange-600 text-white rounded-full transition-all border border-white/30 shadow-lg ${showCompanyShare ? 'ring-4 ring-orange-500/30 rotate-90' : ''}`}
-                                >
-                                    <Share2 className="w-6 h-6" />
-                                </button>
-
+                                    {showCompanyShare && (
+                                        <div className="bg-white/95 backdrop-blur-xl border border-slate-100 shadow-2xl rounded-2xl p-1.5 flex flex-col items-center gap-1.5 animate-in fade-in zoom-in slide-in-from-top-2 duration-300">
+                                            <button
+                                                onClick={() => handleShare('whatsapp', shareUrl, company.name)}
+                                                className="w-8 h-8 flex items-center justify-center bg-slate-50 text-slate-600 hover:bg-emerald-500 hover:text-white rounded-xl transition-all"
+                                                title="WhatsApp"
+                                            >
+                                                <WhatsAppIcon className="w-4 h-4" />
+                                            </button>
+                                            <button
+                                                onClick={() => handleShare('facebook', shareUrl, company.name)}
+                                                className="w-8 h-8 flex items-center justify-center bg-slate-50 text-slate-600 hover:bg-blue-600 hover:text-white rounded-xl transition-all"
+                                                title="Facebook"
+                                            >
+                                                <Facebook className="w-4 h-4" />
+                                            </button>
+                                            <button
+                                                onClick={() => handleShare('linkedin', shareUrl, company.name)}
+                                                className="w-8 h-8 flex items-center justify-center bg-slate-50 text-slate-600 hover:bg-blue-700 hover:text-white rounded-xl transition-all"
+                                                title="LinkedIn"
+                                            >
+                                                <Linkedin className="w-4 h-4" />
+                                            </button>
+                                            <div className="w-6 h-px bg-slate-100 my-0.5" />
+                                            <button
+                                                onClick={() => handleShare('copy', shareUrl, company.name)}
+                                                className="w-8 h-8 flex items-center justify-center bg-slate-50 text-slate-400 hover:bg-slate-600 hover:text-white rounded-xl transition-all"
+                                                title="Copiar Link"
+                                            >
+                                                <LinkIcon className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>

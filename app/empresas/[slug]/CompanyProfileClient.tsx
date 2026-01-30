@@ -194,24 +194,9 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                                     </h1>
                                     <div className="flex items-center gap-2 mb-2">
                                         <div className="h-1 w-8 bg-[#f97316] rounded-full" />
-                                        <p className="text-white/90 font-black text-xs md:text-sm uppercase tracking-wider drop-shadow-sm opacity-90 truncate">
-                                            {company.activity || company.category || "Empresa de Agronegócio"}
+                                        <p className="text-white/90 font-bold text-sm md:text-base tracking-wide drop-shadow-sm opacity-90 truncate first-letter:uppercase lowercase">
+                                            {company.activity || company.category || "Empresa de agronegócio"}
                                         </p>
-                                    </div>
-                                    <p className="text-white/90 font-bold drop-shadow-sm text-xs md:text-sm opacity-90 capitalize">
-                                        {company.province}, Moçambique
-                                    </p>
-                                    <div className="flex gap-2 mt-2">
-                                        {company.is_verified && (
-                                            <div className="bg-emerald-500/80 backdrop-blur-sm p-1 rounded-full border border-emerald-400/50 shadow-lg">
-                                                <CheckCircle2 className="w-3.5 h-3.5 text-white" />
-                                            </div>
-                                        )}
-                                        {company.registration_type && (
-                                            <span className="bg-white/10 backdrop-blur-sm text-[9px] font-black text-white px-2 py-0.5 rounded border border-white/20 uppercase tracking-widest">
-                                                {company.registration_type}
-                                            </span>
-                                        )}
                                     </div>
                                 </div>
                                 {showCompanyShare && (

@@ -187,14 +187,14 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                                     <Building2 className="w-10 h-10 md:w-14 md:h-14 text-slate-200" />
                                 )}
                             </div>
-                            <div className="text-white mb-4 md:mb-6 flex-1 flex items-end justify-between min-w-0">
+                            <div className="text-white mb-2 md:mb-4 flex-1 flex items-end justify-between min-w-0">
                                 <div className="min-w-0 flex-1">
                                     <h1 className="text-xl md:text-3xl font-black mb-1 text-white leading-tight drop-shadow-lg uppercase truncate">
                                         {company.name}
                                     </h1>
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <div className="h-1 w-8 bg-[#f97316] rounded-full" />
-                                        <p className="text-white/90 font-bold text-sm md:text-base tracking-wide drop-shadow-sm opacity-90 truncate first-letter:uppercase lowercase">
+                                    <div className="flex items-center gap-2">
+                                        <div className="h-[1px] w-6 bg-[#f97316] opacity-70" />
+                                        <p className="text-white/80 font-medium text-[11px] md:text-xs tracking-wider drop-shadow-sm truncate first-letter:uppercase lowercase">
                                             {company.activity || company.category || "Empresa de agronegócio"}
                                         </p>
                                     </div>

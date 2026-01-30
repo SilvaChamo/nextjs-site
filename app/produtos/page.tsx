@@ -3,7 +3,7 @@
 import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { StandardBlogTemplate } from "@/components/StandardBlogTemplate";
-import { ShoppingBag, Search, ArrowRight } from "lucide-react";
+import { ShoppingBag, Search, ArrowRight, Building2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { supabase } from "@/lib/supabaseClient";
@@ -51,8 +51,12 @@ function ProductsContent() {
 
                 setContextName(cName);
 
-                // 2. Fetch Products from main DB table
-                let query = supabase.from('products').select('*, companies(slug, name)');
+                // 2. Fetch Products from companies only
+                let query = supabase
+                    .from('products')
+                    .select('*, companies(slug, name)')
+                    .not('company_id', 'is', null)
+                    .order('created_at', { ascending: false });
 
                 if (empresaId) {
                     query = query.eq('company_id', empresaId);
@@ -111,7 +115,7 @@ function ProductsContent() {
             searchQuery === 'tecnologia' ? 'Tecnologias Agrárias' :
                 searchQuery === 'financiamento' ? 'Financiamento Agrário' :
                     searchQuery === 'turismo' ? 'Turismo Rural' :
-                        "Mercado de Produtos");
+                        "Produtos do Repositório");
 
     return (
         <StandardBlogTemplate
@@ -120,7 +124,7 @@ function ProductsContent() {
             breadcrumbs={[
                 { label: "Início", href: "/" },
                 { label: "Repositório", href: "/repositorio" },
-                { label: contextName ? "Produtos" : "Mercado", href: contextName ? "/produtos" : undefined },
+                { label: contextName ? "Produtos" : "Produtos", href: contextName ? "/produtos" : undefined },
                 { label: contextName || "Ver Todos", href: undefined }
             ]}
             sidebarComponents={
@@ -160,12 +164,11 @@ function ProductsContent() {
                             : "#";
 
                         return (
-                            <Link
+                            <div
                                 key={product.id || i}
-                                href={prodUrl}
-                                className="group bg-white rounded-agro border border-slate-100 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col h-full cursor-pointer"
+                                className="group bg-white rounded-agro border border-slate-100 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col h-full"
                             >
-                                <div className="relative h-48">
+                                <Link href={prodUrl} className="relative h-48 block overflow-hidden">
                                     <Image
                                         src={product.image_url || product.img || product.photo || "https://images.unsplash.com/photo-1595152248447-c93d5006b00b?q=80&w=400"}
                                         alt={product.nome || "Produto"}
@@ -176,22 +179,40 @@ function ProductsContent() {
                                     <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm text-[9px] font-black text-emerald-600 uppercase tracking-widest px-2 py-1 rounded-md shadow-sm">
                                         {product.category || "Insumo"}
                                     </div>
-                                </div>
+                                </Link>
                                 <div className="p-5 flex-1 flex flex-col">
-                                    <h3 className="text-[17px] font-black text-slate-800 mb-1 uppercase tracking-tight line-clamp-1">{product.nome}</h3>
+                                    <Link
+                                        href={`/empresas/${product.company_slug}`}
+                                        className="flex items-center gap-1.5 mb-2 bg-slate-50 self-start px-2 py-1 rounded-md border border-slate-100 hover:bg-emerald-50 hover:border-emerald-100 transition-colors"
+                                    >
+                                        <Building2 className="w-3 h-3 text-emerald-600" />
+                                        <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest truncate max-w-[150px]">
+                                            {product.company_name || "Agro Empresa"}
+                                        </span>
+                                    </Link>
+                                    <Link href={prodUrl}>
+                                        <h3 className="text-[17px] font-black text-slate-800 mb-1 uppercase tracking-tight line-clamp-1 group-hover:text-orange-600 transition-colors duration-300">{product.nome}</h3>
+                                    </Link>
                                     <p className="text-xs text-slate-400 font-medium leading-relaxed mb-2 line-clamp-2">
                                         {product.description || "Descrição de alta qualidade para este insumo agrícola."}
                                     </p>
 
                                     <div>
                                         <div className="text-emerald-600 font-black text-[18px] mb-1.5">
-                                            {product.preco || product.price ? `${product.preco || product.price}` : "Sob Consulta"}
+                                            {product.preco || product.price
+                                                ? `${typeof (product.preco || product.price) === 'number'
+                                                    ? (product.preco || product.price).toLocaleString('pt-MZ')
+                                                    : (product.preco || product.price)} MT`
+                                                : "Sob Consulta"}
                                         </div>
 
                                         <div className="pt-2 border-t border-slate-50 flex items-center justify-between">
-                                            <div className="text-[11px] font-black uppercase tracking-wider text-[#f97316] flex items-center gap-1 group-hover:gap-2 transition-all">
+                                            <Link
+                                                href={prodUrl}
+                                                className="text-[11px] font-black uppercase tracking-wider text-[#f97316] flex items-center gap-1 hover:gap-2 transition-all"
+                                            >
                                                 DETALHES <ArrowRight className="w-3.5 h-3.5" />
-                                            </div>
+                                            </Link>
 
                                             <div className="flex items-center gap-1.5">
                                                 <div className={`w-1.5 h-1.5 rounded-full ${product.available !== false ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
@@ -202,7 +223,7 @@ function ProductsContent() {
                                         </div>
                                     </div>
                                 </div>
-                            </Link>
+                            </div>
                         );
                     })
                 ) : (

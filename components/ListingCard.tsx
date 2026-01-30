@@ -23,7 +23,7 @@ export function ListingCard({ title, description, category, image, href, badgeCo
             {/* Image Placeholder */}
             <div className="w-16 h-16 md:w-20 md:h-20 bg-slate-900 rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
                 {image ? (
-                    <img src={image} alt={title} className="w-full h-full object-cover" />
+                    <img src={image} alt={title} className="w-full h-full object-contain" />
                 ) : (
                     <div className="text-emerald-500">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" /></svg>
@@ -40,7 +40,7 @@ export function ListingCard({ title, description, category, image, href, badgeCo
                     </span>
                 </div>
 
-                <p className="text-slate-500 text-sm leading-relaxed mb-4 md:mb-0 max-w-3xl">
+                <p className="text-slate-500 text-sm leading-relaxed mb-4 md:mb-0 max-w-3xl line-clamp-2">
                     {description}
                 </p>
             </div>

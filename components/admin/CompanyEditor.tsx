@@ -37,7 +37,18 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
         mission: initialData?.mission || "",
         vision: initialData?.vision || "",
         values: initialData?.values || "",
-        services: Array.isArray(initialData?.services) ? initialData.services : [] as string[],
+        services: (() => {
+            if (Array.isArray(initialData?.services)) return initialData.services;
+            if (typeof initialData?.services === 'string' && initialData.services.trim()) {
+                try {
+                    const parsed = JSON.parse(initialData.services);
+                    return Array.isArray(parsed) ? parsed : [initialData.services];
+                } catch (e) {
+                    return [initialData.services];
+                }
+            }
+            return [];
+        })() as string[],
         activity: initialData?.activity || "",
         secondary_contact: initialData?.secondary_contact || "",
         is_featured: initialData?.is_featured || false,
@@ -49,6 +60,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
     const [newProduct, setNewProduct] = useState({ name: "", price: "", category: "", image_url: "", description: "", is_available: true });
     const [isAddingProduct, setIsAddingProduct] = useState(false);
     const [editingProductId, setEditingProductId] = useState<string | null>(null);
+    const slugify = (text: string) => (text || "").toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
     const [productLoading, setProductLoading] = useState(false);
 
     useEffect(() => {
@@ -140,7 +152,10 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
             const { data: { user } } = await supabase.auth.getUser();
 
             // Base data without user_id
-            const baseData = { ...formData };
+            const baseData = {
+                ...formData,
+                services: formData.services.filter(s => s.trim() !== "")
+            };
 
             let error;
             if (!isNew && initialData?.id) {
@@ -572,33 +587,19 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                         </button>
                                     </div>
 
-                                    <div className="flex flex-col md:flex-row gap-6 mb-6">
-                                        {/* Left Side: Image & Availability */}
-                                        <div className="w-full md:w-48 shrink-0 space-y-4">
+                                    <div className="flex flex-col md:flex-row gap-6 mb-4 items-stretch">
+                                        {/* Left Side: Image */}
+                                        <div className="w-full md:w-56 shrink-0">
                                             <ImageUpload
-                                                label="Foto"
                                                 value={newProduct.image_url}
                                                 onChange={(url) => setNewProduct({ ...newProduct, image_url: url })}
                                                 recommendedSize="400x400"
                                                 aspectRatio="square"
                                                 bucket="public-assets"
                                                 folder="products"
-                                                imageClassName="w-full h-full rounded-lg object-cover bg-white shadow-sm border border-slate-100"
+                                                imageClassName="w-full h-full rounded-lg object-cover bg-white shadow-sm border border-slate-300"
                                                 showRecommendedBadge={false}
                                             />
-
-                                            <div className="flex flex-col gap-2 bg-white border border-slate-200 rounded-lg px-3 py-3">
-                                                <div className="flex items-center gap-2">
-                                                    <Switch
-                                                        checked={newProduct.is_available}
-                                                        onCheckedChange={(checked) => setNewProduct({ ...newProduct, is_available: checked })}
-                                                    />
-                                                    <span className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Disponibilidade</span>
-                                                </div>
-                                                <span className="text-[10px] font-medium text-slate-400 italic leading-tight">
-                                                    {newProduct.is_available ? "Em Stock" : "Sem Stock"}
-                                                </span>
-                                            </div>
                                         </div>
 
                                         {/* Right Side: Inputs */}
@@ -615,7 +616,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                                     type="number"
                                                     value={newProduct.price}
                                                     onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
-                                                    placeholder="Preço (MZN)"
+                                                    placeholder="Preço (Somente números)"
                                                     className="px-4 py-3 bg-white border border-slate-200 rounded-lg text-sm font-medium w-full outline-none focus:ring-2 focus:ring-emerald-500 transition-all shadow-sm placeholder:text-slate-400 placeholder:font-normal"
                                                 />
                                                 <div className="relative">
@@ -655,27 +656,43 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                         </div>
                                     </div>
 
-                                    <div className="flex justify-end gap-3 pt-4 border-t border-emerald-100/50">
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                setIsAddingProduct(false);
-                                                setEditingProductId(null);
-                                                setNewProduct({ name: "", price: "", category: "", image_url: "", description: "", is_available: true });
-                                            }}
-                                            className="px-4 py-2 text-xs font-black text-slate-500 hover:bg-slate-200 rounded-lg transition-colors uppercase tracking-wide"
-                                        >
-                                            Cancelar
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={handleAddProduct}
-                                            disabled={productLoading}
-                                            className="px-6 py-2 text-xs font-black text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors flex items-center gap-2 uppercase tracking-wide shadow-lg shadow-emerald-900/10"
-                                        >
-                                            {productLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : (editingProductId ? <Check className="w-3 h-3" /> : <Plus className="w-3 h-3" />)}
-                                            {editingProductId ? 'Actualizar Produto' : 'Salvar Produto'}
-                                        </button>
+                                    <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-4 pt-4 border-t border-slate-100">
+                                        <div className="flex items-center gap-4 bg-slate-50/50 border border-slate-200 rounded-lg px-4 py-2.5">
+                                            <div className="flex items-center gap-2">
+                                                <Switch
+                                                    checked={newProduct.is_available}
+                                                    onCheckedChange={(checked) => setNewProduct({ ...newProduct, is_available: checked })}
+                                                />
+                                                <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Disponibilidade</span>
+                                            </div>
+                                            <div className="w-px h-4 bg-slate-200" />
+                                            <span className={`text-[10px] font-bold uppercase tracking-wider ${newProduct.is_available ? 'text-emerald-600' : 'text-red-500'}`}>
+                                                {newProduct.is_available ? "Em Stock" : "Esgotado"}
+                                            </span>
+                                        </div>
+
+                                        <div className="flex items-center gap-3">
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setIsAddingProduct(false);
+                                                    setEditingProductId(null);
+                                                    setNewProduct({ name: "", price: "", category: "", image_url: "", description: "", is_available: true });
+                                                }}
+                                                className="px-6 py-2.5 text-xs font-black text-slate-500 hover:bg-slate-100 rounded-lg transition-colors uppercase tracking-widest border border-slate-200 bg-white"
+                                            >
+                                                Cancelar
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={handleAddProduct}
+                                                disabled={productLoading}
+                                                className="px-8 py-2.5 text-xs font-black text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors flex items-center gap-2 uppercase tracking-widest shadow-lg shadow-emerald-900/10"
+                                            >
+                                                {productLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : (editingProductId ? <Check className="w-3 h-3" /> : <Plus className="w-3 h-3" />)}
+                                                {editingProductId ? 'Actualizar Produto' : 'Salvar Produto'}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -683,55 +700,89 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                             {/* Products List */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                                 {products.map((product) => (
-                                    <div key={product.id} className="bg-white border border-slate-100 rounded-xl p-3 flex gap-3 group hover:border-emerald-200 transition-colors">
-                                        <div className="w-16 h-16 bg-slate-100 rounded-lg shrink-0 overflow-hidden">
-                                            {product.image_url ? (
-                                                <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-slate-300">
-                                                    <ShoppingBag className="w-6 h-6" />
-                                                </div>
-                                            )}
-                                        </div>
-                                        <div className="flex-1 min-w-0 flex flex-col justify-center">
-                                            <h5 className="text-sm font-black text-slate-800 truncate">{product.name}</h5>
-                                            <div className="flex items-center gap-2 text-xs text-slate-500">
-                                                <span className="font-bold text-emerald-600">
-                                                    {product.price ? new Intl.NumberFormat('pt-MZ', { style: 'currency', currency: 'MZN' }).format(product.price) : 'Sob Consulta'}
-                                                </span>
-                                                {product.category && <span className="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">{product.category}</span>}
-                                                {/* Availability Badge */}
-                                                <span className={`text-[10px] px-1.5 py-0.5 rounded ${product.is_available !== false ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
-                                                    {product.is_available !== false ? 'Disponível' : 'Indisponível'}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div className="flex flex-col gap-1">
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    setEditingProductId(product.id);
-                                                    setNewProduct({
-                                                        name: product.name || "",
-                                                        price: product.price?.toString() || "",
-                                                        category: product.category || "",
-                                                        image_url: product.image_url || "",
-                                                        description: product.description || "",
-                                                        is_available: product.is_available !== false
-                                                    });
-                                                    setIsAddingProduct(true);
-                                                }}
-                                                className="self-start p-1.5 text-slate-300 hover:text-emerald-500 hover:bg-emerald-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
-                                            >
-                                                <Pencil className="w-4 h-4" />
-                                            </button>
+                                    <div key={product.id} className="bg-white border border-slate-100 rounded-xl overflow-hidden group hover:border-emerald-200 transition-colors flex flex-col relative">
+                                        {/* Action Buttons - Absolute Positioned (Trash Only) */}
+                                        <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
                                             <button
                                                 type="button"
                                                 onClick={() => handleDeleteProduct(product.id)}
-                                                className="self-start p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                                                className="p-2 bg-white/90 backdrop-blur-sm text-slate-400 hover:text-red-500 rounded-lg shadow-sm border border-slate-100 transition-all"
+                                                title="Eliminar Produto"
                                             >
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
+                                        </div>
+
+                                        {/* Image Area */}
+                                        <div className="w-full h-40 bg-slate-50 shrink-0 overflow-hidden border-b border-slate-50">
+                                            {product.image_url ? (
+                                                <img src={product.image_url} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-slate-200">
+                                                    <ShoppingBag className="w-12 h-12" />
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Content Area */}
+                                        <div className="p-4 flex flex-col gap-1.5 items-start">
+                                            <div className="flex flex-col gap-0.5 w-full">
+                                                <h5 className="text-[14px] font-black text-slate-800 truncate leading-tight">{product.name}</h5>
+
+                                                {product.category && (
+                                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider leading-tight">
+                                                        {product.category}
+                                                    </p>
+                                                )}
+                                            </div>
+
+                                            <div className="text-[12px] font-black text-emerald-600 leading-tight">
+                                                {product.price ? `${parseFloat(product.price.toString()).toLocaleString('pt-MZ')} MT` : 'Sob consulta'}
+                                            </div>
+
+                                            <div className="mt-1 flex items-center justify-between w-full">
+                                                <span className={`text-[8px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md border ${product.is_available !== false
+                                                    ? 'bg-emerald-50 border-emerald-100 text-emerald-600'
+                                                    : 'bg-red-50 border-red-100 text-red-600'
+                                                    }`}>
+                                                    {product.is_available !== false ? 'Em Stock' : 'Esgotado'}
+                                                </span>
+
+                                                <div className="flex items-center gap-1 transition-all">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            const url = initialData.slug
+                                                                ? `/empresas/${initialData.slug}/produto/${slugify(product.name)}`
+                                                                : `/produtos/${product.id}`;
+                                                            window.open(url, '_blank');
+                                                        }}
+                                                        className="p-1.5 text-slate-400 hover:text-orange-500 hover:bg-orange-50 rounded-md transition-all"
+                                                        title="Ver Produto"
+                                                    >
+                                                        <Eye className="w-3.5 h-3.5" />
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setEditingProductId(product.id);
+                                                            setNewProduct({
+                                                                name: product.name || "",
+                                                                price: product.price?.toString() || "",
+                                                                category: product.category || "",
+                                                                image_url: product.image_url || "",
+                                                                description: product.description || "",
+                                                                is_available: product.is_available !== false
+                                                            });
+                                                            setIsAddingProduct(true);
+                                                        }}
+                                                        className="p-1.5 text-slate-400 hover:text-orange-500 hover:bg-orange-50 rounded-md transition-all"
+                                                        title="Editar Produto"
+                                                    >
+                                                        <Pencil className="w-3.5 h-3.5" />
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
@@ -746,13 +797,13 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                 }
 
                 <div className=" pt-8 border-t border-slate-100 flex items-center justify-end gap-3">
-                    <Button type="button" variant="outline" onClick={() => router.back()} className="px-8 h-12 rounded-xl text-xs font-black text-slate-500 uppercase tracking-widest">
+                    <Button type="button" variant="outline" onClick={() => router.back()} className="px-8 h-10 rounded-lg text-xs font-black text-slate-500 uppercase tracking-widest">
                         Cancelar
                     </Button>
                     <Button
                         type="submit"
                         disabled={loading}
-                        className="px-10 h-12 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg"
+                        className="px-10 h-10 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-black uppercase tracking-widest shadow-lg"
                     >
                         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (isNew ? "Adicionar Empresa" : "Guardar Alterações")}
                     </Button>

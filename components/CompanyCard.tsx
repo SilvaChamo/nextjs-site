@@ -46,7 +46,7 @@ export function CompanyCard({ company }: CompanyCardProps) {
                                 alt={company.name || "Empresa"}
                                 width={100}
                                 height={100}
-                                className="w-full h-full object-cover rounded-md"
+                                className="w-full h-full object-contain rounded-md"
                             />
                         </div>
 

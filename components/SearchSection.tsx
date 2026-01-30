@@ -309,7 +309,7 @@ function SearchResultCard({ item, colorClass, isRound = false }: { item: any, co
 
                 <div className="flex-1 min-w-0">
                     <h4 className="font-bold text-slate-600 text-sm md:text-base leading-tight group-hover:text-[#f97316] transition-colors truncate">{item.title}</h4>
-                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-bold mt-1 truncate">{item.sub}</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-bold mt-1 line-clamp-2">{item.sub}</p>
                 </div>
             </div>
         </Link>

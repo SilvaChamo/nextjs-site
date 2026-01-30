@@ -160,30 +160,43 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
         >
             <div className="space-y-agro">
                 {/* Profile Banner */}
-                <div className="relative w-full h-[280px] rounded-agro overflow-hidden shadow-lg border border-slate-100/50">
+                <div className="relative w-full h-[220px] rounded-agro overflow-hidden shadow-lg border border-slate-100/50 group/banner">
+                    {/* CERTIFICATION SEAL - TOP RIGHT */}
+                    {company.is_verified && (
+                        <div className="absolute top-4 right-4 z-40 animate-in fade-in zoom-in duration-700">
+                            <div className="bg-emerald-600/95 backdrop-blur-md text-white px-3 py-1.5 rounded-full shadow-2xl border border-white/20 flex items-center gap-1.5">
+                                <CheckCircle2 className="w-3.5 h-3.5" />
+                                <span className="text-[9px] font-black uppercase tracking-widest whitespace-nowrap">Certificado</span>
+                            </div>
+                        </div>
+                    )}
+
                     <Image
                         src={company.banner_url || "/images/Prototipo/sala1.jpg"}
                         alt="Company Cover"
                         fill
-                        className="object-cover"
+                        className="object-cover transition-transform duration-700 group-hover/banner:scale-105"
                         priority
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-8 text-left">
-                        <div className="flex items-end gap-6 w-full">
-                            <div className="w-24 h-24 bg-white rounded-agro p-2 shadow-2xl shrink-0 border border-slate-100 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent flex items-end p-6 md:p-8 text-left">
+                        <div className="flex items-end gap-4 md:gap-6 w-full translate-y-2 md:translate-y-4">
+                            <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-agro p-2 shadow-2xl shrink-0 border-4 border-white flex items-center justify-center relative z-10">
                                 {company.logo_url ? (
                                     <img src={company.logo_url} alt="Logo" className="w-full h-full object-contain" />
                                 ) : (
-                                    <Building2 className="w-12 h-12 text-slate-200" />
+                                    <Building2 className="w-10 h-10 md:w-14 md:h-14 text-slate-200" />
                                 )}
                             </div>
-                            <div className="text-white mb-2 flex-1 flex items-end justify-between">
-                                <div className="w-full">
-                                    <div className="flex items-center gap-2.5 mb-0.5">
-                                        {company.is_verified && <CheckCircle2 className="text-emerald-400 w-5 h-5 md:w-6 md:h-6 drop-shadow-lg" />}
-                                        <h1 className="text-xl md:text-2xl font-black mb-0 text-white leading-tight drop-shadow-md uppercase">
-                                            {company.category}
-                                        </h1>
+                            <div className="text-white mb-4 md:mb-6 flex-1 flex items-end justify-between min-w-0">
+                                <div className="min-w-0 flex-1">
+                                    <h1 className="text-xl md:text-3xl font-black mb-1 text-white leading-tight drop-shadow-lg uppercase truncate">
+                                        {company.name}
+                                    </h1>
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <div className="h-1 w-8 bg-[#f97316] rounded-full" />
+                                        <p className="text-white/90 font-black text-xs md:text-sm uppercase tracking-wider drop-shadow-sm opacity-90 truncate">
+                                            {company.activity || company.category || "Empresa de Agronegócio"}
+                                        </p>
                                     </div>
                                     <p className="text-white/90 font-bold drop-shadow-sm text-xs md:text-sm opacity-90 capitalize">
                                         {company.province}, Moçambique

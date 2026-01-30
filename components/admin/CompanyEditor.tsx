@@ -90,25 +90,26 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
 
     return (
         <div className="bg-white rounded-agro-lg shadow-[0_0_10px_rgba(0,0,0,0.1)] border border-slate-200 overflow-hidden flex flex-col">
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                <div className="flex items-center gap-4">
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-100">
+                <div className="flex items-center gap-4 w-full">
                     <button
                         onClick={() => router.back()}
-                        className="p-2 hover:bg-slate-200 rounded-full transition-colors"
+                        className="p-2 hover:bg-slate-200 rounded-full transition-colors flex-shrink-0"
                     >
                         <ArrowLeft className="w-5 h-5 text-slate-500" />
                     </button>
-                    <div className="flex flex-col">
-                        <div className="flex items-baseline gap-2">
-                            <h1 className="text-xl font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">
-                                {isNew ? "Registar Nova Empresa" : "Editar Empresa"}
-                                {!isNew && <span className="text-slate-300 font-light">|</span>}
-                            </h1>
-                            {!isNew && <span className="text-lg font-bold text-emerald-600 uppercase tracking-tight">{initialData?.name}</span>}
-                        </div>
-                        <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">
-                            {isNew ? "Adicione uma nova empresa ao directório" : `Editando: ${initialData?.name}`}
-                        </p>
+                    <div className="flex items-center gap-3 overflow-hidden">
+                        <h1 className="text-lg font-black text-slate-800 uppercase tracking-tight whitespace-nowrap">
+                            Editar Empresa
+                        </h1>
+                        {!isNew && (
+                            <>
+                                <span className="text-slate-300 font-light flex-shrink-0">|</span>
+                                <span className="text-sm font-bold text-emerald-600 uppercase tracking-tight truncate">
+                                    Editando: <span className="text-slate-500 font-medium">{initialData?.name}</span>
+                                </span>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>

@@ -30,6 +30,7 @@ interface ImageUploadProps {
     maxWidth?: number;
     maxHeight?: number;
     className?: string; // Container class override
+    useBackgroundImage?: boolean; // If true, use background-image instead of img element
 }
 
 export function ImageUpload({
@@ -46,7 +47,8 @@ export function ImageUpload({
     showRecommendedBadge = true,
     maxWidth,
     maxHeight,
-    className
+    className,
+    useBackgroundImage = false
 }: ImageUploadProps) {
     const supabase = createClient();
     const [uploading, setUploading] = useState(false);
@@ -233,25 +235,24 @@ export function ImageUpload({
     };
 
     return (
-        <div className="flex flex-col gap-2">
-            <div className="flex items-center justify-between">
-                <label className="text-xs font-black uppercase text-slate-500 tracking-widest">{label}</label>
-                {showRecommendedBadge && recommendedSize && (
-                    <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
-                        recomendado: {recommendedSize}
-                    </span>
-                )}
-            </div>
+        <div className={cn("flex flex-col gap-2", useBackgroundImage && "h-full")}>
+            {!useBackgroundImage && (
+                <div className="flex items-center justify-between">
+                    <label className="text-xs font-black uppercase text-slate-500 tracking-widest">{label}</label>
+                    {showRecommendedBadge && recommendedSize && (
+                        <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                            recomendado: {recommendedSize}
+                        </span>
+                    )}
+                </div>
+            )}
 
             <div
                 className={cn(
                     "relative rounded-xl border border-dashed border-slate-200 bg-slate-50/50 hover:bg-slate-50 transition-all cursor-pointer group flex items-center justify-center overflow-hidden w-full",
-                    !className?.includes('aspect-') && !className?.includes('h-') && (
-                        aspectRatio === "square" ? "aspect-square max-h-[220px] max-w-[220px] mx-auto p-[10px]" :
-                            aspectRatio === "video" ? "aspect-video max-h-[220px]" :
-                                aspectRatio === "any" ? "" : "aspect-[3/1] max-h-[220px]"
-                    ),
+                    !className?.includes('aspect-') && (aspectRatio === "square" ? "aspect-square max-h-[220px] max-w-[220px] mx-auto p-[10px]" : "aspect-[3/1] max-h-[220px]"),
                     error ? "border-red-200 bg-red-50/10" : "",
+                    useBackgroundImage && "h-full flex-1",
                     className
                 )}
                 onClick={() => !uploading && fileInputRef.current?.click()}
@@ -271,25 +272,47 @@ export function ImageUpload({
                         <span className="text-xs font-bold text-emerald-600 uppercase tracking-tight">Processando...</span>
                     </div>
                 ) : value ? (
-                    <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
-                        <img
-                            src={value}
-                            alt={label}
-                            className={cn(
-                                "w-full h-full transition-transform group-hover:scale-105 object-cover rounded-lg",
-                                imageClassName
-                            )}
-                        />
-                        <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                removeImage();
+                    useBackgroundImage ? (
+                        <div
+                            className="relative w-full h-full flex items-center justify-center overflow-hidden group"
+                            style={{
+                                backgroundImage: `url(${value})`,
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
+                                backgroundRepeat: 'no-repeat'
                             }}
-                            className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
                         >
-                            <X className="w-4 h-4" />
-                        </button>
-                    </div>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeImage();
+                                }}
+                                className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+                            <img
+                                src={value}
+                                alt={label}
+                                className={cn(
+                                    "w-full h-full transition-transform group-hover:scale-105 object-cover rounded-lg",
+                                    imageClassName
+                                )}
+                            />
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeImage();
+                                }}
+                                className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        </div>
+                    )
                 ) : (
                     <div className="flex flex-col items-center gap-2 p-6 text-center">
                         <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">

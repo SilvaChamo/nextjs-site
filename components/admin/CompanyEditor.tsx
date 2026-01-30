@@ -228,33 +228,40 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                 <div className="space-y-4">
                     <h3 className="text-xs font-black uppercase text-emerald-600 tracking-widest border-b border-emerald-100 pb-2 mb-4">Mídia e Branding</h3>
 
-                    <div className="flex flex-col md:flex-row gap-6 h-auto md:h-[180px]">
-                        <div className="w-full md:w-[180px] shrink-0 h-[180px] md:h-full">
-                            <ImageUpload
-                                label="Logo"
-                                value={formData.logo_url}
-                                onChange={(url) => setFormData({ ...formData, logo_url: url })}
-                                recommendedSize="400x400"
-                                aspectRatio="square"
-                                bucket="public-assets"
-                                folder="logos"
-                                showRecommendedBadge={false}
-                                className="h-full w-full object-cover"
-                            />
+                    <div className="flex flex-col md:flex-row gap-6">
+                        <div className="w-full md:w-[180px] shrink-0 flex flex-col">
+                            <label className="text-xs font-black uppercase text-slate-500 tracking-widest mb-2">Logo</label>
+                            <div className="h-[180px] md:flex-1">
+                                <ImageUpload
+                                    label="Logo"
+                                    value={formData.logo_url}
+                                    onChange={(url) => setFormData({ ...formData, logo_url: url })}
+                                    recommendedSize="400x400"
+                                    aspectRatio="square"
+                                    bucket="public-assets"
+                                    folder="logos"
+                                    showRecommendedBadge={false}
+                                    className="h-full w-full object-cover"
+                                    useBackgroundImage={true}
+                                />
+                            </div>
                         </div>
-                        <div className="flex-1 h-[180px] md:h-full">
-                            <ImageUpload
-                                label="Banner (Capa)"
-                                value={formData.banner_url}
-                                onChange={(url) => setFormData({ ...formData, banner_url: url })}
-                                recommendedSize="1200x400"
-                                aspectRatio="any"
-                                bucket="public-assets"
-                                folder="banners"
-                                imageClassName="object-cover w-full h-full"
-                                showRecommendedBadge={false}
-                                className="h-full w-full"
-                            />
+                        <div className="flex-1 flex flex-col">
+                            <label className="text-xs font-black uppercase text-slate-500 tracking-widest mb-2">Banner (Capa)</label>
+                            <div className="h-[180px] md:flex-1">
+                                <ImageUpload
+                                    label="Banner (Capa)"
+                                    value={formData.banner_url}
+                                    onChange={(url) => setFormData({ ...formData, banner_url: url })}
+                                    recommendedSize="1200x400"
+                                    bucket="public-assets"
+                                    folder="banners"
+                                    imageClassName="object-cover w-full h-full"
+                                    showRecommendedBadge={false}
+                                    className="h-full w-full aspect-auto"
+                                    useBackgroundImage={true}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -176,7 +176,7 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                     {/* CONTENT LAYER WITHOUT CLIPPING */}
                     <div className="absolute inset-0 flex items-end p-6 md:p-8 text-left pointer-events-none">
                         <div className="flex items-end gap-6 w-full pointer-events-auto">
-                            <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-agro p-[6px] md:p-2 shadow-2xl shrink-0 border border-slate-100 flex items-center justify-center -mb-[30px] relative z-10">
+                            <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-agro p-[6px] md:p-2 shadow-2xl shrink-0 border border-slate-100 flex items-center justify-center transform translate-y-2 md:translate-y-4 relative z-10">
                                 {company.logo_url ? (
                                     <img src={company.logo_url} alt="Logo" className="w-full h-full object-contain" />
                                 ) : (
@@ -199,9 +199,10 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                                 <div className="relative z-50 ml-4">
                                     <button
                                         onClick={() => setShowCompanyShare(!showCompanyShare)}
-                                        className={`flex items-center justify-center w-9 h-9 bg-white/10 backdrop-blur-md hover:bg-white hover:text-[#f97316] text-white rounded-full transition-all border border-white/20 shadow-lg ${showCompanyShare ? 'rotate-90 bg-white text-[#f97316]' : ''}`}
+                                        className={`flex items-center gap-2 px-4 h-9 bg-white/10 backdrop-blur-md hover:bg-white hover:text-[#f97316] text-white rounded-full transition-all border border-white/20 shadow-lg ${showCompanyShare ? 'bg-white text-[#f97316]' : ''}`}
                                     >
                                         <Share2 className="w-4 h-4" />
+                                        <span className="hidden sm:inline text-[11px] font-black uppercase tracking-widest">Partilhe</span>
                                     </button>
 
                                     {showCompanyShare && (

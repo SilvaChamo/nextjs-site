@@ -20,6 +20,7 @@ interface AdminDataTableProps {
     onDelete?: (row: any) => void;
     onAdd?: () => void;
     loading?: boolean;
+    customActions?: (row: any) => React.ReactNode;
 }
 
 export function AdminDataTable({
@@ -29,7 +30,8 @@ export function AdminDataTable({
     onEdit,
     onDelete,
     onAdd,
-    loading
+    loading,
+    customActions
 }: AdminDataTableProps) {
     const [searchTerm, setSearchTerm] = useState("");
 
@@ -82,21 +84,23 @@ export function AdminDataTable({
                                     {col.header}
                                 </th>
                             ))}
-                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 border-b border-slate-100 text-right">
-                                Acções
-                            </th>
+                            {(onEdit || onDelete || customActions) && (
+                                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 border-b border-slate-100 text-right">
+                                    Acções
+                                </th>
+                            )}
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
                         {loading ? (
                             <tr>
-                                <td colSpan={columns.length + 1} className="px-6 py-12 text-center text-slate-400 text-xs font-bold italic">
+                                <td colSpan={columns.length + (onEdit || onDelete || customActions ? 1 : 0)} className="px-6 py-12 text-center text-slate-400 text-xs font-bold italic">
                                     A carregar dados...
                                 </td>
                             </tr>
                         ) : filteredData.length === 0 ? (
                             <tr>
-                                <td colSpan={columns.length + 1} className="px-6 py-12 text-center text-slate-400 text-xs font-bold italic">
+                                <td colSpan={columns.length + (onEdit || onDelete || customActions ? 1 : 0)} className="px-6 py-12 text-center text-slate-400 text-xs font-bold italic">
                                     Nenhum item encontrado.
                                 </td>
                             </tr>
@@ -108,31 +112,36 @@ export function AdminDataTable({
                                             {col.render ? col.render(row[col.key], row) : String(row[col.key])}
                                         </td>
                                     ))}
-                                    <td className="px-6 py-4 text-right">
-                                        <div className="flex items-center justify-end gap-2">
-                                            {onEdit && (
-                                                <button
-                                                    onClick={() => onEdit(row)}
-                                                    className="size-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all opacity-0 group-hover:opacity-100"
-                                                    title="Editar"
-                                                >
-                                                    <Edit2 className="w-3.5 h-3.5" />
-                                                </button>
-                                            )}
-                                            {onDelete && (
-                                                <button
-                                                    onClick={() => onDelete(row)}
-                                                    className="size-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-600 hover:text-white transition-all opacity-0 group-hover:opacity-100"
-                                                    title="Eliminar"
-                                                >
-                                                    <Trash2 className="w-3.5 h-3.5" />
-                                                </button>
-                                            )}
-                                            <button className="size-8 rounded-lg text-slate-400 flex items-center justify-center hover:bg-slate-100 group-hover:opacity-0 transition-all">
-                                                <MoreHorizontal className="w-4 h-4" />
-                                            </button>
-                                        </div>
-                                    </td>
+                                    {(onEdit || onDelete || customActions) && (
+                                        <td className="px-6 py-4 text-right">
+                                            <div className="flex items-center justify-end gap-2">
+                                                {customActions && customActions(row)}
+                                                {onEdit && (
+                                                    <button
+                                                        onClick={() => onEdit(row)}
+                                                        className="size-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all opacity-0 group-hover:opacity-100"
+                                                        title="Editar"
+                                                    >
+                                                        <Edit2 className="w-3.5 h-3.5" />
+                                                    </button>
+                                                )}
+                                                {onDelete && (
+                                                    <button
+                                                        onClick={() => onDelete(row)}
+                                                        className="size-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-600 hover:text-white transition-all opacity-0 group-hover:opacity-100"
+                                                        title="Eliminar"
+                                                    >
+                                                        <Trash2 className="w-3.5 h-3.5" />
+                                                    </button>
+                                                )}
+                                                {!customActions && !onEdit && !onDelete && (
+                                                    <button className="size-8 rounded-lg text-slate-400 flex items-center justify-center hover:bg-slate-100 group-hover:opacity-0 transition-all">
+                                                        <MoreHorizontal className="w-4 h-4" />
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </td>
+                                    )}
                                 </tr>
                             ))
                         )}

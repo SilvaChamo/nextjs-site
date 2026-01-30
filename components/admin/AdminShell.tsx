@@ -16,7 +16,9 @@ import {
     LogOut,
     PanelLeftClose,
     PanelLeftOpen,
-    Menu
+    Menu,
+    ShoppingCart,
+    LandPlot
 } from "lucide-react";
 
 interface AdminShellProps {
@@ -40,8 +42,8 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
             <Link
                 href={href}
                 className={`flex items-center gap-3 px-4 py-2.5 text-sm font-semibold rounded-xl transition-all group whitespace-nowrap ${active
-                        ? "text-orange-500"
-                        : "text-slate-400 hover:text-orange-500"
+                    ? "text-orange-500"
+                    : "text-slate-400 hover:text-orange-500"
                     } ${isCollapsed ? "justify-center px-2" : ""}`}
                 title={isCollapsed ? label : undefined}
             >
@@ -55,12 +57,12 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
     return (
         <div className="flex min-h-screen bg-slate-50 font-sans">
             <aside
-                className={`fixed inset-y-0 left-0 z-50 bg-slate-900 text-white transition-all duration-300 transform shadow-xl ${isCollapsed ? "w-20" : "w-64"
+                className={`fixed inset-y-0 left-0 z-50 bg-gradient-to-b from-emerald-950 to-slate-950 text-white transition-all duration-300 transform shadow-xl ${isCollapsed ? "w-20" : "w-64"
                     } hidden lg:block`}
             >
                 <div className="flex flex-col h-full border-r border-slate-800">
                     {/* Header */}
-                    <div className={`h-16 flex items-center px-4 border-b border-slate-800 bg-slate-950 transition-all ${isCollapsed ? "justify-center" : "justify-between"}`}>
+                    <div className={`h-16 flex items-center px-4 border-b border-white/5 bg-transparent transition-all ${isCollapsed ? "justify-center" : "justify-between"}`}>
                         {!isCollapsed && (
                             <div className="flex items-center gap-3 overflow-hidden">
                                 <img src="/admin-icon.png" alt="Logo" className="w-8 h-8 object-contain" />
@@ -73,14 +75,15 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
                         {/* Collapse Toggle */}
                         <button
                             onClick={() => setIsCollapsed(!isCollapsed)}
-                            className={`text-slate-500 hover:text-white transition-colors ${isCollapsed ? "" : ""}`}
+                            className={`text-slate-500 hover:text-white transition-colors p-1 rounded-md hover:bg-slate-800 ${isCollapsed ? "w-full flex justify-center" : ""}`}
+                            title={isCollapsed ? "Expandir" : "Colapsar"}
                         >
-                            {isCollapsed ? <img src="/admin-icon.png" alt="Logo" className="w-8 h-8 object-contain" /> : <PanelLeftClose className="w-5 h-5" />}
+                            {isCollapsed ? <PanelLeftOpen className="w-5 h-5" /> : <PanelLeftClose className="w-5 h-5" />}
                         </button>
                     </div>
 
                     {/* Nav */}
-                    <nav className="flex-1 px-2 py-6 flex flex-col gap-1 overflow-y-auto custom-scrollbar overflow-x-hidden">
+                    <nav className="flex-1 px-2 py-6 flex flex-col gap-0 overflow-y-auto custom-scrollbar overflow-x-hidden">
 
                         {/* Section 1: Dashboard */}
                         <LinkItem href="/admin" icon={LayoutDashboard} label="Dashboard" />
@@ -88,8 +91,11 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
                         <div className={`my-2 border-b border-slate-700 ${isCollapsed ? "mx-2" : "mx-4"}`}></div>
 
                         {/* Section 2: Management & Content */}
-                        <div className="flex flex-col gap-1">
+                        <div className="flex flex-col gap-0">
                             <LinkItem href="/admin/empresas" icon={Building2} label="Empresas" />
+                            <LinkItem href="/admin/propriedades" icon={LandPlot} label="Propriedades" />
+                            <LinkItem href="/admin/profissionais" icon={Users} label="Profissionais" />
+                            <LinkItem href="/admin/produtos" icon={ShoppingCart} label="Produtos" />
                             <LinkItem href="/admin/noticias" icon={Newspaper} label="Notícias" />
                             <LinkItem href="/admin/artigos" icon={FileText} label="Artigos" />
                             <LinkItem href="/admin/documentos" icon={FileText} label="Documentos" />
@@ -114,7 +120,7 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
                     </nav>
 
                     {/* Footer */}
-                    <div className="p-4 border-t border-slate-800 bg-slate-950">
+                    <div className="p-4 border-t border-white/5 bg-transparent">
                         {!isCollapsed && (
                             <div className="flex items-center gap-3 px-2 py-2 mb-2 overflow-hidden">
                                 <div className="w-8 h-8 min-w-[32px] rounded-full bg-emerald-600 flex items-center justify-center text-xs font-bold ring-2 ring-emerald-500/30">

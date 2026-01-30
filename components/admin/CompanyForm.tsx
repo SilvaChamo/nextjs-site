@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
-import { Loader2, X, Globe, Phone, Mail, MapPin, Building2 } from "lucide-react";
+import { Loader2, X, Globe, Phone, Mail, MapPin, Building2, FileText, Target, Eye, Heart, List } from "lucide-react";
+import { MOZ_DATA, SECTORS, VALUE_CHAINS } from "@/lib/agro-data";
 
 interface CompanyFormProps {
     onClose: () => void;
@@ -15,33 +16,56 @@ export function CompanyForm({ onClose, onSuccess, initialData }: CompanyFormProp
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         name: initialData?.name || "",
-        sector: initialData?.sector || "Produção",
-        phone: initialData?.phone || "",
+        nuit: initialData?.nuit || "",
         email: initialData?.email || "",
+        contact: initialData?.contact || initialData?.phone || "", // Fallback for phone
         website: initialData?.website || "",
-        location: initialData?.location || "",
+        address: initialData?.address || "",
+        province: initialData?.province || "",
+        district: initialData?.district || "",
+        category: initialData?.category || initialData?.sector || "", // Fallback for sector
+        value_chain: initialData?.value_chain || "",
         logo_url: initialData?.logo_url || "",
-        description: initialData?.description || ""
+        banner_url: initialData?.banner_url || "",
+        description: initialData?.description || "",
+        mission: initialData?.mission || "",
+        vision: initialData?.vision || "",
+        values: initialData?.values || "",
+        services: Array.isArray(initialData?.services) ? initialData.services : [] as string[]
     });
 
-    const sectors = ["Produção", "Processamento", "Distribuição", "Equipamentos", "Serviços Financeiros", "Consultoria"];
+    // Handle province change to reset district
+    useEffect(() => {
+        if (formData.province && !MOZ_DATA[formData.province]?.includes(formData.district)) {
+            setFormData(prev => ({ ...prev, district: "" }));
+        }
+    }, [formData.province]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
         try {
+            // Prepare data for submission - map friendly names to DB columns if needed
+            // Currently assuming DB columns match state keys based on User Dashboard
+            const submissionData = {
+                ...formData,
+                // Ensure sector/category consistency if needed. User dashboard uses 'category'.
+                // If 'sector' is deprecated in favor of 'category', we just send 'category'.
+                // If the DB has both, we might need to verify. Assuming 'category' is the main one now.
+            };
+
             let error;
             if (initialData?.id) {
                 const { error: err } = await supabase
                     .from('companies')
-                    .update(formData)
+                    .update(submissionData)
                     .eq('id', initialData.id);
                 error = err;
             } else {
                 const { error: err } = await supabase
                     .from('companies')
-                    .insert([formData]);
+                    .insert([submissionData]);
                 error = err;
             }
 
@@ -55,9 +79,24 @@ export function CompanyForm({ onClose, onSuccess, initialData }: CompanyFormProp
         }
     };
 
+    const addService = () => {
+        setFormData(prev => ({ ...prev, services: [...prev.services, ""] }));
+    };
+
+    const updateService = (index: number, value: string) => {
+        const newServices = [...formData.services];
+        newServices[index] = value;
+        setFormData(prev => ({ ...prev, services: newServices }));
+    };
+
+    const removeService = (index: number) => {
+        const newServices = formData.services.filter((_, i) => i !== index);
+        setFormData(prev => ({ ...prev, services: newServices }));
+    };
+
     return (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
                 <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                     <div>
                         <h2 className="text-xl font-black text-slate-800 tracking-tight">
@@ -70,59 +109,150 @@ export function CompanyForm({ onClose, onSuccess, initialData }: CompanyFormProp
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-8 space-y-6">
-                    <div className="flex flex-col gap-2">
-                        <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Nome da Empresa</label>
-                        <div className="relative">
-                            <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                            <input
-                                required
-                                value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                placeholder="Ex: AgroMoz Lda"
-                                className="pl-12 pr-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
-                            />
+                <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-8 space-y-8">
+
+                    {/* Basic Info Section */}
+                    <div className="space-y-4">
+                        <h3 className="text-xs font-black uppercase text-emerald-600 tracking-widest border-b border-emerald-100 pb-2 mb-4">Informação Básica</h3>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="flex flex-col gap-2">
+                                <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Nome da Empresa</label>
+                                <div className="relative">
+                                    <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                    <input
+                                        required
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                        placeholder="Ex: AgroMoz Lda"
+                                        className="pl-12 pr-4 py-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                    />
+                                </div>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-xs font-black uppercase text-slate-500 tracking-widest">NUIT</label>
+                                <div className="relative">
+                                    <FileText className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                    <input
+                                        value={formData.nuit}
+                                        onChange={(e) => setFormData({ ...formData, nuit: e.target.value })}
+                                        placeholder="Número Unificado de Imposto"
+                                        className="pl-12 pr-4 py-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="flex flex-col gap-2">
+                                <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Cadeia de Valor</label>
+                                <select
+                                    value={formData.value_chain}
+                                    onChange={(e) => setFormData({ ...formData, value_chain: e.target.value })}
+                                    className="p-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                >
+                                    <option value="">Selecione...</option>
+                                    {VALUE_CHAINS.map(vc => <option key={vc} value={vc}>{vc}</option>)}
+                                </select>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Sector de Actividade</label>
+                                <div className="relative">
+                                    <select
+                                        value={SECTORS.includes(formData.category) ? formData.category : "Outro"}
+                                        onChange={(e) => {
+                                            const val = e.target.value;
+                                            setFormData(prev => ({ ...prev, category: val === "Outro" ? "" : val }));
+                                        }}
+                                        className="p-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                    >
+                                        <option value="">Selecione...</option>
+                                        {SECTORS.map(s => <option key={s} value={s}>{s}</option>)}
+                                    </select>
+                                    {/* Custom category input if needed, mirroring user dashboard logic */}
+                                    {((!SECTORS.includes(formData.category) && formData.category !== "") || (!SECTORS.includes(formData.category) && formData.category === "")) && (
+                                        <input
+                                            value={formData.category}
+                                            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                            placeholder="Especifique o sector..."
+                                            className="mt-2 p-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                        />
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-2">
-                            <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Sector</label>
-                            <select
-                                value={formData.sector}
-                                onChange={(e) => setFormData({ ...formData, sector: e.target.value })}
-                                className="p-4 bg-slate-50 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
-                            >
-                                {sectors.map(s => <option key={s} value={s}>{s}</option>)}
-                            </select>
+                    {/* Contact & Location */}
+                    <div className="space-y-4">
+                        <h3 className="text-xs font-black uppercase text-emerald-600 tracking-widest border-b border-emerald-100 pb-2 mb-4">Contactos e Localização</h3>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="flex flex-col gap-2">
+                                <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Telefone</label>
+                                <div className="relative">
+                                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                    <input
+                                        value={formData.contact}
+                                        onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
+                                        placeholder="+258 ..."
+                                        className="pl-12 pr-4 py-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                    />
+                                </div>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Email</label>
+                                <div className="relative">
+                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                    <input
+                                        value={formData.email}
+                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                        placeholder="email@empresa.com"
+                                        className="pl-12 pr-4 py-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                    />
+                                </div>
+                            </div>
                         </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="flex flex-col gap-2">
+                                <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Província</label>
+                                <select
+                                    value={formData.province}
+                                    onChange={(e) => setFormData({ ...formData, province: e.target.value })}
+                                    className="p-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                >
+                                    <option value="">Selecione...</option>
+                                    {Object.keys(MOZ_DATA).map(p => <option key={p} value={p}>{p}</option>)}
+                                </select>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Distrito</label>
+                                <select
+                                    value={formData.district}
+                                    onChange={(e) => setFormData({ ...formData, district: e.target.value })}
+                                    disabled={!formData.province}
+                                    className="p-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full disabled:opacity-50"
+                                >
+                                    <option value="">Selecione...</option>
+                                    {formData.province && MOZ_DATA[formData.province]?.map(d => <option key={d} value={d}>{d}</option>)}
+                                </select>
+                            </div>
+                        </div>
+
                         <div className="flex flex-col gap-2">
-                            <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Localização</label>
+                            <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Endereço Físico</label>
                             <div className="relative">
                                 <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                 <input
-                                    value={formData.location}
-                                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                                    placeholder="Cidade, Província"
-                                    className="pl-12 pr-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                    value={formData.address}
+                                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                                    placeholder="Av., Rua, Nº..."
+                                    className="pl-12 pr-4 py-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
                                 />
                             </div>
                         </div>
-                    </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-2">
-                            <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Telefone</label>
-                            <div className="relative">
-                                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                <input
-                                    value={formData.phone}
-                                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                    placeholder="+258 ..."
-                                    className="pl-12 pr-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
-                                />
-                            </div>
-                        </div>
                         <div className="flex flex-col gap-2">
                             <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Website</label>
                             <div className="relative">
@@ -131,31 +261,131 @@ export function CompanyForm({ onClose, onSuccess, initialData }: CompanyFormProp
                                     value={formData.website}
                                     onChange={(e) => setFormData({ ...formData, website: e.target.value })}
                                     placeholder="www.empresa.co.mz"
-                                    className="pl-12 pr-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                    className="pl-12 pr-4 py-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
                                 />
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex flex-col gap-2">
-                        <label className="text-xs font-black uppercase text-slate-500 tracking-widest">URL do Logo</label>
-                        <input
-                            value={formData.logo_url}
-                            onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
-                            placeholder="https://..."
-                            className="p-4 bg-slate-50 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
-                        />
+                    {/* Branding & Media */}
+                    <div className="space-y-4">
+                        <h3 className="text-xs font-black uppercase text-emerald-600 tracking-widest border-b border-emerald-100 pb-2 mb-4">Mídia e Branding</h3>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="flex flex-col gap-2">
+                                <label className="text-xs font-black uppercase text-slate-500 tracking-widest">URL do Logo</label>
+                                <input
+                                    value={formData.logo_url}
+                                    onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
+                                    placeholder="https://..."
+                                    className="p-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-xs font-black uppercase text-slate-500 tracking-widest">URL do Banner</label>
+                                <input
+                                    value={formData.banner_url}
+                                    onChange={(e) => setFormData({ ...formData, banner_url: e.target.value })}
+                                    placeholder="https://..."
+                                    className="p-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                />
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="flex flex-col gap-2">
-                        <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Descrição</label>
-                        <textarea
-                            value={formData.description}
-                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                            placeholder="Breve descrição dos serviços..."
-                            className="p-4 bg-slate-50 border-none rounded-2xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 outline-none resize-none h-32"
-                        />
+                    {/* Corporate Profile */}
+                    <div className="space-y-4">
+                        <h3 className="text-xs font-black uppercase text-emerald-600 tracking-widest border-b border-emerald-100 pb-2 mb-4">Perfil Corporativo</h3>
+
+                        <div className="flex flex-col gap-2">
+                            <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Descrição / Quem Somos</label>
+                            <textarea
+                                value={formData.description}
+                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                placeholder="Breve descrição dos serviços..."
+                                className="p-4 bg-slate-50 border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 outline-none resize-none h-32"
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="flex flex-col gap-2">
+                                <label className="text-xs font-black uppercase text-slate-500 tracking-widest flex items-center gap-1">
+                                    <Target className="w-3 h-3" /> Missão
+                                </label>
+                                <textarea
+                                    value={formData.mission}
+                                    onChange={(e) => setFormData({ ...formData, mission: e.target.value })}
+                                    placeholder="Missão da empresa..."
+                                    className="p-3 bg-slate-50 border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 outline-none resize-none h-24"
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-xs font-black uppercase text-slate-500 tracking-widest flex items-center gap-1">
+                                    <Eye className="w-3 h-3" /> Visão
+                                </label>
+                                <textarea
+                                    value={formData.vision}
+                                    onChange={(e) => setFormData({ ...formData, vision: e.target.value })}
+                                    placeholder="Visão da empresa..."
+                                    className="p-3 bg-slate-50 border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 outline-none resize-none h-24"
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-xs font-black uppercase text-slate-500 tracking-widest flex items-center gap-1">
+                                    <Heart className="w-3 h-3" /> Valores
+                                </label>
+                                <textarea
+                                    value={formData.values}
+                                    onChange={(e) => setFormData({ ...formData, values: e.target.value })}
+                                    placeholder="Valores da empresa..."
+                                    className="p-3 bg-slate-50 border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 outline-none resize-none h-24"
+                                />
+                            </div>
+                        </div>
                     </div>
+
+                    {/* Services */}
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between border-b border-emerald-100 pb-2 mb-4">
+                            <h3 className="text-xs font-black uppercase text-emerald-600 tracking-widest">Portfólio de Serviços</h3>
+                            <button
+                                type="button"
+                                onClick={addService}
+                                className="text-[10px] font-black uppercase text-emerald-600 hover:text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full transition-colors"
+                            >
+                                + Adicionar Serviço
+                            </button>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            {formData.services.map((service, index) => (
+                                <div key={index} className="flex items-center gap-2">
+                                    <div className="relative flex-1">
+                                        <List className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                        <input
+                                            value={service}
+                                            onChange={(e) => updateService(index, e.target.value)}
+                                            placeholder="Descreva o serviço..."
+                                            className="pl-10 pr-4 py-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                        />
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => removeService(index)}
+                                        className="p-3 bg-red-50 text-red-500 hover:bg-red-100 rounded-xl transition-colors"
+                                    >
+                                        <X className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            ))}
+                            {formData.services.length === 0 && (
+                                <p className="col-span-full text-center text-slate-400 text-xs italic py-4">
+                                    Nenhum serviço adicionado.
+                                </p>
+                            )}
+                        </div>
+                    </div>
+
                 </form>
 
                 <div className="p-6 border-t border-slate-100 bg-slate-50/50 flex items-center justify-end gap-3">

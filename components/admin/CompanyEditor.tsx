@@ -84,12 +84,12 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
     };
 
     const removeService = (index: number) => {
-        const newServices = formData.services.filter((_, i) => i !== index);
+        const newServices = formData.services.filter((_: string, i: number) => i !== index);
         setFormData(prev => ({ ...prev, services: newServices }));
     };
 
     return (
-        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden flex flex-col">
+        <div className="bg-white rounded-agro-lg shadow-agro border border-slate-200 overflow-hidden flex flex-col">
             <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <div className="flex items-center gap-4">
                     <button
@@ -125,7 +125,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                     placeholder="Ex: AgroMoz Lda"
-                                    className="pl-12 pr-4 py-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                    className="pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-agro text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                                 />
                             </div>
                         </div>
@@ -137,7 +137,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                     value={formData.nuit}
                                     onChange={(e) => setFormData({ ...formData, nuit: e.target.value })}
                                     placeholder="Número Unificado de Imposto"
-                                    className="pl-12 pr-4 py-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                    className="pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-agro text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                                 />
                             </div>
                         </div>
@@ -149,10 +149,10 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                             <select
                                 value={formData.value_chain}
                                 onChange={(e) => setFormData({ ...formData, value_chain: e.target.value })}
-                                className="p-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                className="p-3 bg-white border border-slate-200 rounded-agro text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                             >
                                 <option value="">Selecione...</option>
-                                {VALUE_CHAINS.map(vc => <option key={vc} value={vc}>{vc}</option>)}
+                                {VALUE_CHAINS.map((vc: string) => <option key={vc} value={vc}>{vc}</option>)}
                             </select>
                         </div>
                         <div className="flex flex-col gap-2">
@@ -164,17 +164,17 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                         const val = e.target.value;
                                         setFormData(prev => ({ ...prev, category: val === "Outro" ? "" : val }));
                                     }}
-                                    className="p-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                    className="p-3 bg-white border border-slate-200 rounded-agro text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                                 >
                                     <option value="">Selecione...</option>
-                                    {SECTORS.map(s => <option key={s} value={s}>{s}</option>)}
+                                    {SECTORS.map((s: string) => <option key={s} value={s}>{s}</option>)}
                                 </select>
                                 {((!SECTORS.includes(formData.category) && formData.category !== "") || (!SECTORS.includes(formData.category) && formData.category === "")) && (
                                     <input
                                         value={formData.category}
                                         onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                                         placeholder="Especifique o sector..."
-                                        className="mt-2 p-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                        className="mt-2 p-3 bg-white border border-slate-200 rounded-agro text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                                     />
                                 )}
                             </div>
@@ -215,7 +215,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                     value={formData.contact}
                                     onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
                                     placeholder="+258 ..."
-                                    className="pl-12 pr-4 py-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                    className="pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-agro text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                                 />
                             </div>
                         </div>
@@ -227,7 +227,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                     value={formData.email}
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                     placeholder="email@empresa.com"
-                                    className="pl-12 pr-4 py-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                    className="pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-agro text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                                 />
                             </div>
                         </div>
@@ -239,10 +239,10 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                             <select
                                 value={formData.province}
                                 onChange={(e) => setFormData({ ...formData, province: e.target.value })}
-                                className="p-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                className="p-3 bg-white border border-slate-200 rounded-agro text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                             >
                                 <option value="">Selecione...</option>
-                                {Object.keys(MOZ_DATA).map(p => <option key={p} value={p}>{p}</option>)}
+                                {Object.keys(MOZ_DATA).map((p: string) => <option key={p} value={p}>{p}</option>)}
                             </select>
                         </div>
                         <div className="flex flex-col gap-2">
@@ -251,10 +251,10 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                 value={formData.district}
                                 onChange={(e) => setFormData({ ...formData, district: e.target.value })}
                                 disabled={!formData.province}
-                                className="p-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full disabled:opacity-50"
+                                className="p-3 bg-white border border-slate-200 rounded-agro text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full disabled:opacity-50 transition-all"
                             >
                                 <option value="">Selecione...</option>
-                                {formData.province && MOZ_DATA[formData.province]?.map(d => <option key={d} value={d}>{d}</option>)}
+                                {formData.province && MOZ_DATA[formData.province]?.map((d: string) => <option key={d} value={d}>{d}</option>)}
                             </select>
                         </div>
                     </div>
@@ -267,7 +267,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                 value={formData.address}
                                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                                 placeholder="Av., Rua, Nº..."
-                                className="pl-12 pr-4 py-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                className="pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-agro text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                             />
                         </div>
                     </div>
@@ -280,7 +280,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                 value={formData.website}
                                 onChange={(e) => setFormData({ ...formData, website: e.target.value })}
                                 placeholder="www.empresa.co.mz"
-                                className="pl-12 pr-4 py-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                className="pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-agro text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                             />
                         </div>
                     </div>
@@ -297,7 +297,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                 value={formData.logo_url}
                                 onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
                                 placeholder="https://..."
-                                className="p-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                className="p-3 bg-white border border-slate-200 rounded-agro text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                             />
                         </div>
                         <div className="flex flex-col gap-2">
@@ -306,7 +306,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                 value={formData.banner_url}
                                 onChange={(e) => setFormData({ ...formData, banner_url: e.target.value })}
                                 placeholder="https://..."
-                                className="p-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                className="p-3 bg-white border border-slate-200 rounded-agro text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                             />
                         </div>
                     </div>
@@ -322,7 +322,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                             value={formData.description}
                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                             placeholder="Breve descrição dos serviços..."
-                            className="p-4 bg-slate-50 border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 outline-none resize-none h-32"
+                            className="p-4 bg-white border border-slate-200 rounded-agro text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none resize-none h-32 transition-all"
                         />
                     </div>
 
@@ -335,7 +335,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                 value={formData.mission}
                                 onChange={(e) => setFormData({ ...formData, mission: e.target.value })}
                                 placeholder="Missão da empresa..."
-                                className="p-3 bg-slate-50 border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 outline-none resize-none h-24"
+                                className="p-3 bg-white border border-slate-200 rounded-agro text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none resize-none h-24 transition-all"
                             />
                         </div>
                         <div className="flex flex-col gap-2">
@@ -346,7 +346,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                 value={formData.vision}
                                 onChange={(e) => setFormData({ ...formData, vision: e.target.value })}
                                 placeholder="Visão da empresa..."
-                                className="p-3 bg-slate-50 border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 outline-none resize-none h-24"
+                                className="p-3 bg-white border border-slate-200 rounded-agro text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none resize-none h-24 transition-all"
                             />
                         </div>
                         <div className="flex flex-col gap-2">
@@ -357,7 +357,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                 value={formData.values}
                                 onChange={(e) => setFormData({ ...formData, values: e.target.value })}
                                 placeholder="Valores da empresa..."
-                                className="p-3 bg-slate-50 border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 outline-none resize-none h-24"
+                                className="p-3 bg-white border border-slate-200 rounded-agro text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none resize-none h-24 transition-all"
                             />
                         </div>
                     </div>
@@ -377,7 +377,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {formData.services.map((service, index) => (
+                        {formData.services.map((service: string, index: number) => (
                             <div key={index} className="flex items-center gap-2">
                                 <div className="relative flex-1">
                                     <List className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -385,7 +385,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                         value={service}
                                         onChange={(e) => updateService(index, e.target.value)}
                                         placeholder="Descreva o serviço..."
-                                        className="pl-10 pr-4 py-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                        className="pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-agro text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                                     />
                                 </div>
                                 <button

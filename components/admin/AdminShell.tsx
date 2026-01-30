@@ -55,7 +55,7 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
     };
 
     return (
-        <div className="flex min-h-screen bg-slate-50 font-sans">
+        <div className="flex min-h-screen bg-slate-100 font-sans">
             <aside
                 className={`fixed inset-y-0 left-0 z-50 bg-gradient-to-b from-emerald-950 to-slate-950 text-white transition-all duration-300 transform shadow-xl ${isCollapsed ? "w-20" : "w-64"
                     } hidden lg:block`}
@@ -147,7 +147,7 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
             </aside>
 
             {/* Main Content */}
-            <main className={`flex-1 bg-slate-50 min-h-screen transition-all duration-300 ${isCollapsed ? "lg:ml-20" : "lg:ml-64"}`}>
+            <main className={`flex-1 bg-slate-100 min-h-screen transition-all duration-300 ${isCollapsed ? "lg:ml-20" : "lg:ml-64"}`}>
                 <div className="p-8 max-w-7xl mx-auto">
                     {children}
                 </div>

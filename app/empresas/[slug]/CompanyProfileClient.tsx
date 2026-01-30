@@ -193,8 +193,7 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                                         {company.name}
                                     </h1>
                                     <div className="flex items-center gap-2">
-                                        <div className="h-[1px] w-6 bg-[#f97316] opacity-70" />
-                                        <p className="text-white/80 font-medium text-[11px] md:text-xs tracking-wider drop-shadow-sm truncate first-letter:uppercase lowercase">
+                                        <p className="text-white/90 font-medium text-sm md:text-base tracking-wide drop-shadow-sm truncate first-letter:uppercase lowercase">
                                             {(company.activity || company.category || "Empresa de agronegócio").substring(0, 50)}
                                         </p>
                                     </div>

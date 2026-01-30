@@ -129,7 +129,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                     placeholder="Ex: AgroMoz Lda"
-                                    className="pl-12 pr-4 py-3 bg-slate-50/50 border border-slate-200 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
+                                    className="pl-12 pr-4 py-3 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                                 />
                             </div>
                         </div>
@@ -153,7 +153,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                             <select
                                 value={formData.value_chain}
                                 onChange={(e) => setFormData({ ...formData, value_chain: e.target.value })}
-                                className="p-3 bg-slate-50/50 border border-slate-200 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
+                                className="p-3 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                             >
                                 <option value="">Selecione...</option>
                                 {VALUE_CHAINS.map((vc: string) => <option key={vc} value={vc}>{vc}</option>)}
@@ -168,7 +168,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                         const val = e.target.value;
                                         setFormData(prev => ({ ...prev, category: val === "Outro" ? "" : val }));
                                     }}
-                                    className="p-3 bg-slate-50/50 border border-slate-200 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
+                                    className="p-3 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                                 >
                                     <option value="">Selecione...</option>
                                     {SECTORS.map((s: string) => <option key={s} value={s}>{s}</option>)}
@@ -178,7 +178,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                         value={formData.category}
                                         onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                                         placeholder="Especifique o sector..."
-                                        className="mt-2 p-3 bg-slate-50/50 border border-slate-200 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
+                                        className="mt-2 p-3 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                                     />
                                 )}
                             </div>

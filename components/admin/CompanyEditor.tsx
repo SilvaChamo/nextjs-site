@@ -32,7 +32,8 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
         mission: initialData?.mission || "",
         vision: initialData?.vision || "",
         values: initialData?.values || "",
-        services: Array.isArray(initialData?.services) ? initialData.services : [] as string[]
+        services: Array.isArray(initialData?.services) ? initialData.services : [] as string[],
+        is_featured: initialData?.is_featured || false,
     });
 
     useEffect(() => {
@@ -177,6 +178,26 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                     />
                                 )}
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Status & Visibility */}
+                <div className="space-y-4">
+                    <h3 className="text-xs font-black uppercase text-emerald-600 tracking-widest border-b border-emerald-100 pb-2 mb-4">Status e Visibilidade</h3>
+                    <div className="flex items-center justify-between p-4 bg-emerald-50/50 rounded-2xl border border-emerald-100">
+                        <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-2">
+                                <span className={`w-2 h-2 rounded-full ${formData.is_featured ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`}></span>
+                                <h4 className="text-sm font-black text-slate-800 uppercase tracking-tight">Destacar Empresa</h4>
+                            </div>
+                            <p className="text-[10px] text-slate-500 font-medium whitespace-pre-wrap">Empresas destacadas aparecem na página inicial e são indexadas pelo Google.</p>
+                        </div>
+                        <div
+                            className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-colors duration-300 flex items-center flex-shrink-0 ${formData.is_featured ? 'bg-emerald-600' : 'bg-slate-200'}`}
+                            onClick={() => setFormData({ ...formData, is_featured: !formData.is_featured })}
+                        >
+                            <div className={`w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform duration-300 ${formData.is_featured ? 'translate-x-6' : 'translate-x-0'}`}></div>
                         </div>
                     </div>
                 </div>

@@ -205,35 +205,34 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                                     </button>
 
                                     {showCompanyShare && (
-                                        <div className="absolute right-0 top-full mt-2 bg-white/95 backdrop-blur-xl border border-slate-100 shadow-2xl rounded-2xl p-[5px] flex flex-row items-center gap-1 animate-in fade-in zoom-in slide-in-from-top-2 duration-300 z-[100]">
+                                        <div className="absolute right-0 top-full mt-2 flex flex-row items-center gap-2 animate-in fade-in zoom-in slide-in-from-top-2 duration-300 z-[100]">
                                             <button
                                                 onClick={() => handleShare('whatsapp', shareUrl, company.name)}
-                                                className="w-7 h-7 flex items-center justify-center bg-slate-50 text-slate-600 hover:bg-emerald-500 hover:text-white rounded-xl transition-all"
+                                                className="w-8 h-8 flex items-center justify-center bg-white text-slate-600 hover:text-emerald-500 rounded-full shadow-xl transition-all border border-slate-100/50"
                                                 title="WhatsApp"
                                             >
-                                                <WhatsAppIcon className="w-3.5 h-3.5" />
+                                                <WhatsAppIcon className="w-4 h-4" />
                                             </button>
                                             <button
                                                 onClick={() => handleShare('facebook', shareUrl, company.name)}
-                                                className="w-7 h-7 flex items-center justify-center bg-slate-50 text-slate-600 hover:bg-blue-600 hover:text-white rounded-xl transition-all"
+                                                className="w-8 h-8 flex items-center justify-center bg-white text-slate-600 hover:text-blue-600 rounded-full shadow-xl transition-all border border-slate-100/50"
                                                 title="Facebook"
                                             >
-                                                <Facebook className="w-3.5 h-3.5" />
+                                                <Facebook className="w-4 h-4" />
                                             </button>
                                             <button
                                                 onClick={() => handleShare('linkedin', shareUrl, company.name)}
-                                                className="w-7 h-7 flex items-center justify-center bg-slate-50 text-slate-600 hover:bg-blue-700 hover:text-white rounded-xl transition-all"
+                                                className="w-8 h-8 flex items-center justify-center bg-white text-slate-600 hover:text-blue-700 rounded-full shadow-xl transition-all border border-slate-100/50"
                                                 title="LinkedIn"
                                             >
-                                                <Linkedin className="w-3.5 h-3.5" />
+                                                <Linkedin className="w-4 h-4" />
                                             </button>
-                                            <div className="w-px h-5 bg-slate-100 mx-0.5" />
                                             <button
                                                 onClick={() => handleShare('copy', shareUrl, company.name)}
-                                                className="w-7 h-7 flex items-center justify-center bg-slate-50 text-slate-400 hover:bg-slate-600 hover:text-white rounded-xl transition-all"
+                                                className="w-8 h-8 flex items-center justify-center bg-white text-slate-400 hover:text-slate-600 rounded-full shadow-xl transition-all border border-slate-100/50"
                                                 title="Copiar Link"
                                             >
-                                                <LinkIcon className="w-3.5 h-3.5" />
+                                                <LinkIcon className="w-4 h-4" />
                                             </button>
                                         </div>
                                     )}

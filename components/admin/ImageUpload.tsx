@@ -318,12 +318,12 @@ export function ImageUpload({
                         </div>
                     )
                 ) : (
-                    <div className="flex flex-col items-center gap-2 p-6 text-center">
-                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
-                            <Upload className="w-6 h-6 text-slate-400 group-hover:text-emerald-500" />
+                    <div className="flex flex-col items-center gap-2 p-4 text-center">
+                        <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
+                            <Upload className="w-5 h-5 text-slate-400 group-hover:text-emerald-500" />
                         </div>
-                        <div>
-                            <p className="text-sm font-bold text-slate-600">Clique para carregar</p>
+                        <div className="whitespace-nowrap">
+                            <p className="text-xs font-bold text-slate-600">Clique para carregar</p>
                             {recommendedSize && (
                                 <p className="text-[10px] text-emerald-600 font-bold tracking-tight">recomendado: {recommendedSize}</p>
                             )}

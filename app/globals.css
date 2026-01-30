@@ -118,6 +118,17 @@
     @apply bg-background text-foreground overflow-x-hidden antialiased;
   }
 
+  /* TEXT SELECTION - ORANGE TRANSPARENT */
+  ::selection {
+    background-color: rgba(249, 115, 22, 0.3);
+    color: inherit;
+  }
+
+  ::-moz-selection {
+    background-color: rgba(249, 115, 22, 0.3);
+    color: inherit;
+  }
+
   /* TYPOGRAPHY SYSTEM */
   h1 {
     @apply font-heading font-black leading-[1.1] tracking-tight mb-4;

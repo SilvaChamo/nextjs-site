@@ -7,6 +7,8 @@ import { ArrowLeft, Building2, Globe, Mail, MapPin, Phone, Target, Eye, Heart, L
 import { RichTextEditor } from "../RichTextEditor";
 import { MOZ_DATA, SECTORS, VALUE_CHAINS } from "@/lib/agro-data";
 import { useRouter } from "next/navigation";
+import { ImageUpload } from "./ImageUpload";
+import { toSentenceCase } from "@/lib/utils";
 
 interface CompanyEditorProps {
     initialData?: any;
@@ -91,7 +93,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
 
     return (
         <div className="bg-white rounded-agro-lg shadow-[0_0_10px_rgba(0,0,0,0.1)] border border-slate-200 overflow-hidden flex flex-col">
-            <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-200/60 transition-all">
+            <div className="px-6 py-8 border-b border-slate-200 flex items-center justify-between bg-slate-300/40 transition-all">
                 <div className="flex items-center gap-4 flex-1 min-w-0">
                     <button
                         onClick={() => router.back()}
@@ -100,13 +102,13 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                         <ArrowLeft className="w-5 h-5 text-slate-500" />
                     </button>
                     <div className="flex items-center gap-3 overflow-hidden">
-                        <h1 className="text-lg font-black text-slate-800 uppercase tracking-tight whitespace-nowrap leading-none">
+                        <h1 className="text-lg font-black text-slate-800 uppercase tracking-tight whitespace-nowrap leading-none m-0 p-0">
                             {isNew ? "Nova Empresa" : "Editar Empresa"}
                         </h1>
                         {!isNew && (
                             <div className="flex items-center gap-3">
                                 <span className="text-slate-300 font-light flex-shrink-0 text-xl leading-none">|</span>
-                                <div className="text-sm font-black uppercase tracking-tight truncate flex items-center gap-1.5 leading-none">
+                                <div className="text-sm font-black uppercase tracking-tight truncate flex items-center gap-1.5 leading-none m-0 p-0">
                                     <span className="text-emerald-600">Editando:</span>
                                     <span className="text-slate-500 font-bold">{initialData?.name}</span>
                                 </div>
@@ -118,8 +120,8 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                 <div className="flex items-center gap-3 ml-4 flex-shrink-0">
                     <div
                         className={`flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer transition-all duration-300 border shadow-sm ${formData.is_featured
-                                ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
-                                : 'bg-white border-slate-200 text-slate-400 opacity-60 hover:opacity-100'
+                            ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                            : 'bg-white border-slate-200 text-slate-400 opacity-60 hover:opacity-100'
                             }`}
                         onClick={() => setFormData({ ...formData, is_featured: !formData.is_featured })}
                     >
@@ -134,6 +136,43 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
 
             <form onSubmit={handleSubmit} className="flex-1 p-8 space-y-8">
 
+                {/* Branding & Media Section - NOW FIRST */}
+                <div className="space-y-4">
+                    <h3 className="text-xs font-black uppercase text-emerald-600 tracking-widest border-b border-emerald-100 pb-2 mb-4">Mídia e Branding</h3>
+
+                    <div className="flex flex-col md:flex-row gap-6">
+                        <div className="w-full md:w-[20%]">
+                            <ImageUpload
+                                label="Logo da Empresa"
+                                value={formData.logo_url}
+                                onChange={(url) => setFormData({ ...formData, logo_url: url })}
+                                recommendedSize="400x400 (1:1)"
+                                aspectRatio="square"
+                                maxWidth={800}
+                                maxHeight={800}
+                                bucket="public-assets"
+                                folder="logos"
+                                showRecommendedBadge={false}
+                            />
+                        </div>
+                        <div className="w-full md:w-[78%]">
+                            <ImageUpload
+                                label="Banner de Capa"
+                                value={formData.banner_url}
+                                onChange={(url) => setFormData({ ...formData, banner_url: url })}
+                                recommendedSize="1200x400 (3:1)"
+                                aspectRatio="video"
+                                maxWidth={1920}
+                                maxHeight={640}
+                                bucket="public-assets"
+                                folder="banners"
+                                imageClassName="object-cover w-full h-full"
+                                showRecommendedBadge={false}
+                            />
+                        </div>
+                    </div>
+                </div>
+
                 {/* Basic Info Section */}
                 <div className="space-y-4">
                     <h3 className="text-xs font-black uppercase text-emerald-600 tracking-widest border-b border-emerald-100 pb-2 mb-4">Informação Básica</h3>
@@ -146,7 +185,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                 <input
                                     required
                                     value={formData.name}
-                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    onChange={(e) => setFormData({ ...formData, name: toSentenceCase(e.target.value) })}
                                     placeholder="Ex: AgroMoz Lda"
                                     className="pl-12 pr-4 py-3 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                                 />
@@ -181,25 +220,38 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                         <div className="flex flex-col gap-2">
                             <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Sector de Actividade</label>
                             <div className="relative">
-                                <select
-                                    value={SECTORS.includes(formData.category) ? formData.category : "Outro"}
-                                    onChange={(e) => {
-                                        const val = e.target.value;
-                                        setFormData(prev => ({ ...prev, category: val === "Outro" ? "" : val }));
-                                    }}
-                                    className="p-3 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
-                                >
-                                    <option value="">Selecione...</option>
-                                    {SECTORS.map((s: string) => <option key={s} value={s}>{s}</option>)}
-                                </select>
-                                {((!SECTORS.includes(formData.category) && formData.category !== "") || (!SECTORS.includes(formData.category) && formData.category === "")) && (
-                                    <input
-                                        value={formData.category}
-                                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                        placeholder="Especifique o sector..."
-                                        className="mt-2 p-3 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
-                                    />
-                                )}
+                                <div className="space-y-4">
+                                    <select
+                                        value={SECTORS.includes(formData.category) ? formData.category : (formData.category ? "Outro" : "")}
+                                        onChange={(e) => {
+                                            const val = e.target.value;
+                                            if (val !== "Outro") {
+                                                setFormData(prev => ({ ...prev, category: val }));
+                                            } else {
+                                                // If switching to Outro, clear but keep placeholder or state logic?
+                                                // Actually let's just use the select to hold the custom value via option injection
+                                            }
+                                        }}
+                                        className="p-4 bg-slate-100 border-2 border-slate-200 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
+                                    >
+                                        <option value="">Selecione o Sector...</option>
+                                        {SECTORS.map((s: string) => <option key={s} value={s}>{s}</option>)}
+                                        {formData.category && !SECTORS.includes(formData.category) && (
+                                            <option value={formData.category}>{formData.category}</option>
+                                        )}
+                                        <option value="Outro">Outro (digitar)...</option>
+                                    </select>
+
+                                    {(formData.category === "Outro" || (formData.category && !SECTORS.includes(formData.category))) && (
+                                        <input
+                                            value={SECTORS.includes(formData.category) ? "" : formData.category}
+                                            onChange={(e) => setFormData({ ...formData, category: toSentenceCase(e.target.value) })}
+                                            placeholder="Digite o sector personalizado..."
+                                            className="p-4 bg-white border-2 border-emerald-500 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all shadow-sm"
+                                            autoFocus
+                                        />
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -269,7 +321,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                             <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                             <input
                                 value={formData.address}
-                                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                                onChange={(e) => setFormData({ ...formData, address: toSentenceCase(e.target.value) })}
                                 placeholder="Av., Rua, Nº..."
                                 className="pl-12 pr-4 py-3 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                             />
@@ -282,7 +334,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                             <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                             <input
                                 value={formData.website}
-                                onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                                onChange={(e) => setFormData({ ...formData, website: toSentenceCase(e.target.value) })}
                                 placeholder="www.empresa.co.mz"
                                 className="pl-12 pr-4 py-3 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                             />
@@ -290,31 +342,6 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                     </div>
                 </div>
 
-                {/* Branding & Media */}
-                <div className="space-y-4">
-                    <h3 className="text-xs font-black uppercase text-emerald-600 tracking-widest border-b border-emerald-100 pb-2 mb-4">Mídia e Branding</h3>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-2">
-                            <label className="text-xs font-black uppercase text-slate-500 tracking-widest">URL do Logo</label>
-                            <input
-                                value={formData.logo_url}
-                                onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
-                                placeholder="https://..."
-                                className="p-3 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
-                            />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <label className="text-xs font-black uppercase text-slate-500 tracking-widest">URL do Banner</label>
-                            <input
-                                value={formData.banner_url}
-                                onChange={(e) => setFormData({ ...formData, banner_url: e.target.value })}
-                                placeholder="https://..."
-                                className="p-3 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
-                            />
-                        </div>
-                    </div>
-                </div>
 
                 {/* Corporate Profile */}
                 <div className="space-y-4">
@@ -337,7 +364,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                             </label>
                             <textarea
                                 value={formData.mission}
-                                onChange={(e) => setFormData({ ...formData, mission: e.target.value })}
+                                onChange={(e) => setFormData({ ...formData, mission: toSentenceCase(e.target.value) })}
                                 placeholder="Missão da empresa..."
                                 className="p-3 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none resize-none h-48 transition-all"
                             />
@@ -348,7 +375,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                             </label>
                             <textarea
                                 value={formData.vision}
-                                onChange={(e) => setFormData({ ...formData, vision: e.target.value })}
+                                onChange={(e) => setFormData({ ...formData, vision: toSentenceCase(e.target.value) })}
                                 placeholder="Visão da empresa..."
                                 className="p-3 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none resize-none h-48 transition-all"
                             />
@@ -359,7 +386,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                             </label>
                             <textarea
                                 value={formData.values}
-                                onChange={(e) => setFormData({ ...formData, values: e.target.value })}
+                                onChange={(e) => setFormData({ ...formData, values: toSentenceCase(e.target.value) })}
                                 placeholder="Valores da empresa..."
                                 className="p-3 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none resize-none h-48 transition-all"
                             />

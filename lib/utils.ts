@@ -86,3 +86,16 @@ export const compressImage = async (
     reader.onerror = (err) => reject(err);
   });
 };
+
+/**
+ * Capitalizes the first letter of each sentence in a string.
+ */
+export const toSentenceCase = (text: string): string => {
+  if (!text) return text;
+
+  // Split by marks that end a sentence (. ! ?) followed by space or newline
+  // Keep the delimiter in the result using capture group
+  return text.replace(/(^|[.!?]\s+)([a-záàâãéèêíïóôõöúç])/g, (match, prefix, char) => {
+    return prefix + char.toUpperCase();
+  });
+};

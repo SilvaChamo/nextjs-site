@@ -521,6 +521,15 @@ export default function SimpleRegistrationPage() {
                             </div>
                         </div>
 
+                        {/* PROMOTIONAL IMAGE */}
+                        <div className="w-full rounded-xl overflow-hidden shadow-sm border border-slate-200">
+                            <img
+                                src="/assets/promocional-perfil.png"
+                                alt="Exemplo de Perfil Corporativo"
+                                className="w-full h-auto object-cover"
+                            />
+                        </div>
+
                         <div className="pt-6 flex justify-start">
                             <Button
                                 onClick={handlePublish}

@@ -237,6 +237,8 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                     value={formData.logo_url}
                                     onChange={(url) => setFormData({ ...formData, logo_url: url })}
                                     recommendedSize="400x400"
+                                    maxWidth={400}
+                                    maxHeight={400}
                                     aspectRatio="square"
                                     bucket="public-assets"
                                     folder="logos"
@@ -255,6 +257,8 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                     value={formData.banner_url}
                                     onChange={(url) => setFormData({ ...formData, banner_url: url })}
                                     recommendedSize="1200x400"
+                                    maxWidth={1200}
+                                    maxHeight={400}
                                     bucket="public-assets"
                                     folder="banners"
                                     imageClassName="object-cover w-full h-full"

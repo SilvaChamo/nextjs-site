@@ -89,7 +89,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
     };
 
     return (
-        <div className="bg-white rounded-agro-lg shadow-agro border border-slate-200 overflow-hidden flex flex-col">
+        <div className="bg-white rounded-agro-lg shadow-[0_0_10px_rgba(0,0,0,0.1)] border border-slate-200 overflow-hidden flex flex-col">
             <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <div className="flex items-center gap-4">
                     <button
@@ -141,7 +141,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                     value={formData.nuit}
                                     onChange={(e) => setFormData({ ...formData, nuit: e.target.value })}
                                     placeholder="Número Unificado de Imposto"
-                                    className="pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-agro text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
+                                    className="pl-12 pr-4 py-3 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                                 />
                             </div>
                         </div>

@@ -281,7 +281,9 @@ export function ImageUpload({
                                 backgroundImage: `url(${value})`,
                                 backgroundSize: backgroundSize,
                                 backgroundPosition: 'center',
-                                backgroundRepeat: 'no-repeat'
+                                backgroundRepeat: 'no-repeat',
+                                backgroundColor: backgroundSize === 'contain' ? '#ffffff' : 'transparent',
+                                transform: backgroundSize === 'contain' ? 'scale(1.2)' : 'none'
                             }}
                         >
                             <button

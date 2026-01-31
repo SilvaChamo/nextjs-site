@@ -266,7 +266,7 @@ export default function CompanyProfileClient({ company, slug }: CompanyProfileCl
 
                     <div className="absolute inset-0 flex items-end p-6 md:p-8 text-left pointer-events-none">
                         <div className="flex items-end gap-6 w-full pointer-events-auto">
-                            <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-agro p-[6px] md:p-2 shadow-2xl shrink-0 border border-slate-100 flex items-center justify-center transform translate-y-2 md:translate-y-4 relative z-10">
+                            <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-agro p-[6px] md:p-2 shadow-2xl shrink-0 border border-slate-100 flex items-center justify-center transform translate-y-2 md:translate-y-4 relative z-10 mb-5">
                                 {company.logo_url ? (
                                     <img src={company.logo_url} alt="Logo" className="w-full h-full object-contain" />
                                 ) : (
@@ -274,7 +274,7 @@ export default function CompanyProfileClient({ company, slug }: CompanyProfileCl
                                 )}
                             </div>
 
-                            <div className="text-white mb-2 md:mb-4 flex-1 flex items-end justify-between min-w-0">
+                            <div className="text-white mb-6 md:mb-8 flex-1 flex items-end justify-between min-w-0">
                                 <div className="min-w-0 flex-1 relative">
                                     <h1 className="text-xl md:text-3xl font-black mb-1 text-white leading-tight drop-shadow-lg uppercase truncate">
                                         {company.name}
@@ -286,41 +286,41 @@ export default function CompanyProfileClient({ company, slug }: CompanyProfileCl
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-3 ml-4 relative z-50 group">
+                                <div className="flex items-center gap-3 ml-4 relative z-50 group mb-6 md:mb-8">
                                     <span className="hidden sm:inline text-[11px] font-black uppercase tracking-widest text-white/70 drop-shadow-sm cursor-default">Partilhe</span>
                                     <div className="relative">
-                                        <div className="flex items-center justify-center w-10 h-10 bg-white/10 backdrop-blur-md hover:bg-white hover:text-[#f97316] text-white rounded-full transition-all border border-white/20 shadow-lg cursor-pointer">
-                                            <Share2 className="w-5 h-5" />
+                                        <div className="flex items-center justify-center w-8 h-8 bg-white/10 backdrop-blur-md hover:bg-white hover:text-[#f97316] text-white rounded-full transition-all border border-white/20 shadow-lg cursor-pointer">
+                                            <Share2 className="w-4 h-4" />
                                         </div>
 
                                         <div className="absolute right-0 top-full mt-2 flex flex-row items-center gap-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-[100]">
                                             <button
                                                 onClick={() => handleShare('whatsapp', shareUrl, company.name)}
-                                                className="w-9 h-9 flex items-center justify-center bg-white text-slate-600 hover:text-emerald-500 rounded-full shadow-2xl transition-all border border-slate-100/50 hover:scale-110 active:scale-95"
+                                                className="w-7 h-7 flex items-center justify-center bg-white text-slate-600 hover:text-emerald-500 rounded-full shadow-2xl transition-all border border-slate-100/50 hover:scale-110 active:scale-95"
                                                 title="WhatsApp"
                                             >
-                                                <WhatsAppIcon className="w-4.5 h-4.5" />
+                                                <WhatsAppIcon className="w-3.5 h-3.5" />
                                             </button>
                                             <button
                                                 onClick={() => handleShare('facebook', shareUrl, company.name)}
-                                                className="w-9 h-9 flex items-center justify-center bg-white text-slate-600 hover:text-blue-600 rounded-full shadow-2xl transition-all border border-slate-100/50 hover:scale-110 active:scale-95"
+                                                className="w-7 h-7 flex items-center justify-center bg-white text-slate-600 hover:text-blue-600 rounded-full shadow-2xl transition-all border border-slate-100/50 hover:scale-110 active:scale-95"
                                                 title="Facebook"
                                             >
-                                                <Facebook className="w-4.5 h-4.5" />
+                                                <Facebook className="w-3.5 h-3.5" />
                                             </button>
                                             <button
                                                 onClick={() => handleShare('linkedin', shareUrl, company.name)}
-                                                className="w-9 h-9 flex items-center justify-center bg-white text-slate-600 hover:text-blue-700 rounded-full shadow-2xl transition-all border border-slate-100/50 hover:scale-110 active:scale-95"
+                                                className="w-7 h-7 flex items-center justify-center bg-white text-slate-600 hover:text-blue-700 rounded-full shadow-2xl transition-all border border-slate-100/50 hover:scale-110 active:scale-95"
                                                 title="LinkedIn"
                                             >
-                                                <Linkedin className="w-4.5 h-4.5" />
+                                                <Linkedin className="w-3.5 h-3.5" />
                                             </button>
                                             <button
                                                 onClick={() => handleShare('copy', shareUrl, company.name)}
-                                                className="w-9 h-9 flex items-center justify-center bg-white text-slate-400 hover:text-slate-600 rounded-full shadow-2xl transition-all border border-slate-100/50 hover:scale-110 active:scale-95"
+                                                className="w-7 h-7 flex items-center justify-center bg-white text-slate-400 hover:text-slate-600 rounded-full shadow-2xl transition-all border border-slate-100/50 hover:scale-110 active:scale-95"
                                                 title="Copiar Link"
                                             >
-                                                <LinkIcon className="w-4.5 h-4.5" />
+                                                <LinkIcon className="w-3.5 h-3.5" />
                                             </button>
                                         </div>
                                     </div>

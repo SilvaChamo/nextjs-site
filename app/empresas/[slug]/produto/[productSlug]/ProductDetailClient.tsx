@@ -99,7 +99,9 @@ export default function ProductDetailClient({
     };
 
     const handleOrder = () => {
-        const phone = (company.secondary_contact || company.contact || "").replace(/\D/g, '');
+        // Prioritize secondary_contact (labeled as 'Nº de WhatsApp' in the form)
+        const waContact = company.secondary_contact || company.contact || "";
+        const phone = waContact.replace(/\D/g, '');
         const message = encodeURIComponent(`Olá! Tenho interesse no produto *${product.name}* que vi no BaseAgroData. Poderiam dar-me mais informações?`);
 
         if (phone) {

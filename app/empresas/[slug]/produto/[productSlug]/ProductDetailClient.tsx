@@ -98,6 +98,17 @@ export default function ProductDetailClient({
         }
     };
 
+    const handleOrder = () => {
+        const phone = (company.secondary_contact || company.contact || "").replace(/\D/g, '');
+        const message = encodeURIComponent(`Olá! Tenho interesse no produto *${product.name}* que vi no BaseAgroData. Poderiam dar-me mais informações?`);
+
+        if (phone) {
+            window.open(`https://wa.me/${phone.startsWith('258') ? phone : '258' + phone}?text=${message}`, '_blank');
+        } else {
+            alert('Esta empresa ainda não disponibilizou um contacto de WhatsApp.');
+        }
+    };
+
     return (
         <StandardBlogTemplate
             title={product.name}
@@ -311,8 +322,11 @@ export default function ProductDetailClient({
                             </div>
 
                             <div className="pt-2">
-                                <button className="btn-primary py-3 px-10 rounded-[10px] h-auto text-sm shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-2">
-                                    <ShoppingCart className="w-4 h-4" />
+                                <button
+                                    onClick={handleOrder}
+                                    className="btn-primary py-3 px-10 rounded-[10px] h-auto text-sm shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-2"
+                                >
+                                    <WhatsAppIcon className="w-5 h-5" />
                                     Encomendar agora
                                 </button>
                             </div>

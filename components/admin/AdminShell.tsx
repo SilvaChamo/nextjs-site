@@ -65,13 +65,13 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
                     {/* Header */}
                     <div className={`h-16 flex items-center px-4 border-b border-white/5 bg-transparent transition-all ${isCollapsed ? "justify-center" : "justify-between"}`}>
                         {!isCollapsed && (
-                            <div className="flex items-center gap-3 overflow-hidden">
+                            <Link href="/" className="flex items-center gap-3 overflow-hidden hover:opacity-80 transition-opacity">
                                 <img src="/admin-icon.png" alt="Logo" className="w-8 h-8 object-contain" />
                                 <div>
                                     <span className="font-black text-lg tracking-wider text-white block truncate">PAINEL</span>
                                     <span className="text-[9px] text-slate-500 uppercase tracking-widest block truncate">Administrativo</span>
                                 </div>
-                            </div>
+                            </Link>
                         )}
                         {/* Collapse Toggle */}
                         <button

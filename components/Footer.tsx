@@ -26,6 +26,7 @@ export function Footer() {
                 <div className="container-site relative z-10">
                     {/* RE-RENDERING GRID STRUCTURE FOR ACCURACY */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 mb-[40px]">
+                        {/* ... (rest of the grid content) */}
                         {/* 1. Brand */}
                         <div className="col-span-1 lg:col-span-3 space-y-3 pt-[30px]">
                             <div className="flex flex-col items-start gap-1">
@@ -121,22 +122,22 @@ export function Footer() {
                             </form>
                         </div>
                     </div>
-                </div>
 
-                {/* Bottom Bar: Legal Links & Socials */}
-                <div className="border-t border-gray-500 py-6 flex flex-col md:flex-row justify-between items-center gap-6">
-                    <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-gray-400 text-[10px] font-black uppercase tracking-widest">
-                        <Link href="/politica-privacidade" className="hover:text-[#f97316] transition-colors">Política de privacidade</Link>
-                        <Link href="/termos" className="hover:text-[#f97316] transition-colors">Termos e condições</Link>
-                        <Link href="/suporte" className="hover:text-[#f97316] transition-colors">Suporte</Link>
-                        <Link href="/design-system" className="hover:text-[#f97316] transition-colors text-emerald-600/50">Kit Padrão</Link>
-                        <Link href="/admin" className="hover:text-[#f97316] transition-colors text-gray-800 hover:text-emerald-600">Cozinha</Link>
-                    </div>
-                    <div className="flex items-center gap-4">
-                        <SocialIcon Icon={Facebook} />
-                        <SocialIcon Icon={Linkedin} />
-                        <SocialIcon Icon={Instagram} />
-                        <SocialIcon Icon={Youtube} />
+                    {/* Bottom Bar: Legal Links & Socials */}
+                    <div className="border-t border-gray-500/30 py-6 flex flex-col md:flex-row justify-between items-center gap-6">
+                        <div className="flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-2 text-gray-400 text-[10px] font-black uppercase tracking-widest">
+                            <Link href="/politica-privacidade" className="hover:text-[#f97316] transition-colors">Política de privacidade</Link>
+                            <Link href="/termos" className="hover:text-[#f97316] transition-colors">Termos e condições</Link>
+                            <Link href="/suporte" className="hover:text-[#f97316] transition-colors">Suporte</Link>
+                            <Link href="/design-system" className="hover:text-[#f97316] transition-colors text-emerald-600/50">Kit Padrão</Link>
+                            <Link href="/admin" className="hover:text-[#f97316] transition-colors text-gray-400/20 hover:text-emerald-600">Cozinha</Link>
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <SocialIcon Icon={Facebook} />
+                            <SocialIcon Icon={Linkedin} />
+                            <SocialIcon Icon={Instagram} />
+                            <SocialIcon Icon={Youtube} />
+                        </div>
                     </div>
                 </div>
             </div>

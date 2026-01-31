@@ -73,7 +73,7 @@ export default function AdminContactosPage() {
                 *,
                 company:companies(name, logo_url)
             `)
-            .order('created_at', { ascending: false });
+            .order('name', { ascending: true });
 
         if (error) {
             console.error("Error fetching contacts:", error);
@@ -337,6 +337,7 @@ export default function AdminContactosPage() {
                 loading={loading}
                 onEdit={openEditModal}
                 onDelete={handleDelete}
+                pageSize={25}
                 customActions={(row) => (
                     <button
                         onClick={async () => {
@@ -345,8 +346,8 @@ export default function AdminContactosPage() {
                             fetchContacts();
                         }}
                         className={`size-8 rounded-lg flex items-center justify-center transition-all shadow-sm ${row.is_verified
-                                ? 'bg-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white'
-                                : 'bg-slate-100 text-slate-400 hover:bg-emerald-500 hover:text-white'
+                            ? 'bg-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white'
+                            : 'bg-slate-100 text-slate-400 hover:bg-emerald-500 hover:text-white'
                             }`}
                         title={row.is_verified ? "Verificado" : "Marcar como verificado"}
                     >

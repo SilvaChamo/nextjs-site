@@ -266,7 +266,7 @@ export default function CompanyProfileClient({ company, slug }: CompanyProfileCl
 
                     <div className="absolute inset-0 flex items-end p-6 md:p-8 text-left pointer-events-none">
                         <div className="flex items-end gap-6 w-full pointer-events-auto">
-                            <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-agro p-[6px] md:p-2 shadow-2xl shrink-0 border border-slate-100 flex items-center justify-center transform translate-y-2 md:translate-y-4 relative z-10 mb-5">
+                            <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-agro p-[6px] md:p-2 shadow-2xl shrink-0 border border-slate-100 flex items-center justify-center transform translate-y-2 md:translate-y-4 relative z-10 mb-[18px]">
                                 {company.logo_url ? (
                                     <img src={company.logo_url} alt="Logo" className="w-full h-full object-contain" />
                                 ) : (
@@ -274,9 +274,9 @@ export default function CompanyProfileClient({ company, slug }: CompanyProfileCl
                                 )}
                             </div>
 
-                            <div className="text-white mb-6 md:mb-8 flex-1 flex items-end justify-between min-w-0">
+                            <div className="text-white mb-0 flex-1 flex items-end justify-between min-w-0">
                                 <div className="min-w-0 flex-1 relative">
-                                    <h1 className="text-xl md:text-3xl font-black mb-1 text-white leading-tight drop-shadow-lg uppercase truncate">
+                                    <h1 className="text-xl md:text-3xl font-black mb-0 text-white leading-tight drop-shadow-lg uppercase truncate">
                                         {company.name}
                                     </h1>
                                     <div className="flex items-center gap-2">
@@ -286,7 +286,7 @@ export default function CompanyProfileClient({ company, slug }: CompanyProfileCl
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-3 ml-4 relative z-50 group mb-6 md:mb-8">
+                                <div className="flex items-center gap-3 ml-4 relative z-50 group mb-0">
                                     <span className="hidden sm:inline text-[11px] font-black uppercase tracking-widest text-white/70 drop-shadow-sm cursor-default">Partilhe</span>
                                     <div className="relative">
                                         <div className="flex items-center justify-center w-8 h-8 bg-white/10 backdrop-blur-md hover:bg-white hover:text-[#f97316] text-white rounded-full transition-all border border-white/20 shadow-lg cursor-pointer">

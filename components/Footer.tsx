@@ -79,45 +79,47 @@ export function Footer() {
                             </ul>
                         </div>
 
-                        <h3 className="text-lg font-bold text-gray-200">Newsletter</h3>
-                        <p className="text-gray-400 text-xs leading-tight">
-                            Receba as últimas actualizações e oportunidades do mercado agrário directamente no seu e-mail.
-                        </p>
-                        <form
-                            onSubmit={async (e) => {
-                                e.preventDefault();
-                                const form = e.currentTarget;
-                                const emailInput = form.querySelector('input[type="email"]') as HTMLInputElement;
-                                const email = emailInput.value;
+                        <div className="col-span-1 lg:col-span-3 space-y-4 pt-[30px]">
+                            <h3 className="text-lg font-bold text-gray-200">Newsletter</h3>
+                            <p className="text-gray-400 text-xs leading-tight">
+                                Receba as últimas actualizações e oportunidades do mercado agrário directamente no seu e-mail.
+                            </p>
+                            <form
+                                onSubmit={async (e) => {
+                                    e.preventDefault();
+                                    const form = e.currentTarget;
+                                    const emailInput = form.querySelector('input[type="email"]') as HTMLInputElement;
+                                    const email = emailInput.value;
 
-                                if (!email) return;
+                                    if (!email) return;
 
-                                // Dynamic import to avoid server-component issues if this becomes one, though it is "use client"
-                                const { createClient } = await import("@/utils/supabase/client");
-                                const supabase = createClient();
+                                    // Dynamic import to avoid server-component issues if this becomes one, though it is "use client"
+                                    const { createClient } = await import("@/utils/supabase/client");
+                                    const supabase = createClient();
 
-                                const { error } = await supabase.from('newsletter_subscribers').insert([{ email }]);
+                                    const { error } = await supabase.from('newsletter_subscribers').insert([{ email }]);
 
-                                if (error) {
-                                    if (error.code === '23505') alert("Este email já está subscrito!");
-                                    else alert("Erro ao subscrever. Tente novamente.");
-                                } else {
-                                    alert("Subscrição realizada com sucesso!");
-                                    emailInput.value = "";
-                                }
-                            }}
-                            className="flex flex-col gap-[15px]"
-                        >
-                            <input
-                                type="email"
-                                placeholder="E-Mail"
-                                required
-                                className="w-full bg-white text-gray-800 px-6 py-3 rounded-[7px] text-xs focus:outline-none focus:ring-2 focus:ring-[#f97316] border border-gray-100 shadow-inner"
-                            />
-                            <button type="submit" className="w-full bg-[#f97316] text-white font-bold uppercase py-3 rounded-[7px] hover:bg-[#ea580c] transition-colors text-xs tracking-wider shadow-md active:scale-95">
-                                Subscrever
-                            </button>
-                        </form>
+                                    if (error) {
+                                        if (error.code === '23505') alert("Este email já está subscrito!");
+                                        else alert("Erro ao subscrever. Tente novamente.");
+                                    } else {
+                                        alert("Subscrição realizada com sucesso!");
+                                        emailInput.value = "";
+                                    }
+                                }}
+                                className="flex flex-col gap-[15px]"
+                            >
+                                <input
+                                    type="email"
+                                    placeholder="E-Mail"
+                                    required
+                                    className="w-full bg-white text-gray-800 px-6 py-3 rounded-[7px] text-xs focus:outline-none focus:ring-2 focus:ring-[#f97316] border border-gray-100 shadow-inner"
+                                />
+                                <button type="submit" className="w-full bg-emerald-600 text-white font-bold uppercase py-3 rounded-[7px] hover:bg-[#f97316] transition-colors text-xs tracking-wider shadow-md active:scale-95">
+                                    Subscrever
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
 

@@ -259,35 +259,41 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                     )}
                 </div>
 
-                {/* Who We Are & MVV Section */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-agro items-stretch">
-                    <div className="card-agro text-left flex flex-col">
-                        <div className="flex items-center justify-between mb-4">
-                            <h2 className="mb-0">Descrição Geral</h2>
-                            {company.portfolio_url && (
-                                <a
-                                    href={company.portfolio_url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex items-center gap-2 px-4 py-2 bg-orange-50 text-orange-600 hover:bg-orange-100 rounded-xl text-xs font-black uppercase tracking-tighter transition-all shadow-sm border border-orange-100"
-                                >
-                                    <FileText className="w-4 h-4" />
-                                    Baixar Portfólio
-                                </a>
-                            )}
-                        </div>
-                        <div className="prose prose-slate max-w-none font-sans text-slate-500 leading-relaxed flex-1">
-                            <p className="whitespace-pre-wrap">{company.description}</p>
-                        </div>
+                {/* General Description - FULL WIDTH */}
+                <div className="card-agro text-left">
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="mb-0 text-xl font-black uppercase tracking-tight text-black/75">Descrição Geral</h2>
+                        {company.portfolio_url && (
+                            <a
+                                href={company.portfolio_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-2 px-4 py-2 bg-orange-50 text-orange-600 hover:bg-orange-100 rounded-xl text-xs font-black uppercase tracking-tighter transition-all shadow-sm border border-orange-100"
+                            >
+                                <FileText className="w-4 h-4" />
+                                Baixar Portfólio
+                            </a>
+                        )}
                     </div>
+                    <div className="prose prose-slate max-w-none font-sans text-slate-500 leading-relaxed">
+                        <p className="whitespace-pre-wrap">{company.description}</p>
+                    </div>
+                </div>
 
-                    <div className="space-y-agro flex flex-col h-full">
-                        {company.mission && (
-                            <div className="card-agro text-left border-t-4 border-t-emerald-500 flex-1">
-                                <h4 className="text-[11px] font-black text-emerald-600 uppercase tracking-[0.2em] mb-3">Missão</h4>
+                {/* Mission, Vision & Values - 2 COLUMNS */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-agro items-stretch">
+                    {/* Mission (Left) */}
+                    {company.mission && (
+                        <div className="card-agro text-left border-t-4 border-t-emerald-500 flex flex-col h-full">
+                            <h4 className="text-[11px] font-black text-emerald-600 uppercase tracking-[0.2em] mb-4">Missão</h4>
+                            <div className="flex-1">
                                 <p className="text-sm text-slate-500 leading-relaxed">{company.mission}</p>
                             </div>
-                        )}
+                        </div>
+                    )}
+
+                    {/* Vision & Values (Right - Stacked) */}
+                    <div className="space-y-agro flex flex-col h-full">
                         {company.vision && (
                             <div className="card-agro text-left border-t-4 border-t-emerald-500 flex-1">
                                 <h4 className="text-[11px] font-black text-emerald-600 uppercase tracking-[0.2em] mb-3">Visão</h4>

@@ -8,6 +8,7 @@ import { ArticleForm } from "@/components/admin/ArticleForm";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
+import { NewsCard } from "@/components/NewsCard";
 
 export default function AdminNoticiasPage() {
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -44,7 +45,12 @@ export default function AdminNoticiasPage() {
 
     const confirmDelete = async () => {
         if (!articleToDelete) return;
+        const previousArticles = [...articles];
+
         try {
+            // Optimistic update
+            setArticles(prev => prev.filter(a => a.id !== articleToDelete.id));
+
             const { error } = await supabase
                 .from('articles')
                 .delete()
@@ -52,8 +58,10 @@ export default function AdminNoticiasPage() {
 
             if (error) throw error;
             toast.success("Artigo eliminado!");
-            fetchArticles();
+            // Optional: refetch to be absolutely sure
+            // fetchArticles(); 
         } catch (error: any) {
+            setArticles(previousArticles);
             toast.error("Erro ao eliminar: " + error.message);
         } finally {
             setShowDeleteConfirm(false);
@@ -157,46 +165,18 @@ export default function AdminNoticiasPage() {
                 // Grid View
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredArticles.map((article) => (
-                        <div key={article.id} className="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-lg transition-all hover:-translate-y-1">
-                            <div className="aspect-video bg-slate-100 relative overflow-hidden">
-                                {article.image_url ? (
-                                    <img src={article.image_url} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-slate-300">
-                                        <div className="bg-slate-200/50 p-4 rounded-full">
-                                            <LayoutGrid className="w-8 h-8 opacity-50" />
-                                        </div>
-                                    </div>
-                                )}
-                                <div className="absolute top-3 left-3">
-                                    <span className="bg-white/90 backdrop-blur text-emerald-800 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider border border-white/20 shadow-sm">
-                                        {article.type || 'Geral'}
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="p-5">
-                                <div className="flex items-center gap-2 text-xs text-slate-400 mb-3 font-medium">
-                                    <Calendar className="w-3.5 h-3.5" />
-                                    {new Date(article.date || article.created_at).toLocaleDateString()}
-                                </div>
-                                <h3 className="font-bold text-slate-800 leading-tight mb-2 line-clamp-2 min-h-[40px]">
-                                    {article.title}
-                                </h3>
-                                <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
-                                    <Button size="sm" variant="ghost" className="text-slate-400 hover:text-emerald-600" onClick={() => window.open(`/artigo/${article.slug}`, '_blank')}>
-                                        <LinkIcon className="w-4 h-4" />
-                                    </Button>
-                                    <div className="flex gap-2">
-                                        <Button size="sm" variant="outline" className="h-8 w-8 p-0" onClick={() => handleEdit(article)}>
-                                            <Pencil className="w-3.5 h-3.5 text-slate-600" />
-                                        </Button>
-                                        <Button size="sm" variant="outline" className="h-8 w-8 p-0 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200" onClick={() => handleDelete(article)}>
-                                            <Trash2 className="w-3.5 h-3.5" />
-                                        </Button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <NewsCard
+                            key={article.id}
+                            title={article.title}
+                            subtitle={article.subtitle}
+                            category={article.type}
+                            date={article.date || article.created_at}
+                            image={article.image_url}
+                            slug={article.slug}
+                            isAdmin={true}
+                            onEdit={() => handleEdit(article)}
+                            onDelete={() => handleDelete(article)}
+                        />
                     ))}
                 </div>
             ) : (

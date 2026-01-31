@@ -3,14 +3,17 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { AdminDataTable } from "@/components/admin/AdminDataTable";
-import { BadgeCheck, BadgeAlert } from "lucide-react";
+import { BadgeCheck, BadgeAlert, LayoutGrid, List } from "lucide-react";
 import { ArticleForm } from "@/components/admin/ArticleForm";
 import { toast } from "sonner";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
+import { NewsCard } from "@/components/NewsCard";
+import { Button } from "@/components/ui/button";
 
 export default function AdminArticlesPage() {
     const [articles, setArticles] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
     const [showForm, setShowForm] = useState(false);
     const [editingItem, setEditingItem] = useState<any>(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -34,7 +37,12 @@ export default function AdminArticlesPage() {
 
     const confirmDelete = async () => {
         if (!itemToDelete) return;
+        const previousArticles = [...articles];
+
         try {
+            // Optimistic update
+            setArticles(prev => prev.filter(article => article.id !== itemToDelete.id));
+
             const { error } = await supabase
                 .from('articles')
                 .delete()
@@ -42,8 +50,8 @@ export default function AdminArticlesPage() {
 
             if (error) throw error;
             toast.success("Artigo eliminado!");
-            fetchArticles();
         } catch (error: any) {
+            setArticles(previousArticles);
             toast.error("Erro ao eliminar: " + error.message);
         } finally {
             setShowDeleteConfirm(false);
@@ -107,21 +115,66 @@ export default function AdminArticlesPage() {
                 </div>
             </div>
 
-            <AdminDataTable
-                title="Lista de Artigos"
-                columns={columns}
-                data={articles}
-                loading={loading}
-                onAdd={() => {
-                    setEditingItem(null);
-                    setShowForm(true);
-                }}
-                onEdit={(row) => {
-                    setEditingItem(row);
-                    setShowForm(true);
-                }}
-                onDelete={handleDelete}
-            />
+            <div className="flex items-center justify-between gap-4 bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
+                <p className="text-sm font-bold text-slate-500 ml-2">Vista de conteúdos</p>
+                <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg">
+                    <button
+                        onClick={() => setViewMode('grid')}
+                        className={`p-2 rounded-md transition-all ${viewMode === 'grid' ? 'bg-white shadow text-emerald-600' : 'text-slate-400 hover:text-slate-600'}`}
+                    >
+                        <LayoutGrid className="w-4 h-4" />
+                    </button>
+                    <button
+                        onClick={() => setViewMode('list')}
+                        className={`p-2 rounded-md transition-all ${viewMode === 'list' ? 'bg-white shadow text-emerald-600' : 'text-slate-400 hover:text-slate-600'}`}
+                    >
+                        <List className="w-4 h-4" />
+                    </button>
+                </div>
+            </div>
+
+            {viewMode === 'grid' ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {articles.map((article) => (
+                        <NewsCard
+                            key={article.id}
+                            title={article.title}
+                            subtitle={article.subtitle}
+                            category={article.type}
+                            date={article.date || article.created_at}
+                            image={article.image_url}
+                            slug={article.slug}
+                            isAdmin={true}
+                            onEdit={() => {
+                                setEditingItem(article);
+                                setShowForm(true);
+                            }}
+                            onDelete={() => handleDelete(article)}
+                        />
+                    ))}
+                    {articles.length === 0 && !loading && (
+                        <div className="col-span-full py-20 text-center text-slate-400">
+                            Nenhum conteúdo encontrado.
+                        </div>
+                    )}
+                </div>
+            ) : (
+                <AdminDataTable
+                    title="Lista de Artigos"
+                    columns={columns}
+                    data={articles}
+                    loading={loading}
+                    onAdd={() => {
+                        setEditingItem(null);
+                        setShowForm(true);
+                    }}
+                    onEdit={(row: any) => {
+                        setEditingItem(row);
+                        setShowForm(true);
+                    }}
+                    onDelete={handleDelete}
+                />
+            )}
 
             {showForm && (
                 <ArticleForm

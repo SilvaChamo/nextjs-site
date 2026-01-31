@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { supabase } from "@/lib/supabaseClient";
 import { createClient } from "@supabase/supabase-js";
+import { NewsCard } from "@/components/NewsCard";
 
 // DEMO FALLBACK DATA
 const FALLBACK_ARTICLES = [
@@ -368,10 +369,10 @@ export default function ArticlesArchivePage() {
                 )}
             </div>
 
-            <div className="grid grid-cols-1 border-t border-slate-200">
+            <div className="pt-10 border-t border-slate-200">
                 {!isSearchActive ? (
-                    /* Hero Scientific Advertisement */
-                    <div className="py-[25px] animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                    // ... (Hero section remains same as it's a large banner/ad)
+                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
                         <div className="relative group overflow-hidden rounded-[15px] border border-slate-100 shadow-xl bg-white aspect-[21/9] md:aspect-[3/1]">
                             <Image
                                 src="/images/scientific-ad-natural-v3.png"
@@ -387,7 +388,7 @@ export default function ArticlesArchivePage() {
                                     </div>
                                     <h2 className="text-3xl font-black text-white leading-tight uppercase">O FUTURO DO CAMPO É <span className="text-emerald-400">DIGITAL</span></h2>
                                     <p className="text-slate-200 text-sm font-medium leading-relaxed">
-                                        Accesse o maior repositório de inteligência agrícola de Moçambique. Pesquise teses, relatórios e papers globais validados academicamente.
+                                        Aceda ao maior repositório de inteligência agrícola de Moçambique. Pesquise teses, relatórios e papers globais validados academicamente.
                                     </p>
                                     <Link
                                         href="/repositorio"
@@ -423,78 +424,32 @@ export default function ArticlesArchivePage() {
                         </div>
                     </div>
                 ) : (
-                    <>
+                    <div className="space-y-10">
                         {loading ? (
-                            Array(4).fill(0).map((_, i) => (
-                                <div key={i} className="animate-pulse bg-white p-4 h-32 w-full border-b border-slate-200" />
-                            ))
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {Array(6).fill(0).map((_, i) => (
+                                    <div key={i} className="animate-pulse bg-white rounded-[20px] h-[400px] border border-slate-100 shadow-sm" />
+                                ))}
+                            </div>
                         ) : (
                             <>
                                 {displayedArticles.length > 0 ? (
-                                    displayedArticles.map((article, index) => (
-                                        <div key={article.id} className={`group block py-6 bg-white border-b border-slate-200 hover:bg-slate-50 transition-colors pl-[25px] pr-4 ${index === 0 ? 'rounded-t-[10px]' : ''}`}>
-                                            <div className="flex flex-col gap-0.5">
-                                                <div className="flex items-center gap-2 text-sm text-[#202124] mb-1">
-                                                    <div className="bg-slate-50 rounded-full w-7 h-7 flex items-center justify-center shrink-0 border border-slate-100 overflow-hidden">
-                                                        <Image
-                                                            src="/icon.png"
-                                                            alt="Icon"
-                                                            width={24}
-                                                            height={24}
-                                                            className="object-contain"
-                                                        />
-                                                    </div>
-                                                    <div className="flex flex-col leading-tight">
-                                                        <div className="flex items-center gap-1.5 font-semibold text-[14px]">
-                                                            <span>{article.author || "Autor Desconhecido"}</span>
-                                                            {article.source && <span className="text-slate-400 font-normal">› {article.source}</span>}
-                                                        </div>
-                                                        <a
-                                                            href={article.source_url}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="text-xs text-slate-500 hover:underline decoration-slate-300"
-                                                        >
-                                                            {article.source_url ? article.source_url.replace(/^https?:\/\/(www\.)?/, '').split('/')[0] + " › ..." : `baseagrodata.com › ...`}
-                                                        </a>
-                                                    </div>
-                                                </div>
-
-                                                {article.type === 'external_article' ? (
-                                                    <a
-                                                        href={article.source_url}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="text-lg font-bold text-[#1a0dab] hover:underline cursor-pointer leading-snug tracking-tight mb-0.5"
-                                                    >
-                                                        {article.title}
-                                                    </a>
-                                                ) : (
-                                                    <Link
-                                                        href={`/artigos/${article.slug}`}
-                                                        className="text-lg font-bold text-[#1a0dab] hover:underline cursor-pointer leading-snug tracking-tight mb-0.5"
-                                                    >
-                                                        {article.title}
-                                                    </Link>
-                                                )}
-
-                                                <div className="text-sm text-[#4d5156] leading-relaxed max-w-3xl">
-                                                    <span className="text-slate-500 text-[12px] mr-2">{new Date(article.date).getFullYear()} —</span>
-                                                    {article.subtitle || (article.content ? article.content.substring(0, 160).replace(/<[^>]*>/g, '') + "..." : "Documento científico.")}
-                                                </div>
-
-                                                {article.type === 'external_article' && (
-                                                    <div className="mt-2 inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-[4px] w-fit">
-                                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                                                        Base de Dados Global
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    ))
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                        {displayedArticles.map((article) => (
+                                            <NewsCard
+                                                key={article.id}
+                                                title={article.title}
+                                                subtitle={article.subtitle}
+                                                category={article.type === 'external_article' ? 'Documento' : (article.type || 'Artigo')}
+                                                date={article.date}
+                                                image={article.image_url}
+                                                slug={article.slug}
+                                            />
+                                        ))}
+                                    </div>
                                 ) : (
-                                    <div className="col-span-full py-20 text-center text-slate-400">
-                                        Nenhum artigo encontrado.
+                                    <div className="py-20 text-center text-slate-400">
+                                        Nenhum artigo encontrado para a sua pesquisa.
                                     </div>
                                 )}
 
@@ -509,7 +464,7 @@ export default function ArticlesArchivePage() {
                                 )}
                             </>
                         )}
-                    </>
+                    </div>
                 )}
             </div>
         </StandardBlogTemplate>

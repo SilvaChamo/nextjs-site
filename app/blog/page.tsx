@@ -13,6 +13,7 @@ import {
 import { supabase } from "@/lib/supabaseClient";
 import { WeatherSidebar } from "@/components/WeatherSidebar";
 import { NewsletterCard } from "@/components/NewsletterCard";
+import { NewsCard } from "@/components/NewsCard";
 
 function BlogContent() {
     const searchParams = useSearchParams();
@@ -134,37 +135,15 @@ function BlogContent() {
                         {/* Articles Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                             {filteredArticles.map((article, i) => (
-                                <Link key={i} href={`/artigos/${article.slug}`} className="group flex flex-col h-full bg-white rounded-[15px] shadow-lg border border-slate-100 hover:border-[#f97316] transition-all overflow-hidden">
-                                    <div className="relative aspect-[16/10] overflow-hidden">
-                                        <Image
-                                            src={article.image_url || "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=800&auto=format&fit=crop"}
-                                            alt={article.title}
-                                            fill
-                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                            className="object-cover transition-transform duration-500 group-hover:scale-110"
-                                        />
-                                        <div className="absolute top-4 left-4 bg-[#f97316] text-white text-[10px] font-black uppercase px-3 py-1 rounded-[5px]">
-                                            {article.type || "Artigo"}
-                                        </div>
-                                    </div>
-                                    <div className="p-6 flex flex-col flex-1">
-                                        <div className="space-y-3">
-                                            <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400">
-                                                <Calendar className="w-3 h-3 text-[#f97316]" />
-                                                <span>{new Date(article.date).toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' }).replace('.', '').replace(' de ', ' ')}</span>
-                                            </div>
-                                            <h3 className="text-lg font-black text-slate-600 group-hover:text-[#f97316] transition-colors line-clamp-2 first-letter:uppercase lowercase my-0" suppressHydrationWarning>
-                                                <span>{article.title}</span>
-                                            </h3>
-                                            <p className="text-xs text-slate-500 leading-relaxed line-clamp-3">
-                                                {article.subtitle}
-                                            </p>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 group-hover:text-[#f97316] transition-colors mt-auto pt-6">
-                                            Explorar <ArrowRight className="h-3 w-3" />
-                                        </div>
-                                    </div>
-                                </Link>
+                                <NewsCard
+                                    key={i}
+                                    title={article.title}
+                                    subtitle={article.subtitle}
+                                    category={article.type}
+                                    date={article.date}
+                                    image={article.image_url}
+                                    slug={article.slug}
+                                />
                             ))}
                         </div>
 

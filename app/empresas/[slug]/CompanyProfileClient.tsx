@@ -263,7 +263,7 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-agro items-stretch">
                     <div className="card-agro text-left flex flex-col">
                         <div className="flex items-center justify-between mb-4">
-                            <h2 className="mb-0">Quem Somos</h2>
+                            <h2 className="mb-0">Descrição Geral</h2>
                             {company.portfolio_url && (
                                 <a
                                     href={company.portfolio_url}

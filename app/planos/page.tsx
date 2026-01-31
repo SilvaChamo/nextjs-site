@@ -86,6 +86,7 @@ export default function PricingPage() {
                             width={140}
                             height={50}
                             className="h-8 w-auto"
+                            priority
                         />
                     </Link>
                     <div className="w-[140px] hidden md:block"></div> {/* Spacer for center alignment */}

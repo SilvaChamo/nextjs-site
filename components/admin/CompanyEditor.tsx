@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Building2, Globe, Mail, MapPin, Phone, Target, Eye, Heart, List, X, Loader2, FileText, Star, ShoppingBag, Plus, Trash2, ChevronDown, Check, Pencil } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { RichTextEditor } from "../RichTextEditor";
-import { MOZ_DATA, SECTORS, VALUE_CHAINS, COMPANY_DESIGNATIONS } from "@/lib/agro-data";
+import { MOZ_DATA, SECTORS, SECTOR_CATEGORIES, VALUE_CHAINS, COMPANY_DESIGNATIONS, COMPANY_SIZES } from "@/lib/agro-data";
 import { useRouter } from "next/navigation";
 import { ImageUpload } from "./ImageUpload";
 import { toSentenceCase } from "@/lib/utils";
@@ -55,6 +55,8 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
         plan: initialData?.plan || "free",
         portfolio_url: initialData?.portfolio_url || "",
         type: initialData?.type || "",
+        sub_category: initialData?.sub_category || "",
+        size: initialData?.size || "",
     });
 
     // Products State
@@ -472,11 +474,11 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                     {/* Row 1: Descrição 75% + Missão 25% */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div className="md:col-span-3 flex flex-col gap-2">
-                            <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Descrição / Quem Somos</label>
+                            <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Descrição geral da empresa</label>
                             <RichTextEditor
                                 value={formData.description}
                                 onChange={(val) => setFormData({ ...formData, description: val })}
-                                placeholder="Breve descrição dos serviços..."
+                                placeholder="Descreva os objectivos, história e actuação da empresa..."
                                 className="bg-slate-100"
                             />
                         </div>
@@ -526,13 +528,13 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                     <h3 className="text-xs font-black uppercase text-emerald-600 tracking-widest border-b border-emerald-100 pb-2 mb-4">Enquadramento</h3>
 
                     <div className="flex flex-col gap-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                             <select
                                 value={formData.type}
                                 onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                                 className="py-3 px-3 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-medium text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                             >
-                                <option value="">Designação da Empresa...</option>
+                                <option value="">Designação...</option>
                                 {COMPANY_DESIGNATIONS.map((d: string) => <option key={d} value={d}>{d}</option>)}
                             </select>
                             <select
@@ -544,20 +546,41 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                 {VALUE_CHAINS.map((vc: string) => <option key={vc} value={vc}>{vc}</option>)}
                             </select>
                             <select
-                                value={formData.category}
+                                value={formData.size}
+                                onChange={(e) => setFormData({ ...formData, size: e.target.value })}
+                                className="py-3 px-3 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-medium text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
+                            >
+                                <option value="">Dimensão...</option>
+                                {COMPANY_SIZES.map((sz: string) => <option key={sz} value={sz}>{sz}</option>)}
+                            </select>
+                            <select
+                                value={formData.category} // Using category for High-level Sector
                                 onChange={(e) => {
-                                    const val = e.target.value;
-                                    setFormData(prev => ({ ...prev, category: val }));
+                                    setFormData({ ...formData, category: e.target.value, sub_category: "" });
                                 }}
                                 className="py-3 px-3 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-medium text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                             >
                                 <option value="">Sector de Actividade...</option>
                                 {SECTORS.map((s: string) => <option key={s} value={s}>{s}</option>)}
-                                {formData.category && !SECTORS.includes(formData.category) && (
-                                    <option value={formData.category}>{formData.category}</option>
-                                )}
                             </select>
                         </div>
+
+                        {/* Nested Sub-category Selection */}
+                        {formData.category && SECTOR_CATEGORIES[formData.category] && (
+                            <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                                <label className="text-[10px] font-black uppercase text-emerald-600 tracking-widest mb-2 block">Seleccione a Categoria Específica</label>
+                                <select
+                                    value={formData.sub_category}
+                                    onChange={(e) => setFormData({ ...formData, sub_category: e.target.value })}
+                                    className="py-3 px-4 bg-emerald-50 border-2 border-emerald-100 rounded-xl text-sm font-bold text-emerald-900 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none w-full transition-all"
+                                >
+                                    <option value="">Escolha uma categoria de {formData.category}...</option>
+                                    {SECTOR_CATEGORIES[formData.category].map((cat: string) => (
+                                        <option key={cat} value={cat}>{cat}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
                     </div>
                 </div>
 

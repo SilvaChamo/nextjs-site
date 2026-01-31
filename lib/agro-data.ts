@@ -12,11 +12,67 @@ export const MOZ_DATA: Record<string, string[]> = {
     "Niassa": ["Chimbonila", "Cuamba", "Lago", "Lichinga", "Majune", "Mandimba", "Marrupa", "Maúa", "Mavago", "Mecanhelas", "Mecula", "Metarica", "Muembe", "N'gauma", "Sanga"]
 };
 
-export const SECTORS = [
-    "Agricultura", "Pecuária", "Pescas", "Avicultura", "Agro-indústria",
-    "Fornecedor de Insumos", "Serviços Financeiros", "Logística",
-    "Consultoria", "Educação/Investigação", "Prestação de serviços", "Outro"
-];
+export const SECTOR_CATEGORIES: Record<string, string[]> = {
+    "Agricultura": [
+        "Agricultura de precisão",
+        "Agricultura orgânica",
+        "Agricultura sustentável",
+        "Fruticultura",
+        "Horticultura",
+        "Irrigação",
+        "Produção agrícola",
+        "Silvicultura",
+        "Viveiros",
+        "Sustentabilidade agrícola",
+        "Floricultura"
+    ],
+    "Pecuária": [
+        "Apicultura",
+        "Avicultura",
+        "Pecuária",
+        "Suinocultura"
+    ],
+    "Pesca & Aquicultura": [
+        "Aquicultura"
+    ],
+    "Agro-indústria": [
+        "Agro-industrial",
+        "Agroindústria",
+        "Processamento"
+    ],
+    "Serviços & Consultoria": [
+        "Assistência técnica",
+        "Certificação agrícola",
+        "Consultoria agrícola",
+        "Gestão agrícola",
+        "Pesquisa agrícola",
+        "Planeamento agrícola",
+        "Seguros agrícolas",
+        "Tecnologia agrícola"
+    ],
+    "Logística & Comércio": [
+        "Armazenagem",
+        "Exportação",
+        "Insumos agrícolas",
+        "Máquinas/equipamento",
+        "Transporte agrícola"
+    ],
+    "Finanças & Investimento": [
+        "Crédito agrícola",
+        "Financiamento",
+        "Investimento agrícola"
+    ],
+    "Organizações & Gestão": [
+        "Agronegócio",
+        "Cooperativas",
+        "Segurança alimentar"
+    ],
+    "Energia": [
+        "Energia renovável"
+    ]
+};
+
+export const SECTORS = Object.keys(SECTOR_CATEGORIES);
 
 export const VALUE_CHAINS = [
     "Produtor", "Consumidor", "Fornecedor", "Prestador de Serviços"
@@ -29,4 +85,11 @@ export const COMPANY_DESIGNATIONS = [
     "Cooperativa Agrícola",
     "ONG Internacional",
     "Outros"
+];
+
+export const COMPANY_SIZES = [
+    "Micro Empresa",
+    "Pequena Empresa",
+    "Média Empresa",
+    "Grande Empresa"
 ];

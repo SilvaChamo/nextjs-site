@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Loader2, X, Globe, Phone, Mail, MapPin, Building2, FileText, Target, Eye, Heart, List } from "lucide-react";
-import { MOZ_DATA, SECTORS, VALUE_CHAINS, COMPANY_DESIGNATIONS } from "@/lib/agro-data";
+import { MOZ_DATA, SECTORS, SECTOR_CATEGORIES, VALUE_CHAINS, COMPANY_DESIGNATIONS, COMPANY_SIZES } from "@/lib/agro-data";
 import { toast } from "sonner";
 
 interface CompanyFormProps {
@@ -34,6 +34,8 @@ export function CompanyForm({ onClose, onSuccess, initialData }: CompanyFormProp
         mission: initialData?.mission || "",
         vision: initialData?.vision || "",
         values: initialData?.values || "",
+        sub_category: initialData?.sub_category || "",
+        size: initialData?.size || "",
         services: Array.isArray(initialData?.services) ? initialData.services : [] as string[]
     });
 
@@ -211,30 +213,49 @@ export function CompanyForm({ onClose, onSuccess, initialData }: CompanyFormProp
                             </div>
                         </div>
 
-                        <div className="flex flex-col gap-2">
-                            <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Sector de Actividade</label>
-                            <div className="relative">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="flex flex-col gap-2">
+                                <label className="text-xs font-black uppercase text-slate-500 tracking-widest text-emerald-600">Sector de Actividade</label>
                                 <select
-                                    value={SECTORS.includes(formData.category) ? formData.category : "Outro"}
-                                    onChange={(e) => {
-                                        const val = e.target.value;
-                                        setFormData(prev => ({ ...prev, category: val === "Outro" ? "" : val }));
-                                    }}
+                                    value={formData.category}
+                                    onChange={(e) => setFormData({ ...formData, category: e.target.value, sub_category: "" })}
                                     className="p-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
                                 >
-                                    <option value="">Selecione...</option>
+                                    <option value="">Selecione o Sector...</option>
                                     {SECTORS.map(s => <option key={s} value={s}>{s}</option>)}
                                 </select>
-                                {((!SECTORS.includes(formData.category) && formData.category !== "") || (!SECTORS.includes(formData.category) && formData.category === "")) && (
-                                    <input
-                                        value={formData.category}
-                                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                        placeholder="Especifique o sector..."
-                                        className="mt-2 p-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
-                                    />
-                                )}
+                            </div>
+
+                            <div className="flex flex-col gap-2">
+                                <label className="text-xs font-black uppercase text-slate-500 tracking-widest text-[#f97316]">Dimensão da Empresa</label>
+                                <select
+                                    value={formData.size}
+                                    onChange={(e) => setFormData({ ...formData, size: e.target.value })}
+                                    className="p-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-[#f97316] outline-none w-full"
+                                >
+                                    <option value="">Selecione a Dimensão...</option>
+                                    {COMPANY_SIZES.map(sz => <option key={sz} value={sz}>{sz}</option>)}
+                                </select>
                             </div>
                         </div>
+
+                        {formData.category && SECTOR_CATEGORIES[formData.category] && (
+                            <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-2">
+                                <label className="text-[10px] font-black uppercase text-emerald-600 tracking-widest">Categoria Específica ({formData.category})</label>
+                                <div className="relative">
+                                    <select
+                                        value={formData.sub_category}
+                                        onChange={(e) => setFormData({ ...formData, sub_category: e.target.value })}
+                                        className="p-3 bg-emerald-50 border-2 border-emerald-100/50 rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                    >
+                                        <option value="">Escolha uma categoria...</option>
+                                        {SECTOR_CATEGORIES[formData.category].map(cat => (
+                                            <option key={cat} value={cat}>{cat}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* Contact & Location */}
@@ -352,11 +373,11 @@ export function CompanyForm({ onClose, onSuccess, initialData }: CompanyFormProp
                         <h3 className="text-xs font-black uppercase text-emerald-600 tracking-widest border-b border-emerald-100 pb-2 mb-4">Perfil Corporativo</h3>
 
                         <div className="flex flex-col gap-2">
-                            <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Descrição / Quem Somos</label>
+                            <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Descrição geral da empresa</label>
                             <textarea
                                 value={formData.description}
                                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                placeholder="Breve descrição dos serviços..."
+                                placeholder="Descreva os objectivos, história e actuação da empresa..."
                                 className="p-4 bg-slate-50 border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 outline-none resize-none h-32"
                             />
                         </div>

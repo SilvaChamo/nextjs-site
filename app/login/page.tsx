@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
 import { Mail, Lock, User, CheckCircle, AlertCircle, Loader2, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -118,7 +119,14 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
 
                     <div className="text-center mb-7">
                         <Link href="/" className="inline-block transition-transform hover:scale-105 duration-300">
-                            <img src="/assets/Logo.png" alt="Base Agro Data" className="h-16 w-auto mx-auto" />
+                            <Image
+                                src="/assets/Logo.png"
+                                alt="Base Agro Data"
+                                width={160}
+                                height={64}
+                                className="h-16 w-auto mx-auto object-contain"
+                                priority
+                            />
                         </Link>
                     </div>
 

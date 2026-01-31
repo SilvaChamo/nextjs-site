@@ -6,12 +6,19 @@ import { Building2, MapPin, CheckCircle2, ArrowRight, Search, ShieldCheck } from
 import Image from "next/image";
 import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
-import { COMPANY_CATEGORIES } from "@/lib/constants";
+import { SECTORS, SECTOR_CATEGORIES, COMPANY_SIZES, MOZ_DATA } from "@/lib/agro-data";
 import { CompanyCard } from "@/components/CompanyCard";
 
 export default function EmpresasPage() {
     const [companies, setCompanies] = useState<any[]>([]);
+    const [filteredCompanies, setFilteredCompanies] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+
+    // Filter states
+    const [selectedSector, setSelectedSector] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState("");
+    const [selectedSize, setSelectedSize] = useState("");
+    const [selectedProvince, setSelectedProvince] = useState("");
 
     useEffect(() => {
         async function fetchCompanies() {
@@ -24,6 +31,7 @@ export default function EmpresasPage() {
 
                 if (error) throw error;
                 setCompanies(data || []);
+                setFilteredCompanies(data || []);
             } catch (err) {
                 console.error("Error fetching companies:", err);
             } finally {
@@ -33,9 +41,28 @@ export default function EmpresasPage() {
         fetchCompanies();
     }, []);
 
+    const handleApplyFilters = () => {
+        let filtered = [...companies];
+
+        if (selectedSector) {
+            filtered = filtered.filter(c => c.category === selectedSector);
+        }
+        if (selectedCategory) {
+            filtered = filtered.filter(c => c.sub_category === selectedCategory);
+        }
+        if (selectedSize) {
+            filtered = filtered.filter(c => c.size === selectedSize);
+        }
+        if (selectedProvince) {
+            filtered = filtered.filter(c => c.province === selectedProvince);
+        }
+
+        setFilteredCompanies(filtered);
+    };
+
     return (
         <StandardBlogTemplate
-            title="Empresas"
+            title="Repositório de Empresas"
             breadcrumbs={[
                 { label: "Início", href: "/" },
                 { label: "Repositório", href: "/repositorio" },
@@ -44,44 +71,87 @@ export default function EmpresasPage() {
             sidebarComponents={
                 <div className="space-y-agro">
                     {/* Filters Card */}
-                    <div className="card-agro-static">
-                        <h4 className="flex items-center gap-2 mb-6">
-                            <Search className="w-4 h-4 text-emerald-600" />
-                            Filtrar Empresas
+                    <div className="card-agro-static bg-white/80 backdrop-blur-sm border-slate-100 shadow-xl shadow-slate-200/20">
+                        <h4 className="flex items-center gap-2 mb-6 text-slate-800 font-black uppercase text-xs tracking-tighter">
+                            <Search className="w-4 h-4 text-[#f97316]" />
+                            Filtrar por Sectores
                         </h4>
 
-                        <div className="space-y-6">
+                        <div className="space-y-5">
+                            {/* 1. Sector (Chapéu) */}
                             <div>
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Categoria</label>
-                                <select className="w-full h-10 rounded-lg border border-slate-200 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all outline-none px-3 bg-slate-50 font-bold uppercase tracking-tight">
-                                    <option>Todas as Categorias</option>
-                                    {COMPANY_CATEGORIES.map(cat => (
-                                        <option key={cat}>{cat}</option>
-                                    ))}
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Sector Principal</label>
+                                <select
+                                    value={selectedSector}
+                                    onChange={(e) => {
+                                        setSelectedSector(e.target.value);
+                                        setSelectedCategory(""); // Reset sub-category
+                                    }}
+                                    className="w-full h-10 rounded-lg border border-slate-100 text-[13px] font-bold text-slate-700 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all outline-none px-3 bg-slate-50 shadow-inner"
+                                >
+                                    <option value="">Todos os Sectores</option>
+                                    {SECTORS.map(s => <option key={s} value={s}>{s}</option>)}
                                 </select>
                             </div>
 
+                            {/* 2. Categoria (Específica) - Activa apenas se houver sector */}
+                            {selectedSector && SECTOR_CATEGORIES[selectedSector] && (
+                                <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                                    <label className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-2 block animate-pulse">Especifique a Categoria</label>
+                                    <select
+                                        value={selectedCategory}
+                                        onChange={(e) => setSelectedCategory(e.target.value)}
+                                        className="w-full h-10 rounded-lg border-2 border-emerald-100/50 text-[13px] font-bold text-slate-700 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all outline-none px-3 bg-emerald-50/30"
+                                    >
+                                        <option value="">Todas de {selectedSector}</option>
+                                        {SECTOR_CATEGORIES[selectedSector].map(cat => (
+                                            <option key={cat} value={cat}>{cat}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            )}
+
+                            {/* 3. Província */}
                             <div>
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Província</label>
-                                <select className="w-full h-10 rounded-lg border border-slate-200 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all outline-none px-3 bg-slate-50">
-                                    <option>Todas as Províncias</option>
-                                    <option>Zambézia</option>
-                                    <option>Nampula</option>
-                                    <option>Sofala</option>
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Província</label>
+                                <select
+                                    value={selectedProvince}
+                                    onChange={(e) => setSelectedProvince(e.target.value)}
+                                    className="w-full h-10 rounded-lg border border-slate-100 text-[13px] font-bold text-slate-700 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all outline-none px-3 bg-slate-50 shadow-inner"
+                                >
+                                    <option value="">Todas as Províncias</option>
+                                    {Object.keys(MOZ_DATA).map(p => <option key={p} value={p}>{p}</option>)}
                                 </select>
                             </div>
 
-                            <button className="btn-primary w-full shadow-emerald-200/50">
-                                Aplicar Filtros
+                            {/* 4. Dimensão */}
+                            <div>
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Dimensão (Tamanho)</label>
+                                <select
+                                    value={selectedSize}
+                                    onChange={(e) => setSelectedSize(e.target.value)}
+                                    className="w-full h-10 rounded-lg border border-slate-100 text-[13px] font-bold text-slate-700 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all outline-none px-3 bg-slate-50 shadow-inner"
+                                >
+                                    <option value="">Qualquer Dimensão</option>
+                                    {COMPANY_SIZES.map(sz => <option key={sz} value={sz}>{sz}</option>)}
+                                </select>
+                            </div>
+
+                            <button
+                                onClick={handleApplyFilters}
+                                className="group relative w-full h-11 bg-slate-900 border-none rounded-xl overflow-hidden transition-all hover:bg-emerald-700 active:scale-95 shadow-lg shadow-slate-200"
+                            >
+                                <div className="absolute inset-0 bg-gradient-to-r from-[#f97316] to-[#ea580c] opacity-0 group-hover:opacity-10 transition-opacity" />
+                                <span className="relative text-xs font-black text-white uppercase tracking-widest">Aplicar Filtros</span>
                             </button>
                         </div>
                     </div>
 
                     {/* Stats Card */}
-                    <div className="card-agro-static text-center py-8">
-                        <Building2 className="w-12 h-12 text-[#f97316] mx-auto mb-4" />
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Empresas Registadas</p>
-                        <p className="text-3xl font-black text-slate-800 tracking-tighter">
+                    <div className="card-agro-static bg-gradient-to-br from-emerald-600 to-emerald-800 text-center py-8 border-none shadow-xl shadow-emerald-200/50">
+                        <Building2 className="w-12 h-12 text-white/20 mx-auto mb-4" />
+                        <p className="text-[10px] font-black text-white/60 uppercase tracking-widest mb-1">Empresas Registadas</p>
+                        <p className="text-3xl font-black text-white tracking-tighter">
                             {loading ? "..." : companies.length}
                         </p>
                     </div>
@@ -90,31 +160,40 @@ export default function EmpresasPage() {
         >
             <div className="space-y-8 pb-10">
                 {loading ? (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-agro">
-                        {[1, 2, 3].map(i => (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-agro">
+                        {[1, 2, 3, 4, 5, 6].map(i => (
                             <div key={i} className="h-[280px] bg-slate-50 animate-pulse rounded-agro border border-slate-100" />
                         ))}
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-agro">
-                        {companies.map((company) => (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-agro">
+                        {filteredCompanies.map((company) => (
                             <CompanyCard
                                 key={company.id}
                                 company={{
                                     id: company.id,
                                     slug: company.slug,
                                     name: company.name,
-                                    tag: company.category,
+                                    tag: company.sub_category || company.category,
                                     description: company.activity || company.bio || "",
                                     logoUrl: company.logo_url || "",
-                                    type: company.registration_type || "Empresa",
+                                    type: company.type || "Empresa",
                                     image: company.banner_url || "",
-                                    isVerified: company.verified,
+                                    isVerified: company.is_verified,
                                     province: company.province,
                                     valueChain: company.value_chain
                                 }}
                             />
                         ))}
+                        {filteredCompanies.length === 0 && (
+                            <div className="col-span-full py-20 text-center">
+                                <div className="bg-slate-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-dashed border-slate-200">
+                                    <Search className="w-8 h-8 text-slate-300" />
+                                </div>
+                                <h3 className="text-lg font-bold text-slate-800">Nenhuma empresa encontrada</h3>
+                                <p className="text-slate-500 text-sm">Tente ajustar os seus filtros de pesquisa.</p>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

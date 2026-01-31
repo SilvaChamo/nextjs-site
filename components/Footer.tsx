@@ -124,23 +124,19 @@ export function Footer() {
                 </div>
 
                 {/* Bottom Bar: Legal Links & Socials */}
-                <div className="border-t border-white/10 mt-10">
-                    <div className="container-site py-8 flex flex-col md:flex-row justify-between items-center gap-8">
-                        {/* Legal Links */}
-                        <div className="flex flex-wrap justify-center md:justify-start gap-x-8 gap-y-3 text-gray-400 text-[11px] font-bold uppercase tracking-[0.1em]">
-                            <Link href="/politica-privacidade" className="hover:text-[#f97316] transition-colors">Política de Privacidade</Link>
-                            <Link href="/termos" className="hover:text-[#f97316] transition-colors">Termos e Condições</Link>
-                            <Link href="/suporte" className="hover:text-[#f97316] transition-colors">Suporte</Link>
-                            <Link href="/design-system" className="hover:text-[#f97316] transition-colors text-emerald-500/40">Kit Padrão</Link>
-                        </div>
-
-                        {/* Social Media Container */}
-                        <div className="flex items-center gap-3 bg-white/5 p-2 rounded-full border border-white/5 backdrop-blur-sm">
-                            <SocialIcon Icon={Facebook} href="https://facebook.com/baseagrodata" />
-                            <SocialIcon Icon={Linkedin} href="https://linkedin.com/company/baseagrodata" />
-                            <SocialIcon Icon={Instagram} href="https://instagram.com/baseagrodata" />
-                            <SocialIcon Icon={Youtube} href="https://youtube.com/@baseagrodata" />
-                        </div>
+                <div className="border-t border-gray-500 py-6 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-gray-400 text-[10px] font-black uppercase tracking-widest">
+                        <Link href="/politica-privacidade" className="hover:text-[#f97316] transition-colors">Política de privacidade</Link>
+                        <Link href="/termos" className="hover:text-[#f97316] transition-colors">Termos e condições</Link>
+                        <Link href="/suporte" className="hover:text-[#f97316] transition-colors">Suporte</Link>
+                        <Link href="/design-system" className="hover:text-[#f97316] transition-colors text-emerald-600/50">Kit Padrão</Link>
+                        <Link href="/admin" className="hover:text-[#f97316] transition-colors text-gray-800 hover:text-emerald-600">Cozinha</Link>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <SocialIcon Icon={Facebook} />
+                        <SocialIcon Icon={Linkedin} />
+                        <SocialIcon Icon={Instagram} />
+                        <SocialIcon Icon={Youtube} />
                     </div>
                 </div>
             </div>
@@ -158,14 +154,9 @@ export function Footer() {
     );
 }
 
-function SocialIcon({ Icon, href = "#" }: { Icon: any; href?: string }) {
+function SocialIcon({ Icon }: { Icon: any }) {
     return (
-        <a
-            href={href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="size-9 rounded-full border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-[#f97316] hover:border-[#f97316] transition-all duration-300 shadow-sm"
-        >
+        <a href="#" className="w-8 h-8 rounded-full border border-gray-500 flex items-center justify-center text-gray-400 hover:text-[#22c55e] hover:border-[#22c55e] transition-all">
             <Icon className="w-4 h-4" />
         </a>
     );

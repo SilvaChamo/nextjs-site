@@ -337,6 +337,22 @@ export default function AdminContactosPage() {
                 loading={loading}
                 onEdit={openEditModal}
                 onDelete={handleDelete}
+                customActions={(row) => (
+                    <button
+                        onClick={async () => {
+                            const newStatus = !row.is_verified;
+                            await supabase.from('contacts').update({ is_verified: newStatus }).eq('id', row.id);
+                            fetchContacts();
+                        }}
+                        className={`size-8 rounded-lg flex items-center justify-center transition-all shadow-sm ${row.is_verified
+                                ? 'bg-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white'
+                                : 'bg-slate-100 text-slate-400 hover:bg-emerald-500 hover:text-white'
+                            }`}
+                        title={row.is_verified ? "Verificado" : "Marcar como verificado"}
+                    >
+                        <CheckCircle2 className="w-4 h-4" />
+                    </button>
+                )}
             />
 
             {/* Modal */}

@@ -30,6 +30,7 @@ interface AdminShellProps {
 export function AdminShell({ children, userEmail }: AdminShellProps) {
     const pathname = usePathname();
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const isActive = (path: string) => {
         if (path === "/admin" && pathname === "/admin") return true;
@@ -57,9 +58,32 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
 
     return (
         <div className="flex min-h-screen bg-slate-100 font-sans">
+            {/* Mobile Header */}
+            <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-emerald-950 border-b border-white/5 z-[60] flex items-center justify-between px-4">
+                <Link href="/" className="flex items-center gap-3 overflow-hidden">
+                    <img src="/admin-icon.png" alt="Logo" className="w-8 h-8 object-contain" />
+                    <span className="font-black text-lg tracking-wider text-white">PAINEL</span>
+                </Link>
+                <button
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    className="p-2 text-slate-400 hover:text-white"
+                >
+                    <Menu className="w-6 h-6" />
+                </button>
+            </header>
+
+            {/* Sidebar Overlay (Mobile) */}
+            {isMobileMenuOpen && (
+                <div
+                    className="lg:hidden fixed inset-0 bg-black/60 z-[70]"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                />
+            )}
+
             <aside
-                className={`fixed inset-y-0 left-0 z-50 bg-gradient-to-b from-emerald-950 to-slate-950 text-white transition-all duration-300 transform shadow-xl ${isCollapsed ? "w-20" : "w-64"
-                    } hidden lg:block`}
+                className={`fixed inset-y-0 left-0 z-[80] bg-gradient-to-b from-emerald-950 to-slate-950 text-white transition-all duration-300 transform shadow-xl 
+                    ${isCollapsed ? "w-20" : "w-64"} 
+                    ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
             >
                 <div className="flex flex-col h-full border-r border-slate-800">
                     {/* Header */}
@@ -149,7 +173,7 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
             </aside>
 
             {/* Main Content */}
-            <main className={`flex-1 bg-slate-100 min-h-screen transition-all duration-300 ${isCollapsed ? "lg:ml-20" : "lg:ml-64"}`}>
+            <main className={`flex-1 bg-slate-100 min-h-screen transition-all duration-300 mt-16 lg:mt-0 ${isCollapsed ? "lg:ml-20" : "lg:ml-64"}`}>
                 <div className="p-8 max-w-7xl mx-auto">
                     {children}
                 </div>

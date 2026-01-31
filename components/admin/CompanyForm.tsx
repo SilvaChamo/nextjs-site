@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Loader2, X, Globe, Phone, Mail, MapPin, Building2, FileText, Target, Eye, Heart, List } from "lucide-react";
-import { MOZ_DATA, SECTORS, VALUE_CHAINS } from "@/lib/agro-data";
+import { MOZ_DATA, SECTORS, VALUE_CHAINS, COMPANY_DESIGNATIONS } from "@/lib/agro-data";
 import { toast } from "sonner";
 
 interface CompanyFormProps {
@@ -26,7 +26,9 @@ export function CompanyForm({ onClose, onSuccess, initialData }: CompanyFormProp
         district: initialData?.district || "",
         category: initialData?.category || initialData?.sector || "", // Fallback for sector
         value_chain: initialData?.value_chain || "",
+        type: initialData?.type || "",
         logo_url: initialData?.logo_url || "",
+        portfolio_url: initialData?.portfolio_url || "",
         banner_url: initialData?.banner_url || "",
         description: initialData?.description || "",
         mission: initialData?.mission || "",
@@ -96,6 +98,45 @@ export function CompanyForm({ onClose, onSuccess, initialData }: CompanyFormProp
         setFormData(prev => ({ ...prev, services: newServices }));
     };
 
+    const handlePortfolioUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (file.type !== "application/pdf") {
+            toast.error("Por favor, suba um ficheiro PDF.");
+            return;
+        }
+
+        if (file.size > 1024 * 1024) {
+            toast.error("O ficheiro deve ter menos de 1MB.");
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const fileName = `portfolio_${Math.random().toString(36).substring(2)}_${Date.now()}.pdf`;
+            const filePath = `portfolios/${fileName}`;
+
+            const { error: uploadError } = await supabase.storage
+                .from('Baseagrodata files')
+                .upload(filePath, file);
+
+            if (uploadError) throw uploadError;
+
+            const { data: { publicUrl } } = supabase.storage
+                .from('Baseagrodata files')
+                .getPublicUrl(filePath);
+
+            setFormData(prev => ({ ...prev, portfolio_url: publicUrl }));
+            toast.success("Portfólio carregado!");
+        } catch (error: any) {
+            console.error(error);
+            toast.error("Erro no upload: " + error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
             <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
@@ -147,6 +188,17 @@ export function CompanyForm({ onClose, onSuccess, initialData }: CompanyFormProp
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="flex flex-col gap-2">
+                                <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Designação (Tipo)</label>
+                                <select
+                                    value={formData.type}
+                                    onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                                    className="p-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                >
+                                    <option value="">Selecione...</option>
+                                    {COMPANY_DESIGNATIONS.map(d => <option key={d} value={d}>{d}</option>)}
+                                </select>
+                            </div>
+                            <div className="flex flex-col gap-2">
                                 <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Cadeia de Valor</label>
                                 <select
                                     value={formData.value_chain}
@@ -157,30 +209,30 @@ export function CompanyForm({ onClose, onSuccess, initialData }: CompanyFormProp
                                     {VALUE_CHAINS.map(vc => <option key={vc} value={vc}>{vc}</option>)}
                                 </select>
                             </div>
-                            <div className="flex flex-col gap-2">
-                                <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Sector de Actividade</label>
-                                <div className="relative">
-                                    <select
-                                        value={SECTORS.includes(formData.category) ? formData.category : "Outro"}
-                                        onChange={(e) => {
-                                            const val = e.target.value;
-                                            setFormData(prev => ({ ...prev, category: val === "Outro" ? "" : val }));
-                                        }}
-                                        className="p-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
-                                    >
-                                        <option value="">Selecione...</option>
-                                        {SECTORS.map(s => <option key={s} value={s}>{s}</option>)}
-                                    </select>
-                                    {/* Custom category input if needed, mirroring user dashboard logic */}
-                                    {((!SECTORS.includes(formData.category) && formData.category !== "") || (!SECTORS.includes(formData.category) && formData.category === "")) && (
-                                        <input
-                                            value={formData.category}
-                                            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                            placeholder="Especifique o sector..."
-                                            className="mt-2 p-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
-                                        />
-                                    )}
-                                </div>
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <label className="text-xs font-black uppercase text-slate-500 tracking-widest">Sector de Actividade</label>
+                            <div className="relative">
+                                <select
+                                    value={SECTORS.includes(formData.category) ? formData.category : "Outro"}
+                                    onChange={(e) => {
+                                        const val = e.target.value;
+                                        setFormData(prev => ({ ...prev, category: val === "Outro" ? "" : val }));
+                                    }}
+                                    className="p-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                >
+                                    <option value="">Selecione...</option>
+                                    {SECTORS.map(s => <option key={s} value={s}>{s}</option>)}
+                                </select>
+                                {((!SECTORS.includes(formData.category) && formData.category !== "") || (!SECTORS.includes(formData.category) && formData.category === "")) && (
+                                    <input
+                                        value={formData.category}
+                                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                        placeholder="Especifique o sector..."
+                                        className="mt-2 p-3 bg-slate-50 border-none rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                                    />
+                                )}
                             </div>
                         </div>
                     </div>
@@ -350,14 +402,42 @@ export function CompanyForm({ onClose, onSuccess, initialData }: CompanyFormProp
                     <div className="space-y-4">
                         <div className="flex items-center justify-between border-b border-emerald-100 pb-2 mb-4">
                             <h3 className="text-xs font-black uppercase text-emerald-600 tracking-widest">Portfólio de Serviços</h3>
-                            <button
-                                type="button"
-                                onClick={addService}
-                                className="text-[10px] font-black uppercase text-emerald-600 hover:text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full transition-colors"
-                            >
-                                + Adicionar Serviço
-                            </button>
+                            <div className="flex items-center gap-2">
+                                <label className="cursor-pointer text-[10px] font-black uppercase text-white bg-orange-500 hover:bg-orange-600 px-3 py-1 rounded-full transition-colors flex items-center gap-1">
+                                    <FileText className="w-3 h-3" />
+                                    {formData.portfolio_url ? "Alterar PDF" : "Subir PDF (Portfólio)"}
+                                    <input
+                                        type="file"
+                                        accept=".pdf"
+                                        onChange={handlePortfolioUpload}
+                                        className="hidden"
+                                    />
+                                </label>
+                                <button
+                                    type="button"
+                                    onClick={addService}
+                                    className="text-[10px] font-black uppercase text-emerald-600 hover:text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full transition-colors"
+                                >
+                                    + Adicionar Serviço
+                                </button>
+                            </div>
                         </div>
+
+                        {formData.portfolio_url && (
+                            <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-100 flex items-center justify-between mb-4">
+                                <div className="flex items-center gap-2">
+                                    <FileText className="w-4 h-4 text-emerald-600" />
+                                    <span className="text-xs font-bold text-emerald-700">PDF do Portfólio carregado</span>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setFormData(prev => ({ ...prev, portfolio_url: "" }))}
+                                    className="p-1 hover:bg-emerald-100 rounded-full text-emerald-600"
+                                >
+                                    <X className="w-4 h-4" />
+                                </button>
+                            </div>
+                        )}
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             {formData.services.map((service: string, index: number) => (

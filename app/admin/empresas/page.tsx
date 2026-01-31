@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { AdminDataTable } from "@/components/admin/AdminDataTable";
 import { Button } from "@/components/ui/button";
-import { Building2, Globe, Phone, CheckCircle2, LayoutGrid, List, Pencil, Trash2, Plus, MapPin, Calendar } from "lucide-react";
+import { Building2, Globe, Phone, CheckCircle2, LayoutGrid, List, Pencil, Trash2, Plus, MapPin, Calendar, Archive, ArchiveRestore } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
@@ -41,10 +41,12 @@ export default function AdminEmpresasPage() {
     const filteredData = data.filter(item => {
         // Status Filter
         let matchesFilter = true;
-        if (filter === 'Públicas') matchesFilter = item.type === 'Publica' || item.sector?.includes('Public');
-        else if (filter === 'Privadas') matchesFilter = item.type === 'Privada' || !item.type;
-        else if (filter === 'Internacionais') matchesFilter = item.type === 'Internacional' || item.name.includes('International');
-        else if (filter === 'Associações') matchesFilter = item.type === 'Associacao' || item.name.includes('Associação');
+        if (filter === 'Públicas') matchesFilter = (item.type === 'Empresa Pública' || item.sector?.includes('Public')) && !item.is_archived;
+        else if (filter === 'Privadas') matchesFilter = (item.type === 'Empresa Privada' || !item.type) && !item.is_archived;
+        else if (filter === 'Internacionais') matchesFilter = (item.type === 'ONG Internacional' || item.name.includes('International')) && !item.is_archived;
+        else if (filter === 'Associações') matchesFilter = (item.type === 'Associação' || item.type === 'Cooperativa Agrícola' || item.name.includes('Associação')) && !item.is_archived;
+        else if (filter === 'Arquivadas') matchesFilter = item.is_archived === true;
+        else if (filter === 'Todas') matchesFilter = !item.is_archived;
 
         // Search Filter
         const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -64,16 +66,22 @@ export default function AdminEmpresasPage() {
     const confirmDelete = async () => {
         if (!itemToProcess) return;
         try {
-            const { error } = await supabase
-                .from('companies')
-                .delete()
-                .eq('id', itemToProcess.id);
+            console.log("Tentando eliminar empresa (via RPC) ID:", itemToProcess.id);
 
-            if (error) throw error;
-            toast.success("Empresa eliminada!");
+            const { data, error } = await supabase.rpc('delete_company_as_admin', {
+                target_company_id: itemToProcess.id
+            });
+
+            if (error) {
+                console.error("Erro no RPC de eliminação:", error);
+                throw error;
+            }
+
+            toast.success("Empresa eliminada com sucesso!");
             fetchData();
         } catch (error: any) {
-            toast.error("Erro ao eliminar: " + error.message);
+            console.error("Erro completo de eliminação:", error);
+            toast.error("Erro ao eliminar: " + (error.message || "Erro de permissão"));
         } finally {
             setShowDeleteConfirm(false);
             setItemToProcess(null);
@@ -96,6 +104,20 @@ export default function AdminEmpresasPage() {
             fetchData();
         } catch (err: any) {
             toast.error("Erro ao verificar: " + err.message);
+        }
+    };
+
+    const toggleArchive = async (row: any) => {
+        try {
+            const { error } = await supabase
+                .from('companies')
+                .update({ is_archived: !row.is_archived })
+                .eq('id', row.id);
+            if (error) throw error;
+            toast.success(row.is_archived ? "Empresa reposta!" : "Empresa arquivada!");
+            fetchData();
+        } catch (err: any) {
+            toast.error("Erro: " + err.message);
         }
     };
 
@@ -138,6 +160,11 @@ export default function AdminEmpresasPage() {
                     <span className="font-excep font-black text-slate-800 text-sm">{val}</span>
                 </div>
             )
+        },
+        {
+            header: "Tipo",
+            key: "type",
+            render: (val: string) => <span className="text-xs font-bold text-slate-500">{val || "N/A"}</span>
         },
         {
             header: "Sector",
@@ -191,6 +218,14 @@ export default function AdminEmpresasPage() {
                     >
                         <CheckCircle2 className="w-4 h-4" />
                     </button>
+                    <button
+                        onClick={() => toggleArchive(row)}
+                        className={`p-1.5 rounded-full transition-colors ${row.is_archived ? 'bg-orange-100 text-orange-600' : 'bg-slate-100 text-slate-300 hover:bg-slate-200'}`}
+                        title={row.is_archived ? "Repor Empresa" : "Arquivar Empresa"}
+                    >
+                        {row.is_archived ? <ArchiveRestore className="w-4 h-4" /> : <Archive className="w-4 h-4" />}
+                    </button>
+                    {row.is_archived && <span className="bg-slate-600 text-white px-2 py-0.5 rounded text-[10px] font-bold">Arquivada</span>}
                     {row.plan === 'partner' && <span className="bg-emerald-950 text-white px-2 py-0.5 rounded text-[10px] font-bold">Parceiro</span>}
                     {row.plan === 'parceiro' && <span className="bg-emerald-950 text-white px-2 py-0.5 rounded text-[10px] font-bold">Parceiro</span>}
                     {row.plan === 'premium' && <span className="bg-orange-500 text-white px-2 py-0.5 rounded text-[10px] font-bold">Premium</span>}
@@ -240,6 +275,7 @@ export default function AdminEmpresasPage() {
                             <option value="Privadas">Privadas</option>
                             <option value="Internacionais">Internacionais</option>
                             <option value="Associações">Associações</option>
+                            <option value="Arquivadas">Arquivadas</option>
                         </select>
 
                         {/* Grid/List Toggle */}
@@ -371,6 +407,9 @@ export default function AdminEmpresasPage() {
 
                                         {/* Delete Overlay */}
                                         <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 p-1 rounded-lg shadow-sm">
+                                            <button onClick={() => toggleArchive(item)} className="p-1.5 hover:bg-orange-50 text-orange-600 rounded" title={item.is_archived ? "Repor" : "Arquivar"}>
+                                                {item.is_archived ? <ArchiveRestore className="w-4 h-4" /> : <Archive className="w-4 h-4" />}
+                                            </button>
                                             <button onClick={() => handleDelete(item)} className="p-1.5 hover:bg-rose-50 text-rose-600 rounded">
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
@@ -431,6 +470,7 @@ export default function AdminEmpresasPage() {
                                                 >
                                                     <CheckCircle2 className="w-4 h-4" />
                                                 </button>
+                                                {item.is_archived && <span className="bg-slate-600 text-white px-2 py-0.5 rounded text-[10px] font-bold">Arquivada</span>}
                                                 {(item.plan === 'partner' || item.plan === 'parceiro') && <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-[10px] font-bold">Parceiro</span>}
                                                 {(item.plan === 'premium' || item.plan === 'profissional') && <span className="bg-orange-100 text-orange-600 px-2 py-0.5 rounded text-[10px] font-bold">Premium</span>}
                                                 {item.plan === 'basic' && <span className="bg-blue-100 text-blue-600 px-2 py-0.5 rounded text-[10px] font-bold">Básico</span>}

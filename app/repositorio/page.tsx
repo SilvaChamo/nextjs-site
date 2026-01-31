@@ -37,7 +37,7 @@ export default function RepositorioPage() {
                     docsCount
                 ] = await Promise.all([
                     supabase.from('articles').select('*', { count: 'exact', head: true }).eq('type', 'article'),
-                    supabase.from('companies').select('*', { count: 'exact', head: true }),
+                    supabase.from('companies').select('*', { count: 'exact', head: true }).eq('is_archived', false),
                     supabase.from('products').select('*', { count: 'exact', head: true }),
                     supabase.from('professionals').select('*', { count: 'exact', head: true }),
                     supabase.from('properties').select('*', { count: 'exact', head: true }),

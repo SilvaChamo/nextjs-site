@@ -21,3 +21,12 @@ export const SECTORS = [
 export const VALUE_CHAINS = [
     "Produtor", "Consumidor", "Fornecedor", "Prestador de Serviços"
 ];
+
+export const COMPANY_DESIGNATIONS = [
+    "Empresa Pública",
+    "Empresa Privada",
+    "Associação",
+    "Cooperativa Agrícola",
+    "ONG Internacional",
+    "Outros"
+];

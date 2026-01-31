@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { StandardBlogTemplate } from "@/components/StandardBlogTemplate";
-import { CheckCircle2, MapPin, Phone, Mail, Globe, Share2, Building2, Package, ArrowRight, Link as LinkIcon, MessageCircle, Facebook, Linkedin, Twitter } from 'lucide-react';
+import { CheckCircle2, MapPin, Phone, Mail, Globe, Share2, Building2, Package, ArrowRight, FileText, Link as LinkIcon, MessageCircle, Facebook, Linkedin, Twitter } from 'lucide-react';
 import Link from 'next/link';
 import { MapNavigation } from '@/components/MapNavigation';
 
@@ -262,7 +262,20 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                 {/* Who We Are & MVV Section */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-agro items-stretch">
                     <div className="card-agro text-left flex flex-col">
-                        <h2 className="mb-4">Quem Somos</h2>
+                        <div className="flex items-center justify-between mb-4">
+                            <h2 className="mb-0">Quem Somos</h2>
+                            {company.portfolio_url && (
+                                <a
+                                    href={company.portfolio_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-2 px-4 py-2 bg-orange-50 text-orange-600 hover:bg-orange-100 rounded-xl text-xs font-black uppercase tracking-tighter transition-all shadow-sm border border-orange-100"
+                                >
+                                    <FileText className="w-4 h-4" />
+                                    Baixar Portfólio
+                                </a>
+                            )}
+                        </div>
                         <div className="prose prose-slate max-w-none font-sans text-slate-500 leading-relaxed flex-1">
                             <p className="whitespace-pre-wrap">{company.description}</p>
                         </div>

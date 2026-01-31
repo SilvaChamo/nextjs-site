@@ -365,20 +365,7 @@ export default function MapNavigationInner({ companyCoords: initialCoords, compa
                     </div>
                 </div>
 
-                {/* Horizontal Steps Bar */}
-                {!selectingLocation && routes.driving && routes.driving.steps.length > 0 && (
-                    <div className="bg-slate-50 border-t border-slate-100 shadow-inner">
-                        <div className="container-site py-1.5 flex items-center gap-3 overflow-x-auto no-scrollbar">
-                            <span className="text-[8px] font-black text-slate-400 uppercase tracking-[0.2em] whitespace-nowrap">Itinerário:</span>
-                            {routes.driving.steps.map((step, idx) => (
-                                <React.Fragment key={idx}>
-                                    <span className="text-[9px] font-extrabold text-slate-600 whitespace-nowrap bg-white px-2 py-0.5 rounded border border-slate-100">{step}</span>
-                                    {idx < routes.driving!.steps.length - 1 && <ArrowRight className="w-2.5 h-2.5 text-slate-300" />}
-                                </React.Fragment>
-                            ))}
-                        </div>
-                    </div>
-                )}
+                {/* Horizontal Steps Bar (Removed as per user request) */}
             </div>
 
             <div className={`relative flex-1 ${selectingLocation ? 'cursor-crosshair' : ''}`}>

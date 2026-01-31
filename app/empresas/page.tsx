@@ -71,7 +71,7 @@ export default function EmpresasPage() {
             sidebarComponents={
                 <div className="space-y-agro">
                     {/* Filters Card */}
-                    <div className="card-agro-static bg-white/80 backdrop-blur-sm border-slate-100 shadow-xl shadow-slate-200/20">
+                    <div className="card-agro-static bg-white border-2 border-emerald-500/15 shadow-[0_20px_50px_rgba(0,0,0,0.08)] ring-1 ring-slate-200/50">
                         <h4 className="flex items-center gap-2 mb-6 text-slate-800 font-black uppercase text-xs tracking-tighter">
                             <Search className="w-4 h-4 text-[#f97316]" />
                             Filtrar por Sectores
@@ -139,20 +139,22 @@ export default function EmpresasPage() {
 
                             <button
                                 onClick={handleApplyFilters}
-                                className="group relative w-full h-11 bg-slate-900 border-none rounded-xl overflow-hidden transition-all hover:bg-emerald-700 active:scale-95 shadow-lg shadow-slate-200"
+                                className="group relative w-full h-11 bg-emerald-600 border-none rounded-md overflow-hidden transition-all hover:bg-[#f97316] active:scale-95 shadow-lg shadow-emerald-100"
                             >
-                                <div className="absolute inset-0 bg-gradient-to-r from-[#f97316] to-[#ea580c] opacity-0 group-hover:opacity-10 transition-opacity" />
-                                <span className="relative text-xs font-black text-white uppercase tracking-widest">Aplicar Filtros</span>
+                                <span className="relative z-10 text-xs font-black text-white uppercase tracking-widest flex items-center justify-center gap-2">
+                                    Aplicar Filtros
+                                </span>
                             </button>
                         </div>
                     </div>
 
                     {/* Stats Card */}
-                    <div className="card-agro-static bg-gradient-to-br from-emerald-600 to-emerald-800 text-center py-8 border-none shadow-xl shadow-emerald-200/50">
-                        <Building2 className="w-12 h-12 text-white/20 mx-auto mb-4" />
-                        <p className="text-[10px] font-black text-white/60 uppercase tracking-widest mb-1">Empresas Registadas</p>
-                        <p className="text-3xl font-black text-white tracking-tighter">
-                            {loading ? "..." : companies.length}
+                    <div className="card-agro-static bg-gradient-to-br from-emerald-600 to-emerald-800 text-center py-5 border-none shadow-xl shadow-emerald-200/50">
+                        <p className="text-4xl font-black text-white tracking-tighter mb-1">
+                            {loading ? "..." : filteredCompanies.length}
+                        </p>
+                        <p className="text-[9px] font-black text-white/60 uppercase tracking-widest">
+                            Empresas Encontradas
                         </p>
                     </div>
                 </div>

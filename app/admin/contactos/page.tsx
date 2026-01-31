@@ -354,7 +354,7 @@ export default function AdminContactosPage() {
     }
 
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col mt-[25px]">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-0 pb-0">
                 <div className="flex items-center gap-4">
                     <h1 className="text-2xl font-black text-slate-800 tracking-tight m-0 p-0 leading-none">Gestão de Contactos</h1>

@@ -137,7 +137,7 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
             }
             bottomFullWidthContent={
                 /* Map Section - Interactive Yango-style Navigation */
-                <div className="card-agro p-0 overflow-hidden h-[250px] md:h-[350px] relative group border-2 border-slate-100 shadow-2xl">
+                <div className="card-agro p-0 overflow-hidden h-[330px] md:h-[450px] relative group border-2 border-slate-100 shadow-2xl">
                     {mounted && (
                         <MapNavigation
                             companyCoords={(() => {

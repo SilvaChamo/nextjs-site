@@ -44,7 +44,7 @@ export function AdminDataTable({
     return (
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
             {/* Header */}
-            <div className="p-6 border-b border-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="px-6 py-4 border-b border-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                     <div className="w-1.5 h-6 bg-emerald-500 rounded-full" />
                     <h2 className="text-lg font-black text-slate-800 tracking-tight">{title}</h2>
@@ -75,8 +75,8 @@ export function AdminDataTable({
             </div>
 
             {/* Table */}
-            <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
+            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+                <table className="w-full text-left border-collapse min-w-[1000px]">
                     <thead className="bg-slate-50/50">
                         <tr>
                             {columns.map((col) => (
@@ -85,7 +85,7 @@ export function AdminDataTable({
                                 </th>
                             ))}
                             {(onEdit || onDelete || customActions) && (
-                                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 border-b border-slate-100 text-right">
+                                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 border-b border-slate-100 text-right sticky right-0 bg-slate-50/50 backdrop-blur-sm z-10 shadow-[-8px_0_12px_-4px_rgba(0,0,0,0.05)]">
                                     Acções
                                 </th>
                             )}
@@ -113,13 +113,13 @@ export function AdminDataTable({
                                         </td>
                                     ))}
                                     {(onEdit || onDelete || customActions) && (
-                                        <td className="px-6 py-4 text-right">
+                                        <td className="px-6 py-4 text-right sticky right-0 bg-white/80 group-hover:bg-slate-50/90 backdrop-blur-sm z-10 shadow-[-8px_0_12px_-4px_rgba(0,0,0,0.05)] transition-colors">
                                             <div className="flex items-center justify-end gap-2">
                                                 {customActions && customActions(row)}
                                                 {onEdit && (
                                                     <button
                                                         onClick={() => onEdit(row)}
-                                                        className="size-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all opacity-0 group-hover:opacity-100"
+                                                        className="size-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
                                                         title="Editar"
                                                     >
                                                         <Edit2 className="w-3.5 h-3.5" />
@@ -128,15 +128,10 @@ export function AdminDataTable({
                                                 {onDelete && (
                                                     <button
                                                         onClick={() => onDelete(row)}
-                                                        className="size-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-600 hover:text-white transition-all opacity-0 group-hover:opacity-100"
+                                                        className="size-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-600 hover:text-white transition-all shadow-sm"
                                                         title="Eliminar"
                                                     >
                                                         <Trash2 className="w-3.5 h-3.5" />
-                                                    </button>
-                                                )}
-                                                {!customActions && !onEdit && !onDelete && (
-                                                    <button className="size-8 rounded-lg text-slate-400 flex items-center justify-center hover:bg-slate-100 group-hover:opacity-0 transition-all">
-                                                        <MoreHorizontal className="w-4 h-4" />
                                                     </button>
                                                 )}
                                             </div>

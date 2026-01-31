@@ -592,6 +592,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                         {/* Left Side: Image */}
                                         <div className="w-full md:w-56 shrink-0">
                                             <ImageUpload
+                                                label="Imagem do Produto"
                                                 value={newProduct.image_url}
                                                 onChange={(url) => setNewProduct({ ...newProduct, image_url: url })}
                                                 recommendedSize="400x400"
@@ -617,7 +618,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                                     type="number"
                                                     value={newProduct.price}
                                                     onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
-                                                    placeholder="Preço (Somente números)"
+                                                    placeholder="Preço (apenas números sem espaço)"
                                                     className="px-4 py-3 bg-white border border-slate-200 rounded-lg text-sm font-medium w-full outline-none focus:ring-2 focus:ring-emerald-500 transition-all shadow-sm placeholder:text-slate-400 placeholder:font-normal"
                                                 />
                                                 <div className="relative">

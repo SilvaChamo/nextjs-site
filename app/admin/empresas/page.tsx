@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { AdminDataTable } from "@/components/admin/AdminDataTable";
 import { Button } from "@/components/ui/button";
-import { Building2, Globe, Phone, CheckCircle2, MessageCircle, LayoutGrid, List, Pencil, Trash2, Plus, MapPin } from "lucide-react";
+import { Building2, Globe, Phone, CheckCircle2, LayoutGrid, List, Pencil, Trash2, Plus, MapPin, Calendar } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function AdminEmpresasPage() {
@@ -116,27 +116,45 @@ export default function AdminEmpresasPage() {
                 </div>
             )
         },
-        { header: "Sector", key: "sector" },
-        { header: "Localização", key: "location", render: (val: string) => val ? <span className="flex items-center gap-1 text-slate-400 text-xs"><MapPin className="w-3 h-3" />{val}</span> : null },
+        {
+            header: "Sector",
+            key: "category",
+            render: (val: string) => val || <span className="text-slate-300 text-xs">Não definido</span>
+        },
+        {
+            header: "Localização",
+            key: "province",
+            render: (val: string, row: any) => {
+                const location = [row.district, row.province].filter(Boolean).join(', ') || row.address;
+                return location ? <span className="flex items-center gap-1 text-slate-400 text-xs"><MapPin className="w-3 h-3" />{location}</span> : null;
+            }
+        },
         {
             header: "Contacto",
-            key: "phone",
-            render: (val: string) => val ? (
-                <span className="flex items-center gap-1 text-slate-400">
-                    <Phone className="w-3 h-3" />
-                    {val}
-                </span>
-            ) : null
+            key: "contact",
+            render: (val: string, row: any) => {
+                const phone = val || row.phone || row.secondary_contact;
+                return phone ? (
+                    <span className="flex items-center gap-1 text-slate-400">
+                        <Phone className="w-3 h-3" />
+                        {phone}
+                    </span>
+                ) : null;
+            }
         },
         {
             header: "Website",
             key: "website",
-            render: (val: string) => val ? (
-                <a href={val} target="_blank" className="text-emerald-500 hover:underline flex items-center gap-1">
-                    <Globe className="w-3 h-3" />
-                    Link
-                </a>
-            ) : null
+            render: (val: string, row: any) => {
+                const url = val || row.activity;
+                if (!url) return null;
+                return (
+                    <a href={url.startsWith('http') ? url : `https://${url}`} target="_blank" rel="noopener noreferrer" className="text-emerald-500 hover:underline flex items-center gap-1">
+                        <Globe className="w-3 h-3" />
+                        Link
+                    </a>
+                );
+            }
         },
         {
             header: "Estado",
@@ -150,8 +168,13 @@ export default function AdminEmpresasPage() {
                     >
                         <CheckCircle2 className="w-4 h-4" />
                     </button>
+                    {row.plan === 'partner' && <span className="bg-emerald-950 text-white px-2 py-0.5 rounded text-[10px] font-bold">Parceiro</span>}
                     {row.plan === 'parceiro' && <span className="bg-emerald-950 text-white px-2 py-0.5 rounded text-[10px] font-bold">Parceiro</span>}
+                    {row.plan === 'premium' && <span className="bg-orange-500 text-white px-2 py-0.5 rounded text-[10px] font-bold">Premium</span>}
                     {row.plan === 'profissional' && <span className="bg-orange-500 text-white px-2 py-0.5 rounded text-[10px] font-bold">Pro</span>}
+                    {row.plan === 'basic' && <span className="bg-blue-500 text-white px-2 py-0.5 rounded text-[10px] font-bold">Básico</span>}
+                    {row.plan === 'free' && <span className="bg-slate-200 text-slate-600 px-2 py-0.5 rounded text-[10px] font-bold">Gratuito</span>}
+                    {(!row.plan || row.plan === '' || row.plan === null) && <span className="bg-slate-100 text-slate-400 px-2 py-0.5 rounded text-[10px] font-bold">Sem Plano</span>}
                 </div>
             )
         }
@@ -239,26 +262,18 @@ export default function AdminEmpresasPage() {
                                 <Button
                                     size="sm"
                                     variant="outline"
-                                    className="h-7 w-7 p-0 rounded-full border-green-200 text-green-600 hover:bg-green-50 mr-2"
+                                    className="h-7 w-7 p-0 rounded-full border-green-500 text-green-500 hover:bg-green-50 mr-2"
                                     title="Contactar via WhatsApp"
                                     onClick={() => {
-                                        const num = row.contact || row.phone;
+                                        const num = row.contact || row.phone || row.secondary_contact;
                                         if (num) window.open(`https://wa.me/${num.replace(/\s+/g, '')}`, '_blank');
                                         else alert("Sem contacto");
                                     }}
                                 >
-                                    <MessageCircle className="w-3.5 h-3.5" />
+                                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                                    </svg>
                                 </Button>
-                                {row.plan !== 'profissional' && row.plan !== 'parceiro' && (
-                                    <Button
-                                        size="sm"
-                                        variant="ghost"
-                                        className="h-7 text-[10px] font-bold uppercase text-orange-500 hover:text-orange-600 hover:bg-orange-50 mr-2"
-                                        onClick={() => activatePremium(row)}
-                                    >
-                                        Activar Pro
-                                    </Button>
-                                )}
                             </div>
                         )}
                     />
@@ -347,10 +362,10 @@ export default function AdminEmpresasPage() {
                                         {/* Avatar */}
                                         <div className="-mt-10 mb-3 relative z-10">
                                             {item.logo_url ? (
-                                                <img src={item.logo_url} alt={item.name} className="size-20 rounded-2xl object-cover bg-white p-1 shadow-sm" />
+                                                <img src={item.logo_url} alt={item.name} className="size-14 rounded-xl object-cover bg-white p-1 shadow-sm" />
                                             ) : (
-                                                <div className="size-20 rounded-2xl bg-white border-4 border-white flex items-center justify-center text-slate-400 shadow-sm">
-                                                    <Building2 className="w-8 h-8" />
+                                                <div className="size-14 rounded-xl bg-white border-4 border-white flex items-center justify-center text-slate-400 shadow-sm">
+                                                    <Building2 className="w-6 h-6" />
                                                 </div>
                                             )}
                                         </div>
@@ -359,29 +374,36 @@ export default function AdminEmpresasPage() {
                                         <div>
                                             <h3 className="font-bold text-slate-900 line-clamp-1 text-lg mb-1">{item.name}</h3>
                                             <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">
-                                                {item.sector || "Entidade"}
+                                                {item.category || item.activity || "Entidade"}
                                             </p>
                                         </div>
 
                                         {/* Info Grid */}
                                         <div className="mt-4 space-y-2 text-xs text-slate-500">
-                                            {(item.phone || item.contact) && (
+                                            {(item.contact || item.phone || item.secondary_contact) && (
                                                 <div className="flex items-center gap-2">
                                                     <Phone className="w-3.5 h-3.5 text-emerald-500" />
-                                                    {item.phone || item.contact}
+                                                    {item.contact || item.phone || item.secondary_contact}
                                                 </div>
                                             )}
-                                            {item.location && (
+                                            {(item.district || item.province || item.address) && (
                                                 <div className="flex items-center gap-2">
                                                     <MapPin className="w-3.5 h-3.5 text-emerald-500" />
-                                                    {item.location}
+                                                    {[item.district, item.province].filter(Boolean).join(', ') || item.address}
+                                                </div>
+                                            )}
+                                            {/* Show updated_at if the company was edited (different from created_at) */}
+                                            {item.updated_at && item.updated_at !== item.created_at && (
+                                                <div className="flex items-center gap-2 text-orange-500">
+                                                    <Calendar className="w-3.5 h-3.5" />
+                                                    <span className="font-medium">Editado: {new Date(item.updated_at).toLocaleDateString('pt-MZ', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
                                                 </div>
                                             )}
                                         </div>
 
                                         {/* Footer */}
                                         <div className="mt-auto pt-4 flex items-center justify-between border-t border-slate-50/50 mt-4">
-                                            <div className="flex gap-2">
+                                            <div className="flex gap-2 items-center">
                                                 <button
                                                     onClick={() => toggleVerify(item)}
                                                     className={`p-1 rounded-full ${item.is_verified ? 'text-emerald-500 bg-emerald-50' : 'text-slate-300 hover:text-emerald-500'}`}
@@ -389,13 +411,16 @@ export default function AdminEmpresasPage() {
                                                 >
                                                     <CheckCircle2 className="w-4 h-4" />
                                                 </button>
-                                                {item.plan === 'profissional' && <span className="bg-orange-100 text-orange-600 px-2 py-0.5 rounded text-[10px] font-bold">PRO</span>}
+                                                {(item.plan === 'partner' || item.plan === 'parceiro') && <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-[10px] font-bold">Parceiro</span>}
+                                                {(item.plan === 'premium' || item.plan === 'profissional') && <span className="bg-orange-100 text-orange-600 px-2 py-0.5 rounded text-[10px] font-bold">Premium</span>}
+                                                {item.plan === 'basic' && <span className="bg-blue-100 text-blue-600 px-2 py-0.5 rounded text-[10px] font-bold">Básico</span>}
+                                                {item.plan === 'free' && <span className="bg-slate-100 text-slate-500 px-2 py-0.5 rounded text-[10px] font-bold">Gratuito</span>}
+                                                {(!item.plan || item.plan === '' || item.plan === null) && <span className="bg-slate-50 text-slate-400 px-2 py-0.5 rounded text-[10px] font-bold border border-slate-200">Sem Plano</span>}
                                             </div>
 
                                             <Button
                                                 onClick={() => router.push(`/admin/empresas/${item.id}`)}
-                                                variant="ghost"
-                                                className="text-[10px] font-bold uppercase text-slate-400 hover:text-emerald-600 ml-auto"
+                                                className="text-[10px] font-bold uppercase text-white bg-emerald-600 hover:bg-emerald-700 ml-auto h-7 px-3"
                                             >
                                                 Editar / Ver
                                             </Button>

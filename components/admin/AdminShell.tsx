@@ -18,7 +18,8 @@ import {
     PanelLeftOpen,
     Menu,
     ShoppingCart,
-    LandPlot
+    LandPlot,
+    Contact
 } from "lucide-react";
 
 interface AdminShellProps {
@@ -107,6 +108,7 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
                         <div className="flex flex-col gap-1">
                             <LinkItem href="/admin/estatisticas" icon={BarChart3} label="Estatísticas" />
                             <LinkItem href="/admin/mensagens" icon={MessageSquare} label="Interacções" />
+                            <LinkItem href="/admin/contactos" icon={Contact} label="Contactos" />
                         </div>
 
                         <div className={`my-2 border-b border-slate-700 ${isCollapsed ? "mx-2" : "mx-4"}`}></div>

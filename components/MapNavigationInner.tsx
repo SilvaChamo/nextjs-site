@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Polyline, useMap, ZoomControl, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Polyline, useMap, ZoomControl, useMapEvents, Tooltip } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Navigation, MapPin, MousePointer2, Car, Maximize, Target } from 'lucide-react';
+import { Navigation, MapPin, MousePointer2, Car, Maximize, Target, ArrowRight } from 'lucide-react';
 
 // Fix for Leaflet default icon issues in Next.js
 const DefaultIcon = L.icon({
@@ -34,6 +34,13 @@ const UserIcon = L.divIcon({
     className: '',
     iconSize: [32, 32],
     iconAnchor: [16, 16],
+});
+
+const StepIcon = L.divIcon({
+    html: `<div class="w-3 h-3 bg-white border-2 border-[#f97316] rounded-full shadow-md"></div>`,
+    className: '',
+    iconSize: [12, 12],
+    iconAnchor: [6, 6],
 });
 
 interface MapNavigationInnerProps {
@@ -82,11 +89,21 @@ export default function MapNavigationInner({ companyCoords: initialCoords, compa
     const [finalCompanyCoords, setFinalCompanyCoords] = useState<[number, number] | null>(initialCoords);
     const [userCoords, setUserCoords] = useState<[number, number] | null>(null);
     const [routes, setRoutes] = useState<{
-        driving?: { path: [number, number][], distance: string, duration: string }
+        driving?: {
+            path: [number, number][],
+            distance: string,
+            duration: string,
+            steps: string[]
+        }
     }>({});
     const [selectingLocation, setSelectingLocation] = useState(false);
     const [fitTrigger, setFitTrigger] = useState(0);
     const [gpsStatus, setGpsStatus] = useState<"idle" | "searching" | "found" | "error">("idle");
+    const [userAddress, setUserAddress] = useState<{ road?: string; suburb?: string }>({});
+    const [routeStepMarkers, setRouteStepMarkers] = useState<{ name: string; coords: [number, number] }[]>([]);
+    const [gpsAccuracy, setGpsAccuracy] = useState<number | null>(null);
+    const watchId = useRef<number | null>(null);
+    const lastFetchedCoords = useRef<string | null>(null);
 
     // 1. Geocoding logic if coords are missing
     useEffect(() => {
@@ -119,31 +136,44 @@ export default function MapNavigationInner({ companyCoords: initialCoords, compa
         geocodeCompany();
     }, [initialCoords, companyAddress]);
 
-    // 2. High Accuracy Geolocation
+    // 2. Continuous GPS Tracking
     const requestGPS = useCallback(() => {
         if ("geolocation" in navigator) {
             setGpsStatus("searching");
+
+            if (watchId.current !== null) {
+                navigator.geolocation.clearWatch(watchId.current);
+            }
+
             const options = {
                 enableHighAccuracy: true,
-                timeout: 10000,
+                timeout: 30000,
                 maximumAge: 0
             };
 
-            navigator.geolocation.getCurrentPosition(
+            watchId.current = navigator.geolocation.watchPosition(
                 (pos) => {
+                    console.log('[GPS] Position acquired:', pos.coords.latitude, pos.coords.longitude, 'Accuracy:', pos.coords.accuracy);
                     setUserCoords([pos.coords.latitude, pos.coords.longitude]);
+                    setGpsAccuracy(pos.coords.accuracy);
                     setGpsStatus("found");
                 },
                 (err) => {
-                    console.warn("GPS failed", err);
+                    console.warn('[GPS] Watch failed:', err.message);
                     setGpsStatus("error");
-                    // Try one more time without high accuracy as a last resort
                     navigator.geolocation.getCurrentPosition(
                         (pos) => {
+                            console.log('[GPS] Fallback position:', pos.coords.latitude, pos.coords.longitude);
                             setUserCoords([pos.coords.latitude, pos.coords.longitude]);
                             setGpsStatus("found");
                         },
-                        () => setGpsStatus("error")
+                        (fallbackErr) => {
+                            console.error('[GPS] Fallback also failed:', fallbackErr.message);
+                            setGpsStatus("error");
+                            // Automatically enable manual selection mode when GPS fails
+                            setSelectingLocation(true);
+                        },
+                        { enableHighAccuracy: false, timeout: 10000 }
                     );
                 },
                 options
@@ -153,32 +183,100 @@ export default function MapNavigationInner({ companyCoords: initialCoords, compa
 
     useEffect(() => {
         requestGPS();
+        return () => {
+            if (watchId.current !== null) {
+                navigator.geolocation.clearWatch(watchId.current);
+            }
+        };
     }, [requestGPS]);
 
-    // 3. Routing Logic (Driving Only)
+    // 2.1 Reverse Geocode User Location
     useEffect(() => {
-        async function fetchRoute() {
-            if (!userCoords || !finalCompanyCoords) return;
-
+        async function reverseGeocode() {
+            if (!userCoords) return;
             try {
-                // Use OSRM for real road distance
-                const url = `https://router.project-osrm.org/route/v1/driving/${userCoords[1]},${userCoords[0]};${finalCompanyCoords[1]},${finalCompanyCoords[0]}?overview=full&geometries=geojson`;
-                const res = await fetch(url);
+                const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${userCoords[0]}&lon=${userCoords[1]}`;
+                const res = await fetch(url, { headers: { 'User-Agent': 'BaseAgroData-App' } });
                 const data = await res.json();
-
-                if (data.routes && data.routes.length > 0) {
-                    const path = data.routes[0].geometry.coordinates.map((c: any) => [c[1], c[0]]);
-
-                    // Rounding distance to be more "human"
-                    let distanceValue = (data.routes[0].distance / 1000).toFixed(1);
-                    const durationValue = Math.ceil(data.routes[0].duration / 60).toString();
-
-                    setRoutes({
-                        driving: { path, distance: distanceValue, duration: durationValue }
+                if (data.address) {
+                    setUserAddress({
+                        road: data.address.road || data.address.pedestrian || data.address.highway,
+                        suburb: data.address.suburb || data.address.neighbourhood || data.address.city_district || data.address.town
                     });
                 }
             } catch (err) {
-                console.error("Routing error:", err);
+                console.error("Reverse geocoding error:", err);
+            }
+        }
+        reverseGeocode();
+    }, [userCoords]);
+
+    // 3. Routing Logic (Driving Only) - with caching to prevent infinite loops
+    useEffect(() => {
+        async function fetchRoute() {
+            if (!userCoords || !finalCompanyCoords) {
+                console.log('[Route] Skipping - missing coords. User:', userCoords, 'Company:', finalCompanyCoords);
+                return;
+            }
+
+            // Prevent refetching if coordinates haven't changed
+            const coordsKey = `${userCoords[0].toFixed(4)},${userCoords[1].toFixed(4)}-${finalCompanyCoords[0].toFixed(4)},${finalCompanyCoords[1].toFixed(4)}`;
+            if (lastFetchedCoords.current === coordsKey) {
+                console.log('[Route] Skipping - already fetched for these coords');
+                return;
+            }
+            lastFetchedCoords.current = coordsKey;
+
+            console.log('[Route] Fetching route from', userCoords, 'to', finalCompanyCoords);
+
+            try {
+                const url = `https://router.project-osrm.org/route/v1/driving/${userCoords[1]},${userCoords[0]};${finalCompanyCoords[1]},${finalCompanyCoords[0]}?overview=full&geometries=geojson&steps=true`;
+                const res = await fetch(url);
+                const data = await res.json();
+
+                console.log('[Route] OSRM Response:', data.code, data.routes?.length, 'routes');
+
+                if (data.routes && data.routes.length > 0) {
+                    const route = data.routes[0];
+                    const path = route.geometry.coordinates.map((c: any) => [c[1], c[0]]);
+
+                    let distanceValue = (route.distance / 1000).toFixed(1);
+                    const durationValue = Math.ceil(route.duration / 60).toString();
+
+                    const stepNames: string[] = [];
+                    const stepMarkers: { name: string; coords: [number, number] }[] = [];
+
+                    route.legs[0].steps.forEach((step: any) => {
+                        if (step.name && step.name.trim() !== "" && step.name !== "Unnamed road") {
+                            if (stepNames[stepNames.length - 1] !== step.name) {
+                                stepNames.push(step.name);
+                                // Only add marker if location exists
+                                if (step.location && Array.isArray(step.location) && step.location.length >= 2) {
+                                    stepMarkers.push({
+                                        name: step.name,
+                                        coords: [step.location[1], step.location[0]]
+                                    });
+                                }
+                            }
+                        }
+                    });
+
+                    console.log('[Route] Path points:', path.length, 'Distance:', distanceValue, 'Duration:', durationValue);
+
+                    setRoutes({
+                        driving: {
+                            path,
+                            distance: distanceValue,
+                            duration: durationValue,
+                            steps: stepNames
+                        }
+                    });
+                    setRouteStepMarkers(stepMarkers);
+                } else {
+                    console.warn('[Route] No routes found in response');
+                }
+            } catch (err) {
+                console.error('[Route] Fetch error:', err);
             }
         }
 
@@ -192,131 +290,175 @@ export default function MapNavigationInner({ companyCoords: initialCoords, compa
     );
 
     return (
-        <div className={`relative w-full h-full ${selectingLocation ? 'cursor-crosshair' : ''}`}>
-            <MapContainer
-                center={finalCompanyCoords}
-                zoom={14}
-                className="w-full h-full"
-                zoomControl={false}
-                attributionControl={false}
-                scrollWheelZoom={true} // Explicitly allow zoom
-            >
-                <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
-
-                <MapClickHandler
-                    active={selectingLocation}
-                    onLocationSelect={(lat, lon) => {
-                        setUserCoords([lat, lon]);
-                        setSelectingLocation(false);
-                        setGpsStatus("found");
-                    }}
-                />
-
-                <Marker position={finalCompanyCoords} icon={CompanyIcon} />
-
-                {userCoords && (
-                    <>
-                        <Marker position={userCoords} icon={UserIcon} />
-                        {routes.driving && (
-                            <Polyline
-                                positions={routes.driving.path}
-                                pathOptions={{ color: '#f97316', weight: 8, opacity: 0.8, lineJoin: 'round', lineCap: 'round' }}
-                            />
-                        )}
-                        <MapController coords={[userCoords, finalCompanyCoords]} trigger={fitTrigger} />
-                    </>
-                )}
-
-                <ZoomControl position="bottomright" />
-            </MapContainer>
-
-            {/* DASHBOARD */}
-            <div className="absolute top-4 left-4 right-4 z-[1000] pointer-events-none">
-                <div className="bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-xl border border-slate-200/50 pointer-events-auto max-w-sm mx-auto md:ml-0 md:mr-0">
-                    <div className="flex items-start gap-4">
-                        <div className={`w-12 h-12 ${selectingLocation ? 'bg-orange-600 text-white animate-bounce' : 'bg-emerald-50 text-emerald-600'} rounded-xl flex items-center justify-center shrink-0 shadow-inner`}>
-                            {selectingLocation ? <MousePointer2 className="w-6 h-6" /> : <Navigation className="w-6 h-6" />}
+        <div className="flex flex-col w-full h-full bg-slate-50 overflow-hidden">
+            {/* TOP INTERFACE (Outside Map) */}
+            <div className="bg-white border-b border-slate-200 z-[1001] shrink-0 overflow-hidden">
+                <div className="h-11 container-site flex items-center justify-between">
+                    {/* Left: Trajectory Data */}
+                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${selectingLocation ? 'bg-orange-600 text-white animate-bounce shadow-lg shadow-orange-500/20' : 'bg-emerald-50 text-emerald-600 shadow-inner'}`}>
+                            {selectingLocation ? <MousePointer2 className="w-5 h-5" /> : <Navigation className="w-4 h-4" />}
                         </div>
+
                         <div className="flex-1 min-w-0">
                             {selectingLocation ? (
-                                <>
-                                    <p className="text-[10px] font-black text-orange-600 uppercase tracking-widest mb-0.5">Definir Partida</p>
-                                    <h4 className="text-sm font-black text-slate-800 uppercase leading-snug">Toque no mapa para marcar onde você está</h4>
-                                </>
-                            ) : (
-                                <>
-                                    <p className="text-[10px] font-black text-[#f97316] uppercase tracking-widest mb-1 flex items-center gap-2">
-                                        <div className={`w-2 h-2 rounded-full ${gpsStatus === 'found' ? 'bg-emerald-500 animate-pulse' : 'bg-orange-400'}`}></div>
-                                        Trajectória Sugerida
-                                    </p>
-                                    <div className="flex items-center gap-4 mt-1">
-                                        <div className="space-y-1">
-                                            <div className="flex items-center gap-1.5 text-slate-400">
-                                                <Car className="w-3.5 h-3.5" />
-                                                <span className="text-[10px] font-black uppercase tracking-tighter text-slate-500">Distância Real</span>
-                                            </div>
-                                            <p className="text-sm font-black text-slate-800 tracking-tight">
-                                                {routes.driving ? `${routes.driving.distance} km` : '--'}
-                                            </p>
+                                <p className="text-xs font-black text-orange-600 uppercase leading-snug truncate tracking-tight animate-pulse">Toque no mapa para definir sua posição</p>
+                            ) : gpsStatus === 'error' && !userCoords ? (
+                                <div className="flex items-center gap-2">
+                                    <p className="text-xs font-black text-red-500 uppercase tracking-tight">GPS Indisponível</p>
+                                    <button onClick={() => setSelectingLocation(true)} className="text-[10px] font-black text-orange-500 underline uppercase">Definir Manualmente</button>
+                                </div>
+                            ) : gpsAccuracy && gpsAccuracy > 1000 ? (
+                                <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></div>
+                                        <p className="text-[10px] font-black text-yellow-600 uppercase tracking-tight">GPS Impreciso ({Math.round(gpsAccuracy / 1000)}km)</p>
+                                    </div>
+                                    <button onClick={() => setSelectingLocation(true)} className="text-[9px] font-black text-orange-500 uppercase">Ajustar</button>
+                                    {routes.driving && (
+                                        <div className="flex items-center gap-4 ml-2">
+                                            <span className="text-sm font-black text-slate-900">{routes.driving.distance}km</span>
+                                            <span className="text-sm font-black text-slate-900">{routes.driving.duration}min</span>
                                         </div>
-                                        <div className="space-y-1 border-l border-slate-100 pl-4">
-                                            <div className="flex items-center gap-1.5 text-slate-400">
-                                                <Maximize className="w-3.5 h-3.5" />
-                                                <span className="text-[10px] font-black uppercase tracking-tighter text-slate-500">Tempo Estimado</span>
-                                            </div>
-                                            <p className="text-sm font-black text-slate-800 tracking-tight">
-                                                {routes.driving ? `${routes.driving.duration} min` : '--'}
-                                            </p>
+                                    )}
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-6">
+                                    <div className="flex items-center gap-2">
+                                        <div className={`w-2 h-2 rounded-full ${gpsStatus === 'found' ? 'bg-emerald-500 animate-pulse' : gpsStatus === 'searching' ? 'bg-orange-400 animate-ping' : 'bg-red-400'}`}></div>
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest hidden sm:block">{gpsStatus === 'searching' ? 'A localizar...' : 'Trajectória'}</p>
+                                    </div>
+                                    <div className="flex items-center gap-6">
+                                        <div className="flex items-center gap-2">
+                                            <Car className="w-4 h-4 text-emerald-600" />
+                                            <span className="text-base font-black text-slate-900 tracking-tighter">{routes.driving ? `${routes.driving.distance}km` : '--'}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <Maximize className="w-4 h-4 text-orange-600" />
+                                            <span className="text-base font-black text-slate-900 tracking-tighter">{routes.driving ? `${routes.driving.duration}min` : '--'}</span>
                                         </div>
                                     </div>
-                                    {gpsStatus === 'searching' && (
-                                        <p className="text-[9px] text-slate-400 font-bold uppercase mt-2 animate-pulse">Obtendo sua posição exata...</p>
-                                    )}
-                                    {gpsStatus === 'error' && !userCoords && (
-                                        <p className="text-[9px] text-red-400 font-bold uppercase mt-2">Erro no GPS. Clique no mapa para marcar sua posição.</p>
-                                    )}
-                                </>
+                                </div>
                             )}
                         </div>
                     </div>
+
+                    {/* Right: Map Controls */}
+                    <div className="flex gap-2 shrink-0">
+                        <button
+                            onClick={() => setFitTrigger(v => v + 1)}
+                            className="p-2 bg-slate-50 hover:bg-slate-100 rounded-lg text-slate-600 transition-all border border-slate-200 active:scale-95"
+                            title="Recentralizar"
+                        >
+                            <Maximize className="w-4 h-4" />
+                        </button>
+                        <button
+                            onClick={() => {
+                                requestGPS();
+                                setFitTrigger(v => v + 1);
+                            }}
+                            className={`p-2 bg-slate-50 hover:bg-slate-100 rounded-lg border transition-all active:scale-95 ${gpsStatus === 'searching' ? 'text-orange-500 border-orange-200' : 'text-slate-600 border-slate-200'}`}
+                            title="GPS"
+                        >
+                            <Target className={`w-4 h-4 ${gpsStatus === 'searching' ? 'animate-spin' : ''}`} />
+                        </button>
+                    </div>
                 </div>
+
+                {/* Horizontal Steps Bar */}
+                {!selectingLocation && routes.driving && routes.driving.steps.length > 0 && (
+                    <div className="bg-slate-50 border-t border-slate-100 shadow-inner">
+                        <div className="container-site py-1.5 flex items-center gap-3 overflow-x-auto no-scrollbar">
+                            <span className="text-[8px] font-black text-slate-400 uppercase tracking-[0.2em] whitespace-nowrap">Itinerário:</span>
+                            {routes.driving.steps.map((step, idx) => (
+                                <React.Fragment key={idx}>
+                                    <span className="text-[9px] font-extrabold text-slate-600 whitespace-nowrap bg-white px-2 py-0.5 rounded border border-slate-100">{step}</span>
+                                    {idx < routes.driving!.steps.length - 1 && <ArrowRight className="w-2.5 h-2.5 text-slate-300" />}
+                                </React.Fragment>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
 
-            {/* BUTTONS */}
-            <div className="absolute bottom-4 left-4 right-4 z-[1000] flex justify-between pointer-events-none">
-                <button
-                    onClick={() => setSelectingLocation(!selectingLocation)}
-                    className={`flex flex-col items-start gap-0 px-4 py-2 rounded-xl shadow-2xl border pointer-events-auto transition-all active:scale-95 ${selectingLocation
-                        ? 'bg-orange-600 text-white border-orange-400 ring-4 ring-orange-500/10'
-                        : 'bg-slate-900 text-white border-white/10 opacity-90 hover:opacity-100'
-                        }`}
+            <div className={`relative flex-1 ${selectingLocation ? 'cursor-crosshair' : ''}`}>
+                <MapContainer
+                    center={finalCompanyCoords}
+                    zoom={14}
+                    className="w-full h-full"
+                    zoomControl={false}
+                    attributionControl={false}
+                    scrollWheelZoom={true} // Explicitly allow zoom
                 >
-                    <div className="flex items-center gap-2">
-                        <MapPin className={`w-3.5 h-3.5 ${selectingLocation ? 'text-white' : 'text-emerald-400'}`} />
-                        <span className="text-[10px] font-black uppercase tracking-widest">{selectingLocation ? 'Cancelar' : companyName}</span>
-                    </div>
-                    {!selectingLocation && (
-                        <span className="text-[8px] font-bold text-slate-400 uppercase tracking-tight mt-0.5 ml-5">
-                            {companyAddress.district || companyAddress.address}, {companyAddress.province}
-                        </span>
-                    )}
-                </button>
+                    <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
 
-                <div className="flex gap-2 pointer-events-auto">
-                    <button
-                        onClick={() => setFitTrigger(v => v + 1)}
-                        className="bg-white/95 backdrop-blur-md p-3 rounded-xl shadow-xl border border-slate-200 text-slate-600 hover:text-emerald-600 transition-all active:scale-90"
-                        title="Centralizar Trajectória"
-                    >
-                        <Maximize className="w-5 h-5" />
-                    </button>
-                    <button
-                        onClick={requestGPS}
-                        className={`bg-white/95 backdrop-blur-md p-3 rounded-xl shadow-xl border border-slate-200 transition-all active:scale-90 ${gpsStatus === 'searching' ? 'text-orange-500' : 'text-slate-600 hover:text-emerald-600'}`}
-                        title="Actualizar meu GPS"
-                    >
-                        <Target className={`w-5 h-5 ${gpsStatus === 'searching' ? 'animate-spin' : ''}`} />
-                    </button>
+                    <MapClickHandler
+                        active={selectingLocation}
+                        onLocationSelect={(lat, lon) => {
+                            setUserCoords([lat, lon]);
+                            setSelectingLocation(false);
+                            setGpsStatus("found");
+                        }}
+                    />
+
+                    <Marker position={finalCompanyCoords} icon={CompanyIcon} />
+
+                    {userCoords && (
+                        <>
+                            {routes.driving && routes.driving.path.length > 0 && (
+                                <Polyline
+                                    positions={routes.driving.path}
+                                    pathOptions={{
+                                        color: '#f97316',
+                                        weight: 5,
+                                        opacity: 0.6,
+                                        lineJoin: 'round',
+                                        lineCap: 'round'
+                                    }}
+                                />
+                            )}
+                            <MapController coords={[userCoords, finalCompanyCoords]} trigger={fitTrigger} />
+                            <Marker position={userCoords} icon={UserIcon}>
+                                <Tooltip permanent direction="top" offset={[0, -10]} opacity={1} className="!bg-transparent !border-none !shadow-none p-0">
+                                    <div className="bg-emerald-600 text-white px-3 py-2 rounded-xl shadow-2xl border-2 border-white flex flex-col items-center min-w-[140px] relative">
+                                        <span className="text-[9px] font-black uppercase tracking-[0.2em] mb-1 text-white/90">Você está aqui</span>
+                                        <div className="w-full h-[1px] bg-white/20 mb-1"></div>
+                                        <p className="text-[11px] font-black leading-tight text-center text-white">{userAddress.suburb || userAddress.road || 'Localizando...'}</p>
+                                        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-emerald-600 rotate-45 border-r-2 border-b-2 border-white"></div>
+                                    </div>
+                                </Tooltip>
+                            </Marker>
+
+                            {routeStepMarkers.map((marker, idx) => (
+                                <Marker key={`step-${idx}`} position={marker.coords} icon={StepIcon}>
+                                    <Tooltip direction="top" offset={[0, -5]} opacity={0.9} className="!bg-white/90 !backdrop-blur !border-slate-200 !rounded-lg !shadow-lg">
+                                        <div className="px-2 py-1">
+                                            <p className="text-[10px] font-black text-slate-800 whitespace-nowrap">{marker.name}</p>
+                                        </div>
+                                    </Tooltip>
+                                </Marker>
+                            ))}
+
+                        </>
+                    )}
+
+                    <ZoomControl position="bottomright" />
+                </MapContainer>
+
+                {/* ACTION BUTTON (Aligned with Container) */}
+                <div className="absolute bottom-3 left-0 right-0 z-[1001] pointer-events-none">
+                    <div className="container-site flex justify-start">
+                        <button
+                            onClick={() => setSelectingLocation(!selectingLocation)}
+                            className={`flex items-center gap-2 px-3 py-2 rounded-lg shadow-2xl border pointer-events-auto transition-all active:scale-95 ${selectingLocation
+                                ? 'bg-orange-600 text-white border-orange-400'
+                                : 'bg-slate-900/95 text-white border-white/20'
+                                }`}
+                        >
+                            <MapPin className={`w-3.5 h-3.5 ${selectingLocation ? 'text-white' : 'text-orange-500'}`} />
+                            <span className="text-[11px] font-black uppercase tracking-wide">{selectingLocation ? 'Cancelar' : companyName}</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

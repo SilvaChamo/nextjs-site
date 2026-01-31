@@ -137,29 +137,31 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
             }
             bottomFullWidthContent={
                 /* Map Section - Interactive Yango-style Navigation */
-                <div className="card-agro p-0 overflow-hidden h-[330px] md:h-[450px] relative group border-2 border-slate-100 shadow-2xl">
-                    {mounted && (
-                        <MapNavigation
-                            companyCoords={(() => {
-                                if (company.geo_location && typeof company.geo_location === 'string') {
-                                    const parts = company.geo_location.split(',').map((s: string) => s.trim());
-                                    if (parts.length === 2) {
-                                        const lat = parseFloat(parts[0]);
-                                        const lon = parseFloat(parts[1]);
-                                        if (!isNaN(lat) && !isNaN(lon)) return [lat, lon] as [number, number];
+                (company.geo_location || company.address) && (
+                    <div className="card-agro p-0 overflow-hidden h-[330px] md:h-[450px] relative group border-2 border-slate-100 shadow-2xl">
+                        {mounted && (
+                            <MapNavigation
+                                companyCoords={(() => {
+                                    if (company.geo_location && typeof company.geo_location === 'string') {
+                                        const parts = company.geo_location.split(',').map((s: string) => s.trim());
+                                        if (parts.length === 2) {
+                                            const lat = parseFloat(parts[0]);
+                                            const lon = parseFloat(parts[1]);
+                                            if (!isNaN(lat) && !isNaN(lon)) return [lat, lon] as [number, number];
+                                        }
                                     }
-                                }
-                                return null;
-                            })()}
-                            companyName={company.name}
-                            companyAddress={{
-                                address: company.address,
-                                district: company.district,
-                                province: company.province
-                            }}
-                        />
-                    )}
-                </div>
+                                    return null;
+                                })()}
+                                companyName={company.name}
+                                companyAddress={{
+                                    address: company.address,
+                                    district: company.district,
+                                    province: company.province
+                                }}
+                            />
+                        )}
+                    </div>
+                )
             }
         >
             <div className="space-y-agro">
@@ -260,110 +262,162 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                 </div>
 
                 {/* General Description - FULL WIDTH */}
-                <div className="card-agro text-left">
-                    <div className="flex items-center justify-between mb-4">
-                        <h2 className="mb-0 text-xl font-black uppercase tracking-tight text-black/75">Descrição Geral</h2>
-                        {company.portfolio_url && (
-                            <a
-                                href={company.portfolio_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-2 px-4 py-2 bg-orange-50 text-orange-600 hover:bg-orange-100 rounded-xl text-xs font-black uppercase tracking-tighter transition-all shadow-sm border border-orange-100"
-                            >
-                                <FileText className="w-4 h-4" />
-                                Baixar Portfólio
-                            </a>
-                        )}
+                {company.description && (
+                    <div className="card-agro text-left">
+                        <div className="flex items-center justify-between mb-4">
+                            <h2 className="mb-0 text-xl font-black uppercase tracking-tight text-black/75">Descrição Geral</h2>
+                            {company.portfolio_url && (
+                                <a
+                                    href={company.portfolio_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-2 px-4 py-2 bg-orange-50 text-orange-600 hover:bg-orange-100 rounded-xl text-xs font-black uppercase tracking-tighter transition-all shadow-sm border border-orange-100"
+                                >
+                                    <FileText className="w-4 h-4" />
+                                    Baixar Portfólio
+                                </a>
+                            )}
+                        </div>
+                        <div className="prose prose-slate max-w-none font-sans text-slate-500 leading-relaxed">
+                            <p className="whitespace-pre-wrap">{company.description}</p>
+                        </div>
                     </div>
-                    <div className="prose prose-slate max-w-none font-sans text-slate-500 leading-relaxed">
-                        <p className="whitespace-pre-wrap">{company.description}</p>
-                    </div>
-                </div>
+                )}
 
                 {/* Mission, Vision & Values - 2 COLUMNS */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-agro items-stretch">
-                    {/* Mission (Left) */}
-                    {company.mission && (
-                        <div className="card-agro text-left border-t-4 border-t-emerald-500 flex flex-col h-full">
-                            <h4 className="text-[11px] font-black text-emerald-600 uppercase tracking-[0.2em] mb-4">Missão</h4>
-                            <div className="flex-1">
-                                <p className="text-sm text-slate-500 leading-relaxed">{company.mission}</p>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Vision & Values (Right - Stacked) */}
-                    <div className="space-y-agro flex flex-col h-full">
-                        {company.vision && (
-                            <div className="card-agro text-left border-t-4 border-t-emerald-500 flex-1">
-                                <h4 className="text-[11px] font-black text-emerald-600 uppercase tracking-[0.2em] mb-3">Visão</h4>
-                                <p className="text-sm text-slate-500 leading-relaxed">{company.vision}</p>
-                            </div>
-                        )}
-                        {company.values && (
-                            <div className="card-agro text-left border-t-4 border-t-emerald-500 flex-1">
-                                <h4 className="text-[11px] font-black text-emerald-600 uppercase tracking-[0.2em] mb-3">Valores</h4>
-                                <div className="text-sm text-slate-500 leading-relaxed space-y-2">
-                                    {company.values.split('\n').map((line: string, i: number) => (
-                                        <p key={i}>{line}</p>
-                                    ))}
+                {(company.mission || company.vision || company.values) && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-agro items-stretch">
+                        {/* Mission (Left) */}
+                        {company.mission ? (
+                            <div className="card-agro text-left border-t-4 border-t-emerald-500 flex flex-col h-full">
+                                <h4 className="text-[11px] font-black text-emerald-600 uppercase tracking-[0.2em] mb-4">Missão</h4>
+                                <div className="flex-1">
+                                    <p className="text-sm text-slate-500 leading-relaxed">{company.mission}</p>
                                 </div>
                             </div>
-                        )}
-                    </div>
-                </div>
-
-                {/* Services Provided Section */}
-                <div className="card-agro text-left">
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center">
-                            <CheckCircle2 className="w-5 h-5" />
-                        </div>
-                        <h2 className="mb-0 text-xl font-black uppercase tracking-tight">Serviços Prestados</h2>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {company.services ? (
-                            Array.isArray(company.services) ? company.services.map((service: string, i: number) => (
-                                <div key={i} className="flex items-center gap-3 p-4 rounded-xl bg-slate-50/50 border border-slate-100 group hover:border-emerald-200 transition-colors">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 group-hover:scale-125 transition-transform" />
-                                    <span className="text-sm font-bold text-slate-700">{service}</span>
-                                </div>
-                            )) : (
-                                <div className="col-span-full p-4 rounded-xl bg-slate-50/50 border border-slate-100">
-                                    <p className="text-sm font-medium text-slate-600">{company.services}</p>
-                                </div>
-                            )
                         ) : (
-                            <div className="col-span-full py-8 text-center border border-slate-100 border-dashed rounded-2xl grayscale opacity-60">
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Lista de serviços disponível sob consulta</p>
-                                <p className="text-[10px] font-medium text-slate-300 mt-1">Contacte a empresa para mais detalhes sobre soluções personalizadas</p>
+                            <div className="hidden md:block" /> /* Layout spacer if Mission is missing but Vision/Values exist */
+                        )}
+
+                        {/* Vision & Values (Right - Stacked) */}
+                        {(company.vision || company.values) && (
+                            <div className="space-y-agro flex flex-col h-full">
+                                {company.vision && (
+                                    <div className="card-agro text-left border-t-4 border-t-emerald-500 flex-1">
+                                        <h4 className="text-[11px] font-black text-emerald-600 uppercase tracking-[0.2em] mb-3">Visão</h4>
+                                        <p className="text-sm text-slate-500 leading-relaxed">{company.vision}</p>
+                                    </div>
+                                )}
+                                {company.values && (
+                                    <div className="card-agro text-left border-t-4 border-t-emerald-500 flex-1">
+                                        <h4 className="text-[11px] font-black text-emerald-600 uppercase tracking-[0.2em] mb-3">Valores</h4>
+                                        <div className="text-sm text-slate-500 leading-relaxed space-y-2">
+                                            {company.values.split('\n').map((line: string, i: number) => (
+                                                <p key={i}>{line}</p>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
+                    </div>
+                )}
+
+                {/* Services Provided & Institutional Details - 2 COLUMNS */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-agro">
+                    {/* Left Column: Services (2/3 width) */}
+                    <div className="lg:col-span-2 card-agro text-left">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center">
+                                <CheckCircle2 className="w-5 h-5" />
+                            </div>
+                            <h2 className="mb-0 text-xl font-black uppercase tracking-tight text-black/75">Serviços Prestados</h2>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {company.services && (Array.isArray(company.services) ? company.services : [company.services]).length > 0 ? (
+                                (Array.isArray(company.services) ? company.services : [company.services]).map((service: string, i: number) => (
+                                    <div key={i} className="flex items-center gap-3 p-4 rounded-xl bg-slate-50/50 border border-slate-100 group hover:border-emerald-200 transition-colors">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 group-hover:scale-125 transition-transform" />
+                                        <span className="text-sm font-bold text-slate-700">{service}</span>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="col-span-full py-8 text-center border border-slate-100 border-dashed rounded-2xl grayscale opacity-60">
+                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Lista de serviços disponível sob consulta</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Right Column: Institutional Details (1/3 width) */}
+                    <div className="lg:col-span-1 space-y-agro">
+                        <div className="card-agro text-left h-full">
+                            <h4 className="text-[11px] font-black text-emerald-600 uppercase tracking-[0.2em] mb-6 border-b border-emerald-100 pb-2">Informação Institucional</h4>
+
+                            <dl className="space-y-6">
+                                {(company.category || company.sub_category) && (
+                                    <div>
+                                        <dt className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Sector & Categoria</dt>
+                                        <dd className="text-sm font-bold text-slate-700">
+                                            {company.category} {company.sub_category && `• ${company.sub_category}`}
+                                        </dd>
+                                    </div>
+                                )}
+
+                                {company.size && (
+                                    <div>
+                                        <dt className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Tamanho da Empresa</dt>
+                                        <dd className="text-sm font-bold text-slate-700">{company.size}</dd>
+                                    </div>
+                                )}
+
+                                {company.type && (
+                                    <div>
+                                        <dt className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Designação / Tipo</dt>
+                                        <dd className="text-sm font-bold text-slate-700">{company.type}</dd>
+                                    </div>
+                                )}
+
+                                {company.value_chain && (
+                                    <div>
+                                        <dt className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Cadeia de Valor</dt>
+                                        <dd className="text-sm font-bold text-slate-700">{company.value_chain}</dd>
+                                    </div>
+                                )}
+
+                                {company.nuit && (
+                                    <div>
+                                        <dt className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">NUIT</dt>
+                                        <dd className="text-sm font-bold text-slate-700">{company.nuit}</dd>
+                                    </div>
+                                )}
+                            </dl>
+                        </div>
                     </div>
                 </div>
 
                 {/* Product Grid Section */}
-                <div className="card-agro text-left">
-                    <div className="flex items-center justify-between mb-8">
-                        <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 bg-orange-50 text-[#f97316] rounded-xl flex items-center justify-center border border-orange-100/50 shadow-sm">
-                                <Package className="w-6 h-6" />
+                {company.products && company.products.length > 0 && (
+                    <div className="card-agro text-left">
+                        <div className="flex items-center justify-between mb-8">
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 bg-orange-50 text-[#f97316] rounded-xl flex items-center justify-center border border-orange-100/50 shadow-sm">
+                                    <Package className="w-6 h-6" />
+                                </div>
+                                <h3 className="text-xl font-black text-slate-800 uppercase tracking-tighter mb-0">
+                                    Catálogo de Produtos
+                                </h3>
                             </div>
-                            <h3 className="text-xl font-black text-slate-800 uppercase tracking-tighter mb-0">
-                                Catálogo de Produtos
-                            </h3>
+                            <Link
+                                href={`/produtos?empresa_id=${company.id}`}
+                                className="text-sm font-bold text-[#f97316] hover:underline flex items-center gap-1 transition-all"
+                            >
+                                Ver todos os produtos
+                                <ArrowRight className="w-4 h-4 ml-1" />
+                            </Link>
                         </div>
-                        <Link
-                            href={`/produtos?empresa_id=${company.id}`}
-                            className="text-sm font-bold text-[#f97316] hover:underline flex items-center gap-1 transition-all"
-                        >
-                            Ver todos os produtos
-                            <ArrowRight className="w-4 h-4 ml-1" />
-                        </Link>
-                    </div>
 
-                    {company.products && company.products.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-agro">
                             {company.products.slice(0, 3).map((product: any, i: number) => (
                                 <Link
@@ -396,7 +450,7 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                                             {product.name}
                                         </h4>
                                         <p className="text-slate-400 text-xs font-medium leading-relaxed mb-2 line-clamp-2">
-                                            {product.description || "Descrição breve do produto disponível sob consulta."}
+                                            {product.description || "Descrição breve do product disponível sob consulta."}
                                         </p>
 
                                         <div>
@@ -423,12 +477,8 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                                 </Link>
                             ))}
                         </div>
-                    ) : (
-                        <div className="py-12 text-center border border-slate-100 border-dashed rounded-agro">
-                            <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest">Nenhum produto listado</p>
-                        </div>
-                    )}
-                </div>
+                    </div>
+                )}
 
             </div>
         </StandardBlogTemplate>

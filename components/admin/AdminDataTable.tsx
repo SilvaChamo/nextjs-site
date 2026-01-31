@@ -21,6 +21,7 @@ interface AdminDataTableProps {
     onAdd?: () => void;
     loading?: boolean;
     customActions?: (row: any) => React.ReactNode;
+    pageSize?: number;
 }
 
 export function AdminDataTable({
@@ -31,14 +32,22 @@ export function AdminDataTable({
     onDelete,
     onAdd,
     loading,
-    customActions
+    customActions,
+    pageSize = 50
 }: AdminDataTableProps) {
     const [searchTerm, setSearchTerm] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
 
     const filteredData = data.filter(item =>
         Object.values(item).some(val =>
             String(val).toLowerCase().includes(searchTerm.toLowerCase())
         )
+    );
+
+    const totalPages = Math.ceil(filteredData.length / pageSize);
+    const paginatedData = filteredData.slice(
+        (currentPage - 1) * pageSize,
+        currentPage * pageSize
     );
 
     return (
@@ -58,7 +67,7 @@ export function AdminDataTable({
                             type="text"
                             placeholder="Pesquisar..."
                             value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                             className="pl-10 pr-4 py-2 bg-slate-50 border-none rounded-xl text-xs font-medium focus:ring-2 focus:ring-emerald-500 transition-all outline-none w-full md:w-64"
                         />
                     </div>
@@ -98,14 +107,14 @@ export function AdminDataTable({
                                     A carregar dados...
                                 </td>
                             </tr>
-                        ) : filteredData.length === 0 ? (
+                        ) : paginatedData.length === 0 ? (
                             <tr>
                                 <td colSpan={columns.length + (onEdit || onDelete || customActions ? 1 : 0)} className="px-6 py-12 text-center text-slate-400 text-xs font-bold italic">
                                     Nenhum item encontrado.
                                 </td>
                             </tr>
                         ) : (
-                            filteredData.map((row, i) => (
+                            paginatedData.map((row, i) => (
                                 <tr key={i} className="hover:bg-slate-50/80 transition-colors group">
                                     {columns.map((col) => (
                                         <td key={col.key} className="px-6 py-4 text-xs font-bold text-slate-600">
@@ -119,19 +128,19 @@ export function AdminDataTable({
                                                 {onEdit && (
                                                     <button
                                                         onClick={() => onEdit(row)}
-                                                        className="size-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
+                                                        className="size-9 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center hover:bg-orange-500 hover:text-white transition-all shadow-sm border border-orange-100"
                                                         title="Editar"
                                                     >
-                                                        <Edit2 className="w-3.5 h-3.5" />
+                                                        <Edit2 className="w-4 h-4" />
                                                     </button>
                                                 )}
                                                 {onDelete && (
                                                     <button
                                                         onClick={() => onDelete(row)}
-                                                        className="size-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-600 hover:text-white transition-all shadow-sm"
+                                                        className="size-9 rounded-xl bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-600 hover:text-white transition-all shadow-sm border border-red-100"
                                                         title="Eliminar"
                                                     >
-                                                        <Trash2 className="w-3.5 h-3.5" />
+                                                        <Trash2 className="w-4 h-4" />
                                                     </button>
                                                 )}
                                             </div>
@@ -144,19 +153,41 @@ export function AdminDataTable({
                 </table>
             </div>
 
-            {/* Pagination Mockup */}
+            {/* Pagination Controls */}
             <div className="p-6 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
                 <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">
-                    Mostrando {filteredData.length} de {data.length} itens
+                    Página {currentPage} de {totalPages || 1} • Mostrando {paginatedData.length} de {filteredData.length} itens
                 </p>
                 <div className="flex items-center gap-2">
-                    <button className="size-8 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 disabled:opacity-50" disabled>
+                    <button
+                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                        disabled={currentPage === 1}
+                        className="size-8 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 disabled:opacity-30 transition-all hover:bg-white"
+                    >
                         <ChevronLeft className="w-4 h-4" />
                     </button>
-                    <button className="size-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-xs font-black shadow-lg shadow-emerald-900/10">
-                        1
-                    </button>
-                    <button className="size-8 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400">
+
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                        const pageNum = i + 1;
+                        return (
+                            <button
+                                key={pageNum}
+                                onClick={() => setCurrentPage(pageNum)}
+                                className={`size-8 rounded-lg text-xs font-black transition-all ${currentPage === pageNum
+                                        ? "bg-emerald-600 text-white shadow-lg shadow-emerald-900/10"
+                                        : "border border-slate-200 text-slate-400 hover:bg-white"
+                                    }`}
+                            >
+                                {pageNum}
+                            </button>
+                        );
+                    })}
+
+                    <button
+                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                        disabled={currentPage === totalPages || totalPages === 0}
+                        className="size-8 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 disabled:opacity-30 transition-all hover:bg-white"
+                    >
                         <ChevronRight className="w-4 h-4" />
                     </button>
                 </div>

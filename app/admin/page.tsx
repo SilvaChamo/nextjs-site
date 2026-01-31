@@ -30,7 +30,7 @@ export default function AdminDashboardPage() {
             const counts = await Promise.all([
                 supabase.from('articles').select('*', { count: 'exact', head: true }),
                 supabase.from('companies').select('*', { count: 'exact', head: true }),
-                supabase.from('produtos').select('*', { count: 'exact', head: true }),
+                supabase.from('products').select('*', { count: 'exact', head: true }),
                 supabase.from('professionals').select('*', { count: 'exact', head: true }),
                 supabase.from('agricultural_stats').select('*', { count: 'exact', head: true })
             ]);

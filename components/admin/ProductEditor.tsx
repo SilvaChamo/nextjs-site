@@ -15,12 +15,12 @@ export function ProductEditor({ initialData, isNew = false }: ProductEditorProps
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
-        nome: initialData?.nome || "",
+        name: initialData?.name || initialData?.nome || "",
         category: initialData?.category || "Sementes",
-        preco: initialData?.preco || "",
+        price: initialData?.price || initialData?.preco || "",
         description: initialData?.description || "",
         image_url: initialData?.image_url || "",
-        empresa_id: initialData?.empresa_id || ""
+        company_id: initialData?.company_id || initialData?.empresa_id || ""
     });
 
     const categories = ["Sementes", "Fertilizantes", "Ferramentas", "Maquinaria", "Pesticidas", "Sistemas de Rega"];
@@ -32,19 +32,19 @@ export function ProductEditor({ initialData, isNew = false }: ProductEditorProps
         try {
             const payload = {
                 ...formData,
-                preco: parseFloat(formData.preco.toString()) || 0
+                price: parseFloat(formData.price.toString()) || 0
             };
 
             let error;
             if (!isNew && initialData?.id) {
                 const { error: err } = await supabase
-                    .from('produtos')
+                    .from('products')
                     .update(payload)
                     .eq('id', initialData.id);
                 error = err;
             } else {
                 const { error: err } = await supabase
-                    .from('produtos')
+                    .from('products')
                     .insert([payload]);
                 error = err;
             }
@@ -85,8 +85,8 @@ export function ProductEditor({ initialData, isNew = false }: ProductEditorProps
                         <ShoppingBag className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                         <input
                             required
-                            value={formData.nome}
-                            onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                            value={formData.name}
+                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                             placeholder="Ex: Semente de Milho PAN 53"
                             className="pl-12 pr-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
                         />
@@ -113,13 +113,23 @@ export function ProductEditor({ initialData, isNew = false }: ProductEditorProps
                             <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                             <input
                                 type="number"
-                                value={formData.preco}
-                                onChange={(e) => setFormData({ ...formData, preco: e.target.value })}
+                                value={formData.price}
+                                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                                 placeholder="0.00"
                                 className="pl-12 pr-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
                             />
                         </div>
                     </div>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                    <label className="text-xs font-black uppercase text-slate-500 tracking-widest">ID da Empresa</label>
+                    <input
+                        value={formData.company_id}
+                        onChange={(e) => setFormData({ ...formData, company_id: e.target.value })}
+                        placeholder="UUID da empresa"
+                        className="p-4 bg-slate-50 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 outline-none w-full"
+                    />
                 </div>
 
                 <div className="flex flex-col gap-2">

@@ -10,6 +10,7 @@ interface StandardBlogTemplateProps {
     children: ReactNode;
     backgroundImage?: string;
     isSidebarLeft?: boolean;
+    topFullWidthContent?: ReactNode;
     bottomFullWidthContent?: ReactNode;
     titleClassName?: string;
 }
@@ -21,6 +22,7 @@ export function StandardBlogTemplate({
     children,
     backgroundImage = "https://images.unsplash.com/photo-1495107334309-fcf20504a5ab?q=80&w=2000&auto=format&fit=crop",
     isSidebarLeft = false,
+    topFullWidthContent,
     bottomFullWidthContent,
     titleClassName
 }: StandardBlogTemplateProps) {
@@ -32,6 +34,12 @@ export function StandardBlogTemplate({
                 breadcrumbs={breadcrumbs}
                 titleClassName={titleClassName}
             />
+
+            {topFullWidthContent && (
+                <div className="w-full">
+                    {topFullWidthContent}
+                </div>
+            )}
 
             <main className="container-site pt-12 pb-[70px]">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-agro items-start">

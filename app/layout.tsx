@@ -11,6 +11,7 @@ import { FloatingChatButton } from "@/components/FloatingChatButton";
 
 import { GoogleTranslate } from "@/components/GoogleTranslate";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
+import { Toaster } from "sonner";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -79,6 +80,7 @@ export default function RootLayout({
               <PWAInstallPrompt />
             </NavFooterToggle>
           </LanguageProvider>
+          <Toaster position="top-right" richColors closeButton />
         </ThemeProvider>
       </body>
     </html>

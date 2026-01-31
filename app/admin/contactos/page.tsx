@@ -16,9 +16,16 @@ import {
     Users,
     Loader2,
     Star,
-    Copy as CopyIcon
+    Copy as CopyIcon,
+    Trash2,
+    X,
+    Check
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
+import Papa from "papaparse";
+import * as XLSX from "xlsx";
 
 interface Contact {
     id: string;
@@ -48,6 +55,10 @@ export default function AdminContactosPage() {
     const [importStatus, setImportStatus] = useState<string>("");
     const [searchTerm, setSearchTerm] = useState("");
     const [showModal, setShowModal] = useState(false);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false);
+    const [contactToDelete, setContactToDelete] = useState<Contact | null>(null);
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [editingContact, setEditingContact] = useState<Contact | null>(null);
     const [formData, setFormData] = useState({
         company_id: "",
@@ -116,27 +127,58 @@ export default function AdminContactosPage() {
                     });
                 if (error) throw error;
             }
+            toast.success(editingContact ? "Contacto atualizado!" : "Contacto adicionado!");
             setShowModal(false);
             setEditingContact(null);
             resetForm();
             fetchContacts();
         } catch (error: any) {
-            alert("Erro: " + error.message);
+            toast.error("Erro ao salvar: " + error.message);
         }
     }
 
-    async function handleDelete(contact: Contact) {
-        if (!confirm(`Eliminar contacto "${contact.name}"?`)) return;
+    async function confirmDelete() {
+        if (!contactToDelete) return;
         try {
             const { error } = await supabase
                 .from('contacts')
                 .delete()
-                .eq('id', contact.id);
+                .eq('id', contactToDelete.id);
             if (error) throw error;
+            toast.success("Contacto eliminado com sucesso!");
             fetchContacts();
         } catch (error: any) {
-            alert("Erro: " + error.message);
+            toast.error("Erro ao eliminar: " + error.message);
+        } finally {
+            setShowDeleteConfirm(false);
+            setContactToDelete(null);
         }
+    }
+
+    async function handleBulkDelete() {
+        setShowBulkDeleteConfirm(true);
+    }
+
+    async function confirmBulkDelete() {
+        try {
+            const { error } = await supabase
+                .from('contacts')
+                .delete()
+                .in('id', selectedIds);
+            if (error) throw error;
+            toast.success(`${selectedIds.length} contactos eliminados!`);
+            setSelectedIds([]);
+            fetchContacts();
+        } catch (error: any) {
+            toast.error("Erro na eliminação em massa: " + error.message);
+        } finally {
+            setShowBulkDeleteConfirm(false);
+        }
+    }
+
+    async function handleDelete(contact: Contact) {
+        setContactToDelete(contact);
+        setShowDeleteConfirm(true);
     }
 
     function resetForm() {
@@ -198,21 +240,75 @@ export default function AdminContactosPage() {
         document.body.removeChild(link);
     }
 
-    function handleManualImport() {
+    async function handleManualImport() {
         const input = document.createElement('input');
         input.type = 'file';
-        input.accept = '.csv,.vcf';
+        input.accept = '.csv,.xlsx,.xls';
         input.onchange = async (e: any) => {
             const file = e.target.files[0];
             if (!file) return;
+
             setImporting(true);
-            setImportStatus(`A importar: ${file.name}...`);
-            // Here we would normally upload to a server or parse locally
-            // For now, let's acknowledge the file
-            setTimeout(() => {
-                setImportStatus(`Ficheiro "${file.name}" recebido. Processamento em background.`);
+            setImportStatus(`A processar ficheiro: ${file.name}...`);
+
+            try {
+                let data: any[] = [];
+                if (file.name.endsWith('.csv')) {
+                    const text = await file.text();
+                    const result = Papa.parse(text, { header: true, skipEmptyLines: true });
+                    data = result.data;
+                } else if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+                    const buffer = await file.arrayBuffer();
+                    const workbook = XLSX.read(buffer);
+                    const sheetName = workbook.SheetNames[0];
+                    const sheet = workbook.Sheets[sheetName];
+                    data = XLSX.utils.sheet_to_json(sheet);
+                }
+
+                if (data.length === 0) throw new Error("O ficheiro está vazio ou é inválido.");
+
+                setImportStatus(`A mapear ${data.length} contactos e empresas...`);
+
+                // Simple company matching logic
+                const companyMap = new Map();
+                companies.forEach(c => companyMap.set(c.name.toLowerCase().trim(), c.id));
+
+                const contactsToInsert = data.map(row => {
+                    // Normalize keys (handle different CSV headers)
+                    const name = row.Nome || row.name || row.Name || "";
+                    const email = row.Email || row.email || row.EMAIL || "";
+                    const phone = row.Telefone || row.phone || row.Phone || row.Telemovel || "";
+                    const companyName = row.Empresa || row.company || row.Company || "";
+                    const role = row.Cargo || row.role || row.Role || row.Posicao || "";
+
+                    const companyId = companyName ? companyMap.get(companyName.toLowerCase().trim()) : null;
+
+                    return {
+                        name,
+                        email,
+                        phone,
+                        role,
+                        company_id: companyId || null,
+                        source: 'manual_import',
+                        notes: companyName && !companyId ? `Empresa não encontrada: ${companyName}` : ""
+                    };
+                }).filter(c => c.name || c.email);
+
+                if (contactsToInsert.length === 0) throw new Error("Nenhum contacto válido encontrado.");
+
+                const { error } = await supabase.from('contacts').insert(contactsToInsert);
+                if (error) throw error;
+
+                toast.success(`${contactsToInsert.length} contactos importados com sucesso!`);
+                setImportStatus(`Sucesso! ${contactsToInsert.length} contactos importados.`);
+                fetchContacts();
+            } catch (error: any) {
+                console.error("Erro na importação:", error);
+                toast.error("Erro na importação: " + error.message);
+                setImportStatus(`Erro: ${error.message}`);
+            } finally {
                 setImporting(false);
-            }, 2000);
+            }
         };
         input.click();
     }
@@ -243,22 +339,59 @@ export default function AdminContactosPage() {
             render: (val: string, row: Contact) => {
                 const isCompany = isCompanyName(val) || !!row.company_id;
                 const companyName = row.company?.name;
+                const isSelected = selectedIds.includes(row.id);
 
                 return (
-                    <div className="flex items-center gap-3 group/name">
-                        <div className="size-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-bold overflow-hidden flex-shrink-0">
-                            {row.company?.logo_url ? (
-                                <img src={row.company.logo_url} alt="" className="w-full h-full object-cover" />
-                            ) : isCompany ? (
-                                <Building2 className="w-4 h-4 text-slate-300" />
-                            ) : (
-                                <Users className="w-4 h-4 text-slate-300" />
-                            )}
+                    <div className="flex items-center gap-3 group/name min-w-[220px]">
+                        <div className="relative size-8 rounded-full flex-shrink-0">
+                            {/* Checkbox Overlay */}
+                            <div className={`absolute inset-0 z-10 flex items-center justify-center rounded-full transition-all duration-200 ${isSelected
+                                ? 'bg-emerald-600 opacity-100'
+                                : 'bg-slate-900/40 opacity-0 group-hover/name:opacity-100'
+                                }`}>
+                                <input
+                                    type="checkbox"
+                                    checked={isSelected}
+                                    onChange={(e) => {
+                                        if (e.target.checked) setSelectedIds(prev => [...prev, row.id]);
+                                        else setSelectedIds(prev => prev.filter(id => id !== row.id));
+                                    }}
+                                    className="size-4 rounded border-white/50 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                                />
+                            </div>
+
+                            <div className={`size-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-bold overflow-hidden transition-opacity ${isSelected ? 'opacity-0' : 'opacity-100'
+                                }`}>
+                                {row.company?.logo_url ? (
+                                    <img src={row.company.logo_url} alt="" className="w-full h-full object-cover" />
+                                ) : isCompany ? (
+                                    <Building2 className="w-4 h-4 text-slate-300" />
+                                ) : (
+                                    <Users className="w-4 h-4 text-slate-300" />
+                                )}
+                            </div>
                         </div>
-                        <div className="flex flex-col min-w-0">
-                            <span className="font-medium text-slate-700 truncate">{val || "–"}</span>
+                        <div className="flex flex-col min-w-0 flex-1">
+                            <div className="flex items-center gap-2">
+                                <span className="font-black text-slate-800 truncate text-[13px]">{val || "–"}</span>
+                                <button
+                                    onClick={async (e) => {
+                                        e.stopPropagation();
+                                        const newStatus = !row.is_verified;
+                                        await supabase.from('contacts').update({ is_verified: newStatus }).eq('id', row.id);
+                                        fetchContacts();
+                                    }}
+                                    className={`size-6 rounded-full flex items-center justify-center transition-all ${row.is_verified
+                                        ? 'text-orange-500 bg-orange-50'
+                                        : 'text-slate-200 hover:text-slate-400 hover:bg-slate-50 opacity-0 group-hover/name:opacity-100'
+                                        }`}
+                                    title={row.is_verified ? "Remover dos favoritos" : "Marcar como favorito"}
+                                >
+                                    <Star className={`w-3 h-3 ${row.is_verified ? 'fill-current' : ''}`} />
+                                </button>
+                            </div>
                             {companyName && (
-                                <span className="text-[11px] text-slate-400 font-medium truncate uppercase tracking-wider">
+                                <span className="text-[10px] text-slate-400 font-bold truncate uppercase tracking-wider">
                                     {companyName}
                                 </span>
                             )}
@@ -268,11 +401,20 @@ export default function AdminContactosPage() {
             }
         },
         {
+            header: "Cargo",
+            key: "role",
+            render: (val: string) => val ? (
+                <span className="text-slate-500 font-bold text-[11px] uppercase tracking-wider bg-slate-100/50 px-2 py-0.5 rounded-md inline-block max-w-[150px] truncate">
+                    {val}
+                </span>
+            ) : <span className="text-slate-300 text-xs">—</span>
+        },
+        {
             header: "Email",
             key: "email",
             render: (val: string) => val ? (
-                <div className="flex items-center gap-2 group/email">
-                    <span className="text-slate-600">{val}</span>
+                <div className="flex items-center gap-2 group/email min-w-[180px]">
+                    <span className="text-slate-600 font-medium">{val}</span>
                     <button
                         onClick={() => navigator.clipboard.writeText(val)}
                         className="opacity-0 group-hover/email:opacity-100 transition-opacity p-1 hover:bg-slate-100 rounded text-slate-400"
@@ -284,21 +426,14 @@ export default function AdminContactosPage() {
             ) : <span className="text-slate-300 text-xs">—</span>
         },
         {
-            header: "Nº de telefone",
+            header: "Contacto",
             key: "phone",
             render: (val: string, row: Contact) => {
                 const phone = val || row.whatsapp;
                 return phone ? (
-                    <div className="flex items-center gap-4 group/phone">
-                        <span className="text-slate-600 font-medium">{phone}</span>
+                    <div className="flex items-center gap-3 group/phone min-w-[140px]">
+                        <span className="text-slate-800 font-black text-[13px]">{phone}</span>
                         <div className="flex items-center gap-1 opacity-0 group-hover/phone:opacity-100 transition-opacity">
-                            <button
-                                onClick={() => navigator.clipboard.writeText(phone)}
-                                className="p-1 hover:bg-slate-100 rounded text-slate-400"
-                                title="Copiar número"
-                            >
-                                <CopyIcon className="w-3.5 h-3.5" />
-                            </button>
                             <a
                                 href={`tel:${phone.replace(/\s/g, '')}`}
                                 className="p-1 hover:bg-slate-100 rounded text-slate-400"
@@ -411,21 +546,30 @@ export default function AdminContactosPage() {
                     onPrint={() => window.print()}
                     pageSize={50}
                     hideHeader={true}
+                    selectedIds={selectedIds}
+                    onSelectAll={(all) => {
+                        if (all) {
+                            const allIds = filteredContacts.map(c => c.id);
+                            setSelectedIds(allIds);
+                        } else {
+                            setSelectedIds([]);
+                        }
+                    }}
+                    bulkActions={
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={handleBulkDelete}
+                                className="p-2 hover:bg-white/10 rounded-full transition-colors text-white"
+                                title="Eliminar seleccionados"
+                            >
+                                <Trash2 className="w-5 h-5" />
+                            </button>
+                        </div>
+                    }
                     customActions={(row) => (
-                        <button
-                            onClick={async () => {
-                                const newStatus = !row.is_verified;
-                                await supabase.from('contacts').update({ is_verified: newStatus }).eq('id', row.id);
-                                fetchContacts();
-                            }}
-                            className={`size-7 rounded-lg flex items-center justify-center transition-all ${row.is_verified
-                                ? 'text-blue-500 hover:bg-blue-50'
-                                : 'text-slate-300 hover:bg-slate-50'
-                                }`}
-                            title={row.is_verified ? "Favorito" : "Marcar como favorito"}
-                        >
-                            <Star className={`w-4 h-4 ${row.is_verified ? 'fill-current' : ''}`} />
-                        </button>
+                        <div className="flex items-center gap-1">
+                            {/* Actions are already here */}
+                        </div>
                     )}
                 />
             </div>
@@ -566,6 +710,27 @@ export default function AdminContactosPage() {
                     </div>
                 </div>
             )}
+
+            {/* Confirmation Modals */}
+            <ConfirmationModal
+                isOpen={showDeleteConfirm}
+                onClose={() => setShowDeleteConfirm(false)}
+                onConfirm={confirmDelete}
+                title="Eliminar Contacto"
+                description={`Tem a certeza que deseja eliminar o contacto "${contactToDelete?.name}"? Esta ação não pode ser desfeita.`}
+                confirmLabel="Eliminar"
+                variant="destructive"
+            />
+
+            <ConfirmationModal
+                isOpen={showBulkDeleteConfirm}
+                onClose={() => setShowBulkDeleteConfirm(false)}
+                onConfirm={confirmBulkDelete}
+                title="Eliminar em Massa"
+                description={`Tem a certeza que deseja eliminar ${selectedIds.length} contactos? Esta ação não pode ser desfeita.`}
+                confirmLabel="Eliminar Todos"
+                variant="destructive"
+            />
         </div>
     );
 }

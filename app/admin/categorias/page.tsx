@@ -5,12 +5,16 @@ import { supabase } from "@/lib/supabaseClient";
 import { AdminDataTable } from "@/components/admin/AdminDataTable";
 import * as LucideIcons from "lucide-react";
 import { CategoryForm } from "@/components/admin/CategoryForm";
+import { toast } from "sonner";
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 
 export default function AdminCategoriesPage() {
     const [categories, setCategories] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [editingItem, setEditingItem] = useState<any>(null);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState<any>(null);
 
     async function fetchCategories() {
         setLoading(true);
@@ -28,20 +32,28 @@ export default function AdminCategoriesPage() {
         fetchCategories();
     }, []);
 
-    const handleDelete = async (row: any) => {
-        if (!confirm(`Deseja eliminar a categoria "${row.title}"?`)) return;
-
+    const confirmDelete = async () => {
+        if (!itemToDelete) return;
         try {
             const { error } = await supabase
                 .from('info_categories')
                 .delete()
-                .eq('id', row.id);
+                .eq('id', itemToDelete.id);
 
             if (error) throw error;
+            toast.success("Categoria eliminada!");
             fetchCategories();
         } catch (error: any) {
-            alert("Erro ao eliminar: " + error.message);
+            toast.error("Erro ao eliminar: " + error.message);
+        } finally {
+            setShowDeleteConfirm(false);
+            setItemToDelete(null);
         }
+    };
+
+    const handleDelete = (row: any) => {
+        setItemToDelete(row);
+        setShowDeleteConfirm(true);
     };
 
     const columns = [
@@ -108,6 +120,16 @@ export default function AdminCategoriesPage() {
                     }}
                 />
             )}
+
+            <ConfirmationModal
+                isOpen={showDeleteConfirm}
+                onClose={() => setShowDeleteConfirm(false)}
+                onConfirm={confirmDelete}
+                title="Eliminar Categoria"
+                description={`Tem a certeza que deseja eliminar a categoria "${itemToDelete?.title}"? Esta ação removerá o acesso a esta seção no site.`}
+                confirmLabel="Eliminar"
+                variant="destructive"
+            />
         </div>
     );
 }

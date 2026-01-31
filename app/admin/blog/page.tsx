@@ -5,12 +5,16 @@ import { supabase } from "@/lib/supabaseClient";
 import { AdminDataTable } from "@/components/admin/AdminDataTable";
 import { BadgeCheck, BadgeAlert } from "lucide-react";
 import { ArticleForm } from "@/components/admin/ArticleForm";
+import { toast } from "sonner";
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 
 export default function AdminArticlesPage() {
     const [articles, setArticles] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [editingItem, setEditingItem] = useState<any>(null);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState<any>(null);
 
     async function fetchArticles() {
         setLoading(true);
@@ -28,20 +32,28 @@ export default function AdminArticlesPage() {
         fetchArticles();
     }, []);
 
-    const handleDelete = async (row: any) => {
-        if (!confirm(`Tem a certeza que deseja eliminar o artigo "${row.title}"?`)) return;
-
+    const confirmDelete = async () => {
+        if (!itemToDelete) return;
         try {
             const { error } = await supabase
                 .from('articles')
                 .delete()
-                .eq('id', row.id);
+                .eq('id', itemToDelete.id);
 
             if (error) throw error;
+            toast.success("Artigo eliminado!");
             fetchArticles();
         } catch (error: any) {
-            alert("Erro ao eliminar: " + error.message);
+            toast.error("Erro ao eliminar: " + error.message);
+        } finally {
+            setShowDeleteConfirm(false);
+            setItemToDelete(null);
         }
+    };
+
+    const handleDelete = (row: any) => {
+        setItemToDelete(row);
+        setShowDeleteConfirm(true);
     };
 
     const columns = [
@@ -121,6 +133,16 @@ export default function AdminArticlesPage() {
                     }}
                 />
             )}
+
+            <ConfirmationModal
+                isOpen={showDeleteConfirm}
+                onClose={() => setShowDeleteConfirm(false)}
+                onConfirm={confirmDelete}
+                title="Eliminar Artigo"
+                description={`Tem a certeza que deseja eliminar o artigo "${itemToDelete?.title}"? Esta ação não pode ser desfeita.`}
+                confirmLabel="Eliminar"
+                variant="destructive"
+            />
         </div>
     );
 }

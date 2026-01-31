@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, X, Image as ImageIcon, Type, Link as LinkIcon, Calendar } from "lucide-react";
 import { RichTextEditor } from "@/components/RichTextEditor";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 interface ArticleFormProps {
     onClose: () => void;
@@ -56,10 +57,11 @@ export function ArticleForm({ onClose, onSuccess, initialData }: ArticleFormProp
             }
 
             if (error) throw error;
+            toast.success(initialData?.id ? "Artigo actualizado!" : "Artigo publicado!");
             onSuccess();
             onClose();
         } catch (err: any) {
-            alert("Erro ao salvar: " + err.message);
+            toast.error("Erro ao salvar: " + err.message);
         } finally {
             setLoading(false);
         }

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Loader2, X, Grid2X2, Type, Link as LinkIcon, Palette } from "lucide-react";
+import { toast } from "sonner";
 
 interface CategoryFormProps {
     onClose: () => void;
@@ -42,10 +43,11 @@ export function CategoryForm({ onClose, onSuccess, initialData }: CategoryFormPr
             }
 
             if (error) throw error;
+            toast.success(initialData?.id ? "Categoria actualizada!" : "Categoria criada!");
             onSuccess();
             onClose();
         } catch (error: any) {
-            alert("Erro ao salvar categoria: " + error.message);
+            toast.error("Erro ao salvar categoria: " + error.message);
         } finally {
             setLoading(false);
         }

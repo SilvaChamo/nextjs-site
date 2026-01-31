@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { AdminDataTable } from "@/components/admin/AdminDataTable";
 import { Mail, Clock, Trash2, Users } from "lucide-react";
+import { toast } from "sonner";
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 
 
 
@@ -12,6 +14,8 @@ export default function AdminMessagesPage() {
     const [messages, setMessages] = useState<any[]>([]);
     const [subscribers, setSubscribers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState<any>(null);
 
     async function fetchData() {
         setLoading(true);
@@ -39,25 +43,29 @@ export default function AdminMessagesPage() {
         fetchData();
     }, [activeTab]);
 
-    const handleDelete = async (row: any) => {
+    const confirmDelete = async () => {
+        if (!itemToDelete) return;
         const table = activeTab === 'messages' ? 'contact_messages' : 'newsletter_subscribers';
-        const confirmMsg = activeTab === 'messages'
-            ? `Deseja eliminar a mensagem de "${row.name}"?`
-            : `Deseja remover o email "${row.email}" da newsletter?`;
-
-        if (!confirm(confirmMsg)) return;
-
         try {
             const { error } = await supabase
                 .from(table)
                 .delete()
-                .eq('id', row.id);
+                .eq('id', itemToDelete.id);
 
             if (error) throw error;
+            toast.success(activeTab === 'messages' ? "Mensagem eliminada!" : "Subscritor removido!");
             fetchData();
         } catch (error: any) {
-            alert("Erro ao eliminar: " + error.message);
+            toast.error("Erro ao eliminar: " + error.message);
+        } finally {
+            setShowDeleteConfirm(false);
+            setItemToDelete(null);
         }
+    };
+
+    const handleDelete = (row: any) => {
+        setItemToDelete(row);
+        setShowDeleteConfirm(true);
     };
 
     const messageColumns = [
@@ -148,6 +156,19 @@ export default function AdminMessagesPage() {
                 data={activeTab === 'messages' ? messages : subscribers}
                 loading={loading}
                 onDelete={handleDelete}
+            />
+
+            <ConfirmationModal
+                isOpen={showDeleteConfirm}
+                onClose={() => setShowDeleteConfirm(false)}
+                onConfirm={confirmDelete}
+                title={activeTab === 'messages' ? "Eliminar Mensagem" : "Remover Subscritor"}
+                description={activeTab === 'messages'
+                    ? `Tem a certeza que deseja eliminar a mensagem de "${itemToDelete?.name}"?`
+                    : `Tem a certeza que deseja remover o email "${itemToDelete?.email}" da newsletter?`
+                }
+                confirmLabel="Eliminar"
+                variant="destructive"
             />
         </div>
     );

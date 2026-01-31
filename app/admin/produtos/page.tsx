@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { MarketProductForm } from "@/components/admin/MarketProductForm";
 import { ShoppingCart, LayoutGrid, List, Pencil, Trash2, Plus, Tag, Building2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 
 export default function AdminProductsPage() {
     const router = useRouter();
@@ -17,6 +19,8 @@ export default function AdminProductsPage() {
 
     const [showMarketForm, setShowMarketForm] = useState(false);
     const [editingItem, setEditingItem] = useState<any>(null);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState<any>(null);
 
     async function fetchData() {
         setLoading(true);
@@ -41,24 +45,29 @@ export default function AdminProductsPage() {
         fetchData();
     }, [view]);
 
-    const handleDelete = async (row: any) => {
-        const type = view === 'market' ? 'cotação' : 'produto';
-        const name = row.name || row.product || row.id;
-
-        if (!confirm(`Tem a certeza que deseja eliminar o ${type} "${name}"?`)) return;
-
+    const confirmDelete = async () => {
+        if (!itemToDelete) return;
         try {
             const table = view === 'market' ? 'market_prices' : 'products';
             const { error } = await supabase
                 .from(table)
                 .delete()
-                .eq('id', row.id);
+                .eq('id', itemToDelete.id);
 
             if (error) throw error;
+            toast.success(view === 'market' ? "Cotação eliminada!" : "Produto eliminado!");
             fetchData();
         } catch (error: any) {
-            alert("Erro ao eliminar: " + error.message);
+            toast.error("Erro ao eliminar: " + error.message);
+        } finally {
+            setShowDeleteConfirm(false);
+            setItemToDelete(null);
         }
+    };
+
+    const handleDelete = (row: any) => {
+        setItemToDelete(row);
+        setShowDeleteConfirm(true);
     };
 
     const handleEdit = (row: any) => {
@@ -283,6 +292,16 @@ export default function AdminProductsPage() {
                     }}
                 />
             )}
+
+            <ConfirmationModal
+                isOpen={showDeleteConfirm}
+                onClose={() => setShowDeleteConfirm(false)}
+                onConfirm={confirmDelete}
+                title={view === 'market' ? "Eliminar Cotação" : "Eliminar Produto"}
+                description={`Tem a certeza que deseja eliminar "${itemToDelete?.name || itemToDelete?.product}"? Esta ação não pode ser desfeita.`}
+                confirmLabel="Eliminar"
+                variant="destructive"
+            />
         </div>
     );
 }

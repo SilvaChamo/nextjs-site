@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Plus, LayoutGrid, List, Pencil, Trash2, Calendar, Link as LinkIcon, Search, FileText, Scale } from "lucide-react";
 import { ArticleForm } from "@/components/admin/ArticleForm";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 
 export default function AdminDocumentosPage() {
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -15,6 +17,8 @@ export default function AdminDocumentosPage() {
     const [search, setSearch] = useState("");
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [editingArticle, setEditingArticle] = useState<null | any>(null);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [docToDelete, setDocToDelete] = useState<any>(null);
 
     const tabs = [
         { id: 'Relatórios', label: 'Relatórios', icon: FileText },
@@ -37,15 +41,28 @@ export default function AdminDocumentosPage() {
         fetchArticles();
     }, []);
 
-    const handleDelete = async (id: string) => {
-        if (!confirm("Tem a certeza que deseja eliminar este documento?")) return;
+    const confirmDelete = async () => {
+        if (!docToDelete) return;
+        try {
+            const { error } = await supabase
+                .from('articles')
+                .delete()
+                .eq('id', docToDelete.id);
 
-        const { error } = await supabase
-            .from('articles')
-            .delete()
-            .eq('id', id);
+            if (error) throw error;
+            toast.success("Documento eliminado!");
+            fetchArticles();
+        } catch (error: any) {
+            toast.error("Erro ao eliminar: " + error.message);
+        } finally {
+            setShowDeleteConfirm(false);
+            setDocToDelete(null);
+        }
+    };
 
-        if (!error) fetchArticles();
+    const handleDelete = (article: any) => {
+        setDocToDelete(article);
+        setShowDeleteConfirm(true);
     };
 
     const handleEdit = (article: any) => {
@@ -85,8 +102,8 @@ export default function AdminDocumentosPage() {
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
                         className={`flex items-center gap-2 px-4 md:px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === tab.id
-                                ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
-                                : 'text-slate-400 hover:bg-slate-50'
+                            ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
+                            : 'text-slate-400 hover:bg-slate-50'
                             }`}
                     >
                         <tab.icon className="w-4 h-4" />
@@ -168,7 +185,7 @@ export default function AdminDocumentosPage() {
                                         <Button size="sm" variant="outline" className="h-8 w-8 p-0" onClick={() => handleEdit(article)}>
                                             <Pencil className="w-3.5 h-3.5 text-slate-600" />
                                         </Button>
-                                        <Button size="sm" variant="outline" className="h-8 w-8 p-0 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200" onClick={() => handleDelete(article.id)}>
+                                        <Button size="sm" variant="outline" className="h-8 w-8 p-0 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200" onClick={() => handleDelete(article)}>
                                             <Trash2 className="w-3.5 h-3.5" />
                                         </Button>
                                     </div>
@@ -214,7 +231,7 @@ export default function AdminDocumentosPage() {
                                             <Button size="sm" variant="ghost" onClick={() => handleEdit(article)}>
                                                 <Pencil className="w-4 h-4 text-slate-400 hover:text-emerald-600" />
                                             </Button>
-                                            <Button size="sm" variant="ghost" onClick={() => handleDelete(article.id)}>
+                                            <Button size="sm" variant="ghost" onClick={() => handleDelete(article)}>
                                                 <Trash2 className="w-4 h-4 text-slate-400 hover:text-rose-600" />
                                             </Button>
                                         </div>
@@ -234,6 +251,16 @@ export default function AdminDocumentosPage() {
                     initialData={editingArticle}
                 />
             )}
+
+            <ConfirmationModal
+                isOpen={showDeleteConfirm}
+                onClose={() => setShowDeleteConfirm(false)}
+                onConfirm={confirmDelete}
+                title="Eliminar Documento"
+                description={`Tem a certeza que deseja eliminar o documento "${docToDelete?.title}"? Esta ação não pode ser desfeita.`}
+                confirmLabel="Eliminar"
+                variant="destructive"
+            />
         </div>
     );
 }

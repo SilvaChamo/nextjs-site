@@ -6,6 +6,8 @@ import { AdminDataTable } from "@/components/admin/AdminDataTable";
 import { Button } from "@/components/ui/button";
 import { Building2, Globe, Phone, CheckCircle2, LayoutGrid, List, Pencil, Trash2, Plus, MapPin, Calendar } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 
 export default function AdminEmpresasPage() {
     const router = useRouter();
@@ -17,6 +19,9 @@ export default function AdminEmpresasPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 9;
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [showPremiumConfirm, setShowPremiumConfirm] = useState(false);
+    const [itemToProcess, setItemToProcess] = useState<any>(null);
 
     async function fetchData() {
         setLoading(true);
@@ -56,20 +61,28 @@ export default function AdminEmpresasPage() {
         currentPage * ITEMS_PER_PAGE
     );
 
-    const handleDelete = async (row: any) => {
-        if (!confirm(`Tem a certeza que deseja eliminar a empresa "${row.name}"?`)) return;
-
+    const confirmDelete = async () => {
+        if (!itemToProcess) return;
         try {
             const { error } = await supabase
                 .from('companies')
                 .delete()
-                .eq('id', row.id);
+                .eq('id', itemToProcess.id);
 
             if (error) throw error;
+            toast.success("Empresa eliminada!");
             fetchData();
         } catch (error: any) {
-            alert("Erro ao eliminar: " + error.message);
+            toast.error("Erro ao eliminar: " + error.message);
+        } finally {
+            setShowDeleteConfirm(false);
+            setItemToProcess(null);
         }
+    };
+
+    const handleDelete = (row: any) => {
+        setItemToProcess(row);
+        setShowDeleteConfirm(true);
     };
 
     const toggleVerify = async (row: any) => {
@@ -79,24 +92,34 @@ export default function AdminEmpresasPage() {
                 .update({ is_verified: !row.is_verified })
                 .eq('id', row.id);
             if (error) throw error;
+            toast.success(row.is_verified ? "Verificação removida" : "Empresa verificada!");
             fetchData();
         } catch (err: any) {
-            alert("Erro ao verificar: " + err.message);
+            toast.error("Erro ao verificar: " + err.message);
         }
     };
 
-    const activatePremium = async (row: any) => {
-        if (!confirm("Confirmar ativação do plano Profissional?")) return;
+    const confirmPremium = async () => {
+        if (!itemToProcess) return;
         try {
             const { error } = await supabase
                 .from('companies')
                 .update({ plan: 'profissional' })
-                .eq('id', row.id);
+                .eq('id', itemToProcess.id);
             if (error) throw error;
+            toast.success("Plano Profissional ativado!");
             fetchData();
         } catch (err: any) {
-            alert("Erro: " + err.message);
+            toast.error("Erro: " + err.message);
+        } finally {
+            setShowPremiumConfirm(false);
+            setItemToProcess(null);
         }
+    };
+
+    const activatePremium = (row: any) => {
+        setItemToProcess(row);
+        setShowPremiumConfirm(true);
     };
 
     const companyColumns = [
@@ -267,7 +290,7 @@ export default function AdminEmpresasPage() {
                                     onClick={() => {
                                         const num = row.contact || row.phone || row.secondary_contact;
                                         if (num) window.open(`https://wa.me/${num.replace(/\s+/g, '')}`, '_blank');
-                                        else alert("Sem contacto");
+                                        else toast.error("Sem contacto");
                                     }}
                                 >
                                     <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
@@ -488,6 +511,26 @@ export default function AdminEmpresasPage() {
                     </>
                 )
             )}
+
+            <ConfirmationModal
+                isOpen={showDeleteConfirm}
+                onClose={() => setShowDeleteConfirm(false)}
+                onConfirm={confirmDelete}
+                title="Eliminar Empresa"
+                description={`Tem a certeza que deseja eliminar a empresa "${itemToProcess?.name}"? Esta ação não pode ser desfeita.`}
+                confirmLabel="Eliminar"
+                variant="destructive"
+            />
+
+            <ConfirmationModal
+                isOpen={showPremiumConfirm}
+                onClose={() => setShowPremiumConfirm(false)}
+                onConfirm={confirmPremium}
+                title="Ativar Plano Profissional"
+                description={`Deseja ativar o plano Profissional para "${itemToProcess?.name}"?`}
+                confirmLabel="Ativar"
+                variant="default"
+            />
         </div>
     );
 }

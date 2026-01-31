@@ -15,7 +15,8 @@ import {
     FileDown,
     Copy,
     Share2,
-    ExternalLink
+    ExternalLink,
+    X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -33,6 +34,11 @@ interface AdminDataTableProps {
     customActions?: (row: any) => React.ReactNode;
     pageSize?: number;
     hideHeader?: boolean;
+    // Selection support
+    selectedIds?: string[];
+    onSelectAll?: (all: boolean) => void;
+    onSelectRow?: (id: string, selected: boolean) => void;
+    bulkActions?: React.ReactNode;
 }
 
 export function AdminDataTable({
@@ -48,7 +54,11 @@ export function AdminDataTable({
     loading,
     customActions,
     pageSize = 50,
-    hideHeader = false
+    hideHeader = false,
+    selectedIds = [],
+    onSelectAll,
+    onSelectRow,
+    bulkActions
 }: AdminDataTableProps) {
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
@@ -130,6 +140,16 @@ export function AdminDataTable({
                 <table className="w-full text-left border-collapse min-w-[1000px]">
                     <thead className="bg-slate-50/50">
                         <tr>
+                            {onSelectAll && (
+                                <th className="px-4 py-2 w-10 border-b border-slate-100">
+                                    <input
+                                        type="checkbox"
+                                        className="size-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                                        checked={paginatedData.length > 0 && paginatedData.every(row => selectedIds.includes(row.id))}
+                                        onChange={(e) => onSelectAll(e.target.checked)}
+                                    />
+                                </th>
+                            )}
                             {columns.map((col) => (
                                 <th key={col.key} className="px-4 py-2 text-[11px] font-black uppercase tracking-[0.12em] text-slate-400 border-b border-slate-100">
                                     {col.header}
@@ -194,6 +214,26 @@ export function AdminDataTable({
                     </tbody>
                 </table>
             </div>
+
+            {/* Selection Toolbar / Floating Header */}
+            {selectedIds.length > 0 && (
+                <div className="absolute top-0 left-0 w-full h-[60px] bg-emerald-600 text-white flex items-center justify-between px-6 z-50 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <div className="flex items-center gap-6">
+                        <button
+                            onClick={() => onSelectAll?.(false)}
+                            className="p-1 hover:bg-white/10 rounded transition-colors"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
+                        <span className="text-lg font-black tracking-tight">
+                            {selectedIds.length} {selectedIds.length === 1 ? 'seleccionado' : 'seleccionados'}
+                        </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        {bulkActions}
+                    </div>
+                </div>
+            )}
 
             {/* Pagination Controls - Minimalist Style */}
             <div className="px-4 py-3 border-t border-slate-50 flex items-center justify-end bg-slate-50/20">

@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Loader2, X, Globe, Phone, Mail, MapPin, Building2, FileText, Target, Eye, Heart, List } from "lucide-react";
 import { MOZ_DATA, SECTORS, VALUE_CHAINS } from "@/lib/agro-data";
+import { toast } from "sonner";
 
 interface CompanyFormProps {
     onClose: () => void;
@@ -70,10 +71,11 @@ export function CompanyForm({ onClose, onSuccess, initialData }: CompanyFormProp
             }
 
             if (error) throw error;
+            toast.success(initialData?.id ? "Empresa actualizada!" : "Empresa adicionada!");
             onSuccess();
             onClose();
         } catch (error: any) {
-            alert("Erro ao salvar empresa: " + error.message);
+            toast.error("Erro ao salvar empresa: " + error.message);
         } finally {
             setLoading(false);
         }

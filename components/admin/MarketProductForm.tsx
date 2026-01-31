@@ -4,6 +4,7 @@ import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Loader2, X, ShoppingBag, MapPin } from "lucide-react";
+import { toast } from "sonner";
 
 interface MarketProductFormProps {
     onClose: () => void;
@@ -43,10 +44,11 @@ export function MarketProductForm({ onClose, onSuccess, initialData }: MarketPro
             }
 
             if (error) throw error;
+            toast.success(initialData?.id ? "Cotação actualizada!" : "Cotação adicionada!");
             onSuccess();
             onClose();
         } catch (error: any) {
-            alert("Erro ao salvar cotação de mercado: " + error.message);
+            toast.error("Erro ao salvar cotação de mercado: " + error.message);
         } finally {
             setLoading(false);
         }

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Send, CheckCircle2 } from "lucide-react";
+import { toast } from "sonner";
 
 export function NewsletterCard() {
     const [email, setEmail] = useState("");
@@ -14,6 +15,7 @@ export function NewsletterCard() {
         setTimeout(() => {
             setStatus('success');
             setEmail("");
+            toast.success("Inscrição realizada com sucesso!");
         }, 1500);
     };
 

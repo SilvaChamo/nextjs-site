@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Send } from "lucide-react";
+import { toast } from "sonner";
 
 export function ContactForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -12,7 +13,10 @@ export function ContactForm() {
             return;
         }
         setIsSubmitting(true);
-        setTimeout(() => setIsSubmitting(false), 3000);
+        setTimeout(() => {
+            setIsSubmitting(false);
+            toast.success("Mensagem enviada! Entraremos em contacto em breve.");
+        }, 1500);
     };
 
     return (

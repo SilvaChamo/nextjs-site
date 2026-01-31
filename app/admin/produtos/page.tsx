@@ -20,7 +20,9 @@ export default function AdminProductsPage() {
     const [showMarketForm, setShowMarketForm] = useState(false);
     const [editingItem, setEditingItem] = useState<any>(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<any>(null);
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
     async function fetchData() {
         setLoading(true);
@@ -47,7 +49,11 @@ export default function AdminProductsPage() {
 
     const confirmDelete = async () => {
         if (!itemToDelete) return;
+        const previousData = [...data];
         try {
+            // Optimistic update
+            setData(prev => prev.filter(item => item.id !== itemToDelete.id));
+
             const table = view === 'market' ? 'market_prices' : 'products';
             const { error } = await supabase
                 .from(table)
@@ -56,12 +62,36 @@ export default function AdminProductsPage() {
 
             if (error) throw error;
             toast.success(view === 'market' ? "Cotação eliminada!" : "Produto eliminado!");
-            fetchData();
         } catch (error: any) {
+            setData(previousData);
             toast.error("Erro ao eliminar: " + error.message);
         } finally {
             setShowDeleteConfirm(false);
             setItemToDelete(null);
+        }
+    };
+
+    const confirmBulkDelete = async () => {
+        const previousData = [...data];
+        try {
+            // Optimistic update
+            setData(prev => prev.filter(item => !selectedIds.includes(item.id)));
+
+            const table = view === 'market' ? 'market_prices' : 'products';
+            const { error } = await supabase
+                .from(table)
+                .delete()
+                .in('id', selectedIds);
+
+            if (error) throw error;
+
+            toast.success(`${selectedIds.length} ${view === 'market' ? 'cotações' : 'produtos'} eliminados!`);
+            setSelectedIds([]);
+        } catch (error: any) {
+            setData(previousData);
+            toast.error("Erro na eliminação em massa: " + error.message);
+        } finally {
+            setShowBulkDeleteConfirm(false);
         }
     };
 
@@ -189,6 +219,29 @@ export default function AdminProductsPage() {
                     onAdd={handleAdd}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
+                    selectedIds={selectedIds}
+                    onSelectRow={(id, selected) => {
+                        if (selected) setSelectedIds(prev => [...prev, id]);
+                        else setSelectedIds(prev => prev.filter(i => i !== id));
+                    }}
+                    onSelectAll={(all) => {
+                        if (all) {
+                            setSelectedIds(data.map(r => r.id));
+                        } else {
+                            setSelectedIds([]);
+                        }
+                    }}
+                    bulkActions={
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => setShowBulkDeleteConfirm(true)}
+                                className="p-2 hover:bg-white/10 rounded-full transition-colors text-white"
+                                title="Eliminar seleccionados"
+                            >
+                                <Trash2 className="w-5 h-5" />
+                            </button>
+                        </div>
+                    }
                 />
             ) : (
                 /* GRID VIEW */
@@ -298,8 +351,18 @@ export default function AdminProductsPage() {
                 onClose={() => setShowDeleteConfirm(false)}
                 onConfirm={confirmDelete}
                 title={view === 'market' ? "Eliminar Cotação" : "Eliminar Produto"}
-                description={`Tem a certeza que deseja eliminar "${itemToDelete?.name || itemToDelete?.product}"? Esta ação não pode ser desfeita.`}
+                description={`Tem a certeza que deseja eliminar "${itemToDelete?.name || itemToDelete?.product}"? Esta acção não pode ser desfeita.`}
                 confirmLabel="Eliminar"
+                variant="destructive"
+            />
+
+            <ConfirmationModal
+                isOpen={showBulkDeleteConfirm}
+                onClose={() => setShowBulkDeleteConfirm(false)}
+                onConfirm={confirmBulkDelete}
+                title="Eliminar em Massa"
+                description={`Tem a certeza que deseja eliminar ${selectedIds.length} ${view === 'market' ? 'cotações' : 'produtos'}? Esta acção não pode ser desfeita.`}
+                confirmLabel="Eliminar Tudo"
                 variant="destructive"
             />
         </div>

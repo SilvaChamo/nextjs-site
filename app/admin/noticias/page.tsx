@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { AdminDataTable } from "@/components/admin/AdminDataTable";
 import { Button } from "@/components/ui/button";
 import { Plus, LayoutGrid, List, Pencil, Trash2, Calendar, Link as LinkIcon, Search, FileText, Globe, BookOpen, Lightbulb } from "lucide-react";
 import { ArticleForm } from "@/components/admin/ArticleForm";
@@ -19,7 +20,9 @@ export default function AdminNoticiasPage() {
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [editingArticle, setEditingArticle] = useState<null | any>(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false);
     const [articleToDelete, setArticleToDelete] = useState<any>(null);
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
     const tabs = [
         { id: 'Notícia', label: 'Notícias', icon: FileText },
@@ -58,14 +61,35 @@ export default function AdminNoticiasPage() {
 
             if (error) throw error;
             toast.success("Artigo eliminado!");
-            // Optional: refetch to be absolutely sure
-            // fetchArticles(); 
         } catch (error: any) {
             setArticles(previousArticles);
             toast.error("Erro ao eliminar: " + error.message);
         } finally {
             setShowDeleteConfirm(false);
             setArticleToDelete(null);
+        }
+    };
+
+    const confirmBulkDelete = async () => {
+        const previousArticles = [...articles];
+        try {
+            // Optimistic update
+            setArticles(prev => prev.filter(a => !selectedIds.includes(a.id)));
+
+            const { error } = await supabase
+                .from('articles')
+                .delete()
+                .in('id', selectedIds);
+
+            if (error) throw error;
+
+            toast.success(`${selectedIds.length} artigos eliminados!`);
+            setSelectedIds([]);
+        } catch (error: any) {
+            setArticles(previousArticles);
+            toast.error("Erro na eliminação em massa: " + error.message);
+        } finally {
+            setShowBulkDeleteConfirm(false);
         }
     };
 
@@ -93,6 +117,35 @@ export default function AdminNoticiasPage() {
 
         return matchesSearch && matchesType;
     });
+
+    const columns = [
+        {
+            header: "Artigo",
+            key: "title",
+            render: (val: string, row: any) => (
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-slate-100 overflow-hidden flex-shrink-0 border border-slate-200">
+                        {row.image_url && <img src={row.image_url} className="w-full h-full object-cover" />}
+                    </div>
+                    <span className="font-semibold text-slate-700 line-clamp-1">{val}</span>
+                </div>
+            )
+        },
+        {
+            header: "Categoria",
+            key: "type",
+            render: (val: string) => (
+                <span className="bg-slate-100 text-slate-600 px-2 py-1 rounded text-[10px] font-bold uppercase">
+                    {val || 'Geral'}
+                </span>
+            )
+        },
+        {
+            header: "Data",
+            key: "date",
+            render: (val: string, row: any) => new Date(val || row.created_at).toLocaleDateString()
+        }
+    ];
 
     return (
         <div className="space-y-8">
@@ -181,50 +234,39 @@ export default function AdminNoticiasPage() {
                 </div>
             ) : (
                 // List View
-                <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
-                    <table className="w-full text-sm text-left">
-                        <thead className="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200">
-                            <tr>
-                                <th className="px-6 py-4">Artigo</th>
-                                <th className="px-6 py-4">Categoria</th>
-                                <th className="px-6 py-4">Data</th>
-                                <th className="px-6 py-4 text-right">Acções</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100">
-                            {filteredArticles.map((article) => (
-                                <tr key={article.id} className="hover:bg-slate-50/50 transition-colors">
-                                    <td className="px-6 py-4 max-w-[400px]">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-lg bg-slate-100 overflow-hidden flex-shrink-0 border border-slate-200">
-                                                {article.image_url && <img src={article.image_url} className="w-full h-full object-cover" />}
-                                            </div>
-                                            <span className="font-semibold text-slate-700 line-clamp-1">{article.title}</span>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <span className="bg-slate-100 text-slate-600 px-2 py-1 rounded text-[10px] font-bold uppercase">
-                                            {article.type || 'Geral'}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4 text-slate-500 font-medium">
-                                        {new Date(article.date || article.created_at).toLocaleDateString()}
-                                    </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <div className="flex items-center justify-end gap-2">
-                                            <Button size="sm" variant="ghost" onClick={() => handleEdit(article)}>
-                                                <Pencil className="w-4 h-4 text-slate-400 hover:text-emerald-600" />
-                                            </Button>
-                                            <Button size="sm" variant="ghost" onClick={() => handleDelete(article)}>
-                                                <Trash2 className="w-4 h-4 text-slate-400 hover:text-rose-600" />
-                                            </Button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                <AdminDataTable
+                    title={activeTab}
+                    columns={columns}
+                    data={filteredArticles}
+                    loading={loading}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                    selectedIds={selectedIds}
+                    onSelectRow={(id: string, selected: boolean) => {
+                        if (selected) setSelectedIds(prev => [...prev, id]);
+                        else setSelectedIds(prev => prev.filter(i => i !== id));
+                    }}
+                    onSelectAll={(all: boolean) => {
+                        if (all) {
+                            setSelectedIds(filteredArticles.map(r => r.id));
+                        } else {
+                            setSelectedIds([]);
+                        }
+                    }}
+                    bulkActions={
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => setShowBulkDeleteConfirm(true)}
+                                className="p-2 hover:bg-white/10 rounded-full transition-colors text-white"
+                                title="Eliminar seleccionados"
+                            >
+                                <Trash2 className="w-5 h-5" />
+                            </button>
+                        </div>
+                    }
+                    hideHeader={true}
+                    pageSize={50}
+                />
             )}
 
             {/* Modal */}
@@ -241,8 +283,18 @@ export default function AdminNoticiasPage() {
                 onClose={() => setShowDeleteConfirm(false)}
                 onConfirm={confirmDelete}
                 title="Eliminar Artigo"
-                description={`Tem a certeza que deseja eliminar o artigo "${articleToDelete?.title}"? Esta ação não pode ser desfeita.`}
+                description={`Tem a certeza que deseja eliminar o artigo "${articleToDelete?.title}"? Esta acção não pode ser desfeita.`}
                 confirmLabel="Eliminar"
+                variant="destructive"
+            />
+
+            <ConfirmationModal
+                isOpen={showBulkDeleteConfirm}
+                onClose={() => setShowBulkDeleteConfirm(false)}
+                onConfirm={confirmBulkDelete}
+                title="Eliminar em Massa"
+                description={`Tem a certeza que deseja eliminar ${selectedIds.length} artigos? Esta acção não pode ser desfeita.`}
+                confirmLabel="Eliminar Todos"
                 variant="destructive"
             />
         </div>

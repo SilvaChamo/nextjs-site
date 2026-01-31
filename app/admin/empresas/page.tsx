@@ -20,8 +20,10 @@ export default function AdminEmpresasPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 9;
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false);
     const [showPremiumConfirm, setShowPremiumConfirm] = useState(false);
     const [itemToProcess, setItemToProcess] = useState<any>(null);
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
     async function fetchData() {
         setLoading(true);
@@ -65,10 +67,14 @@ export default function AdminEmpresasPage() {
 
     const confirmDelete = async () => {
         if (!itemToProcess) return;
+        const previousData = [...data];
         try {
+            // Optimistic update
+            setData(prev => prev.filter(c => c.id !== itemToProcess.id));
+
             console.log("Tentando eliminar empresa (via RPC) ID:", itemToProcess.id);
 
-            const { data, error } = await supabase.rpc('delete_company_as_admin', {
+            const { error } = await supabase.rpc('delete_company_as_admin', {
                 target_company_id: itemToProcess.id
             });
 
@@ -78,13 +84,36 @@ export default function AdminEmpresasPage() {
             }
 
             toast.success("Empresa eliminada com sucesso!");
-            fetchData();
         } catch (error: any) {
+            setData(previousData);
             console.error("Erro completo de eliminação:", error);
             toast.error("Erro ao eliminar: " + (error.message || "Erro de permissão"));
         } finally {
             setShowDeleteConfirm(false);
             setItemToProcess(null);
+        }
+    };
+
+    const confirmBulkDelete = async () => {
+        const previousData = [...data];
+        try {
+            // Optimistic update
+            setData(prev => prev.filter(c => !selectedIds.includes(c.id)));
+
+            const { error } = await supabase
+                .from('companies')
+                .delete()
+                .in('id', selectedIds);
+
+            if (error) throw error;
+
+            toast.success(`${selectedIds.length} empresas eliminadas!`);
+            setSelectedIds([]);
+        } catch (error: any) {
+            setData(previousData);
+            toast.error("Erro na eliminação em massa: " + error.message);
+        } finally {
+            setShowBulkDeleteConfirm(false);
         }
     };
 
@@ -316,6 +345,29 @@ export default function AdminEmpresasPage() {
                         loading={loading}
                         onEdit={(row) => router.push(`/admin/empresas/${row.id}`)}
                         onDelete={handleDelete}
+                        selectedIds={selectedIds}
+                        onSelectRow={(id, selected) => {
+                            if (selected) setSelectedIds(prev => [...prev, id]);
+                            else setSelectedIds(prev => prev.filter(i => i !== id));
+                        }}
+                        onSelectAll={(all) => {
+                            if (all) {
+                                setSelectedIds(paginatedData.map(r => r.id));
+                            } else {
+                                setSelectedIds([]);
+                            }
+                        }}
+                        bulkActions={
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() => setShowBulkDeleteConfirm(true)}
+                                    className="p-2 hover:bg-white/10 rounded-full transition-colors text-white"
+                                    title="Eliminar seleccionados"
+                                >
+                                    <Trash2 className="w-5 h-5" />
+                                </button>
+                            </div>
+                        }
                         customActions={(row) => (
                             <div className="contents">
                                 <Button
@@ -567,6 +619,16 @@ export default function AdminEmpresasPage() {
                 description={`Deseja ativar o plano Profissional para "${itemToProcess?.name}"?`}
                 confirmLabel="Ativar"
                 variant="default"
+            />
+
+            <ConfirmationModal
+                isOpen={showBulkDeleteConfirm}
+                onClose={() => setShowBulkDeleteConfirm(false)}
+                onConfirm={confirmBulkDelete}
+                title="Eliminar em Massa"
+                description={`Tem a certeza que deseja eliminar ${selectedIds.length} empresas? Esta acção não pode ser desfeita.`}
+                confirmLabel="Eliminar Todas"
+                variant="destructive"
             />
         </div>
     );

@@ -339,57 +339,19 @@ export default function AdminContactosPage() {
             render: (val: string, row: Contact) => {
                 const isCompany = isCompanyName(val) || !!row.company_id;
                 const companyName = row.company?.name;
-                const isSelected = selectedIds.includes(row.id);
-
                 return (
-                    <div className="flex items-center gap-3 group/name min-w-[220px]">
-                        <div className="relative size-8 rounded-full flex-shrink-0">
-                            {/* Checkbox Overlay */}
-                            <div className={`absolute inset-0 z-10 flex items-center justify-center rounded-full transition-all duration-200 ${isSelected
-                                ? 'bg-emerald-600 opacity-100'
-                                : 'bg-slate-900/40 opacity-0 group-hover/name:opacity-100'
-                                }`}>
-                                <input
-                                    type="checkbox"
-                                    checked={isSelected}
-                                    onChange={(e) => {
-                                        if (e.target.checked) setSelectedIds(prev => [...prev, row.id]);
-                                        else setSelectedIds(prev => prev.filter(id => id !== row.id));
-                                    }}
-                                    className="size-4 rounded border-white/50 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
-                                />
-                            </div>
-
-                            <div className={`size-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-bold overflow-hidden transition-opacity ${isSelected ? 'opacity-0' : 'opacity-100'
-                                }`}>
-                                {row.company?.logo_url ? (
-                                    <img src={row.company.logo_url} alt="" className="w-full h-full object-cover" />
-                                ) : isCompany ? (
-                                    <Building2 className="w-4 h-4 text-slate-300" />
-                                ) : (
-                                    <Users className="w-4 h-4 text-slate-300" />
-                                )}
-                            </div>
+                    <div className="flex items-center gap-3 min-w-[220px]">
+                        <div className="size-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-bold overflow-hidden">
+                            {row.company?.logo_url ? (
+                                <img src={row.company.logo_url} alt="" className="w-full h-full object-cover" />
+                            ) : isCompany ? (
+                                <Building2 className="w-4 h-4 text-slate-300" />
+                            ) : (
+                                <Users className="w-4 h-4 text-slate-300" />
+                            )}
                         </div>
                         <div className="flex flex-col min-w-0 flex-1">
-                            <div className="flex items-center gap-2">
-                                <span className="font-black text-slate-800 truncate text-[13px]">{val || "–"}</span>
-                                <button
-                                    onClick={async (e) => {
-                                        e.stopPropagation();
-                                        const newStatus = !row.is_verified;
-                                        await supabase.from('contacts').update({ is_verified: newStatus }).eq('id', row.id);
-                                        fetchContacts();
-                                    }}
-                                    className={`size-6 rounded-full flex items-center justify-center transition-all ${row.is_verified
-                                        ? 'text-orange-500 bg-orange-50'
-                                        : 'text-slate-200 hover:text-slate-400 hover:bg-slate-50 opacity-0 group-hover/name:opacity-100'
-                                        }`}
-                                    title={row.is_verified ? "Remover dos favoritos" : "Marcar como favorito"}
-                                >
-                                    <Star className={`w-3 h-3 ${row.is_verified ? 'fill-current' : ''}`} />
-                                </button>
-                            </div>
+                            <span className="font-semibold text-slate-800 truncate text-[13px]">{val || "–"}</span>
                             {companyName && (
                                 <span className="text-[10px] text-slate-400 font-bold truncate uppercase tracking-wider">
                                     {companyName}
@@ -433,7 +395,7 @@ export default function AdminContactosPage() {
                 return phone ? (
                     <div className="flex items-center gap-3 group/phone min-w-[140px]">
                         <span className="text-slate-800 font-black text-[13px]">{phone}</span>
-                        <div className="flex items-center gap-1 opacity-0 group-hover/phone:opacity-100 transition-opacity">
+                        <div className="flex items-center gap-1">
                             <a
                                 href={`tel:${phone.replace(/\s/g, '')}`}
                                 className="p-1 hover:bg-slate-100 rounded text-slate-400"
@@ -463,10 +425,16 @@ export default function AdminContactosPage() {
         c.phone?.includes(searchTerm) ||
         c.company?.name?.toLowerCase().includes(searchTerm.toLowerCase())
     ).sort((a, b) => {
-        if (a.is_verified === b.is_verified) {
-            return (a.name || "").localeCompare(b.name || "");
-        }
-        return a.is_verified ? -1 : 1;
+        // Criterion 1: Priority for contacts with phone/whatsapp
+        const aHasPhone = !!(a.phone || a.whatsapp);
+        const bHasPhone = !!(b.phone || b.whatsapp);
+        if (aHasPhone !== bHasPhone) return aHasPhone ? -1 : 1;
+
+        // Criterion 2: Verified status
+        if (a.is_verified !== b.is_verified) return a.is_verified ? -1 : 1;
+
+        // Criterion 3: Alphabetical order
+        return (a.name || "").localeCompare(b.name || "");
     });
 
     async function handleScrape() {
@@ -509,7 +477,7 @@ export default function AdminContactosPage() {
                     <Button
                         variant="outline"
                         onClick={handleScrape}
-                        className="border-slate-200 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200 gap-2 text-xs font-bold rounded-lg h-9 px-4 transition-all"
+                        className="border-slate-200 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200 gap-2 text-xs font-bold rounded-md h-8 px-3 transition-all"
                         disabled={importing}
                     >
                         <Globe className="w-4 h-4" />
@@ -517,7 +485,7 @@ export default function AdminContactosPage() {
                     </Button>
                     <Button
                         onClick={() => { resetForm(); setEditingContact(null); setShowModal(true); }}
-                        className="bg-emerald-600 hover:bg-orange-600 text-white gap-2 text-xs font-bold rounded-lg h-9 px-4 transition-all shadow-sm"
+                        className="bg-emerald-600 hover:bg-orange-600 text-white gap-2 text-xs font-bold rounded-md h-8 px-3 transition-all shadow-sm"
                     >
                         <Plus className="w-4 h-4" />
                         Novo
@@ -541,10 +509,14 @@ export default function AdminContactosPage() {
                     loading={loading}
                     onEdit={openEditModal}
                     onDelete={handleDelete}
+                    onSelectRow={(id, selected) => {
+                        if (selected) setSelectedIds(prev => [...prev, id]);
+                        else setSelectedIds(prev => prev.filter(i => i !== id));
+                    }}
                     onExport={handleExport}
                     onImport={handleManualImport}
                     onPrint={() => window.print()}
-                    pageSize={50}
+                    pageSize={100}
                     hideHeader={true}
                     selectedIds={selectedIds}
                     onSelectAll={(all) => {
@@ -568,7 +540,21 @@ export default function AdminContactosPage() {
                     }
                     customActions={(row) => (
                         <div className="flex items-center gap-1">
-                            {/* Actions are already here */}
+                            <button
+                                onClick={async (e) => {
+                                    e.stopPropagation();
+                                    const newStatus = !row.is_verified;
+                                    await supabase.from('contacts').update({ is_verified: newStatus }).eq('id', row.id);
+                                    fetchContacts();
+                                }}
+                                className={`size-7 rounded flex items-center justify-center transition-all ${row.is_verified
+                                    ? 'text-orange-500 hover:bg-orange-50'
+                                    : 'text-slate-300 hover:bg-slate-50'
+                                    }`}
+                                title={row.is_verified ? "Remover dos favoritos" : "Marcar como favorito"}
+                            >
+                                <Star className={`w-3.5 h-3.5 ${row.is_verified ? 'fill-current' : ''}`} />
+                            </button>
                         </div>
                     )}
                 />

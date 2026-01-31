@@ -178,6 +178,16 @@ export function AdminDataTable({
                         ) : (
                             paginatedData.map((row, i) => (
                                 <tr key={i} className="hover:bg-slate-50/80 transition-colors group">
+                                    {onSelectAll && (
+                                        <td className="px-4 py-2 w-10">
+                                            <input
+                                                type="checkbox"
+                                                className="size-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                                                checked={selectedIds.includes(row.id)}
+                                                onChange={(e) => onSelectRow?.(row.id, e.target.checked)}
+                                            />
+                                        </td>
+                                    )}
                                     {columns.map((col) => (
                                         <td key={col.key} className="px-4 py-2 text-xs font-bold text-slate-600">
                                             {col.render ? col.render(row[col.key], row) : String(row[col.key])}
@@ -189,7 +199,7 @@ export function AdminDataTable({
                                                 {onEdit && (
                                                     <button
                                                         onClick={() => onEdit(row)}
-                                                        className="size-7 rounded text-slate-400 flex items-center justify-center hover:bg-orange-50 hover:text-orange-600 transition-all opacity-0 group-hover:opacity-100"
+                                                        className="size-7 rounded text-slate-400 flex items-center justify-center hover:bg-orange-50 hover:text-orange-600 transition-all font-bold"
                                                         title="Editar"
                                                     >
                                                         <Edit2 className="w-3.5 h-3.5" />
@@ -198,7 +208,7 @@ export function AdminDataTable({
                                                 {onDelete && (
                                                     <button
                                                         onClick={() => onDelete(row)}
-                                                        className="size-7 rounded text-slate-400 flex items-center justify-center hover:bg-red-50 hover:text-red-600 transition-all opacity-0 group-hover:opacity-100"
+                                                        className="size-7 rounded text-slate-400 flex items-center justify-center hover:bg-red-50 hover:text-red-600 transition-all font-bold"
                                                         title="Eliminar"
                                                     >
                                                         <Trash2 className="w-3.5 h-3.5" />

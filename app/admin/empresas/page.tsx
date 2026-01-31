@@ -369,11 +369,8 @@ export default function AdminEmpresasPage() {
                                             </div>
                                         )}
 
-                                        {/* Edit/Delete Overlay */}
+                                        {/* Delete Overlay */}
                                         <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 p-1 rounded-lg shadow-sm">
-                                            <button onClick={() => router.push(`/admin/empresas/${item.id}`)} className="p-1.5 hover:bg-emerald-50 text-emerald-600 rounded">
-                                                <Pencil className="w-4 h-4" />
-                                            </button>
                                             <button onClick={() => handleDelete(item)} className="p-1.5 hover:bg-rose-50 text-rose-600 rounded">
                                                 <Trash2 className="w-4 h-4" />
                                             </button>

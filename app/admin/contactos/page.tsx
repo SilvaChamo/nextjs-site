@@ -354,11 +354,11 @@ export default function AdminContactosPage() {
     }
 
     return (
-        <div className="space-y-3">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex flex-col">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-0 pb-0">
                 <div className="flex items-center gap-4">
-                    <h1 className="text-2xl font-black text-slate-800 tracking-tight">Gestão de Contactos</h1>
-                    <span className="text-slate-400 text-sm font-medium">({filteredContacts.length})</span>
+                    <h1 className="text-2xl font-black text-slate-800 tracking-tight m-0 p-0 leading-none">Gestão de Contactos</h1>
+                    <span className="text-slate-400 text-sm font-medium mt-1">({filteredContacts.length})</span>
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="relative">

@@ -354,7 +354,7 @@ export default function AdminContactosPage() {
     }
 
     return (
-        <div className="flex flex-col mt-[25px]">
+        <div className="flex flex-col">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-0 pb-0">
                 <div className="flex items-center gap-4">
                     <h1 className="text-2xl font-black text-slate-800 tracking-tight m-0 p-0 leading-none">Gestão de Contactos</h1>
@@ -398,35 +398,37 @@ export default function AdminContactosPage() {
                 </div>
             )}
 
-            <AdminDataTable
-                title="Contactos"
-                data={filteredContacts}
-                columns={columns}
-                loading={loading}
-                onEdit={openEditModal}
-                onDelete={handleDelete}
-                onExport={handleExport}
-                onImport={handleManualImport}
-                onPrint={() => window.print()}
-                pageSize={50}
-                hideHeader={true}
-                customActions={(row) => (
-                    <button
-                        onClick={async () => {
-                            const newStatus = !row.is_verified;
-                            await supabase.from('contacts').update({ is_verified: newStatus }).eq('id', row.id);
-                            fetchContacts();
-                        }}
-                        className={`size-7 rounded-lg flex items-center justify-center transition-all ${row.is_verified
-                            ? 'text-blue-500 hover:bg-blue-50'
-                            : 'text-slate-300 hover:bg-slate-50'
-                            }`}
-                        title={row.is_verified ? "Favorito" : "Marcar como favorito"}
-                    >
-                        <Star className={`w-4 h-4 ${row.is_verified ? 'fill-current' : ''}`} />
-                    </button>
-                )}
-            />
+            <div className="mt-[25px]">
+                <AdminDataTable
+                    title="Contactos"
+                    data={filteredContacts}
+                    columns={columns}
+                    loading={loading}
+                    onEdit={openEditModal}
+                    onDelete={handleDelete}
+                    onExport={handleExport}
+                    onImport={handleManualImport}
+                    onPrint={() => window.print()}
+                    pageSize={50}
+                    hideHeader={true}
+                    customActions={(row) => (
+                        <button
+                            onClick={async () => {
+                                const newStatus = !row.is_verified;
+                                await supabase.from('contacts').update({ is_verified: newStatus }).eq('id', row.id);
+                                fetchContacts();
+                            }}
+                            className={`size-7 rounded-lg flex items-center justify-center transition-all ${row.is_verified
+                                ? 'text-blue-500 hover:bg-blue-50'
+                                : 'text-slate-300 hover:bg-slate-50'
+                                }`}
+                            title={row.is_verified ? "Favorito" : "Marcar como favorito"}
+                        >
+                            <Star className={`w-4 h-4 ${row.is_verified ? 'fill-current' : ''}`} />
+                        </button>
+                    )}
+                />
+            </div>
 
             {/* Modal */}
             {showModal && (

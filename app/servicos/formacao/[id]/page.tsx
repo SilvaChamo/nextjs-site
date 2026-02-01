@@ -154,8 +154,9 @@ const trainingsData: Record<string, any> = {
     }
 };
 
-export default function TrainingDetailPage({ params }: { params: { id: string } }) {
-    const training = trainingsData[params.id];
+export default async function TrainingDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const training = trainingsData[id];
 
     if (!training) {
         notFound();

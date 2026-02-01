@@ -63,7 +63,7 @@ export default function FormacaoPage() {
                 {upcomingTrainings.map((training) => (
                     <Link
                         key={training.id}
-                        href="#"
+                        href={`/usuario/dashboard/formacao/${training.id}`}
                         className="flex flex-col rounded-[12px] bg-white border border-slate-200 shadow-sm hover:-translate-y-1 hover:shadow-md transition-all duration-300 group overflow-hidden"
                     >
                         {/* Top Section: Date & Details */}

@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/utils/supabase/client";
 import { AdminDataTable } from "@/components/admin/AdminDataTable";
 import { Button } from "@/components/ui/button";
-import { Plus, LayoutGrid, List, Pencil, Trash2, Calendar, Link as LinkIcon, Search, FileText, Globe, BookOpen, Lightbulb } from "lucide-react";
+import { Plus, LayoutGrid, List, Pencil, Trash2, Calendar, Link as LinkIcon, Search, FileText, Globe, BookOpen, Lightbulb, RotateCcw, Trash } from "lucide-react";
 import { ArticleForm } from "@/components/admin/ArticleForm";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -12,8 +12,9 @@ import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { NewsCard } from "@/components/NewsCard";
 
 export default function AdminNoticiasPage() {
+    const supabase = createClient();
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-    const [activeTab, setActiveTab] = useState('Notícia');
+    const [activeTab, setActiveTab] = useState('Todas');
     const [articles, setArticles] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
@@ -23,8 +24,11 @@ export default function AdminNoticiasPage() {
     const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false);
     const [articleToDelete, setArticleToDelete] = useState<any>(null);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
+    const [showBin, setShowBin] = useState(false);
+    const [showEmptyBinConfirm, setShowEmptyBinConfirm] = useState(false);
 
     const tabs = [
+        { id: 'Todas', label: 'Todas', icon: List },
         { id: 'Notícia', label: 'Notícias', icon: FileText },
         { id: 'Guia', label: 'Guias', icon: BookOpen },
         { id: 'Dicas', label: 'Dicas', icon: Lightbulb },
@@ -33,10 +37,18 @@ export default function AdminNoticiasPage() {
 
     const fetchArticles = async () => {
         setLoading(true);
-        const { data, error } = await supabase
+        let query = supabase
             .from('articles')
             .select('*')
             .order('created_at', { ascending: false });
+
+        if (showBin) {
+            query = query.not('deleted_at', 'is', null);
+        } else {
+            query = query.is('deleted_at', null);
+        }
+
+        const { data, error } = await query;
 
         if (data) setArticles(data);
         setLoading(false);
@@ -44,29 +56,75 @@ export default function AdminNoticiasPage() {
 
     useEffect(() => {
         fetchArticles();
-    }, []);
+    }, [showBin]);
 
     const confirmDelete = async () => {
         if (!articleToDelete) return;
-        const previousArticles = [...articles];
 
         try {
-            // Optimistic update
-            setArticles(prev => prev.filter(a => a.id !== articleToDelete.id));
+            if (showBin) {
+                // Hard Delete (Permanent) for items already in Bin
+                const { error, count } = await supabase
+                    .from('articles')
+                    .delete({ count: 'exact' })
+                    .eq('id', articleToDelete.id);
 
-            const { error } = await supabase
-                .from('articles')
-                .delete()
-                .eq('id', articleToDelete.id);
+                if (error) throw error;
+                if (count === 0) throw new Error("Permissão negada ou item não encontrado.");
+                
+                toast.success("Artigo eliminado permanentemente!");
+            } else {
+                // Soft Delete (Move to Bin) for active items
+                const { error, count } = await supabase
+                    .from('articles')
+                    .update({ deleted_at: new Date().toISOString() }, { count: 'exact' })
+                    .eq('id', articleToDelete.id);
 
-            if (error) throw error;
-            toast.success("Artigo eliminado!");
+                if (error) throw error;
+                if (count === 0) throw new Error("Permissão negada ou item não encontrado.");
+                
+                toast.success("Artigo movido para a lixeira!");
+            }
+
+            await fetchArticles();
         } catch (error: any) {
-            setArticles(previousArticles);
-            toast.error("Erro ao eliminar: " + error.message);
+            toast.error(error.message || "Erro ao eliminar artigo");
         } finally {
             setShowDeleteConfirm(false);
             setArticleToDelete(null);
+        }
+    };
+
+    const handleRestore = async (article: any) => {
+        try {
+            const { error, count } = await supabase
+                .from('articles')
+                .update({ deleted_at: null }, { count: 'exact' })
+                .eq('id', article.id);
+
+            if (error) throw error;
+            if (count === 0) throw new Error("Permissão negada ou item não encontrado.");
+            
+            toast.success("Artigo restaurado com sucesso!");
+            await fetchArticles();
+        } catch (error: any) {
+            toast.error(error.message || "Erro ao restaurar artigo");
+        }
+    };
+
+    const handleEmptyBin = async () => {
+        try {
+            const { error, count } = await supabase
+                .from('articles')
+                .delete({ count: 'exact' })
+                .not('deleted_at', 'is', null);
+
+            if (error) throw error;
+            
+            toast.success(`Lixeira esvaziada! ${count} artigo(s) eliminado(s) permanentemente.`);
+            await fetchArticles();
+        } catch (error: any) {
+            toast.error(error.message || "Erro ao esvaziar lixeira");
         }
     };
 
@@ -111,7 +169,9 @@ export default function AdminNoticiasPage() {
     const filteredArticles = articles.filter(a => {
         const matchesSearch = a.title.toLowerCase().includes(search.toLowerCase()) ||
             a.type?.toLowerCase().includes(search.toLowerCase());
-        const matchesType = activeTab === 'Notícia'
+        const matchesType = activeTab === 'Todas'
+            ? true
+            : activeTab === 'Notícia'
             ? (a.type === 'Notícia' || !a.type) // Default to Notícia if null
             : a.type === activeTab;
 
@@ -148,64 +208,101 @@ export default function AdminNoticiasPage() {
     ];
 
     return (
-        <div className="space-y-8">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Gestão de Notícias</h1>
-                    <p className="text-slate-500">Publique e gira conteúdos, artigos e actualizações.</p>
-                </div>
+        <div className="space-y-4">
+            {/* Header - Single Line */}
+            <div className="flex items-center justify-between">
+                <h1 className="text-2xl font-black text-slate-900 tracking-tight">Gestão de Notícias</h1>
                 <Button onClick={() => { setEditingArticle(null); setIsFormOpen(true); }} className="bg-emerald-600 hover:bg-emerald-700">
                     <Plus className="w-4 h-4 mr-2" />
                     Novo Artigo
                 </Button>
             </div>
 
-            {/* Tabs */}
-            <div className="flex items-center gap-2 bg-white p-1.5 rounded-2xl shadow-sm border border-slate-100 w-fit overflow-x-auto">
-                {tabs.map((tab) => (
-                    <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
-                        className={`flex items-center gap-2 px-4 md:px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === tab.id
-                            ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
-                            : 'text-slate-400 hover:bg-slate-50'
-                            }`}
-                    >
-                        <tab.icon className="w-4 h-4" />
-                        {tab.label}
-                    </button>
-                ))}
+            {/* Menu Bar - All Controls */}
+            <div className="flex items-center gap-4 bg-white rounded-lg border border-slate-200 shadow-sm">
+                {/* Left Side - Categories */}
+                <div className="flex items-center gap-1 bg-emerald-50 p-1 rounded-md border border-emerald-200">
+                    {tabs.map((tab) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => {
+                                setActiveTab(tab.id);
+                                setShowBin(false);
+                            }}
+                            className={`flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${activeTab === tab.id
+                                ? 'bg-emerald-600 text-white shadow-sm'
+                                : 'text-slate-600 hover:bg-[#f97316] hover:text-white'
+                                }`}
+                        >
+                            <tab.icon className="w-3.5 h-3.5" />
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Right Side - Search + View Mode + Bin */}
+                <div className="flex items-center gap-2 ml-auto">
+                    {/* Search */}
+                    <div className="relative">
+                        <Search className="absolute left-2.5 top-2.5 w-3.5 h-3.5 text-slate-400" />
+                        <Input
+                            placeholder={`Pesquisar...`}
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="pl-8 border-none bg-slate-50 focus-visible:ring-0 text-sm w-48"
+                        />
+                    </div>
+
+                    {/* View Mode */}
+                    <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-md">
+                        <button
+                            onClick={() => setViewMode('grid')}
+                            className={`p-1.5 rounded transition-all ${viewMode === 'grid' ? 'bg-white shadow text-emerald-600' : 'text-slate-400 hover:text-slate-600'}`}
+                        >
+                            <LayoutGrid className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                            onClick={() => setViewMode('list')}
+                            className={`p-1.5 rounded transition-all ${viewMode === 'list' ? 'bg-white shadow text-emerald-600' : 'text-slate-400 hover:text-slate-600'}`}
+                        >
+                            <List className="w-3.5 h-3.5" />
+                        </button>
+                    </div>
+
+                    {/* Bin Button - Last on right */}
+                    <div className="relative">
+                        <button
+                            onClick={() => setShowBin(!showBin)}
+                            className={`px-4 py-2.5 rounded-md text-xs font-bold transition-all flex items-center gap-2 ${showBin ? 'bg-rose-50 text-rose-600 ring-1 ring-rose-200' : 'text-slate-500 hover:bg-slate-50'}`}
+                        >
+                            <Trash2 className="w-4 h-4" />
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            {/* Controls */}
-            <div className="flex items-center justify-between gap-4 bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
-                <div className="relative flex-1 max-w-sm">
-                    <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
-                    <Input
-                        placeholder={`Pesquisar em ${activeTab}...`}
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="pl-9 border-none bg-slate-50 focus-visible:ring-0"
-                    />
+            {/* Bin Actions - Show when bin is active */}
+            {showBin && (
+                <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-3">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <Trash2 className="w-4 h-4 text-rose-600" />
+                            <span className="text-sm font-semibold text-slate-700">Lixeira Activada</span>
+                            <span className="text-xs text-slate-500">({filteredArticles.length} itens)</span>
+                        </div>
+                        <button
+                            onClick={() => setShowEmptyBinConfirm(true)}
+                            className="px-3 py-1.5 text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 rounded-md border border-red-200 transition-all flex items-center gap-1.5"
+                        >
+                            <Trash className="w-3.5 h-3.5" />
+                            Esvaziar Lixeira
+                        </button>
+                    </div>
                 </div>
-                <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg">
-                    <button
-                        onClick={() => setViewMode('grid')}
-                        className={`p-2 rounded-md transition-all ${viewMode === 'grid' ? 'bg-white shadow text-emerald-600' : 'text-slate-400 hover:text-slate-600'}`}
-                    >
-                        <LayoutGrid className="w-4 h-4" />
-                    </button>
-                    <button
-                        onClick={() => setViewMode('list')}
-                        className={`p-2 rounded-md transition-all ${viewMode === 'list' ? 'bg-white shadow text-emerald-600' : 'text-slate-400 hover:text-slate-600'}`}
-                    >
-                        <List className="w-4 h-4" />
-                    </button>
-                </div>
-            </div>
+            )}
 
-            {/* Content */}
+            {/* Content - with 40px margin from menu */}
+            <div className="pt-10">
             {loading ? (
                 <div className="flex justify-center py-20">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
@@ -227,8 +324,10 @@ export default function AdminNoticiasPage() {
                             image={article.image_url}
                             slug={article.slug}
                             isAdmin={true}
+                            isDeleted={showBin}
                             onEdit={() => handleEdit(article)}
                             onDelete={() => handleDelete(article)}
+                            onRestore={() => handleRestore(article)}
                         />
                     ))}
                 </div>
@@ -282,9 +381,23 @@ export default function AdminNoticiasPage() {
                 isOpen={showDeleteConfirm}
                 onClose={() => setShowDeleteConfirm(false)}
                 onConfirm={confirmDelete}
-                title="Eliminar Artigo"
-                description={`Tem a certeza que deseja eliminar o artigo "${articleToDelete?.title}"? Esta acção não pode ser desfeita.`}
-                confirmLabel="Eliminar"
+                title={showBin ? "Eliminar Permanentemente" : "Mover para Lixeira"}
+                description={
+                    showBin
+                        ? `Tem a certeza que deseja eliminar PERMANENTEMENTE o artigo "${articleToDelete?.title}"? Esta acção NÃO pode ser desfeita.`
+                        : `O artigo "${articleToDelete?.title}" será movido para a lixeira. Poderá restaurá-lo mais tarde.`
+                }
+                confirmLabel={showBin ? "Eliminar de vez" : "Mover para Lixeira"}
+                variant="destructive"
+            />
+
+            <ConfirmationModal
+                isOpen={showEmptyBinConfirm}
+                onClose={() => setShowEmptyBinConfirm(false)}
+                onConfirm={handleEmptyBin}
+                title="Esvaziar Lixeira"
+                description="Tem a certeza que deseja eliminar PERMANENTEMENTE todos os artigos na lixeira? Esta acção NÃO pode ser desfeita."
+                confirmLabel="Esvaziar Lixeira"
                 variant="destructive"
             />
 
@@ -297,6 +410,7 @@ export default function AdminNoticiasPage() {
                 confirmLabel="Eliminar Todos"
                 variant="destructive"
             />
+            </div>
         </div>
     );
 }

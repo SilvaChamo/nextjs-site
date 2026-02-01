@@ -43,6 +43,15 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
     // Create Supabase client
     const supabase = createClient();
 
+    const handleLogout = async () => {
+        try {
+            await supabase.auth.signOut();
+            router.push('/'); // Redirecionar para página inicial
+        } catch (error) {
+            console.error('Erro ao fazer logout:', error);
+        }
+    };
+
     useEffect(() => {
         const getUser = async () => {
             const { data: { user } } = await supabase.auth.getUser();
@@ -144,13 +153,22 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
                     </div>
                 )}
 
-                {/* Sidebar Toggle Button - Right Aligned, Icon Only */}
+                {/* Logout Button */}
+                <button
+                    onClick={handleLogout}
+                    className={`flex items-center justify-center rounded-lg text-slate-400 hover:text-red-400 transition-colors ${isCollapsed ? 'w-10 h-10 mx-auto' : 'w-10 h-10 ml-auto'}`}
+                    title="Terminar Sessão"
+                >
+                    <LogOut className="w-5 h-5" />
+                </button>
+                
+                {/* Sidebar Toggle Button */}
                 <button
                     onClick={toggleSidebar}
-                    className={`flex items-center justify-center rounded-lg text-slate-400 hover:text-[#f97316] transition-colors ${isCollapsed ? 'w-10 h-10 mx-auto' : 'w-10 h-10 ml-auto'}`}
+                    className={`flex items-center justify-center rounded-lg text-slate-400 hover:text-[#f97316] transition-colors ${isCollapsed ? 'w-10 h-10 mx-auto mt-2' : 'w-10 h-10 ml-auto mt-2'}`}
                     title={isCollapsed ? "Expandir Barra" : "Encolher Barra"}
                 >
-                    <LogOut className={`w-5 h-5 transition-transform duration-300 ${!isCollapsed ? 'rotate-180' : ''}`} />
+                    <ChevronRight className={`w-4 h-4 transition-transform duration-300 ${!isCollapsed ? 'rotate-180' : ''}`} />
                 </button>
             </div>
         </aside >

@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Calendar, ArrowRight, Pencil, Trash2, Link as LinkIcon } from 'lucide-react';
+import { Calendar, ArrowRight, Pencil, Trash2, Link as LinkIcon, RotateCcw } from 'lucide-react';
 
 interface NewsCardProps {
     id?: string;
@@ -13,8 +13,10 @@ interface NewsCardProps {
     image?: string;
     slug: string;
     isAdmin?: boolean;
+    isDeleted?: boolean;
     onEdit?: () => void;
     onDelete?: () => void;
+    onRestore?: () => void;
 }
 
 export function NewsCard({
@@ -27,8 +29,10 @@ export function NewsCard({
     image,
     slug,
     isAdmin = false,
+    isDeleted = false,
     onEdit,
-    onDelete
+    onDelete,
+    onRestore
 }: NewsCardProps) {
     const formattedDate = new Date(date).toLocaleDateString('pt-PT', {
         day: '2-digit',
@@ -87,20 +91,36 @@ export function NewsCard({
 
                     {isAdmin && (
                         <div className="flex gap-2">
-                            <button
-                                type="button"
-                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onEdit?.(); }}
-                                className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-50 text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 transition-all border border-slate-100"
-                            >
-                                <Pencil className="w-3.5 h-3.5" />
-                            </button>
-                            <button
-                                type="button"
-                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDelete?.(); }}
-                                className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-50 text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-all border border-slate-100"
-                            >
-                                <Trash2 className="w-3.5 h-3.5" />
-                            </button>
+                            {!isDeleted && (
+                                <>
+                                    <button
+                                        type="button"
+                                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); onEdit?.(); }}
+                                        className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-50 text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 transition-all border border-slate-100"
+                                        title="Editar"
+                                    >
+                                        <Pencil className="w-3.5 h-3.5" />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDelete?.(); }}
+                                        className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-50 text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-all border border-slate-100"
+                                        title="Eliminar"
+                                    >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                    </button>
+                                </>
+                            )}
+                            {isDeleted && (
+                                <button
+                                    type="button"
+                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); onRestore?.(); }}
+                                    className="w-8 h-8 flex items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-all border border-emerald-200"
+                                    title="Restaurar"
+                                >
+                                    <RotateCcw className="w-3.5 h-3.5" />
+                                </button>
+                            )}
                         </div>
                     )}
                 </div>

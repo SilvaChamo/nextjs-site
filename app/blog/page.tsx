@@ -8,9 +8,9 @@ import { PageHeader } from "@/components/PageHeader";
 import {
     Calendar, Clock, ArrowRight, Search,
     Filter, ChevronRight, Tag, Newspaper,
-    ThumbsUp, MessageCircle
+    ThumbsUp, MessageCircle, RefreshCw, FileText, FolderOpen
 } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/utils/supabase/client";
 import { WeatherSidebar } from "@/components/WeatherSidebar";
 import { NewsletterCard } from "@/components/NewsletterCard";
 import { NewsCard } from "@/components/NewsCard";
@@ -18,11 +18,15 @@ import { NewsCard } from "@/components/NewsCard";
 function BlogContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
+    const supabase = createClient();
 
     const [articles, setArticles] = useState<any[]>([]);
+    const [documents, setDocuments] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [activeCategory, setActiveCategory] = useState("Todos");
+    const [activeTab, setActiveTab] = useState("noticias");
+    const [refreshing, setRefreshing] = useState(false);
 
     useEffect(() => {
         const cat = searchParams?.get('cat');
@@ -32,28 +36,100 @@ function BlogContent() {
     }, [searchParams]);
 
     useEffect(() => {
-        const fetchArticles = async () => {
+        const fetchContent = async () => {
             setLoading(true);
             try {
-                const { data, error } = await supabase
+                console.log("Fetching content from blog page...");
+                
+                // Fetch news articles (exclude all document types)
+                const { data: articlesData, error: articlesError } = await supabase
                     .from('articles')
                     .select('id, title, subtitle, image_url, date, slug, type')
                     .is('deleted_at', null)
-                    .neq('type', 'document')
-                    .neq('type', 'Relatório')
+                    .not('type', 'in', '("document", "Relatório", "PDF", "Documento")')
                     .order('date', { ascending: false });
 
-                if (error) throw error;
-                setArticles(data || []);
+                // Fetch documents (all document types)
+                const { data: documentsData, error: documentsError } = await supabase
+                    .from('articles')
+                    .select('id, title, subtitle, image_url, date, slug, type')
+                    .is('deleted_at', null)
+                    .in('type', '("document", "Relatório", "PDF", "Documento")')
+                    .order('date', { ascending: false });
+
+                if (articlesError) {
+                    console.error("Articles error:", articlesError);
+                    throw articlesError;
+                }
+                
+                if (documentsError) {
+                    console.error("Documents error:", documentsError);
+                    throw documentsError;
+                }
+                
+                console.log("Articles fetched:", articlesData?.length || 0);
+                console.log("Documents fetched:", documentsData?.length || 0);
+                setArticles(articlesData || []);
+                setDocuments(documentsData || []);
             } catch (error) {
-                console.error("Error fetching articles:", error);
+                console.error("Error fetching content:", error);
             } finally {
                 setLoading(false);
+                setRefreshing(false);
             }
         };
 
-        fetchArticles();
+        fetchContent();
+        
+        // Add refresh interval to ensure data is current
+        const interval = setInterval(fetchContent, 30000); // Refresh every 30 seconds
+        
+        return () => clearInterval(interval);
     }, []);
+
+    const manualRefresh = async () => {
+        setRefreshing(true);
+        try {
+            console.log("Manual refresh triggered...");
+            
+            // Refresh articles (exclude all document types)
+            const { data: articlesData, error: articlesError } = await supabase
+                .from('articles')
+                .select('id, title, subtitle, image_url, date, slug, type')
+                .is('deleted_at', null)
+                .not('type', 'in', '("document", "Relatório", "PDF", "Documento")')
+                .order('date', { ascending: false })
+                .abortSignal(new AbortController().signal);
+
+            // Refresh documents (all document types)
+            const { data: documentsData, error: documentsError } = await supabase
+                .from('articles')
+                .select('id, title, subtitle, image_url, date, slug, type')
+                .is('deleted_at', null)
+                .in('type', '("document", "Relatório", "PDF", "Documento")')
+                .order('date', { ascending: false })
+                .abortSignal(new AbortController().signal);
+
+            if (articlesError) {
+                console.error("Manual refresh articles error:", articlesError);
+                throw articlesError;
+            }
+            
+            if (documentsError) {
+                console.error("Manual refresh documents error:", documentsError);
+                throw documentsError;
+            }
+            
+            console.log("Manual refresh - Articles fetched:", articlesData?.length || 0);
+            console.log("Manual refresh - Documents fetched:", documentsData?.length || 0);
+            setArticles(articlesData || []);
+            setDocuments(documentsData || []);
+        } catch (error) {
+            console.error("Manual refresh failed:", error);
+        } finally {
+            setRefreshing(false);
+        }
+    };
 
     const filteredArticles = articles.filter(article => {
         const matchesSearch = article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -62,6 +138,13 @@ function BlogContent() {
         const matchesCategory = activeCategory === "Todos" || article.type === activeCategory;
 
         return matchesSearch && matchesCategory;
+    });
+
+    const filteredDocuments = documents.filter(doc => {
+        const matchesSearch = doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            doc.subtitle.toLowerCase().includes(searchQuery.toLowerCase());
+
+        return matchesSearch;
     });
 
 
@@ -98,7 +181,7 @@ function BlogContent() {
                 ]}
             />
 
-            <div className="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-24 py-16">
+            <div className="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-24">
 
 
                 <div className="flex flex-col md:flex-row gap-6 mb-16 items-center justify-between">
@@ -112,7 +195,47 @@ function BlogContent() {
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
-                    <div className="flex gap-3 overflow-x-auto w-full md:w-auto pb-2 md:pb-0">
+                    <div className="flex gap-3 items-center">
+                        <button
+                            onClick={manualRefresh}
+                            disabled={refreshing}
+                            className="bg-white border border-slate-200 rounded-[8px] p-3 text-slate-500 hover:border-[#f97316] hover:text-[#f97316] transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                            title="Atualizar conteúdo"
+                        >
+                            <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+                        </button>
+                    </div>
+                </div>
+
+                {/* Tabs */}
+                <div className="flex gap-2 mb-8 bg-white p-1 rounded-xl border border-slate-200 shadow-sm w-fit">
+                    <button
+                        onClick={() => setActiveTab("noticias")}
+                        className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all ${
+                            activeTab === "noticias"
+                                ? "bg-emerald-600 text-white shadow-lg"
+                                : "text-slate-500 hover:bg-slate-50"
+                        }`}
+                    >
+                        <Newspaper className="w-4 h-4" />
+                        Notícias
+                    </button>
+                    <button
+                        onClick={() => setActiveTab("documentos")}
+                        className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all ${
+                            activeTab === "documentos"
+                                ? "bg-emerald-600 text-white shadow-lg"
+                                : "text-slate-500 hover:bg-slate-50"
+                        }`}
+                    >
+                        <FolderOpen className="w-4 h-4" />
+                        Documentos
+                    </button>
+                </div>
+
+                {/* Category Filter - Only show for news */}
+                {activeTab === "noticias" && (
+                    <div className="flex gap-3 overflow-x-auto pb-2 mb-8">
                         {["Todos", "Guia", "Notícia", "Internacional", "Recursos", "Artigo Técnico", "Oportunidade", "Evento"].map((tag, i) => (
                             <button
                                 key={i}
@@ -126,40 +249,66 @@ function BlogContent() {
                             </button>
                         ))}
                     </div>
-                </div>
-
-
+                )}
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
                     {/* Main Content Area */}
                     <div className="lg:col-span-9">
-                        {/* Articles Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                            {filteredArticles.map((article, i) => (
-                                <NewsCard
-                                    key={i}
-                                    title={article.title}
-                                    subtitle={article.subtitle}
-                                    category={article.type}
-                                    date={article.date}
-                                    image={article.image_url}
-                                    slug={article.slug}
-                                />
-                            ))}
-                        </div>
+                        {/* Content based on active tab */}
+                        {activeTab === "noticias" ? (
+                            /* News Articles */
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                                {filteredArticles.map((article, i) => (
+                                    <NewsCard
+                                        key={i}
+                                        title={article.title}
+                                        subtitle={article.subtitle}
+                                        category={article.type}
+                                        date={article.date}
+                                        image={article.image_url}
+                                        slug={article.slug}
+                                    />
+                                ))}
+                            </div>
+                        ) : (
+                            /* Documents */
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                                {filteredDocuments.map((doc, i) => (
+                                    <NewsCard
+                                        key={i}
+                                        title={doc.title}
+                                        subtitle={doc.subtitle}
+                                        category={doc.type}
+                                        date={doc.date}
+                                        image={doc.image_url}
+                                        slug={doc.slug}
+                                    />
+                                ))}
+                            </div>
+                        )}
 
                         {/* Empty State */}
-                        {filteredArticles.length === 0 && (
-                            <div className="text-center py-32 bg-white rounded-[15px] border border-dashed border-slate-200">
-                                <Search className="w-12 h-12 text-slate-200 mx-auto mb-6" />
-                                <h3 className="text-xl font-black text-slate-600 mb-2">Sem resultados para sua busca</h3>
-                                <p className="text-slate-400">Tente pesquisar por outros termos ou categorias.</p>
-                                <button
-                                    onClick={() => { setSearchQuery(""); setActiveCategory("Todos"); }}
-                                    className="mt-8 text-emerald-600 font-bold hover:underline"
-                                >
-                                    Limpar pesquisa
-                                </button>
+                        {((activeTab === "noticias" && filteredArticles.length === 0) || 
+                          (activeTab === "documentos" && filteredDocuments.length === 0)) && (
+                            <div className="text-center py-20">
+                                <div className="flex flex-col items-center gap-4">
+                                    <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center">
+                                        {activeTab === "noticias" ? (
+                                            <Newspaper className="w-8 h-8 text-slate-400" />
+                                        ) : (
+                                            <FolderOpen className="w-8 h-8 text-slate-400" />
+                                        )}
+                                    </div>
+                                    <h3 className="text-xl font-bold text-slate-700">
+                                        {activeTab === "noticias" ? "Nenhuma notícia encontrada" : "Nenhum documento encontrado"}
+                                    </h3>
+                                    <p className="text-slate-500 max-w-md">
+                                        {activeTab === "noticias" 
+                                            ? "Não há notícias correspondentes aos filtros selecionados."
+                                            : "Não há documentos disponíveis no momento."
+                                        }
+                                    </p>
+                                </div>
                             </div>
                         )}
                     </div>

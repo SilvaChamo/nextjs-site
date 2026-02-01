@@ -1,16 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/utils/supabase/client";
 import { AdminDataTable } from "@/components/admin/AdminDataTable";
-import { BadgeCheck, BadgeAlert, LayoutGrid, List, Trash2, RotateCcw } from "lucide-react";
+import { BadgeCheck, BadgeAlert, LayoutGrid, List, Trash2, RotateCcw, MoreHorizontal, Trash } from "lucide-react";
 import { ArticleForm } from "@/components/admin/ArticleForm";
+import { UndoRedoPanel } from "@/components/admin/UndoRedoPanel";
 import { toast } from "sonner";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { NewsCard } from "@/components/NewsCard";
 import { Button } from "@/components/ui/button";
+import { useUndoRedo } from "@/hooks/useUndoRedo";
 
 export default function AdminArticlesPage() {
+    const supabase = createClient();
     const [articles, setArticles] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
@@ -19,25 +22,42 @@ export default function AdminArticlesPage() {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<any>(null);
     const [showBin, setShowBin] = useState(false);
+    const [showBinDropdown, setShowBinDropdown] = useState(false);
+    const [showEmptyBinConfirm, setShowEmptyBinConfirm] = useState(false);
+    const { addAction, undo, redo, canUndo, canRedo } = useUndoRedo();
 
     async function fetchArticles() {
         setLoading(true);
+        console.log("=== FETCH ARTICLES DEBUG ===");
+        console.log("Show bin:", showBin);
+        
         let query = supabase
             .from('articles')
             .select('*')
             .order('created_at', { ascending: false });
 
         if (showBin) {
+            console.log("Fetching articles from BIN (deleted_at NOT NULL)");
             query = query.not('deleted_at', 'is', null);
         } else {
+            console.log("Fetching ACTIVE articles (deleted_at IS NULL)");
             query = query.is('deleted_at', null);
         }
 
         const { data, error } = await query;
 
+        console.log("Fetch result:", { error, count: data?.length || 0 });
+        if (data) {
+            console.log("Articles found:");
+            data.forEach(article => {
+                console.log(`- [${article.deleted_at ? 'DELETED' : 'ACTIVE'}] ${article.title} (ID: ${article.id})`);
+            });
+        }
+
         if (error) console.error(error);
         else setArticles(data || []);
         setLoading(false);
+        console.log("=== END FETCH DEBUG ===");
     }
 
     useEffect(() => {
@@ -47,33 +67,72 @@ export default function AdminArticlesPage() {
     const confirmDelete = async () => {
         if (!itemToDelete) return;
 
+        console.log("=== DELETE DEBUG ===");
+        console.log("Item to delete:", itemToDelete);
+        console.log("Show bin:", showBin);
+        console.log("Item ID:", itemToDelete.id);
+        console.log("Item current deleted_at:", itemToDelete.deleted_at);
+
         try {
             if (showBin) {
                 // Hard Delete (Permanent) for items already in Bin
+                console.log("Performing HARD DELETE...");
                 const { error, count } = await supabase
                     .from('articles')
                     .delete({ count: 'exact' })
                     .eq('id', itemToDelete.id);
 
+                console.log("Hard delete result:", { error, count });
                 if (error) throw error;
                 if (count === 0) throw new Error("Permissão negada ou item não encontrado.");
+                
+                // Add to undo history
+                addAction({
+                    type: 'delete',
+                    tableName: 'articles',
+                    data: itemToDelete,
+                    description: `Eliminado permanentemente: ${itemToDelete.title}`
+                });
+                
                 toast.success("Artigo eliminado permanentemente!");
             } else {
                 // Soft Delete (Move to Bin) for active items
+                console.log("Performing SOFT DELETE...");
+                const deleteTime = new Date().toISOString();
+                console.log("Setting deleted_at to:", deleteTime);
+                
                 const { error, count } = await supabase
                     .from('articles')
-                    .update({ deleted_at: new Date().toISOString() }, { count: 'exact' })
+                    .update({ deleted_at: deleteTime }, { count: 'exact' })
                     .eq('id', itemToDelete.id);
 
-                if (error) throw error;
-                if (count === 0) throw new Error("Permissão negada ou item não encontrado.");
+                console.log("Soft delete result:", { error, count });
+                if (error) {
+                    console.error("Soft delete error:", error);
+                    throw error;
+                }
+                if (count === 0) {
+                    console.error("No rows affected - count is 0");
+                    throw new Error("Permissão negada ou item não encontrado.");
+                }
+                
+                // Add to undo history
+                addAction({
+                    type: 'delete',
+                    tableName: 'articles',
+                    data: { ...itemToDelete, deleted_at: null },
+                    description: `Movido para lixeira: ${itemToDelete.title}`
+                });
+                
                 toast.success("Artigo movido para a lixeira!");
             }
 
+            console.log("Delete completed, fetching articles...");
             await fetchArticles();
+            console.log("=== END DELETE DEBUG ===");
         } catch (error: any) {
-            toast.error(error.message || "Erro ao eliminar artigo");
             console.error("Delete failed:", error);
+            toast.error(error.message || "Erro ao eliminar artigo");
         } finally {
             setShowDeleteConfirm(false);
             setItemToDelete(null);
@@ -89,17 +148,101 @@ export default function AdminArticlesPage() {
 
             if (error) throw error;
             if (count === 0) throw new Error("Permissão negada ou item não encontrado.");
-
+            
+            // Add to undo history
+            addAction({
+                type: 'restore',
+                tableName: 'articles',
+                data: article,
+                description: `Restaurado: ${article.title}`
+            });
+            
             toast.success("Artigo restaurado com sucesso!");
             await fetchArticles();
         } catch (error: any) {
-            toast.error("Erro ao restaurar: " + error.message);
+            toast.error(error.message || "Erro ao restaurar artigo");
+            console.error("Restore failed:", error);
+        }
+    };
+
+    const handleEmptyBin = async () => {
+        try {
+            const { error, count } = await supabase
+                .from('articles')
+                .delete({ count: 'exact' })
+                .not('deleted_at', 'is', null);
+
+            if (error) throw error;
+            
+            toast.success(`Lixeira esvaziada! ${count} artigo(s) eliminado(s) permanentemente.`);
+            await fetchArticles();
+        } catch (error: any) {
+            toast.error(error.message || "Erro ao esvaziar lixeira");
+            console.error("Empty bin failed:", error);
         }
     };
 
     const handleDelete = (row: any) => {
         setItemToDelete(row);
         setShowDeleteConfirm(true);
+    };
+
+    const handleUndo = async (action: any) => {
+        try {
+            if (action.type === 'delete') {
+                // Restore the deleted item
+                const { error } = await supabase
+                    .from('articles')
+                    .insert([action.data]);
+
+                if (error) throw error;
+            } else if (action.type === 'restore') {
+                // Move back to bin
+                const { error } = await supabase
+                    .from('articles')
+                    .update({ deleted_at: action.data.deleted_at })
+                    .eq('id', action.data.id);
+
+                if (error) throw error;
+            }
+            
+            await fetchArticles();
+        } catch (error) {
+            console.error("Undo operation failed:", error);
+            throw error;
+        }
+    };
+
+    const handleRedo = async (action: any) => {
+        try {
+            if (action.type === 'delete') {
+                // Delete again
+                if (action.data.deleted_at === null) {
+                    // Soft delete
+                    await supabase
+                        .from('articles')
+                        .update({ deleted_at: new Date().toISOString() })
+                        .eq('id', action.data.id);
+                } else {
+                    // Hard delete
+                    await supabase
+                        .from('articles')
+                        .delete()
+                        .eq('id', action.data.id);
+                }
+            } else if (action.type === 'restore') {
+                // Restore again
+                await supabase
+                    .from('articles')
+                    .update({ deleted_at: null })
+                    .eq('id', action.data.id);
+            }
+            
+            await fetchArticles();
+        } catch (error) {
+            console.error("Redo operation failed:", error);
+            throw error;
+        }
     };
 
     const columns = [
@@ -161,13 +304,35 @@ export default function AdminArticlesPage() {
                         <List className="w-4 h-4" />
                         Publicados
                     </button>
-                    <button
-                        onClick={() => setShowBin(true)}
-                        className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${showBin ? 'bg-rose-50 text-rose-600 ring-1 ring-rose-200' : 'text-slate-500 hover:bg-slate-50'}`}
-                    >
-                        <Trash2 className="w-4 h-4" />
-                        Lixeira
-                    </button>
+                    <div className="relative">
+                        <button
+                            onClick={() => setShowBin(true)}
+                            onMouseEnter={() => setShowBinDropdown(true)}
+                            onMouseLeave={() => setShowBinDropdown(false)}
+                            className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${showBin ? 'bg-rose-50 text-rose-600 ring-1 ring-rose-200' : 'text-slate-500 hover:bg-slate-50'}`}
+                        >
+                            <Trash2 className="w-4 h-4" />
+                            Lixeira
+                        </button>
+                        {showBinDropdown && (
+                            <div 
+                                className="absolute top-full left-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg py-1 z-10 min-w-[160px]"
+                                onMouseEnter={() => setShowBinDropdown(true)}
+                                onMouseLeave={() => setShowBinDropdown(false)}
+                            >
+                                <button
+                                    onClick={() => {
+                                        setShowEmptyBinConfirm(true);
+                                        setShowBinDropdown(false);
+                                    }}
+                                    className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                                >
+                                    <Trash className="w-4 h-4" />
+                                    Esvaziar Lixeira
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg">
@@ -198,11 +363,13 @@ export default function AdminArticlesPage() {
                             image={article.image_url}
                             slug={article.slug}
                             isAdmin={true}
+                            isDeleted={showBin}
                             onEdit={() => {
                                 setEditingItem(article);
                                 setShowForm(true);
                             }}
                             onDelete={() => handleDelete(article)}
+                            onRestore={() => handleRestore(article)}
                         />
                     ))}
                     {articles.length === 0 && !loading && (
@@ -262,6 +429,16 @@ export default function AdminArticlesPage() {
                         : `O artigo "${itemToDelete?.title}" será movido para a lixeira. Poderá restaurá-lo mais tarde.`
                 }
                 confirmLabel={showBin ? "Eliminar de vez" : "Mover para Lixeira"}
+                variant="destructive"
+            />
+
+            <ConfirmationModal
+                isOpen={showEmptyBinConfirm}
+                onClose={() => setShowEmptyBinConfirm(false)}
+                onConfirm={handleEmptyBin}
+                title="Esvaziar Lixeira"
+                description="Tem a certeza que deseja eliminar PERMANENTEMENTE todos os artigos na lixeira? Esta acção NÃO pode ser desfeita."
+                confirmLabel="Esvaziar Lixeira"
                 variant="destructive"
             />
         </div>

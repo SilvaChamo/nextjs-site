@@ -6,19 +6,18 @@ export function useNetworkStatus() {
     const [isOnline, setIsOnline] = useState(true);
 
     useEffect(() => {
-        // Initial state
         if (typeof window !== "undefined") {
-            setIsOnline(navigator.onLine);
+            const updateStatus = () => setIsOnline(navigator.onLine);
 
-            const handleOnline = () => setIsOnline(true);
-            const handleOffline = () => setIsOnline(false);
+            window.addEventListener("online", updateStatus);
+            window.addEventListener("offline", updateStatus);
 
-            window.addEventListener("online", handleOnline);
-            window.addEventListener("offline", handleOffline);
+            // Set initial status
+            updateStatus();
 
             return () => {
-                window.removeEventListener("online", handleOnline);
-                window.removeEventListener("offline", handleOffline);
+                window.removeEventListener("online", updateStatus);
+                window.removeEventListener("offline", updateStatus);
             };
         }
     }, []);

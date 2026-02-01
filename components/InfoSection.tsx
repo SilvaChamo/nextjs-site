@@ -4,15 +4,14 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
-    Cpu, Leaf, Book,
-    BarChart3, TrendingUp, ArrowRight,
-    Scale, TreePalm, Sprout, Coins, FileText,
+    Cpu, Leaf, BookOpen,
+    ArrowRight,
+    Scale, TreePalm, Coins,
     ChevronLeft, ChevronRight
 } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import useEmblaCarousel from 'embla-carousel-react';
-import { MarketPriceTable } from "./MarketPriceTable";
 import Autoplay from 'embla-carousel-autoplay';
 import { AgroCastSection } from "@/components/AgroCastSection";
 

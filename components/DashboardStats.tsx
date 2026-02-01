@@ -4,14 +4,30 @@ import { Calendar, Download, TrendingUp, TrendingDown, Eye, MousePointerClick, M
 import { Button } from "@/components/ui/button";
 import { DashboardPageHeader } from "@/components/DashboardPageHeader";
 
-export function DashboardStats() {
+interface DashboardStatsProps {
+    welcomeTitle?: string;
+    welcomeSubtitle?: string;
+    titleStyle?: React.CSSProperties;
+    subtitleStyle?: React.CSSProperties;
+    cardTitleStyle?: React.CSSProperties;
+}
+
+export function DashboardStats({
+    welcomeTitle,
+    welcomeSubtitle,
+    titleStyle,
+    subtitleStyle,
+    cardTitleStyle
+}: DashboardStatsProps) {
 
     return (
         <div className="space-y-5 mb-5">
             {/* Header Section */}
             <DashboardPageHeader
-                title="Estatística de Pesquisa"
-                description="Acompanhe a visibilidade da sua empresa e produtos no Agro Data Moz."
+                title={welcomeTitle || "Estatística de Pesquisa"}
+                description={welcomeSubtitle || "Acompanhe a visibilidade da sua empresa e produtos no Agro Data Moz."}
+                titleStyle={titleStyle}
+                descriptionStyle={subtitleStyle}
             >
                 <div className="flex items-center justify-center px-4 h-10 gap-2 bg-white border border-slate-200 text-slate-600 font-semibold rounded-md shadow-sm cursor-default">
                     <Calendar className="w-4 h-4" />
@@ -28,7 +44,7 @@ export function DashboardStats() {
                 {/* KPI 1 - Impressões */}
                 <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
                     <div className="flex justify-between items-start mb-2">
-                        <p className="text-sm font-semibold text-slate-500">Total de Impressões</p>
+                        <p className="text-sm font-semibold text-slate-500" style={cardTitleStyle}>Total de Impressões</p>
                         <div className="p-2 bg-emerald-50 rounded-lg text-emerald-600 group-hover:scale-110 transition-transform">
                             <Eye className="w-4 h-4" />
                         </div>
@@ -44,7 +60,7 @@ export function DashboardStats() {
                 {/* KPI 2 - Cliques */}
                 <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
                     <div className="flex justify-between items-start mb-2">
-                        <p className="text-sm font-semibold text-slate-500">Cliques no Perfil</p>
+                        <p className="text-sm font-semibold text-slate-500" style={cardTitleStyle}>Cliques no Perfil</p>
                         <div className="p-2 bg-blue-50 rounded-lg text-blue-600 group-hover:scale-110 transition-transform">
                             <MousePointerClick className="w-4 h-4" />
                         </div>
@@ -60,7 +76,7 @@ export function DashboardStats() {
                 {/* KPI 3 - Cotações */}
                 <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
                     <div className="flex justify-between items-start mb-2">
-                        <p className="text-sm font-semibold text-slate-500">Solicitações de Cotação</p>
+                        <p className="text-sm font-semibold text-slate-500" style={cardTitleStyle}>Solicitações de Cotação</p>
                         <div className="p-2 bg-orange-50 rounded-lg text-orange-600 group-hover:scale-110 transition-transform">
                             <MessageSquare className="w-4 h-4" />
                         </div>
@@ -76,7 +92,7 @@ export function DashboardStats() {
                 {/* KPI 4 - CTR */}
                 <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
                     <div className="flex justify-between items-start mb-2">
-                        <p className="text-sm font-semibold text-slate-500">CTR Médio</p>
+                        <p className="text-sm font-semibold text-slate-500" style={cardTitleStyle}>CTR Médio</p>
                         <div className="p-2 bg-purple-50 rounded-lg text-purple-600 group-hover:scale-110 transition-transform">
                             <Percent className="w-4 h-4" />
                         </div>

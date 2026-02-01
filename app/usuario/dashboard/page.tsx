@@ -14,11 +14,27 @@ import { Building2, ShoppingCart, Briefcase, GraduationCap, ArrowRight } from "l
 import Link from "next/link";
 import { Button } from "../../../components/ui/button";
 
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+
+// Helper to convert settings object to CSSProperties
+const getStyles = (startKey: string, settings: any): React.CSSProperties => {
+    const s = settings[startKey];
+    if (!s) return {};
+    return {
+        color: s.color,
+        fontSize: s.fontSize,
+        lineHeight: s.lineHeight,
+        padding: s.padding,
+        margin: s.margin,
+    };
+};
+
 export default function DashboardPage() {
     const router = useRouter();
     const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
-    const supabase = createClient(); // Inicializar client
+    const supabase = createClient();
+    const { settings, loading: settingsLoading } = useSiteSettings();
 
     useEffect(() => {
         const checkUser = async () => {
@@ -35,7 +51,7 @@ export default function DashboardPage() {
         checkUser();
     }, [router, supabase]);
 
-    if (loading) return (
+    if (loading || settingsLoading) return (
         <div className="min-h-screen bg-slate-50 flex items-center justify-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#f97316]"></div>
         </div>
@@ -46,7 +62,13 @@ export default function DashboardPage() {
             <div className="w-full mx-auto relative z-20">
 
                 {/* Statistics Header & KPIs */}
-                <DashboardStats />
+                <DashboardStats
+                    welcomeTitle={settings['dashboard_welcome_title']?.text}
+                    welcomeSubtitle={settings['dashboard_welcome_subtitle']?.text}
+                    titleStyle={getStyles('dashboard_welcome_title', settings)}
+                    subtitleStyle={getStyles('dashboard_welcome_subtitle', settings)}
+                    cardTitleStyle={getStyles('dashboard_card_title', settings)}
+                />
 
                 {/* Main Content Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-start">

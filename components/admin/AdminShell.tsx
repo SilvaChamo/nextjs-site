@@ -140,7 +140,7 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
                         {/* Section 4: Configuration */}
                         <div className="flex flex-col gap-1 mt-auto">
                             <LinkItem href="/admin/indicadores" icon={Target} label="Indicadores" />
-                            <LinkItem href="/admin/categorias" icon={Grid2X2} label="Configurações" />
+                            <LinkItem href="/admin/configuracoes" icon={Grid2X2} label="Configurações" />
                             <LinkItem href="/admin/utilizadores" icon={Users} label="Utilizadores" />
                         </div>
                     </nav>

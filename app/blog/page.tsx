@@ -38,6 +38,7 @@ function BlogContent() {
                 const { data, error } = await supabase
                     .from('articles')
                     .select('id, title, subtitle, image_url, date, slug, type')
+                    .is('deleted_at', null)
                     .neq('type', 'document')
                     .neq('type', 'Relatório')
                     .order('date', { ascending: false });

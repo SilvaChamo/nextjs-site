@@ -536,26 +536,26 @@ export function ProfessionalRegistrationForm() {
                         )}
                     />
                 </div>
-            </div>
 
-            <div className="pt-6 border-t mt-8 text-center md:text-left">
-                <Button
-                    type="submit"
-                    size="lg"
-                    className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-14 rounded-xl px-12 text-lg shadow-lg shadow-emerald-600/20"
-                    disabled={loading}
-                >
-                    {loading ? (
-                        <>
-                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                            A enviar...
-                        </>
-                    ) : (
-                        "Registar Perfil Profissional"
-                    )}
-                </Button>
-            </div>
-        </form>
+
+                <div className="pt-6 border-t mt-8 text-center md:text-left">
+                    <Button
+                        type="submit"
+                        size="lg"
+                        className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-14 rounded-xl px-12 text-lg shadow-lg shadow-emerald-600/20"
+                        disabled={loading}
+                    >
+                        {loading ? (
+                            <>
+                                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                A enviar...
+                            </>
+                        ) : (
+                            "Registar Perfil Profissional"
+                        )}
+                    </Button>
+                </div>
+            </form>
         </Form >
     );
 }

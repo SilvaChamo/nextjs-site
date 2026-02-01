@@ -81,7 +81,7 @@ export default function PricingPage() {
                     </Link>
                     <Link href="/">
                         <Image
-                            src="/assets/Logo.png"
+                            src="/Logo.svg"
                             alt="Base Agro Data"
                             width={140}
                             height={50}

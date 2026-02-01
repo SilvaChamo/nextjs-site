@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { AdminDataTable } from "@/components/admin/AdminDataTable";
-import { BadgeCheck, BadgeAlert, LayoutGrid, List } from "lucide-react";
+import { BadgeCheck, BadgeAlert, LayoutGrid, List, Trash2, RotateCcw } from "lucide-react";
 import { ArticleForm } from "@/components/admin/ArticleForm";
 import { toast } from "sonner";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
@@ -18,13 +18,22 @@ export default function AdminArticlesPage() {
     const [editingItem, setEditingItem] = useState<any>(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<any>(null);
+    const [showBin, setShowBin] = useState(false);
 
     async function fetchArticles() {
         setLoading(true);
-        const { data, error } = await supabase
+        let query = supabase
             .from('articles')
             .select('*')
             .order('created_at', { ascending: false });
+
+        if (showBin) {
+            query = query.not('deleted_at', 'is', null);
+        } else {
+            query = query.is('deleted_at', null);
+        }
+
+        const { data, error } = await query;
 
         if (error) console.error(error);
         else setArticles(data || []);
@@ -33,29 +42,58 @@ export default function AdminArticlesPage() {
 
     useEffect(() => {
         fetchArticles();
-    }, []);
+    }, [showBin]);
 
     const confirmDelete = async () => {
         if (!itemToDelete) return;
-        const previousArticles = [...articles];
 
         try {
-            // Optimistic update
-            setArticles(prev => prev.filter(article => article.id !== itemToDelete.id));
+            if (showBin) {
+                // Hard Delete (Permanent) for items already in Bin
+                const { error, count } = await supabase
+                    .from('articles')
+                    .delete({ count: 'exact' })
+                    .eq('id', itemToDelete.id);
 
-            const { error } = await supabase
-                .from('articles')
-                .delete()
-                .eq('id', itemToDelete.id);
+                if (error) throw error;
+                if (count === 0) throw new Error("Permissão negada ou item não encontrado.");
+                toast.success("Artigo eliminado permanentemente!");
+            } else {
+                // Soft Delete (Move to Bin) for active items
+                const { error, count } = await supabase
+                    .from('articles')
+                    .update({ deleted_at: new Date().toISOString() }, { count: 'exact' })
+                    .eq('id', itemToDelete.id);
 
-            if (error) throw error;
-            toast.success("Artigo eliminado!");
+                if (error) throw error;
+                if (count === 0) throw new Error("Permissão negada ou item não encontrado.");
+                toast.success("Artigo movido para a lixeira!");
+            }
+
+            await fetchArticles();
         } catch (error: any) {
-            setArticles(previousArticles);
-            toast.error("Erro ao eliminar: " + error.message);
+            toast.error(error.message || "Erro ao eliminar artigo");
+            console.error("Delete failed:", error);
         } finally {
             setShowDeleteConfirm(false);
             setItemToDelete(null);
+        }
+    };
+
+    const handleRestore = async (article: any) => {
+        try {
+            const { error, count } = await supabase
+                .from('articles')
+                .update({ deleted_at: null }, { count: 'exact' })
+                .eq('id', article.id);
+
+            if (error) throw error;
+            if (count === 0) throw new Error("Permissão negada ou item não encontrado.");
+
+            toast.success("Artigo restaurado com sucesso!");
+            await fetchArticles();
+        } catch (error: any) {
+            toast.error("Erro ao restaurar: " + error.message);
         }
     };
 
@@ -65,7 +103,6 @@ export default function AdminArticlesPage() {
     };
 
     const columns = [
-        // ... (columns logic)
         {
             header: "Título / Resumo",
             key: "title",
@@ -78,7 +115,7 @@ export default function AdminArticlesPage() {
                     )}
                     <div>
                         <p className="font-black text-slate-800 line-clamp-1">{val}</p>
-                        <p className="text-[10px] text-slate-400 uppercase tracking-widest">{row.category || 'Sem Categoria'}</p>
+                        <p className="text-[10px] text-slate-400 uppercase tracking-widest">{row.type || 'Sem Categoria'}</p>
                     </div>
                 </div>
             )
@@ -116,7 +153,23 @@ export default function AdminArticlesPage() {
             </div>
 
             <div className="flex items-center justify-between gap-4 bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
-                <p className="text-sm font-bold text-slate-500 ml-2">Vista de conteúdos</p>
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => setShowBin(false)}
+                        className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${!showBin ? 'bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200' : 'text-slate-500 hover:bg-slate-50'}`}
+                    >
+                        <List className="w-4 h-4" />
+                        Publicados
+                    </button>
+                    <button
+                        onClick={() => setShowBin(true)}
+                        className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${showBin ? 'bg-rose-50 text-rose-600 ring-1 ring-rose-200' : 'text-slate-500 hover:bg-slate-50'}`}
+                    >
+                        <Trash2 className="w-4 h-4" />
+                        Lixeira
+                    </button>
+                </div>
+
                 <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg">
                     <button
                         onClick={() => setViewMode('grid')}
@@ -160,19 +213,30 @@ export default function AdminArticlesPage() {
                 </div>
             ) : (
                 <AdminDataTable
-                    title="Lista de Artigos"
+                    title={showBin ? "Lixeira" : "Lista de Artigos"}
                     columns={columns}
                     data={articles}
                     loading={loading}
-                    onAdd={() => {
+                    onAdd={showBin ? undefined : () => {
                         setEditingItem(null);
                         setShowForm(true);
                     }}
-                    onEdit={(row: any) => {
+                    onEdit={showBin ? undefined : (row: any) => {
                         setEditingItem(row);
                         setShowForm(true);
                     }}
                     onDelete={handleDelete}
+                    customActions={showBin ? (row: any) => (
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 border-emerald-200"
+                            onClick={() => handleRestore(row)}
+                        >
+                            <RotateCcw className="w-4 h-4 mr-1" />
+                            Restaurar
+                        </Button>
+                    ) : undefined}
                 />
             )}
 
@@ -191,9 +255,13 @@ export default function AdminArticlesPage() {
                 isOpen={showDeleteConfirm}
                 onClose={() => setShowDeleteConfirm(false)}
                 onConfirm={confirmDelete}
-                title="Eliminar Artigo"
-                description={`Tem a certeza que deseja eliminar o artigo "${itemToDelete?.title}"? Esta ação não pode ser desfeita.`}
-                confirmLabel="Eliminar"
+                title={showBin ? "Eliminar Permanentemente" : "Mover para Lixeira"}
+                description={
+                    showBin
+                        ? `Tem a certeza que deseja eliminar PERMANENTEMENTE o artigo "${itemToDelete?.title}"? Esta acção NÃO pode ser desfeita.`
+                        : `O artigo "${itemToDelete?.title}" será movido para a lixeira. Poderá restaurá-lo mais tarde.`
+                }
+                confirmLabel={showBin ? "Eliminar de vez" : "Mover para Lixeira"}
                 variant="destructive"
             />
         </div>

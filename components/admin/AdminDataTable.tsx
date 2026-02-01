@@ -19,6 +19,9 @@ import {
     X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { syncManager } from "@/lib/syncManager";
+import { useNetworkStatus } from "@/hooks/useNetworkStatus";
+import { useEffect } from "react";
 
 interface AdminDataTableProps {
     title: string;
@@ -62,8 +65,27 @@ export function AdminDataTable({
 }: AdminDataTableProps) {
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
+    const [localData, setLocalData] = useState<any[]>(data);
+    const { isOnline } = useNetworkStatus();
 
-    const filteredData = data.filter(item =>
+    // Sync local data with prop data and save snapshots
+    useEffect(() => {
+        if (!loading) {
+            // If we have data (empty or not) and we are online, trust the server
+            // Or if we have data > 0 (even if offline, it might be prop-passed), trust it
+            if (isOnline || data.length > 0) {
+                setLocalData(data);
+                syncManager.saveSnapshot(title, data);
+            }
+            // Only fall back to snapshot if we are Offline AND have no data
+            else if (!isOnline && data.length === 0) {
+                const snapshot = syncManager.getSnapshot(title);
+                if (snapshot) setLocalData(snapshot);
+            }
+        }
+    }, [data, loading, title, isOnline]);
+
+    const filteredData = localData.filter(item =>
         Object.values(item).some(val =>
             String(val).toLowerCase().includes(searchTerm.toLowerCase())
         )

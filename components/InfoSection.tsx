@@ -106,7 +106,7 @@ export function InfoSection() {
                 supabase.from('info_categories').select('*'),
                 supabase.from('agricultural_stats').select('*').limit(3),
                 supabase.from('articles').select('id, title, subtitle, image_url, date, slug, type')
-                    .in('type', ['Guia', 'Notícia', 'Internacional', 'Recursos'])
+                    .in('type', ['Guia', 'Notícia', 'Internacional', 'Recursos', 'Artigo Técnico', 'Evento', 'Oportunidade'])
                     .order('created_at', { ascending: false })
                     .limit(5)
             ]);

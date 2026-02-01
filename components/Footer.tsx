@@ -33,7 +33,7 @@ export function Footer() {
                                 {/* Logo Image */}
                                 <div className="w-32">
                                     <img
-                                        src="/assets/logo-footer.png"
+                                        src="/Logo.svg"
                                         alt="Base Agro Data"
                                         className="w-full h-auto object-contain"
                                     />

@@ -120,7 +120,7 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                     <div className="text-center mb-7">
                         <Link href="/" className="inline-block transition-transform hover:scale-105 duration-300">
                             <Image
-                                src="/assets/Logo.png"
+                                src="/Logo.svg"
                                 alt="Base Agro Data"
                                 width={160}
                                 height={64}

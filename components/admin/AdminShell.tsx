@@ -1,9 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useNetworkStatus } from "@/hooks/useNetworkStatus";
+import { syncManager } from "@/lib/syncManager";
+import { toast } from "sonner";
 import {
+    Wifi, WifiOff, RefreshCw, Loader2,
     LayoutDashboard,
     Building2,
     MessageSquare,
@@ -19,7 +23,8 @@ import {
     Menu,
     ShoppingCart,
     Contact,
-    GraduationCap
+    GraduationCap,
+    LandPlot
 } from "lucide-react";
 
 interface AdminShellProps {
@@ -31,6 +36,34 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
     const pathname = usePathname();
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { isOnline } = useNetworkStatus();
+    const [isSyncing, setIsSyncing] = useState(false);
+    const [pendingCount, setPendingCount] = useState(0);
+
+    useEffect(() => {
+        const checkQueue = () => {
+            const queue = syncManager.getQueue();
+            setPendingCount(queue.length);
+        };
+        checkQueue();
+        const interval = setInterval(checkQueue, 5000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const handleSync = async () => {
+        if (!isOnline) {
+            toast.error("Ainda sem conexão...");
+            return;
+        }
+        setIsSyncing(true);
+        const res = await syncManager.processQueue();
+        setIsSyncing(false);
+        if (res.count > 0) {
+            toast.success(`${res.count} alterações sincronizadas com sucesso!`);
+        } else {
+            toast.info("Nada para sincronizar.");
+        }
+    };
 
     const isActive = (path: string) => {
         if (path === "/admin" && pathname === "/admin") return true;
@@ -159,6 +192,30 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
                                 </div>
                             </div>
                         )}
+
+                        {/* Status Bar */}
+                        <div className="px-2 mb-4 space-y-2">
+                            <div className={`flex items-center gap-2 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors ${isOnline ? "bg-emerald-500/10 text-emerald-400" : "bg-orange-500/10 text-orange-400 animate-pulse"
+                                }`}>
+                                {isOnline ? <Wifi className="w-3.5 h-3.5" /> : <WifiOff className="w-3.5 h-3.5" />}
+                                {!isCollapsed && (isOnline ? "Sistema Online" : "Modo Offline")}
+                            </div>
+
+                            {pendingCount > 0 && !isCollapsed && (
+                                <button
+                                    onClick={handleSync}
+                                    disabled={isSyncing}
+                                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-orange-500 text-white text-[10px] font-black uppercase tracking-widest hover:bg-orange-600 transition-all shadow-lg"
+                                >
+                                    <div className="flex items-center gap-2">
+                                        {isSyncing ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
+                                        Sincronizar
+                                    </div>
+                                    <span className="bg-white/20 px-1.5 py-0.5 rounded-md text-[9px]">{pendingCount}</span>
+                                </button>
+                            )}
+                        </div>
+
                         <form action="/auth/signout" method="post">
                             <button
                                 className={`w-full flex items-center gap-2 py-2 text-xs font-bold text-rose-500 hover:bg-rose-500/10 rounded-md transition-colors ${isCollapsed ? "justify-center" : "justify-start px-2"

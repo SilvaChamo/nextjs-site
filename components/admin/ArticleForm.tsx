@@ -7,6 +7,9 @@ import { Loader2, X, Image as ImageIcon, Type, Link as LinkIcon, Calendar } from
 import { RichTextEditor } from "@/components/RichTextEditor";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { useNetworkStatus } from "@/hooks/useNetworkStatus";
+import { syncManager } from "@/lib/syncManager";
+import { useEffect } from "react";
 
 interface ArticleFormProps {
     onClose: () => void;
@@ -15,6 +18,7 @@ interface ArticleFormProps {
 }
 
 export function ArticleForm({ onClose, onSuccess, initialData }: ArticleFormProps) {
+    const { isOnline } = useNetworkStatus();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         title: initialData?.title || "",
@@ -28,10 +32,61 @@ export function ArticleForm({ onClose, onSuccess, initialData }: ArticleFormProp
         slug: initialData?.slug || ""
     });
 
-    const categories = ["Notícia", "Artigo Técnico", "Política Agrária", "Oportunidade", "Evento", "Curiosidade"];
+    // 1. Recover Draft if New
+    useEffect(() => {
+        if (!initialData) {
+            const draft = localStorage.getItem("agro_article_draft");
+            if (draft) {
+                try {
+                    const parsed = JSON.parse(draft);
+                    const mergedData = { ...formData, ...parsed };
+                    setFormData(mergedData);
+                    toast.info("Rascunho recuperado automaticamente");
+                } catch (e) { }
+            }
+        }
+    }, [initialData]);
+
+    // 2. Autosave Draft if New
+    useEffect(() => {
+        if (!initialData && formData.title) {
+            const timer = setTimeout(() => {
+                localStorage.setItem("agro_article_draft", JSON.stringify(formData));
+            }, 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [formData, initialData]);
+
+    const categories = ["Notícia", "Artigo Técnico", "Guia", "Internacional", "Oportunidade", "Evento", "Recursos", "Política Agrária", "Curiosidade"];
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // If Offline, queue the work
+        if (!isOnline) {
+            setLoading(true);
+            try {
+                const payload = { ...formData };
+                if (!initialData?.id && !payload.slug) {
+                    payload.slug = payload.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                }
+
+                syncManager.addToQueue({
+                    table: 'articles',
+                    action: initialData?.id ? 'update' : 'insert',
+                    payload: initialData?.id ? { ...payload, id: initialData.id } : payload
+                });
+
+                if (!initialData) localStorage.removeItem("agro_article_draft");
+                toast.warning("Trabalhando Offline: Alteração guardada localmente. Será sincronizada assim que tiver internet!");
+                onSuccess();
+                onClose();
+            } finally {
+                setLoading(false);
+            }
+            return;
+        }
+
         setLoading(true);
 
         try {
@@ -44,10 +99,14 @@ export function ArticleForm({ onClose, onSuccess, initialData }: ArticleFormProp
             }
 
             if (initialData?.id) {
-                const { error: err } = await supabase
+                const { error: err, count } = await supabase
                     .from('articles')
-                    .update(payload)
+                    .update(payload, { count: 'exact' })
                     .eq('id', initialData.id);
+
+                if (!err && count === 0) {
+                    throw new Error("Permissão negada: Não foi possível actualizar o artigo. Verifique as suas permissões.");
+                }
                 error = err;
             } else {
                 const { error: err } = await supabase
@@ -57,6 +116,7 @@ export function ArticleForm({ onClose, onSuccess, initialData }: ArticleFormProp
             }
 
             if (error) throw error;
+            if (!initialData) localStorage.removeItem("agro_article_draft");
             toast.success(initialData?.id ? "Artigo actualizado!" : "Artigo publicado!");
             onSuccess();
             onClose();

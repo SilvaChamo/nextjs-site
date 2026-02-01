@@ -41,20 +41,20 @@ function BlogContent() {
             try {
                 console.log("Fetching content from blog page...");
                 
-                // Fetch news articles (exclude all document types)
+                // Fetch news articles (exclude document types)
                 const { data: articlesData, error: articlesError } = await supabase
                     .from('articles')
                     .select('id, title, subtitle, image_url, date, slug, type')
                     .is('deleted_at', null)
-                    .not('type', 'in', '("document", "Relatório", "PDF", "Documento")')
+                    .not('type', 'in', ['Artigo Técnico', 'Estudo', 'Pesquisa', 'Relatório', 'PDF', 'Documento', 'document', 'Artigo Científico'])
                     .order('date', { ascending: false });
 
-                // Fetch documents (all document types)
+                // Fetch documents and scientific articles
                 const { data: documentsData, error: documentsError } = await supabase
                     .from('articles')
                     .select('id, title, subtitle, image_url, date, slug, type')
                     .is('deleted_at', null)
-                    .in('type', '("document", "Relatório", "PDF", "Documento")')
+                    .in('type', ['Artigo Técnico', 'Estudo', 'Pesquisa', 'Relatório', 'PDF', 'Documento', 'document', 'Artigo Científico'])
                     .order('date', { ascending: false });
 
                 if (articlesError) {
@@ -92,21 +92,21 @@ function BlogContent() {
         try {
             console.log("Manual refresh triggered...");
             
-            // Refresh articles (exclude all document types)
+            // Refresh articles (exclude all document and article types)
             const { data: articlesData, error: articlesError } = await supabase
                 .from('articles')
                 .select('id, title, subtitle, image_url, date, slug, type')
                 .is('deleted_at', null)
-                .not('type', 'in', '("document", "Relatório", "PDF", "Documento")')
+                .not('type', 'in', ['Artigo Técnico', 'Estudo', 'Pesquisa', 'Relatório', 'PDF', 'Documento', 'document', 'Artigo Científico'])
                 .order('date', { ascending: false })
                 .abortSignal(new AbortController().signal);
 
-            // Refresh documents (all document types)
+            // Refresh documents and scientific articles
             const { data: documentsData, error: documentsError } = await supabase
                 .from('articles')
                 .select('id, title, subtitle, image_url, date, slug, type')
                 .is('deleted_at', null)
-                .in('type', '("document", "Relatório", "PDF", "Documento")')
+                .in('type', ['Artigo Técnico', 'Estudo', 'Pesquisa', 'Relatório', 'PDF', 'Documento', 'document', 'Artigo Científico'])
                 .order('date', { ascending: false })
                 .abortSignal(new AbortController().signal);
 
@@ -221,15 +221,15 @@ function BlogContent() {
                         Notícias
                     </button>
                     <button
-                        onClick={() => setActiveTab("documentos")}
+                        onClick={() => setActiveTab("artigos")}
                         className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all ${
-                            activeTab === "documentos"
+                            activeTab === "artigos"
                                 ? "bg-emerald-600 text-white shadow-lg"
                                 : "text-slate-500 hover:bg-slate-50"
                         }`}
                     >
-                        <FolderOpen className="w-4 h-4" />
-                        Documentos
+                        <FileText className="w-4 h-4" />
+                        Artigos
                     </button>
                 </div>
 
@@ -271,7 +271,7 @@ function BlogContent() {
                                 ))}
                             </div>
                         ) : (
-                            /* Documents */
+                            /* Articles and Documents */
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                                 {filteredDocuments.map((doc, i) => (
                                     <NewsCard
@@ -289,23 +289,23 @@ function BlogContent() {
 
                         {/* Empty State */}
                         {((activeTab === "noticias" && filteredArticles.length === 0) || 
-                          (activeTab === "documentos" && filteredDocuments.length === 0)) && (
+                          (activeTab === "artigos" && filteredDocuments.length === 0)) && (
                             <div className="text-center py-20">
                                 <div className="flex flex-col items-center gap-4">
                                     <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center">
                                         {activeTab === "noticias" ? (
                                             <Newspaper className="w-8 h-8 text-slate-400" />
                                         ) : (
-                                            <FolderOpen className="w-8 h-8 text-slate-400" />
+                                            <FileText className="w-8 h-8 text-slate-400" />
                                         )}
                                     </div>
                                     <h3 className="text-xl font-bold text-slate-700">
-                                        {activeTab === "noticias" ? "Nenhuma notícia encontrada" : "Nenhum documento encontrado"}
+                                        {activeTab === "noticias" ? "Nenhuma notícia encontrada" : "Nenhum artigo encontrado"}
                                     </h3>
                                     <p className="text-slate-500 max-w-md">
                                         {activeTab === "noticias" 
                                             ? "Não há notícias correspondentes aos filtros selecionados."
-                                            : "Não há documentos disponíveis no momento."
+                                            : "Não há artigos ou documentos disponíveis no momento."
                                         }
                                     </p>
                                 </div>

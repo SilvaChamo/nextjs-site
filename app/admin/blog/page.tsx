@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { AdminDataTable } from "@/components/admin/AdminDataTable";
-import { BadgeCheck, BadgeAlert, LayoutGrid, List, Trash2, RotateCcw, MoreHorizontal, Trash } from "lucide-react";
+import { BadgeCheck, BadgeAlert, LayoutGrid, List, Trash2, RotateCcw, FileText, Trash } from "lucide-react";
 import { ArticleForm } from "@/components/admin/ArticleForm";
 import { UndoRedoPanel } from "@/components/admin/UndoRedoPanel";
 import { toast } from "sonner";
@@ -24,12 +24,14 @@ export default function AdminArticlesPage() {
     const [showBin, setShowBin] = useState(false);
     const [showBinDropdown, setShowBinDropdown] = useState(false);
     const [showEmptyBinConfirm, setShowEmptyBinConfirm] = useState(false);
+    const [activeAdminTab, setActiveAdminTab] = useState("noticias");
     const { addAction, undo, redo, canUndo, canRedo } = useUndoRedo();
 
     async function fetchArticles() {
         setLoading(true);
         console.log("=== FETCH ARTICLES DEBUG ===");
         console.log("Show bin:", showBin);
+        console.log("Active Admin Tab:", activeAdminTab);
         
         let query = supabase
             .from('articles')
@@ -42,6 +44,17 @@ export default function AdminArticlesPage() {
         } else {
             console.log("Fetching ACTIVE articles (deleted_at IS NULL)");
             query = query.is('deleted_at', null);
+        }
+
+        // Filter based on active admin tab
+        if (activeAdminTab === "noticias") {
+            console.log("Filtering NOTÍCIAS - excluding documents");
+            // Show only news articles (exclude documents)
+            query = query.not('type', 'in', ['Artigo Técnico', 'Estudo', 'Pesquisa', 'Relatório', 'PDF', 'Documento', 'document', 'Artigo Científico']);
+        } else {
+            console.log("Filtering ARTIGOS - showing only documents");
+            // Show only documents and articles
+            query = query.in('type', ['Artigo Técnico', 'Estudo', 'Pesquisa', 'Relatório', 'PDF', 'Documento', 'document', 'Artigo Científico']);
         }
 
         const { data, error } = await query;
@@ -62,7 +75,7 @@ export default function AdminArticlesPage() {
 
     useEffect(() => {
         fetchArticles();
-    }, [showBin]);
+    }, [showBin, activeAdminTab]);
 
     const confirmDelete = async () => {
         if (!itemToDelete) return;
@@ -293,6 +306,32 @@ export default function AdminArticlesPage() {
                     <h1 className="text-3xl font-black text-slate-900 tracking-tight">Artigos & Notícias</h1>
                     <p className="text-slate-500 font-medium text-sm">Gerencie o conteúdo editorial do blog e da página inicial.</p>
                 </div>
+            </div>
+
+            {/* Admin Tabs */}
+            <div className="flex gap-2 bg-white p-1 rounded-xl border border-slate-200 shadow-sm w-fit">
+                <button
+                    onClick={() => setActiveAdminTab("noticias")}
+                    className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all ${
+                        activeAdminTab === "noticias"
+                            ? "bg-emerald-600 text-white shadow-lg"
+                            : "text-slate-500 hover:bg-slate-50"
+                    }`}
+                >
+                    <List className="w-4 h-4" />
+                    Notícias
+                </button>
+                <button
+                    onClick={() => setActiveAdminTab("artigos")}
+                    className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all ${
+                        activeAdminTab === "artigos"
+                            ? "bg-emerald-600 text-white shadow-lg"
+                            : "text-slate-500 hover:bg-slate-50"
+                    }`}
+                >
+                    <FileText className="w-4 h-4" />
+                    Artigos & Documentos
+                </button>
             </div>
 
             <div className="flex items-center justify-between gap-4 bg-white p-2 rounded-xl border border-slate-200 shadow-sm">

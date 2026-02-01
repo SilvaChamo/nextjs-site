@@ -4,6 +4,8 @@ import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { GraduationCap, Calendar, Clock, MapPin, Users, ArrowRight, CheckCircle, User } from "lucide-react";
 import { notFound } from "next/navigation";
+import React, { useState, use } from "react";
+import { TrainingEnrollmentForm } from "@/components/TrainingEnrollmentForm";
 
 // Training data (in a real app, this would come from a database)
 const trainingsData: Record<string, any> = {
@@ -154,13 +156,15 @@ const trainingsData: Record<string, any> = {
     }
 };
 
-export default async function TrainingDetailPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;
+export default function TrainingDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = React.use(params);
     const training = trainingsData[id];
 
     if (!training) {
         notFound();
     }
+
+    const [isEnrollmentOpen, setEnrollmentOpen] = useState(false);
 
     return (
         <main className="min-h-screen bg-slate-50">
@@ -301,13 +305,13 @@ export default async function TrainingDetailPage({ params }: { params: Promise<{
                                     <span className="text-2xl font-black text-[#f97316]">{training.price}</span>
                                 </div>
 
-                                <Link
-                                    href="/contacto"
+                                <button
+                                    onClick={() => setEnrollmentOpen(true)}
                                     className="w-full inline-flex items-center justify-center gap-2 bg-[#f97316] hover:bg-[#ea6a0a] text-white font-bold px-6 py-4 rounded-lg transition-all duration-300 hover:scale-105"
                                 >
                                     Inscrever-se Agora
                                     <ArrowRight className="w-5 h-5" />
-                                </Link>
+                                </button>
 
                                 <p className="text-xs text-center text-slate-500 mt-3">
                                     {training.spots}
@@ -317,6 +321,14 @@ export default async function TrainingDetailPage({ params }: { params: Promise<{
                     </div>
                 </div>
             </div>
+
+            {isEnrollmentOpen && (
+                <TrainingEnrollmentForm
+                    trainingId={id}
+                    trainingTitle={training.title}
+                    onClose={() => setEnrollmentOpen(false)}
+                />
+            )}
         </main>
     );
 }

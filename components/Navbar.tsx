@@ -84,6 +84,7 @@ export function Navbar() {
     };
 
     const menuItems = [
+        { label: t("navbar.services"), link: "/servicos" },
         { label: t("navbar.repository"), link: "/repositorio" },
         { label: t("navbar.partnership"), link: "/parceria" },
         { label: t("navbar.market"), link: "/mercado" },
@@ -92,7 +93,6 @@ export function Navbar() {
 
     const baseItems = [
         { label: t("navbar.about"), link: "/sobre-nos" },
-        { label: t("navbar.services"), link: "/servicos" },
         { label: t("navbar.history"), link: "/sobre-nos/historial" },
         { label: t("navbar.app"), link: "/sobre-aplicativo" },
     ];

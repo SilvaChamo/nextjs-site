@@ -18,8 +18,8 @@ import {
     PanelLeftOpen,
     Menu,
     ShoppingCart,
-    LandPlot,
-    Contact
+    Contact,
+    GraduationCap
 } from "lucide-react";
 
 interface AdminShellProps {
@@ -123,6 +123,7 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
                             <LinkItem href="/admin/produtos" icon={ShoppingCart} label="Produtos" />
                             <LinkItem href="/admin/noticias" icon={Newspaper} label="Notícias" />
                             <LinkItem href="/admin/artigos" icon={FileText} label="Artigos" />
+                            <LinkItem href="/admin/formacao" icon={GraduationCap} label="Formação" />
                             <LinkItem href="/admin/documentos" icon={FileText} label="Documentos" />
                         </div>
 

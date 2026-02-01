@@ -3,6 +3,11 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { GraduationCap, BookOpen, Users, Laptop, ArrowRight, Calendar, Clock, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
+import { toast } from "sonner";
+import { PermissionModal } from "@/components/modals/PermissionModal";
 
 export default function FormacaoPage() {
     const programs = [
@@ -75,6 +80,67 @@ export default function FormacaoPage() {
             spots: "10 vagas disponíveis"
         }
     ];
+
+    const [user, setUser] = useState<any>(null);
+    const [userProfile, setUserProfile] = useState<any>(null);
+    const [loadingProfile, setLoadingProfile] = useState(true);
+    const [isPermissionModalOpen, setIsPermissionModalOpen] = useState(false);
+    const [modalType, setModalType] = useState<"no-login" | "restricted-plan" | "already-allowed">("no-login");
+    const router = useRouter();
+
+    useEffect(() => {
+        const fetchUserData = async (currentUser: any) => {
+            setLoadingProfile(true);
+            if (!currentUser) {
+                setUser(null);
+                setUserProfile(null);
+                setLoadingProfile(false);
+                return;
+            }
+            setUser(currentUser);
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', currentUser.id)
+                .single();
+            setUserProfile(profile);
+            setLoadingProfile(false);
+        };
+
+        // Get initial user
+        supabase.auth.getUser().then(({ data: { user } }) => fetchUserData(user));
+
+        // Listen for changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            fetchUserData(session?.user ?? null);
+        });
+
+        return () => subscription.unsubscribe();
+    }, []);
+
+    const handlePublishCourse = () => {
+        if (loadingProfile) {
+            toast.info("Verificando permissões...");
+            return;
+        }
+
+        if (!user) {
+            setModalType("no-login");
+            setIsPermissionModalOpen(true);
+            return;
+        }
+
+        const allowedPlans = ["Premium", "Parceiro", "Profissional", "Empresarial"];
+        const currentPlan = userProfile?.user_type || "Básico";
+
+        if (allowedPlans.includes(currentPlan) || userProfile?.role === 'admin') {
+            // Se já tem permissão, leva para o dashboard
+            router.push("/usuario/dashboard/formacao/novo");
+        } else {
+            setModalType("restricted-plan");
+            setIsPermissionModalOpen(true);
+        }
+    };
 
     return (
         <main className="min-h-screen bg-slate-50 flex flex-col items-center">
@@ -230,17 +296,24 @@ export default function FormacaoPage() {
                         Invista no desenvolvimento da <span className="text-[#f97316]">sua equipa</span>
                     </h3>
                     <p className="text-indigo-100 font-medium mb-6 max-w-2xl mx-auto relative z-10">
-                        Contacte-nos para conhecer os nossos programas de formação personalizados.
+                        Publique a sua formação ou contacte-nos para conhecer os nossos programas personalizados.
                     </p>
-                    <Link
-                        href="/contacto"
+                    <button
+                        onClick={handlePublishCourse}
                         className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/30 text-white font-bold px-8 py-4 rounded-lg transition-all duration-300 hover:scale-105 hover:bg-white/20 hover:text-[#f97316] hover:border-[#f97316] shadow-lg relative z-10"
                     >
-                        Reserve a sua vaga
+                        Cadastrar Curso
                         <ArrowRight className="w-5 h-5" />
-                    </Link>
+                    </button>
                 </div>
             </div>
+
+            <PermissionModal
+                isOpen={isPermissionModalOpen}
+                onClose={() => setIsPermissionModalOpen(false)}
+                type={modalType}
+                currentPlan={userProfile?.user_type}
+            />
         </main>
     );
 }

@@ -13,7 +13,8 @@ import {
     HelpCircle,
     ChevronLeft,
     ChevronRight,
-    Building2
+    Building2,
+    GraduationCap
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "./ui/button";
@@ -25,7 +26,7 @@ const navigation = [
     { name: "Meu Conteúdo", href: "/usuario/dashboard/produtos", icon: Package },
     { name: "Contactos", href: "/usuario/dashboard/contactos", icon: MessageSquare },
     { name: "Análise", href: "/usuario/dashboard/analises", icon: BarChart3 },
-    { name: "Dashboard", href: "/usuario/dashboard", icon: LayoutDashboard },
+    { name: "Cursos", href: "/usuario/dashboard/formacao", icon: GraduationCap },
 ];
 
 interface UserSidebarProps {

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { AdminDataTable } from "@/components/admin/AdminDataTable";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, Plus, Search, LayoutGrid, List, Layers, Briefcase, TrendingUp, Factory, BarChart3, Clock, MapPin, Tag, Trash2 } from "lucide-react";
+import { GraduationCap, Plus, Search, LayoutGrid, List, Layers, Briefcase, TrendingUp, Factory, BarChart3, Clock, MapPin, Tag, Trash2, User, Calendar, Laptop, Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -32,6 +32,8 @@ export default function AdminFormacaoPage() {
         { id: 'Marketing', label: 'Marketing', icon: TrendingUp },
         { id: 'Produção', label: 'Produção', icon: Factory },
         { id: 'Financeiro', label: 'Financeiro', icon: BarChart3 },
+        { id: 'Eventos', label: 'Eventos', icon: Calendar },
+        { id: 'Workshop', label: 'Workshop', icon: Laptop },
     ];
 
     async function fetchData() {
@@ -63,8 +65,9 @@ export default function AdminFormacaoPage() {
     }, [showBin]);
 
     const filteredData = data.filter(item => {
-        const matchesSearch = item.title?.toLowerCase().includes(search.toLowerCase()) ||
-            item.instructor?.toLowerCase().includes(search.toLowerCase());
+        const instructorName = typeof item.instructor === 'object' ? item.instructor?.name : item.instructor;
+        const matchesSearch = (item.title?.toLowerCase() || "").includes(search.toLowerCase()) ||
+            (instructorName?.toLowerCase() || "").includes(search.toLowerCase());
         const matchesCategory = activeTab === 'Todos' || item.category === activeTab;
         return matchesSearch && matchesCategory;
     });
@@ -148,6 +151,21 @@ export default function AdminFormacaoPage() {
             )
         },
         {
+            header: "Formador",
+            key: "instructor",
+            render: (val: any) => {
+                const name = typeof val === 'object' ? val.name : val;
+                return (
+                    <div className="flex items-center gap-2">
+                        <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span className="font-bold text-slate-700 truncate max-w-[120px]">
+                            {name || 'Base Agro'}
+                        </span>
+                    </div>
+                );
+            }
+        },
+        {
             header: "Início",
             key: "date",
             render: (val: string) => <span className="font-bold text-slate-600 text-xs">{val}</span>
@@ -160,7 +178,7 @@ export default function AdminFormacaoPage() {
         {
             header: "Vagas",
             key: "spots_total",
-            render: (val: any) => <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded text-[10px] font-black">{val}</span>
+            render: (val: any) => <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded text-[10px] font-black">{val} vagas</span>
         }
     ];
 
@@ -285,25 +303,20 @@ export default function AdminFormacaoPage() {
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredData.map((item) => (
-                            <div key={item.id} className="bg-white rounded-2xl border border-slate-100 hover:shadow-lg transition-all group flex flex-col overflow-hidden">
-                                <div className="aspect-video bg-slate-100 relative overflow-hidden">
-                                    {item.image_url ? (
-                                        <img src={item.image_url} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-slate-300">
-                                            <GraduationCap className="w-12 h-12" />
-                                        </div>
-                                    )}
-                                    <div className="absolute top-4 left-4">
-                                        <span className="bg-white/90 backdrop-blur-sm text-emerald-700 text-[10px] font-black uppercase px-2 py-1 rounded-md shadow-sm">
+                            <div key={item.id} className="bg-white rounded-2xl border border-slate-100 hover:shadow-md transition-all group flex flex-col overflow-hidden">
+                                <div className="p-6 flex flex-col flex-1">
+                                    <div className="flex items-start justify-between gap-4 mb-4">
+                                        <h3 className="font-bold text-slate-900 text-base line-clamp-2 leading-tight flex-1">{item.title}</h3>
+                                        <span className="shrink-0 bg-slate-50 text-slate-500 text-[9px] font-black uppercase px-2 py-1 rounded-md border border-slate-100">
                                             {item.category}
                                         </span>
                                     </div>
-                                </div>
-                                <div className="p-6 flex flex-col flex-1">
-                                    <h3 className="font-bold text-slate-900 text-base mb-3 line-clamp-2 min-h-[3rem]">{item.title}</h3>
 
-                                    <div className="space-y-2 mb-6">
+                                    <div className="space-y-2 mb-4">
+                                        <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
+                                            <User className="w-3.5 h-3.5 text-slate-400" />
+                                            <span className="truncate">Formador: {typeof item.instructor === 'object' ? item.instructor?.name : item.instructor || 'Base Agro'}</span>
+                                        </div>
                                         <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
                                             <Clock className="w-3.5 h-3.5 text-slate-400" />
                                             <span>Inicia em: {item.date}</span>
@@ -312,22 +325,23 @@ export default function AdminFormacaoPage() {
                                             <Tag className="w-3.5 h-3.5 text-slate-400" />
                                             <span className="text-emerald-600 font-black">{item.price}</span>
                                         </div>
-                                        <div className="flex items-center gap-2 text-xs text-slate-400">
+                                        <div className="flex items-center gap-2 text-xs text-slate-400 pt-1">
                                             <div className="flex-1 h-1 bg-slate-100 rounded-full overflow-hidden">
                                                 <div
                                                     className="h-full bg-emerald-500 rounded-full"
                                                     style={{ width: `${Math.min(100, (item.spots_filled || 0) / (item.spots_total || 1) * 100)}%` }}
                                                 />
                                             </div>
-                                            <span className="font-bold text-[10px] uppercase">{item.spots_filled || 0}/{item.spots_total || 0} Vagas</span>
+                                            <span className="font-bold text-[10px] uppercase">{(item.spots_available || item.spots_total) || 0} Vagas</span>
                                         </div>
                                     </div>
 
-                                    <div className="mt-auto flex items-center gap-2 pt-4 border-t border-slate-50">
+                                    <div className="mt-auto flex items-center justify-end gap-1">
                                         {showBin ? (
                                             <Button
                                                 onClick={() => handleRestore(item)}
-                                                className="flex-1 rounded-xl text-xs font-black uppercase tracking-widest h-10 bg-emerald-600 hover:bg-emerald-700 text-white"
+                                                size="sm"
+                                                className="flex-1 rounded-lg text-[10px] font-black uppercase tracking-widest h-8 bg-emerald-600 hover:bg-emerald-700 text-white"
                                             >
                                                 Restaurar
                                             </Button>
@@ -337,14 +351,18 @@ export default function AdminFormacaoPage() {
                                                     setEditingItem(item);
                                                     setIsFormOpen(true);
                                                 }}
-                                                variant="outline" className="flex-1 rounded-xl text-xs font-black uppercase tracking-widest h-10"
+                                                variant="ghost"
+                                                size="sm"
+                                                className="size-8 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 p-0"
                                             >
-                                                Editar
+                                                <Pencil className="w-4 h-4" />
                                             </Button>
                                         )}
                                         <Button
                                             onClick={() => handleDelete(item)}
-                                            variant="ghost" className="size-10 rounded-xl text-rose-500 hover:text-rose-600 hover:bg-rose-50 p-0"
+                                            variant="ghost"
+                                            size="sm"
+                                            className="size-8 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-0"
                                         >
                                             <Trash2 className="w-4 h-4" />
                                         </Button>

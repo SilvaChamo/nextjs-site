@@ -84,16 +84,20 @@ export default function ArticlesArchivePage() {
                     .from('articles')
                     .select('*')
                     .eq('type', 'article')
+                    .is('deleted_at', null)
                     .order('date', { ascending: false });
 
-                const combinedLocal = [...(data || []), ...FALLBACK_ARTICLES];
+                // If we have real DB data, we use it. If not, we use fallback to not show an empty page.
+                const combinedLocal = (data && data.length > 0) ? data : FALLBACK_ARTICLES;
                 setLocalArticles(combinedLocal);
                 setArticles(combinedLocal);
 
                 // 2. Auto-Scan Global Scientific Database for Mozambique
                 // This fulfills the "national priority" and "auto-reload/scan" request
                 const mozPapers = await fetchExternalArticles("Moçambique Agricultura");
-                setArticles(prev => [...prev, ...mozPapers]);
+                if (mozPapers.length > 0) {
+                    setArticles(prev => [...prev, ...mozPapers]);
+                }
 
             } catch (error) {
                 console.error("Error fetching initial articles:", error);

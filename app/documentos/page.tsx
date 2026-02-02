@@ -19,7 +19,8 @@ export default function DocumentsArchivePage() {
                 const { data, error } = await supabase
                     .from('articles')
                     .select('*')
-                    .or('type.eq.document,type.eq.Relatório')
+                    .is('deleted_at', null)
+                    .in('type', ['document', 'Relatório', 'Legislação', 'PDF', 'Documento', 'Artigo Técnico'])
                     .order('date', { ascending: false });
 
                 if (error) throw error;

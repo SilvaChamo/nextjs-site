@@ -4,20 +4,21 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Plus, LayoutGrid, List, Search, FileText, Scale, Calendar, Link as LinkIcon, Pencil, Trash2, Layers } from "lucide-react";
-import { ArticleForm } from "@/components/admin/ArticleForm";
 import { AdminDataTable } from "@/components/admin/AdminDataTable";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { DocumentCard } from "@/components/admin/DocumentCard";
 
+import { useRouter } from "next/navigation";
+
 export default function AdminDocumentosPage() {
+    const router = useRouter();
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
     const [activeTab, setActiveTab] = useState('todos');
     const [articles, setArticles] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
-    const [isFormOpen, setIsFormOpen] = useState(false);
     const [editingArticle, setEditingArticle] = useState<null | any>(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [docToDelete, setDocToDelete] = useState<any>(null);
@@ -133,15 +134,9 @@ export default function AdminDocumentosPage() {
     };
 
     const handleEdit = (article: any) => {
-        setEditingArticle(article);
-        setIsFormOpen(true);
+        router.push(`/admin/documentos/${article.id}`);
     };
 
-    const handleSuccess = () => {
-        fetchArticles();
-        setIsFormOpen(false);
-        setEditingArticle(null);
-    };
 
     const filteredArticles = articles.filter(a => {
         const matchesSearch = a.title.toLowerCase().includes(search.toLowerCase());
@@ -263,10 +258,7 @@ export default function AdminDocumentosPage() {
                     </div>
 
                     <Button
-                        onClick={() => {
-                            setEditingArticle({ type: 'Relatório' }); // Default to Relatório if ambiguous, or map back from id? logic below
-                            setIsFormOpen(true);
-                        }}
+                        onClick={() => router.push('/admin/documentos/novo')}
                         className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-widest text-xs h-10 px-6 rounded-lg gap-2"
                     >
                         <Plus className="w-4 h-4" />
@@ -336,14 +328,6 @@ export default function AdminDocumentosPage() {
                 </div>
             )}
 
-            {/* Modal */}
-            {isFormOpen && (
-                <ArticleForm
-                    onClose={() => setIsFormOpen(false)}
-                    onSuccess={handleSuccess}
-                    initialData={editingArticle}
-                />
-            )}
 
             <ConfirmationModal
                 key={showBin ? 'perm' : 'soft'}

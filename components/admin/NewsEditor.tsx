@@ -1,0 +1,318 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { createClient } from "@/utils/supabase/client";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, Loader2, Save, X, Calendar, Link as LinkIcon, Type, Image as ImageIcon, FileText } from "lucide-react";
+import { RichTextEditor } from "../RichTextEditor";
+import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { useNetworkStatus } from "@/hooks/useNetworkStatus";
+import { syncManager } from "@/lib/syncManager";
+
+interface NewsEditorProps {
+    initialData?: any;
+    isNew?: boolean;
+}
+
+export function NewsEditor({ initialData, isNew = false }: NewsEditorProps) {
+    const supabase = createClient();
+    const router = useRouter();
+    const { isOnline } = useNetworkStatus();
+
+    const [loading, setLoading] = useState(false);
+    const [formData, setFormData] = useState({
+        title: initialData?.title || "",
+        subtitle: initialData?.subtitle || "",
+        type: initialData?.type || "Notícia",
+        content: initialData?.content || "",
+        image_url: initialData?.image_url || "",
+        source: initialData?.source || "",
+        source_url: initialData?.source_url || "",
+        date: (() => {
+            if (!initialData?.date) return new Date().toISOString().split('T')[0];
+            const d = new Date(initialData.date);
+            return isNaN(d.getTime()) ? new Date().toISOString().split('T')[0] : d.toISOString().split('T')[0];
+        })(),
+        slug: initialData?.slug || ""
+    });
+
+    // Recover Draft
+    useEffect(() => {
+        if (isNew) {
+            const draft = localStorage.getItem("agro_article_draft");
+            if (draft) {
+                try {
+                    const parsed = JSON.parse(draft);
+                    const mergedData = { ...formData, ...parsed };
+                    setFormData(mergedData);
+                    toast.info("Rascunho recuperado automaticamente");
+                } catch (e) { }
+            }
+        }
+    }, [isNew]);
+
+    // Autosave Draft
+    useEffect(() => {
+        if (isNew && formData.title) {
+            const timer = setTimeout(() => {
+                localStorage.setItem("agro_article_draft", JSON.stringify(formData));
+            }, 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [formData, isNew]);
+
+    const categories = ["Notícia", "Artigo Técnico", "Guia", "Relatório", "Legislação", "Documento", "Internacional", "Oportunidade", "Evento", "Recursos", "Política Agrária", "Curiosidade"];
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!isOnline) {
+            setLoading(true);
+            try {
+                const payload = { ...formData };
+                if (isNew && !payload.slug) {
+                    payload.slug = payload.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                }
+
+                syncManager.addToQueue({
+                    table: 'articles',
+                    action: isNew ? 'insert' : 'update',
+                    payload: isNew ? payload : { ...payload, id: initialData.id }
+                });
+
+                if (isNew) localStorage.removeItem("agro_article_draft");
+                toast.warning("Offline: Guardado localmente. Será sincronizado quando recuperar conexão.");
+                router.push("/admin/noticias");
+            } finally {
+                setLoading(false);
+            }
+            return;
+        }
+
+        setLoading(true);
+        try {
+            let error;
+            const payload = { ...formData };
+
+            if (isNew && !payload.slug) {
+                payload.slug = payload.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            }
+
+            if (!isNew && initialData?.id) {
+                const { error: err } = await supabase
+                    .from('articles')
+                    .update(payload)
+                    .eq('id', initialData.id);
+                error = err;
+            } else {
+                const { error: err } = await supabase
+                    .from('articles')
+                    .insert([payload]);
+                error = err;
+            }
+
+            if (error) throw error;
+            if (isNew) localStorage.removeItem("agro_article_draft");
+            toast.success(isNew ? "Artigo publicado!" : "Artigo actualizado!");
+            router.push("/admin/noticias");
+            router.refresh();
+        } catch (error: any) {
+            toast.error("Erro ao salvar: " + error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="bg-white rounded-agro-lg shadow-[0_0_10px_rgba(0,0,0,0.1)] border border-slate-200 flex flex-col h-full">
+            {/* Header */}
+            <div className="px-6 py-8 border-b border-slate-200 flex items-center justify-between bg-slate-300/40 transition-all shrink-0">
+                <div className="flex items-center gap-4 flex-1 min-w-0">
+                    <button
+                        onClick={() => router.back()}
+                        className="p-2 hover:bg-slate-300 rounded-full transition-colors flex-shrink-0 flex items-center justify-center"
+                    >
+                        <ArrowLeft className="w-5 h-5 text-slate-500" />
+                    </button>
+                    <div className="flex items-center gap-3 overflow-hidden">
+                        <h1 className="text-lg font-black text-slate-800 uppercase tracking-tight whitespace-nowrap leading-none m-0 p-0">
+                            {isNew ? "Nova Publicação" : "Editar Publicação"}
+                        </h1>
+                        {!isNew && (
+                            <div className="flex items-center gap-3">
+                                <span className="text-slate-300 font-light flex-shrink-0 text-xl leading-none">|</span>
+                                <div className="text-sm font-black uppercase tracking-tight truncate flex items-center gap-1.5 leading-none m-0 p-0">
+                                    <span className="text-emerald-600">Editando:</span>
+                                    <span className="text-slate-500 font-bold">{initialData?.title}</span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-3 ml-4 flex-shrink-0">
+                    <div className="bg-white px-3 py-1.5 rounded-full border border-slate-200 shadow-sm flex items-center gap-2">
+                        <span className={`w-2 h-2 rounded-full ${formData.type === 'Notícia' ? 'bg-blue-500' : 'bg-emerald-500'}`}></span>
+                        <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">{formData.type}</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Body */}
+            <form onSubmit={handleSubmit} className="p-10 space-y-8 flex-1 overflow-y-auto">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+                    {/* Main Content (2 Cols) */}
+                    <div className="md:col-span-2 space-y-6">
+
+                        {/* Title Section */}
+                        <div className="space-y-4">
+                            <h3 className="text-xs font-black uppercase text-emerald-600 tracking-widest border-b border-emerald-100 pb-2 mb-4">Conteúdo Principal</h3>
+
+                            <div className="relative">
+                                <FileText className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                <Input
+                                    value={formData.title}
+                                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                    placeholder="Manchete da Publicação"
+                                    className="pl-12 pr-4 py-6 bg-slate-50 border border-slate-200 rounded-lg text-lg font-bold text-slate-800 focus:ring-2 focus:ring-emerald-500 outline-none w-full transition-all shadow-sm"
+                                    required
+                                />
+                            </div>
+
+                            <div className="relative">
+                                <Type className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                <Input
+                                    value={formData.subtitle}
+                                    onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
+                                    placeholder="Subtítulo ou lead... (Opcional)"
+                                    className="pl-12 pr-4 py-6 bg-slate-50 border border-slate-200 rounded-lg text-md font-medium text-slate-600 focus:ring-2 focus:ring-emerald-500 outline-none w-full transition-all shadow-sm"
+                                />
+                            </div>
+
+                            <div className="relative">
+                                <RichTextEditor
+                                    value={formData.content}
+                                    onChange={(val) => setFormData({ ...formData, content: val })}
+                                    placeholder="Escreva o conteúdo detalhado da publicação aqui..."
+                                    className="bg-slate-50 rounded-lg border border-slate-200 min-h-[500px]"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Sidebar (1 Col) */}
+                    <div className="space-y-6">
+
+                        {/* Meta Info Box */}
+                        <div className="bg-slate-50 rounded-xl border border-slate-200 p-6 space-y-6 shadow-sm">
+                            <h3 className="text-xs font-black uppercase text-slate-800 flex items-center gap-2 border-b border-slate-200 pb-3">
+                                <FileText className="w-4 h-4 text-emerald-500" />
+                                Detalhes da Publicação
+                            </h3>
+
+                            <div className="space-y-4">
+                                <select
+                                    value={formData.type}
+                                    onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                                    className="w-full h-11 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium shadow-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                                >
+                                    {categories.map(cat => (
+                                        <option key={cat} value={cat}>{cat}</option>
+                                    ))}
+                                </select>
+
+                                <div className="relative">
+                                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                    <Input
+                                        type="date"
+                                        value={formData.date}
+                                        onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                                        className="pl-10 bg-white border-slate-200 h-11 font-medium rounded-lg"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Media Box */}
+                        <div className="bg-slate-50 rounded-xl border border-slate-200 p-6 space-y-6 shadow-sm">
+                            <h3 className="text-xs font-black uppercase text-slate-800 flex items-center gap-2 border-b border-slate-200 pb-3">
+                                <ImageIcon className="w-4 h-4 text-emerald-500" />
+                                Imagem de Capa
+                            </h3>
+
+                            <div className="space-y-4">
+                                <div className="relative">
+                                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                    <Input
+                                        placeholder="Cole o URL da imagem..."
+                                        value={formData.image_url}
+                                        onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                                        className="pl-10 bg-white border-slate-200 h-11 rounded-lg"
+                                    />
+                                </div>
+                                {formData.image_url ? (
+                                    <div className="aspect-video rounded-lg overflow-hidden border border-slate-200 bg-white shadow-sm relative group">
+                                        <img src={formData.image_url} alt="Capa" className="w-full h-full object-cover" />
+                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                                    </div>
+                                ) : (
+                                    <div className="aspect-video rounded-lg border-2 border-dashed border-slate-300 flex items-center justify-center flex-col gap-2 text-slate-400 bg-white">
+                                        <ImageIcon className="w-8 h-8 opacity-50" />
+                                        <span className="text-xs font-medium">Sem imagem definida</span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Source Box */}
+                        <div className="bg-slate-50 rounded-xl border border-slate-200 p-6 space-y-6 shadow-sm">
+                            <h3 className="text-xs font-black uppercase text-slate-800 flex items-center gap-2 border-b border-slate-200 pb-3">
+                                <LinkIcon className="w-4 h-4 text-emerald-500" />
+                                Referências & Fontes
+                            </h3>
+                            <div className="space-y-4">
+                                <div className="relative">
+                                    <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                    <Input
+                                        value={formData.source}
+                                        onChange={(e) => setFormData({ ...formData, source: e.target.value })}
+                                        placeholder="Nome da Fonte (Ex: CNN, Club of Moz)"
+                                        className="pl-10 bg-white border-slate-200 h-11 rounded-lg"
+                                    />
+                                </div>
+                                <div className="relative">
+                                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                    <Input
+                                        value={formData.source_url}
+                                        onChange={(e) => setFormData({ ...formData, source_url: e.target.value })}
+                                        placeholder="Link Original (https://...)"
+                                        className="pl-10 bg-white border-slate-200 h-11 rounded-lg"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                {/* Footer Buttons */}
+                <div className="pt-8 border-t border-slate-100 flex items-center justify-end gap-3">
+                    <Button type="button" variant="outline" onClick={() => router.back()} className="px-8 h-10 rounded-lg text-xs font-black text-slate-500 uppercase tracking-widest bg-white hover:bg-slate-50">
+                        Cancelar
+                    </Button>
+                    <Button
+                        type="submit"
+                        disabled={loading}
+                        className="px-10 h-10 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-black uppercase tracking-widest shadow-lg"
+                    >
+                        {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
+                        {isNew ? "Publicar Artigo" : "Guardar Alterações"}
+                    </Button>
+                </div>
+            </form>
+        </div>
+    );
+}

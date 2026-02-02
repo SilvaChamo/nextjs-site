@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { AdminDataTable } from "@/components/admin/AdminDataTable";
 import { BadgeCheck, BadgeAlert, LayoutGrid, List, Trash2, RotateCcw, FileText, Trash } from "lucide-react";
-import { ArticleForm } from "@/components/admin/ArticleForm";
 import { UndoRedoPanel } from "@/components/admin/UndoRedoPanel";
 import { toast } from "sonner";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
@@ -12,12 +11,14 @@ import { NewsCard } from "@/components/NewsCard";
 import { Button } from "@/components/ui/button";
 import { useUndoRedo } from "@/hooks/useUndoRedo";
 
+import { useRouter } from "next/navigation";
+
 export default function AdminArticlesPage() {
+    const router = useRouter();
     const supabase = createClient();
     const [articles, setArticles] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
-    const [showForm, setShowForm] = useState(false);
     const [editingItem, setEditingItem] = useState<any>(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<any>(null);
@@ -32,7 +33,7 @@ export default function AdminArticlesPage() {
         console.log("=== FETCH ARTICLES DEBUG ===");
         console.log("Show bin:", showBin);
         console.log("Active Admin Tab:", activeAdminTab);
-        
+
         let query = supabase
             .from('articles')
             .select('*')
@@ -98,7 +99,7 @@ export default function AdminArticlesPage() {
                 console.log("Hard delete result:", { error, count });
                 if (error) throw error;
                 if (count === 0) throw new Error("Permissão negada ou item não encontrado.");
-                
+
                 // Add to undo history
                 addAction({
                     type: 'delete',
@@ -106,14 +107,14 @@ export default function AdminArticlesPage() {
                     data: itemToDelete,
                     description: `Eliminado permanentemente: ${itemToDelete.title}`
                 });
-                
+
                 toast.success("Artigo eliminado permanentemente!");
             } else {
                 // Soft Delete (Move to Bin) for active items
                 console.log("Performing SOFT DELETE...");
                 const deleteTime = new Date().toISOString();
                 console.log("Setting deleted_at to:", deleteTime);
-                
+
                 const { error, count } = await supabase
                     .from('articles')
                     .update({ deleted_at: deleteTime }, { count: 'exact' })
@@ -128,7 +129,7 @@ export default function AdminArticlesPage() {
                     console.error("No rows affected - count is 0");
                     throw new Error("Permissão negada ou item não encontrado.");
                 }
-                
+
                 // Add to undo history
                 addAction({
                     type: 'delete',
@@ -136,7 +137,7 @@ export default function AdminArticlesPage() {
                     data: { ...itemToDelete, deleted_at: null },
                     description: `Movido para lixeira: ${itemToDelete.title}`
                 });
-                
+
                 toast.success("Artigo movido para a lixeira!");
             }
 
@@ -161,7 +162,7 @@ export default function AdminArticlesPage() {
 
             if (error) throw error;
             if (count === 0) throw new Error("Permissão negada ou item não encontrado.");
-            
+
             // Add to undo history
             addAction({
                 type: 'restore',
@@ -169,7 +170,7 @@ export default function AdminArticlesPage() {
                 data: article,
                 description: `Restaurado: ${article.title}`
             });
-            
+
             toast.success("Artigo restaurado com sucesso!");
             await fetchArticles();
         } catch (error: any) {
@@ -186,7 +187,7 @@ export default function AdminArticlesPage() {
                 .not('deleted_at', 'is', null);
 
             if (error) throw error;
-            
+
             toast.success(`Lixeira esvaziada! ${count} artigo(s) eliminado(s) permanentemente.`);
             await fetchArticles();
         } catch (error: any) {
@@ -218,7 +219,7 @@ export default function AdminArticlesPage() {
 
                 if (error) throw error;
             }
-            
+
             await fetchArticles();
         } catch (error) {
             console.error("Undo operation failed:", error);
@@ -250,7 +251,7 @@ export default function AdminArticlesPage() {
                     .update({ deleted_at: null })
                     .eq('id', action.data.id);
             }
-            
+
             await fetchArticles();
         } catch (error) {
             console.error("Redo operation failed:", error);
@@ -312,22 +313,20 @@ export default function AdminArticlesPage() {
             <div className="flex gap-2 bg-white p-1 rounded-xl border border-slate-200 shadow-sm w-fit">
                 <button
                     onClick={() => setActiveAdminTab("noticias")}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all ${
-                        activeAdminTab === "noticias"
+                    className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all ${activeAdminTab === "noticias"
                             ? "bg-emerald-600 text-white shadow-lg"
                             : "text-slate-500 hover:bg-slate-50"
-                    }`}
+                        }`}
                 >
                     <List className="w-4 h-4" />
                     Notícias
                 </button>
                 <button
                     onClick={() => setActiveAdminTab("artigos")}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all ${
-                        activeAdminTab === "artigos"
+                    className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all ${activeAdminTab === "artigos"
                             ? "bg-emerald-600 text-white shadow-lg"
                             : "text-slate-500 hover:bg-slate-50"
-                    }`}
+                        }`}
                 >
                     <FileText className="w-4 h-4" />
                     Artigos & Documentos
@@ -354,7 +353,7 @@ export default function AdminArticlesPage() {
                             Lixeira
                         </button>
                         {showBinDropdown && (
-                            <div 
+                            <div
                                 className="absolute top-full left-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg py-1 z-10 min-w-[160px]"
                                 onMouseEnter={() => setShowBinDropdown(true)}
                                 onMouseLeave={() => setShowBinDropdown(false)}
@@ -404,8 +403,8 @@ export default function AdminArticlesPage() {
                             isAdmin={true}
                             isDeleted={showBin}
                             onEdit={() => {
-                                setEditingItem(article);
-                                setShowForm(true);
+                                const route = activeAdminTab === 'noticias' ? '/admin/noticias' : '/admin/artigos';
+                                router.push(`${route}/${article.id}`);
                             }}
                             onDelete={() => handleDelete(article)}
                             onRestore={() => handleRestore(article)}
@@ -424,12 +423,12 @@ export default function AdminArticlesPage() {
                     data={articles}
                     loading={loading}
                     onAdd={showBin ? undefined : () => {
-                        setEditingItem(null);
-                        setShowForm(true);
+                        const route = activeAdminTab === 'noticias' ? '/admin/noticias' : '/admin/artigos';
+                        router.push(`${route}/novo`);
                     }}
                     onEdit={showBin ? undefined : (row: any) => {
-                        setEditingItem(row);
-                        setShowForm(true);
+                        const route = activeAdminTab === 'noticias' ? '/admin/noticias' : '/admin/artigos';
+                        router.push(`${route}/${row.id}`);
                     }}
                     onDelete={handleDelete}
                     customActions={showBin ? (row: any) => (
@@ -446,16 +445,6 @@ export default function AdminArticlesPage() {
                 />
             )}
 
-            {showForm && (
-                <ArticleForm
-                    initialData={editingItem}
-                    onClose={() => setShowForm(false)}
-                    onSuccess={() => {
-                        fetchArticles();
-                        setShowForm(false);
-                    }}
-                />
-            )}
 
             <ConfirmationModal
                 isOpen={showDeleteConfirm}

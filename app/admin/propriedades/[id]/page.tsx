@@ -12,8 +12,10 @@ export default async function EditPropertyPage({ params }: { params: Promise<{ i
     }
 
     return (
-        <div className="max-w-3xl mx-auto py-8">
+    return (
+        <div className="h-full">
             <PropertyEditor initialData={property} />
         </div>
+    );
     );
 }

@@ -5,19 +5,20 @@ import { supabase } from "@/lib/supabaseClient";
 import { AdminDataTable } from "@/components/admin/AdminDataTable";
 import { Button } from "@/components/ui/button";
 import { Plus, LayoutGrid, List, Pencil, Trash2, Calendar, Link as LinkIcon, Search, GraduationCap, FileText, BookOpen, Layers } from "lucide-react";
-import { ArticleForm } from "@/components/admin/ArticleForm";
 import { Input } from "@/components/ui/input";
 import { NewsCard } from "@/components/NewsCard";
 import { toast } from "sonner";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 
+import { useRouter } from "next/navigation";
+
 export default function AdminArtigosCientificosPage() {
+    const router = useRouter();
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
     const [activeTab, setActiveTab] = useState('Dissertações');
     const [articles, setArticles] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
-    const [isFormOpen, setIsFormOpen] = useState(false);
     const [editingArticle, setEditingArticle] = useState<null | any>(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false);
@@ -158,14 +159,9 @@ export default function AdminArtigosCientificosPage() {
     };
 
     const handleEdit = (article: any) => {
-        setEditingArticle(article);
-        setIsFormOpen(true);
+        router.push(`/admin/artigos/${article.id}`);
     };
 
-    const handleSuccess = () => {
-        fetchArticles();
-        setEditingArticle(null);
-    };
 
     const filteredArticles = articles.filter(a => {
         const matchesSearch = a.title.toLowerCase().includes(search.toLowerCase());
@@ -267,7 +263,7 @@ export default function AdminArtigosCientificosPage() {
                     </div>
 
                     <Button
-                        onClick={() => { setEditingArticle({ type: activeTab }); setIsFormOpen(true); }}
+                        onClick={() => router.push('/admin/artigos/novo')}
                         className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-widest text-xs h-10 px-6 rounded-lg gap-2"
                     >
                         <Plus className="w-4 h-4" />
@@ -362,14 +358,6 @@ export default function AdminArtigosCientificosPage() {
                 />
             )}
 
-            {/* Modal */}
-            {isFormOpen && (
-                <ArticleForm
-                    onClose={() => setIsFormOpen(false)}
-                    onSuccess={handleSuccess}
-                    initialData={editingArticle}
-                />
-            )}
 
             <ConfirmationModal
                 key={showBin ? 'perm' : 'soft'}

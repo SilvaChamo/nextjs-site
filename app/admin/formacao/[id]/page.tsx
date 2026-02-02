@@ -1,12 +1,12 @@
 "use client";
 
-import { ProductEditor } from "@/components/admin/ProductEditor";
+import { TrainingEditor } from "@/components/admin/TrainingEditor";
 import { createClient } from "@/utils/supabase/client";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 
-export default function EditProductPage() {
+export default function EditTrainingPage() {
     const params = useParams();
     const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
@@ -16,13 +16,13 @@ export default function EditProductPage() {
         const fetchData = async () => {
             if (!params.id) return;
 
-            const { data: product } = await supabase
-                .from('products')
+            const { data: training } = await supabase
+                .from('trainings')
                 .select('*')
                 .eq('id', params.id)
                 .single();
 
-            if (product) setData(product);
+            if (training) setData(training);
             setLoading(false);
         };
 
@@ -41,7 +41,7 @@ export default function EditProductPage() {
 
     return (
         <div className="h-[calc(100vh-80px)] p-6">
-            <ProductEditor initialData={data} />
+            <TrainingEditor initialData={data} />
         </div>
     );
 }

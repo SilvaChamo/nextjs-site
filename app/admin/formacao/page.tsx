@@ -9,7 +9,6 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
-import { TrainingForm } from "@/components/admin/TrainingForm";
 
 export default function AdminFormacaoPage() {
     const router = useRouter();
@@ -18,8 +17,8 @@ export default function AdminFormacaoPage() {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [activeTab, setActiveTab] = useState('Todos');
-    const [isFormOpen, setIsFormOpen] = useState(false);
-    const [editingItem, setEditingItem] = useState<any>(null);
+
+    // Deletion State
     const [itemToDelete, setItemToDelete] = useState<any>(null);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [showBin, setShowBin] = useState(false);
@@ -246,10 +245,7 @@ export default function AdminFormacaoPage() {
                     </div>
 
                     <Button
-                        onClick={() => {
-                            setEditingItem(null);
-                            setIsFormOpen(true);
-                        }}
+                        onClick={() => router.push('/admin/formacao/novo')}
                         className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-widest text-xs h-10 px-6 rounded-lg gap-2"
                     >
                         <Plus className="w-4 h-4" />
@@ -285,10 +281,7 @@ export default function AdminFormacaoPage() {
                         columns={columns}
                         data={filteredData}
                         loading={loading}
-                        onEdit={(item) => {
-                            setEditingItem(item);
-                            setIsFormOpen(true);
-                        }}
+                        onEdit={(item) => router.push(`/admin/formacao/${item.id}`)}
                         onDelete={handleDelete}
                     />
                 </div>
@@ -347,10 +340,7 @@ export default function AdminFormacaoPage() {
                                             </Button>
                                         ) : (
                                             <Button
-                                                onClick={() => {
-                                                    setEditingItem(item);
-                                                    setIsFormOpen(true);
-                                                }}
+                                                onClick={() => router.push(`/admin/formacao/${item.id}`)}
                                                 variant="ghost"
                                                 size="sm"
                                                 className="size-8 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 p-0"
@@ -398,17 +388,6 @@ export default function AdminFormacaoPage() {
                 confirmLabel="Esvaziar Lixeira"
                 variant="destructive"
             />
-
-            {isFormOpen && (
-                <TrainingForm
-                    onClose={() => setIsFormOpen(false)}
-                    onSuccess={() => {
-                        fetchData();
-                        setIsFormOpen(false);
-                    }}
-                    initialData={editingItem}
-                />
-            )}
         </div>
     );
 }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
+import { ImageUpload } from "./ImageUpload";
 import { Loader2, MapPin, Tag, Ruler, Coins, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 

@@ -12,10 +12,8 @@ export default async function EditPropertyPage({ params }: { params: Promise<{ i
     }
 
     return (
-    return (
         <div className="h-full">
             <PropertyEditor initialData={property} />
         </div>
-    );
     );
 }

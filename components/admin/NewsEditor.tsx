@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Loader2, Save, X, Calendar, Link as LinkIcon, Type, Image as ImageIcon, FileText } from "lucide-react";
+import { ImageUpload } from "./ImageUpload";
 import { RichTextEditor } from "../RichTextEditor";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
@@ -244,26 +245,16 @@ export function NewsEditor({ initialData, isNew = false }: NewsEditorProps) {
                             </h3>
 
                             <div className="space-y-4">
-                                <div className="relative">
-                                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                    <Input
-                                        placeholder="Cole o URL da imagem..."
-                                        value={formData.image_url}
-                                        onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                                        className="pl-10 bg-white border-slate-200 h-11 rounded-lg"
-                                    />
-                                </div>
-                                {formData.image_url ? (
-                                    <div className="aspect-video rounded-lg overflow-hidden border border-slate-200 bg-white shadow-sm relative group">
-                                        <img src={formData.image_url} alt="Capa" className="w-full h-full object-cover" />
-                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
-                                    </div>
-                                ) : (
-                                    <div className="aspect-video rounded-lg border-2 border-dashed border-slate-300 flex items-center justify-center flex-col gap-2 text-slate-400 bg-white">
-                                        <ImageIcon className="w-8 h-8 opacity-50" />
-                                        <span className="text-xs font-medium">Sem imagem definida</span>
-                                    </div>
-                                )}
+                                <ImageUpload
+                                    value={formData.image_url}
+                                    onChange={(url) => setFormData({ ...formData, image_url: url })}
+                                    label="Imagem de Capa"
+                                    description="Carregue uma imagem de destaque"
+                                    bucket="public-assets"
+                                    folder="news"
+                                    aspectRatio="video"
+                                    recommendedSize="1200x675px"
+                                />
                             </div>
                         </div>
 

@@ -62,7 +62,7 @@ export function DocumentCard({
                 <div className="flex items-center gap-3 pt-1">
                     <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                         <Calendar className="w-3.5 h-3.5" />
-                        {new Date(date).toLocaleDateString('pt-PT', { year: 'numeric' })}
+                        <span>Publicado em {new Date(date).toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' }).replace(' de ', ' de ')}</span>
                     </div>
                 </div>
             </div>

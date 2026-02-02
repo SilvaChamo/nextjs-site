@@ -108,19 +108,34 @@ export default function ArticleReadingPage() {
                     }
                 }
 
-                // Fetch recommended articles (excluding current) -- Randomized & Contextual
+                // Attempt to filter by same category if available
                 let recQuery = supabase
                     .from('articles')
                     .select('*')
                     .neq('slug', slug)
-                    .limit(20); // Fetch more to randomize from
+                    .limit(20);
 
-                // Attempt to filter by same category if available
                 if (articleData?.type) {
                     recQuery = recQuery.eq('type', articleData.type);
                 }
 
-                const { data: recData } = await recQuery;
+                let { data: recData } = await recQuery;
+
+                // Fallback: If not enough related articles, fetch generic ones
+                if (!recData || recData.length < 4) {
+                    const { data: fallbackData } = await supabase
+                        .from('articles')
+                        .select('*')
+                        .neq('slug', slug)
+                        .limit(10);
+
+                    if (fallbackData) {
+                        // Merge and remove duplicates by ID
+                        const currentIds = new Set(recData?.map(a => a.id) || []);
+                        const newItems = fallbackData.filter(a => !currentIds.has(a.id));
+                        recData = [...(recData || []), ...newItems];
+                    }
+                }
 
                 // Client-side shuffle for randomness
                 const shuffled = recData ? recData.sort(() => 0.5 - Math.random()) : [];

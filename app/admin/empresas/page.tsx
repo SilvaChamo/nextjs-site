@@ -47,6 +47,7 @@ export default function AdminEmpresasPage() {
         else if (filter === 'Privadas') matchesFilter = (item.type === 'Empresa Privada' || !item.type) && !item.is_archived;
         else if (filter === 'Internacionais') matchesFilter = (item.type === 'ONG Internacional' || item.name.includes('International')) && !item.is_archived;
         else if (filter === 'Associações') matchesFilter = (item.type === 'Associação' || item.type === 'Cooperativa Agrícola' || item.name.includes('Associação')) && !item.is_archived;
+        else if (filter === 'Destacadas') matchesFilter = item.is_featured === true && !item.is_archived;
         else if (filter === 'Arquivadas') matchesFilter = item.is_archived === true;
         else if (filter === 'Todas') matchesFilter = !item.is_archived;
 
@@ -150,6 +151,20 @@ export default function AdminEmpresasPage() {
         }
     };
 
+    const toggleFeatured = async (row: any) => {
+        try {
+            const { error } = await supabase
+                .from('companies')
+                .update({ is_featured: !row.is_featured })
+                .eq('id', row.id);
+            if (error) throw error;
+            toast.success(row.is_featured ? "Destaque removido" : "Empresa em destaque!");
+            fetchData();
+        } catch (err: any) {
+            toast.error("Erro: " + err.message);
+        }
+    };
+
     const confirmPremium = async () => {
         if (!itemToProcess) return;
         try {
@@ -247,6 +262,17 @@ export default function AdminEmpresasPage() {
                     >
                         <CheckCircle2 className="w-4 h-4" />
                     </button>
+                    <div className="flex items-center gap-1.5 min-w-[120px]">
+                        <button
+                            onClick={() => toggleFeatured(row)}
+                            className={`w-7 h-3.5 rounded-full relative transition-colors ${row.is_featured ? 'bg-amber-500' : 'bg-slate-200'}`}
+                        >
+                            <div className={`absolute top-0.5 w-2.5 h-2.5 bg-white rounded-full transition-all ${row.is_featured ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                        </button>
+                        <span className={`text-[9px] font-bold uppercase transition-colors ${row.is_featured ? 'text-amber-600' : 'text-slate-400'}`}>
+                            {row.is_featured ? 'Destacada' : 'Não Destacada'}
+                        </span>
+                    </div>
                     <button
                         onClick={() => toggleArchive(row)}
                         className={`p-1.5 rounded-full transition-colors ${row.is_archived ? 'bg-orange-100 text-orange-600' : 'bg-slate-100 text-slate-300 hover:bg-slate-200'}`}
@@ -254,6 +280,7 @@ export default function AdminEmpresasPage() {
                     >
                         {row.is_archived ? <ArchiveRestore className="w-4 h-4" /> : <Archive className="w-4 h-4" />}
                     </button>
+                    {row.is_featured && <span className="bg-amber-500 text-white px-2 py-0.5 rounded text-[10px] font-bold">Destaque</span>}
                     {row.is_archived && <span className="bg-slate-600 text-white px-2 py-0.5 rounded text-[10px] font-bold">Arquivada</span>}
                     {row.plan === 'partner' && <span className="bg-emerald-950 text-white px-2 py-0.5 rounded text-[10px] font-bold">Parceiro</span>}
                     {row.plan === 'parceiro' && <span className="bg-emerald-950 text-white px-2 py-0.5 rounded text-[10px] font-bold">Parceiro</span>}
@@ -303,6 +330,7 @@ export default function AdminEmpresasPage() {
                             <option value="Privadas">Privadas</option>
                             <option value="Internacionais">Internacionais</option>
                             <option value="Associações">Associações</option>
+                            <option value="Destacadas">Destacadas</option>
                             <option value="Arquivadas">Arquivadas</option>
                         </select>
 
@@ -481,11 +509,19 @@ export default function AdminEmpresasPage() {
                                         </div>
 
                                         {/* Title & Subtitle */}
-                                        <div>
-                                            <h3 className="font-bold text-slate-900 line-clamp-1 text-lg mb-1">{item.name}</h3>
-                                            <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">
-                                                {item.category || item.activity || "Entidade"}
-                                            </p>
+                                        <div className="flex items-center gap-3">
+                                            <button
+                                                onClick={() => toggleFeatured(item)}
+                                                className={`w-8 h-4 rounded-full relative transition-colors shrink-0 ${item.is_featured ? 'bg-amber-500' : 'bg-slate-200'}`}
+                                            >
+                                                <div className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all ${item.is_featured ? 'translate-x-[18px]' : 'translate-x-0.5'}`} />
+                                            </button>
+                                            <div className="flex-1 min-w-0">
+                                                <h3 className="font-bold text-slate-900 line-clamp-1 text-lg">{item.name}</h3>
+                                                <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">
+                                                    {item.category || item.activity || "Entidade"}
+                                                </p>
+                                            </div>
                                         </div>
 
                                         {/* Info Grid */}
@@ -521,6 +557,7 @@ export default function AdminEmpresasPage() {
                                                 >
                                                     <CheckCircle2 className="w-4 h-4" />
                                                 </button>
+                                                {item.is_featured && <span className="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-[10px] font-bold">Destaque</span>}
                                                 {item.is_archived && <span className="bg-slate-600 text-white px-2 py-0.5 rounded text-[10px] font-bold">Arquivada</span>}
                                                 {(item.plan === 'partner' || item.plan === 'parceiro') && <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-[10px] font-bold">Parceiro</span>}
                                                 {(item.plan === 'premium' || item.plan === 'profissional') && <span className="bg-orange-100 text-orange-600 px-2 py-0.5 rounded text-[10px] font-bold">Premium</span>}
@@ -537,98 +574,98 @@ export default function AdminEmpresasPage() {
                                             </Button>
                                         </div>
                                     </div>
-                                </div>
                             ))}
-                            {/* Add New Card - Only show on first page if space */}
-                            {currentPage === 1 && (
-                                <button
-                                    onClick={() => router.push('/admin/empresas/novo')}
-                                    className="bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center p-6 hover:border-emerald-500 hover:bg-emerald-50/50 transition-all group min-h-[200px]"
-                                >
-                                    <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                                        <Plus className="w-6 h-6 text-emerald-500" />
-                                    </div>
-                                    <span className="font-bold text-slate-400 group-hover:text-emerald-600">
-                                        Nova Empresa
-                                    </span>
-                                </button>
-                            )}
-                        </div>
-
-                        {/* Pagination Controls */}
-                        {totalPages > 1 && (
-                            <div className="flex justify-center mt-10">
-                                <div className="flex items-center gap-2 bg-white p-2 rounded-xl shadow-sm border border-slate-100">
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        disabled={currentPage === 1}
-                                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                                        className="text-slate-500 hover:text-emerald-600"
-                                    >
-                                        Anterior
-                                    </Button>
-
-                                    <div className="flex items-center gap-1 px-2">
-                                        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                                            <button
-                                                key={page}
-                                                onClick={() => setCurrentPage(page)}
-                                                className={`w-8 h-8 flex items-center justify-center rounded-lg text-xs font-bold transition-all ${currentPage === page
-                                                    ? 'bg-emerald-600 text-white shadow-md scale-105'
-                                                    : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'
-                                                    }`}
-                                            >
-                                                {page}
-                                            </button>
-                                        ))}
-                                    </div>
-
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        disabled={currentPage === totalPages}
-                                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                                        className="text-slate-500 hover:text-emerald-600"
-                                    >
-                                        Seguinte
-                                    </Button>
+                                    {/* Add New Card - Only show on first page if space */}
+                                    {currentPage === 1 && (
+                                        <button
+                                            onClick={() => router.push('/admin/empresas/novo')}
+                                            className="bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center p-6 hover:border-emerald-500 hover:bg-emerald-50/50 transition-all group min-h-[200px]"
+                                        >
+                                            <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                                                <Plus className="w-6 h-6 text-emerald-500" />
+                                            </div>
+                                            <span className="font-bold text-slate-400 group-hover:text-emerald-600">
+                                                Nova Empresa
+                                            </span>
+                                        </button>
+                                    )}
                                 </div>
-                            </div>
-                        )}
-                    </>
-                )
+
+            {/* Pagination Controls */ }
+            { totalPages > 1 && (
+                                    <div className="flex justify-center mt-10">
+                                        <div className="flex items-center gap-2 bg-white p-2 rounded-xl shadow-sm border border-slate-100">
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                disabled={currentPage === 1}
+                                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                                className="text-slate-500 hover:text-emerald-600"
+                                            >
+                                                Anterior
+                                            </Button>
+
+                                            <div className="flex items-center gap-1 px-2">
+                                                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                                                    <button
+                                                        key={page}
+                                                        onClick={() => setCurrentPage(page)}
+                                                        className={`w-8 h-8 flex items-center justify-center rounded-lg text-xs font-bold transition-all ${currentPage === page
+                                                            ? 'bg-emerald-600 text-white shadow-md scale-105'
+                                                            : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'
+                                                            }`}
+                                                    >
+                                                        {page}
+                                                    </button>
+                                                ))}
+                                            </div>
+
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                disabled={currentPage === totalPages}
+                                                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                                className="text-slate-500 hover:text-emerald-600"
+                                            >
+                                                Seguinte
+                                            </Button>
+                                        </div>
+                                    </div>
+                                )}
+                        </>
+                        )
+                        )
             )}
 
-            <ConfirmationModal
-                isOpen={showDeleteConfirm}
-                onClose={() => setShowDeleteConfirm(false)}
-                onConfirm={confirmDelete}
-                title="Eliminar Empresa"
-                description={`Tem a certeza que deseja eliminar a empresa "${itemToProcess?.name}"? Esta ação não pode ser desfeita.`}
-                confirmLabel="Eliminar"
-                variant="destructive"
-            />
+                        <ConfirmationModal
+                            isOpen={showDeleteConfirm}
+                            onClose={() => setShowDeleteConfirm(false)}
+                            onConfirm={confirmDelete}
+                            title="Eliminar Empresa"
+                            description={`Tem a certeza que deseja eliminar a empresa "${itemToProcess?.name}"? Esta ação não pode ser desfeita.`}
+                            confirmLabel="Eliminar"
+                            variant="destructive"
+                        />
 
-            <ConfirmationModal
-                isOpen={showPremiumConfirm}
-                onClose={() => setShowPremiumConfirm(false)}
-                onConfirm={confirmPremium}
-                title="Ativar Plano Profissional"
-                description={`Deseja ativar o plano Profissional para "${itemToProcess?.name}"?`}
-                confirmLabel="Ativar"
-                variant="default"
-            />
+                        <ConfirmationModal
+                            isOpen={showPremiumConfirm}
+                            onClose={() => setShowPremiumConfirm(false)}
+                            onConfirm={confirmPremium}
+                            title="Ativar Plano Profissional"
+                            description={`Deseja ativar o plano Profissional para "${itemToProcess?.name}"?`}
+                            confirmLabel="Ativar"
+                            variant="default"
+                        />
 
-            <ConfirmationModal
-                isOpen={showBulkDeleteConfirm}
-                onClose={() => setShowBulkDeleteConfirm(false)}
-                onConfirm={confirmBulkDelete}
-                title="Eliminar em Massa"
-                description={`Tem a certeza que deseja eliminar ${selectedIds.length} empresas? Esta acção não pode ser desfeita.`}
-                confirmLabel="Eliminar Todas"
-                variant="destructive"
-            />
-        </div>
-    );
+                        <ConfirmationModal
+                            isOpen={showBulkDeleteConfirm}
+                            onClose={() => setShowBulkDeleteConfirm(false)}
+                            onConfirm={confirmBulkDelete}
+                            title="Eliminar em Massa"
+                            description={`Tem a certeza que deseja eliminar ${selectedIds.length} empresas? Esta acção não pode ser desfeita.`}
+                            confirmLabel="Eliminar Todas"
+                            variant="destructive"
+                        />
+                    </div>
+            );
 }

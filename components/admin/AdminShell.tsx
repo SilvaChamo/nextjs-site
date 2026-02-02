@@ -217,12 +217,16 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
                         <button
                             onClick={handleSignOut}
                             disabled={isSigningOut}
-                            className={`w-full flex items-center gap-2 py-2 text-xs font-bold text-slate-400 hover:text-orange-500 transition-colors ${isCollapsed ? "justify-center" : "justify-start px-2"
+                            className={`w-full flex items-center gap-2 py-2.5 text-xs font-bold text-slate-400 hover:text-orange-500 hover:bg-orange-500/5 px-2 rounded-xl transition-all cursor-pointer group ${isCollapsed ? "justify-center" : "justify-start"
                                 }`}
                             title="Terminar Sessão"
                         >
-                            {isSigningOut ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogOut className="w-4 h-4 min-w-[16px]" />}
-                            {!isCollapsed && (isSigningOut ? "A sair..." : "Terminar Sessão")}
+                            {isSigningOut ? (
+                                <Loader2 className="w-4 h-4 animate-spin text-orange-500" />
+                            ) : (
+                                <LogOut className="w-4 h-4 min-w-[16px] transition-transform group-hover:translate-x-0.5" />
+                            )}
+                            {!isCollapsed && <span>{isSigningOut ? "A sair..." : "Terminar Sessão"}</span>}
                         </button>
                     </div>
                 </div>

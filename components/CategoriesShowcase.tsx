@@ -46,9 +46,10 @@ export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
 
             <div className="container-site relative z-10">
                 {/* Header - Fixed margins as requested: mb-[35px] for card spacing, no top/bottom margin for section/title area */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-[35px] gap-4 px-[10px]">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4 px-[10px]">
                     <div className="flex items-center gap-4">
-                        <h2 className="text-[28px] md:text-[45px] leading-none font-heading font-extrabold text-slate-600 uppercase tracking-tight">
+                        <div className="w-[5px] h-[30px] bg-[#f97316] rounded-none" />
+                        <h2 className="text-[30px] leading-none font-heading font-extrabold text-slate-600 uppercase tracking-tight m-0">
                             Empresas em destaque
                         </h2>
                     </div>

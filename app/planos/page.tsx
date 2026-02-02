@@ -203,34 +203,45 @@ export default function PricingPage() {
 
                                     {/* Minimalist Bottom Button */}
                                     <div className="mt-auto flex justify-start">
-                                        <Button
-                                            className={`w-fit px-4 h-9 rounded-[8px] font-bold text-sm transition-all hover:text-white ${plan.popular
-                                                ? 'bg-orange-600 hover:bg-gradient-to-r hover:from-orange-600 hover:to-emerald-600 shadow-lg shadow-orange-600/20 text-white'
-                                                : `hover:bg-orange-600 ${plan.color === 'emerald'
-                                                    ? 'bg-emerald-700 text-white'
-                                                    : 'bg-slate-800 text-white'
-                                                }`}`}
+                                        <Link
+                                            href={`/checkout?plan=${plan.name}&price=${plan.price}&period=${plan.period || ''}`}
+                                            className="w-fit cursor-pointer"
                                         >
-                                            {plan.cta}
-                                        </Button>
+                                            <Button
+                                                className={`px-4 h-9 rounded-[8px] font-bold text-sm transition-all hover:text-white w-full cursor-pointer ${plan.popular
+                                                    ? 'bg-orange-600 hover:bg-gradient-to-r hover:from-orange-600 hover:to-emerald-600 shadow-lg shadow-orange-600/20 text-white'
+                                                    : `hover:bg-orange-600 ${plan.color === 'emerald'
+                                                        ? 'bg-emerald-700 text-white'
+                                                        : 'bg-slate-800 text-white'
+                                                    }`}`}
+                                            >
+                                                {plan.cta}
+                                            </Button>
+                                        </Link>
                                     </div>
                                 </div>
                             </div>
                         ))}
                     </div>
 
-                    {/* FAQ / Trust Section */}
-                    <div className="mt-20 pt-10 border-t border-slate-200 text-center">
-                        <h4 className="text-slate-900 font-bold mb-4">Dúvidas sobre os planos?</h4>
-                        <p className="text-slate-600 mb-6">Nossa equipe está pronta para ajudar você a escolher a melhor opção.</p>
-                        <Button variant="outline" className="gap-2">
-                            <HelpCircle className="w-4 h-4" />
-                            Falar com Suporte
-                        </Button>
-                    </div>
-
                 </div>
             </main>
+
+            {/* Partner Plan / Support Section with White Background */}
+            <section className="bg-white py-16 border-t border-slate-200">
+                <div className="container-site text-center">
+                    <h4 className="text-2xl font-black text-slate-900 mb-4">Quer assinar o Plano Parceiro?</h4>
+                    <p className="text-slate-600 mb-8 max-w-2xl mx-auto">
+                        Entre em contacto com a nossa equipe do sector comercial que está pronta para ajudar você a celebrar uma parceria.
+                    </p>
+                    <Link href="/contactos">
+                        <Button variant="outline" className="gap-2 px-[25px] py-[8px] rounded-[7px] font-bold border-slate-300 hover:bg-slate-50 transition-all cursor-pointer">
+                            <HelpCircle className="w-5 h-5 text-orange-600" />
+                            Falar connossco
+                        </Button>
+                    </Link>
+                </div>
+            </section>
         </div>
     );
 }

@@ -255,9 +255,11 @@ export default function RepositorioPage() {
                             <div className="bg-emerald-50 border border-emerald-100 p-5 rounded-[10px] space-y-4">
                                 <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Dica Pro</p>
                                 <p className="text-sm text-emerald-900 font-medium">Registe-se como vendedor para listar os seus produtos gratuitamente.</p>
-                                <button className="w-full py-3 bg-emerald-600 text-white text-xs font-bold rounded-[10px] hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-600/20">
-                                    Tornar-se Vendedor
-                                </button>
+                                <Link href="/planos">
+                                    <button className="w-full py-3 bg-emerald-600 text-white text-xs font-bold rounded-[10px] hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-600/20">
+                                        Tornar-se Vendedor
+                                    </button>
+                                </Link>
                             </div>
                         </div>
                     </aside>

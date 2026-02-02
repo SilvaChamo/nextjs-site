@@ -97,25 +97,64 @@ export default function AdminProductsPage() {
 
     const confirmDelete = async () => {
         if (!itemToDelete) return;
-        const previousData = [...data];
         try {
-            // Optimistic update
-            setData(prev => prev.filter(item => item.id !== itemToDelete.id));
+            const table = activeTab === 'mercado' ? 'market_prices' : 'products';
 
-            const table = view === 'market' ? 'market_prices' : 'products';
-            const { error } = await supabase
-                .from(table)
-                .delete()
-                .eq('id', itemToDelete.id);
-
-            if (error) throw error;
-            toast.success(view === 'market' ? "Cotação eliminada!" : "Produto eliminado!");
+            if (showBin || activeTab === 'mercado') {
+                // Hard Delete (Market prices don't have soft-delete yet, or item is already in bin)
+                const { error } = await supabase
+                    .from(table)
+                    .delete()
+                    .eq('id', itemToDelete.id);
+                if (error) throw error;
+                toast.success("Eliminado permanentemente!");
+            } else {
+                // Soft Delete
+                const { error } = await supabase
+                    .from(table)
+                    .update({ deleted_at: new Date().toISOString() })
+                    .eq('id', itemToDelete.id);
+                if (error) throw error;
+                toast.success("Movido para a lixeira!");
+            }
+            await fetchData();
         } catch (error: any) {
-            setData(previousData);
             toast.error("Erro ao eliminar: " + error.message);
         } finally {
             setShowDeleteConfirm(false);
             setItemToDelete(null);
+        }
+    };
+
+    const handleRestore = async (item: any) => {
+        try {
+            const { error } = await supabase
+                .from('products')
+                .update({ deleted_at: null })
+                .eq('id', item.id);
+
+            if (error) throw error;
+            toast.success("Produto restaurado com sucesso!");
+            await fetchData();
+        } catch (error: any) {
+            toast.error("Erro ao restaurar: " + error.message);
+        }
+    };
+
+    const handleEmptyBin = async () => {
+        try {
+            const { error } = await supabase
+                .from('products')
+                .delete()
+                .not('deleted_at', 'is', null);
+
+            if (error) throw error;
+            toast.success("Lixeira esvaziada!");
+            await fetchData();
+        } catch (error: any) {
+            toast.error("Erro ao esvaziar lixeira");
+        } finally {
+            setShowEmptyBinConfirm(false);
         }
     };
 
@@ -197,117 +236,94 @@ export default function AdminProductsPage() {
 
     return (
         <div className="space-y-8">
+            {/* Header & Controls */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">Produtos & Cotações</h1>
                 </div>
-            </div>
 
-            {/* Admin Tabs */}
-            <div className="flex gap-2 bg-white p-1 rounded-xl border border-slate-200 shadow-sm w-fit">
-                <button
-                    onClick={() => setActiveTab("produtos")}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all ${activeTab === "produtos"
-                        ? "bg-emerald-600 text-white shadow-lg"
-                        : "text-slate-500 hover:bg-slate-50"
-                        }`}
-                >
-                    <Package className="w-4 h-4" />
-                    Produtos
-                </button>
-                <button
-                    onClick={() => setActiveTab("mercado")}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all ${activeTab === "mercado"
-                        ? "bg-emerald-600 text-white shadow-lg"
-                        : "text-slate-500 hover:bg-slate-50"
-                        }`}
-                >
-                    <ShoppingCart className="w-4 h-4" />
-                    Mercado
-                </button>
-                <button
-                    onClick={() => setActiveTab("servicos")}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all ${activeTab === "servicos"
-                        ? "bg-emerald-600 text-white shadow-lg"
-                        : "text-slate-500 hover:bg-slate-50"
-                        }`}
-                >
-                    <FileText className="w-4 h-4" />
-                    Serviços
-                </button>
-                <button
-                    onClick={() => setActiveTab("outros")}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all ${activeTab === "outros"
-                        ? "bg-emerald-600 text-white shadow-lg"
-                        : "text-slate-500 hover:bg-slate-50"
-                        }`}
-                >
-                    <FileText className="w-4 h-4" />
-                    Outros
-                </button>
-            </div>
-
-            <div className="flex items-center justify-between gap-4 bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
-                <div className="flex gap-2">
-                    <button
-                        onClick={() => setShowBin(false)}
-                        className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${!showBin ? 'bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200' : 'text-slate-500 hover:bg-slate-50'}`}
+                <div className="flex flex-col md:flex-row items-center gap-3">
+                    {/* Filter (Active Tab) */}
+                    <select
+                        value={activeTab}
+                        onChange={(e) => {
+                            setActiveTab(e.target.value);
+                            // If switching to mercado, potentially reset showBin as market_prices might not have soft-delete
+                            if (e.target.value === 'mercado') setShowBin(false);
+                        }}
+                        className="bg-white border border-slate-200 text-slate-600 text-xs font-bold uppercase tracking-wide rounded-lg px-4 py-2 outline-none focus:border-emerald-500 h-10 w-full md:w-40"
                     >
-                        <List className="w-4 h-4" />
-                        Publicados
-                    </button>
-                    <div className="relative">
+                        <option value="produtos">Produtos</option>
+                        <option value="mercado">Mercado</option>
+                        <option value="servicos">Serviços</option>
+                        <option value="outros">Outros</option>
+                    </select>
+
+                    {/* Status Filter (Bin) */}
+                    <div className="flex items-center bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
+                        <button
+                            onClick={() => setShowBin(false)}
+                            className={`p-2 rounded-md transition-all ${!showBin ? 'bg-slate-100 text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                            title="Publicados"
+                        >
+                            <List className="w-4 h-4" />
+                        </button>
                         <button
                             onClick={() => setShowBin(true)}
-                            className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${showBin ? 'bg-rose-50 text-rose-600 ring-1 ring-rose-200' : 'text-slate-500 hover:bg-slate-50'}`}
+                            className={`p-2 rounded-md transition-all ${showBin ? 'bg-rose-50 text-rose-600 shadow-sm' : 'text-slate-400 hover:text-rose-600'}`}
+                            title="Lixeira"
                         >
                             <Trash2 className="w-4 h-4" />
-                            Lixeira
                         </button>
-
-                        {/* Bin Dropdown Menu */}
-                        {showBin && (
-                            <div className="absolute left-0 top-full mt-2 bg-white border border-slate-200 rounded-lg shadow-lg p-2 min-w-[200px] z-50">
-                                <button
-                                    onClick={() => setShowEmptyBinConfirm(true)}
-                                    className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded flex items-center gap-2"
-                                >
-                                    <Trash2 className="w-4 h-4" />
-                                    Esvaziar Lixeira
-                                </button>
-                            </div>
-                        )}
                     </div>
-                </div>
 
-                {/* Grid/List Toggle */}
-                <div className="flex items-center bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
-                    <button
-                        onClick={() => setViewMode('grid')}
-                        className={`p-2 rounded-md transition-all ${viewMode === 'grid' ? 'bg-slate-100 text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                        title="Vista de Grelha"
-                    >
-                        <LayoutGrid className="w-4 h-4" />
-                    </button>
-                    <button
-                        onClick={() => setViewMode('list')}
-                        className={`p-2 rounded-md transition-all ${viewMode === 'list' ? 'bg-slate-100 text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                        title="Vista de Lista"
-                    >
-                        <List className="w-4 h-4" />
-                    </button>
-                </div>
+                    {/* View Toggle */}
+                    <div className="flex items-center bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
+                        <button
+                            onClick={() => setViewMode('grid')}
+                            className={`p-2 rounded-md transition-all ${viewMode === 'grid' ? 'bg-slate-100 text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                            title="Vista de Grelha"
+                        >
+                            <LayoutGrid className="w-4 h-4" />
+                        </button>
+                        <button
+                            onClick={() => setViewMode('list')}
+                            className={`p-2 rounded-md transition-all ${viewMode === 'list' ? 'bg-slate-100 text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                            title="Vista de Lista"
+                        >
+                            <List className="w-4 h-4" />
+                        </button>
+                    </div>
 
-                <div className="flex items-center gap-3">
                     <Button
                         onClick={handleAdd}
                         className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-widest text-xs h-10 px-6 rounded-lg gap-2"
                     >
                         <Plus className="w-4 h-4" />
-                        {activeTab === "mercado" ? "Nova Cotação" : activeTab === "servicos" ? "Novo Serviço" : "Novo Produto"}
+                        {activeTab === "mercado" ? "Nova Cotação" : "Novo Item"}
                     </Button>
                 </div>
             </div>
+
+            {/* Bin Actions */}
+            {showBin && (
+                <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-3">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <Trash2 className="w-4 h-4 text-rose-600" />
+                            <span className="text-sm font-semibold text-slate-700">Lixeira Activada</span>
+                            <span className="text-xs text-slate-500">({data.length} itens)</span>
+                        </div>
+                        <button
+                            onClick={() => setShowEmptyBinConfirm(true)}
+                            className="px-3 py-1.5 text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 rounded-md border border-red-200 transition-all flex items-center gap-1.5"
+                        >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            Esvaziar Lixeira
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {viewMode === 'list' ? (
                 <AdminDataTable
@@ -378,9 +394,15 @@ export default function AdminProductsPage() {
 
                                     {/* Edit/Delete Overlay */}
                                     <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 p-1 rounded-lg shadow-sm">
-                                        <button onClick={() => handleEdit(item)} className="p-1.5 hover:bg-emerald-50 text-emerald-600 rounded">
-                                            <Pencil className="w-4 h-4" />
-                                        </button>
+                                        {showBin ? (
+                                            <button onClick={() => handleRestore(item)} className="p-1.5 hover:bg-emerald-50 text-emerald-600 rounded" title="Restaurar">
+                                                <RotateCcw className="w-4 h-4" />
+                                            </button>
+                                        ) : (
+                                            <button onClick={() => handleEdit(item)} className="p-1.5 hover:bg-emerald-50 text-emerald-600 rounded">
+                                                <Pencil className="w-4 h-4" />
+                                            </button>
+                                        )}
                                         <button onClick={() => handleDelete(item)} className="p-1.5 hover:bg-rose-50 text-rose-600 rounded">
                                             <Trash2 className="w-4 h-4" />
                                         </button>
@@ -425,13 +447,23 @@ export default function AdminProductsPage() {
 
                                     {/* Footer */}
                                     <div className="mt-auto pt-4 flex items-center justify-between border-t border-slate-50/50 mt-4">
-                                        <Button
-                                            onClick={() => handleEdit(item)}
-                                            variant="ghost"
-                                            className="text-[10px] font-bold uppercase text-slate-400 hover:text-emerald-600 ml-auto"
-                                        >
-                                            Editar / Ver
-                                        </Button>
+                                        {showBin ? (
+                                            <Button
+                                                onClick={() => handleRestore(item)}
+                                                variant="ghost"
+                                                className="text-[10px] font-bold uppercase text-emerald-600 hover:bg-emerald-50 ml-auto"
+                                            >
+                                                Restaurar Item
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                onClick={() => handleEdit(item)}
+                                                variant="ghost"
+                                                className="text-[10px] font-bold uppercase text-slate-400 hover:text-emerald-600 ml-auto"
+                                            >
+                                                Editar / Ver
+                                            </Button>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -462,12 +494,17 @@ export default function AdminProductsPage() {
             )}
 
             <ConfirmationModal
+                key={showBin ? 'perm' : 'soft'}
                 isOpen={showDeleteConfirm}
                 onClose={() => setShowDeleteConfirm(false)}
                 onConfirm={confirmDelete}
-                title={activeTab === "mercado" ? "Eliminar Cotação" : activeTab === "servicos" ? "Eliminar Serviço" : "Eliminar Produto"}
-                description={`Tem a certeza que deseja eliminar "${itemToDelete?.name || itemToDelete?.product || itemToDelete?.nome}"? Esta acção não pode ser desfeita.`}
-                confirmLabel="Eliminar"
+                title={showBin ? "Eliminar Permanentemente" : "Mover para Lixeira"}
+                description={
+                    showBin
+                        ? `Tem a certeza que deseja eliminar PERMANENTEMENTE "${itemToDelete?.name || itemToDelete?.product || itemToDelete?.nome}"? Esta acção NÃO pode ser desfeita.`
+                        : `O item "${itemToDelete?.name || itemToDelete?.product || itemToDelete?.nome}" será movido para a lixeira. Poderá restaurá-lo mais tarde.`
+                }
+                confirmLabel={showBin ? "Eliminar de vez" : "Mover para Lixeira"}
                 variant="destructive"
             />
 
@@ -484,13 +521,9 @@ export default function AdminProductsPage() {
             <ConfirmationModal
                 isOpen={showEmptyBinConfirm}
                 onClose={() => setShowEmptyBinConfirm(false)}
-                onConfirm={() => {
-                    // Implement empty bin logic
-                    setShowEmptyBinConfirm(false);
-                    toast.success("Lixeira esvaziada com sucesso!");
-                }}
+                onConfirm={handleEmptyBin}
                 title="Esvaziar Lixeira"
-                description="Tem a certeza que deseja esvaziar permanentemente todos os itens na lixeira? Esta acção não pode ser desfeita."
+                description="Tem a certeza que deseja eliminar PERMANENTEMENTE todos os itens na lixeira? Esta acção NÃO pode ser desfeita."
                 confirmLabel="Esvaziar Lixeira"
                 variant="destructive"
             />

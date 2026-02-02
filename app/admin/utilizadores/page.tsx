@@ -96,7 +96,6 @@ export default function AdminUsersPage() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-black text-slate-900 tracking-tight">Utilizadores</h1>
-                    <p className="text-slate-500 font-medium text-sm">Gira os utilizadores e permissões de acesso ao sistema.</p>
                 </div>
 
                 <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>

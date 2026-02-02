@@ -1,25 +1,29 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { AdminShell } from "@/components/admin/AdminShell";
-import { AdminDataTable } from "@/components/admin/AdminDataTable";
-import { TrainingForm } from "@/components/admin/TrainingForm";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Plus, GraduationCap, LayoutGrid, List, Search, Layers, Briefcase, TrendingUp, Factory, BarChart3 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { AdminDataTable } from "@/components/admin/AdminDataTable";
+import { Button } from "@/components/ui/button";
+import { GraduationCap, Plus, Search, LayoutGrid, List, Layers, Briefcase, TrendingUp, Factory, BarChart3, Clock, MapPin, Tag, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
+import { TrainingForm } from "@/components/admin/TrainingForm";
 
-export default function AdminFormacaoPage({ userEmail }: { userEmail?: string }) {
-    const [trainings, setTrainings] = useState<any[]>([]);
-    const [isFormOpen, setFormOpen] = useState(false);
-    const [editingCourse, setEditingCourse] = useState<any>(null);
-    const [refreshTrigger, setRefreshTrigger] = useState(0);
-    const [loading, setLoading] = useState(true);
-
-    // UI States
-    const [search, setSearch] = useState("");
+export default function AdminFormacaoPage() {
+    const router = useRouter();
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
+    const [data, setData] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [search, setSearch] = useState("");
     const [activeTab, setActiveTab] = useState('Todos');
+    const [isFormOpen, setIsFormOpen] = useState(false);
+    const [editingItem, setEditingItem] = useState<any>(null);
+    const [itemToDelete, setItemToDelete] = useState<any>(null);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [showBin, setShowBin] = useState(false);
+    const [showEmptyBinConfirm, setShowEmptyBinConfirm] = useState(false);
 
     const tabs = [
         { id: 'Todos', label: 'Todos', icon: Layers },
@@ -30,146 +34,363 @@ export default function AdminFormacaoPage({ userEmail }: { userEmail?: string })
         { id: 'Financeiro', label: 'Financeiro', icon: BarChart3 },
     ];
 
-    const fetchTrainings = async () => {
+    async function fetchData() {
         setLoading(true);
-        const { data, error } = await supabase
+        let query = supabase
             .from('trainings')
             .select('*')
             .order('created_at', { ascending: false });
 
-        if (data) setTrainings(data);
+        if (showBin) {
+            query = query.not('deleted_at', 'is', null);
+        } else {
+            query = query.is('deleted_at', null);
+        }
+
+        const { data, error } = await query;
+
+        if (error) {
+            console.error(error);
+            toast.error("Erro ao carregar formações");
+        } else {
+            setData(data || []);
+        }
         setLoading(false);
-    };
+    }
 
     useEffect(() => {
-        fetchTrainings();
-    }, [refreshTrigger]);
+        fetchData();
+    }, [showBin]);
 
-    // Filter Logic
-    const filteredTrainings = trainings.filter(t => {
-        const matchesSearch = t.title.toLowerCase().includes(search.toLowerCase());
-        const matchesCategory = activeTab === 'Todos' || t.category === activeTab;
+    const filteredData = data.filter(item => {
+        const matchesSearch = item.title?.toLowerCase().includes(search.toLowerCase()) ||
+            item.instructor?.toLowerCase().includes(search.toLowerCase());
+        const matchesCategory = activeTab === 'Todos' || item.category === activeTab;
         return matchesSearch && matchesCategory;
     });
 
+    const handleDelete = (row: any) => {
+        setItemToDelete(row);
+        setIsDeleteModalOpen(true);
+    };
+
+    const confirmDelete = async () => {
+        if (!itemToDelete) return;
+
+        try {
+            if (showBin) {
+                // Hard Delete
+                const { error } = await supabase
+                    .from('trainings')
+                    .delete()
+                    .eq('id', itemToDelete.id);
+                if (error) throw error;
+                toast.success("Formação eliminada permanentemente");
+            } else {
+                // Soft Delete
+                const { error } = await supabase
+                    .from('trainings')
+                    .update({ deleted_at: new Date().toISOString() })
+                    .eq('id', itemToDelete.id);
+                if (error) throw error;
+                toast.success("Formação movida para a lixeira");
+            }
+            await fetchData();
+        } catch (error: any) {
+            toast.error("Erro ao eliminar formação");
+        } finally {
+            setIsDeleteModalOpen(false);
+            setItemToDelete(null);
+        }
+    };
+
+    const handleRestore = async (item: any) => {
+        try {
+            const { error } = await supabase
+                .from('trainings')
+                .update({ deleted_at: null })
+                .eq('id', item.id);
+
+            if (error) throw error;
+            toast.success("Formação restaurada com sucesso");
+            await fetchData();
+        } catch (error: any) {
+            toast.error("Erro ao restaurar formação");
+        }
+    };
+
+    const handleEmptyBin = async () => {
+        try {
+            const { error } = await supabase
+                .from('trainings')
+                .delete()
+                .not('deleted_at', 'is', null);
+
+            if (error) throw error;
+            toast.success("Lixeira esvaziada com sucesso");
+            await fetchData();
+        } catch (error: any) {
+            toast.error("Erro ao esvaziar lixeira");
+        } finally {
+            setShowEmptyBinConfirm(false);
+        }
+    };
+
     const columns = [
-        { key: "title", header: "Título da Formação" },
-        { key: "category", header: "Categoria" },
+        { header: "Título da Formação", key: "title" },
         {
+            header: "Categoria",
+            key: "category",
+            render: (val: string) => (
+                <span className="text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-600 px-2 py-1 rounded-md">
+                    {val}
+                </span>
+            )
+        },
+        {
+            header: "Início",
             key: "date",
-            header: "Data",
-            render: (val: string) => <span className="font-bold text-slate-600">{val}</span>
+            render: (val: string) => <span className="font-bold text-slate-600 text-xs">{val}</span>
         },
         {
-            key: "price",
             header: "Preço",
-            render: (val: string) => <span className="text-emerald-600 font-bold">{val}</span>
+            key: "price",
+            render: (val: string) => <span className="text-emerald-600 font-bold text-xs">{val}</span>
         },
         {
-            key: "spots_total",
             header: "Vagas",
-            render: (val: any) => <span className="bg-slate-100 px-2 py-1 rounded text-xs font-bold">{val}</span>
+            key: "spots_total",
+            render: (val: any) => <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded text-[10px] font-black">{val}</span>
         }
     ];
 
     return (
-        <AdminShell userEmail={userEmail}>
-            <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Gestão de Formações</h1>
+        <div className="space-y-8">
+            {/* Header & Controls */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">Gestão de Formações</h1>
+                </div>
+
+                <div className="flex flex-col md:flex-row items-center gap-3">
+                    {/* Search */}
+                    <div className="relative w-full md:w-64">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <Input
+                            placeholder="Pesquisar formação..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="pl-10 h-10 bg-white border-slate-200"
+                        />
                     </div>
+
+                    {/* Category Selector */}
+                    <select
+                        value={activeTab}
+                        onChange={(e) => {
+                            setActiveTab(e.target.value);
+                            setShowBin(false);
+                        }}
+                        className="bg-white border border-slate-200 text-slate-600 text-xs font-bold uppercase tracking-wide rounded-lg px-4 py-2 outline-none focus:border-emerald-500 h-10 w-full md:w-40"
+                    >
+                        {tabs.map(tab => (
+                            <option key={tab.id} value={tab.id}>{tab.label}</option>
+                        ))}
+                    </select>
+
+                    {/* Bin Button */}
+                    <div className="flex items-center bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
+                        <button
+                            onClick={() => setShowBin(!showBin)}
+                            className={`p-2 rounded-md transition-all ${showBin ? 'bg-rose-50 text-rose-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                            title="Lixeira"
+                        >
+                            <Trash2 className="w-4 h-4" />
+                        </button>
+                    </div>
+
+                    {/* View mode toggle */}
+                    <div className="flex items-center bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
+                        <button
+                            onClick={() => setViewMode('grid')}
+                            className={`p-2 rounded-md transition-all ${viewMode === 'grid' ? 'bg-slate-100 text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                            title="Vista de Grelha"
+                        >
+                            <LayoutGrid className="w-4 h-4" />
+                        </button>
+                        <button
+                            onClick={() => setViewMode('list')}
+                            className={`p-2 rounded-md transition-all ${viewMode === 'list' ? 'bg-slate-100 text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                            title="Vista de Lista"
+                        >
+                            <List className="w-4 h-4" />
+                        </button>
+                    </div>
+
                     <Button
                         onClick={() => {
-                            setEditingCourse(null);
-                            setFormOpen(true);
+                            setEditingItem(null);
+                            setIsFormOpen(true);
                         }}
-                        className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-2 rounded-xl shadow-lg h-10 px-6"
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-widest text-xs h-10 px-6 rounded-lg gap-2"
                     >
                         <Plus className="w-4 h-4" />
                         Nova Formação
                     </Button>
                 </div>
+            </div>
 
-                {/* Toolbar - Merged Tabs and Controls */}
-                <div className="flex items-center gap-4 bg-white p-1 rounded-lg border border-slate-200 shadow-sm overflow-x-auto">
-                    {/* Tabs */}
-                    <div className="flex items-center gap-1">
-                        {tabs.map((tab) => (
-                            <button
-                                key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
-                                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${activeTab === tab.id
-                                    ? 'bg-emerald-600 text-white'
-                                    : 'text-slate-500 hover:bg-orange-50 hover:text-orange-600'
-                                    }`}
-                            >
-                                <tab.icon className="w-3.5 h-3.5" />
-                                {tab.label}
-                            </button>
-                        ))}
-                    </div>
-
-                    {/* Right Side Controls */}
-                    <div className="flex items-center gap-2 ml-auto">
-                        {/* Search */}
-                        <div className="relative w-48 lg:w-64">
-                            <Search className="absolute left-2.5 top-2 w-3.5 h-3.5 text-slate-400" />
-                            <Input
-                                placeholder="Pesquisar..."
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                className="pl-8 h-8 border-none bg-slate-50 focus-visible:ring-0 text-xs"
-                            />
+            {/* Bin Actions */}
+            {showBin && (
+                <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-3">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <Trash2 className="w-4 h-4 text-rose-600" />
+                            <span className="text-sm font-semibold text-slate-700">Lixeira Activada</span>
+                            <span className="text-xs text-slate-500">({filteredData.length} itens)</span>
                         </div>
-
-                        <div className="w-px h-4 bg-slate-200 mx-1"></div>
-
-                        {/* View Mode */}
-                        <div className="flex items-center gap-0.5 bg-slate-50 p-0.5 rounded-md border border-slate-100">
-                            <button
-                                onClick={() => setViewMode('grid')}
-                                className={`p-1.5 rounded-md transition-all ${viewMode === 'grid' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'}`}
-                            >
-                                <LayoutGrid className="w-3.5 h-3.5" />
-                            </button>
-                            <button
-                                onClick={() => setViewMode('list')}
-                                className={`p-1.5 rounded-md transition-all ${viewMode === 'list' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'}`}
-                            >
-                                <List className="w-3.5 h-3.5" />
-                            </button>
-                        </div>
+                        <button
+                            onClick={() => setShowEmptyBinConfirm(true)}
+                            className="px-3 py-1.5 text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 rounded-md border border-red-200 transition-all flex items-center gap-1.5"
+                        >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            Esvaziar Lixeira
+                        </button>
                     </div>
                 </div>
+            )}
 
+            {viewMode === 'list' ? (
                 <div className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
                     <AdminDataTable
                         title={activeTab === 'Todos' ? 'Todas Formações' : `Formações em ${activeTab}`}
-                        data={filteredTrainings}
                         columns={columns}
+                        data={filteredData}
                         loading={loading}
                         onEdit={(item) => {
-                            setEditingCourse(item);
-                            setFormOpen(true);
+                            setEditingItem(item);
+                            setIsFormOpen(true);
                         }}
-                        onAdd={() => {
-                            setEditingCourse(null);
-                            setFormOpen(true);
-                        }}
+                        onDelete={handleDelete}
                     />
                 </div>
-            </div>
+            ) : (
+                /* GRID VIEW */
+                loading ? (
+                    <div className="flex justify-center py-20">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+                    </div>
+                ) : filteredData.length === 0 ? (
+                    <div className="text-center py-20 text-slate-400 italic font-medium">Nenhuma formação encontrada.</div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {filteredData.map((item) => (
+                            <div key={item.id} className="bg-white rounded-2xl border border-slate-100 hover:shadow-lg transition-all group flex flex-col overflow-hidden">
+                                <div className="aspect-video bg-slate-100 relative overflow-hidden">
+                                    {item.image_url ? (
+                                        <img src={item.image_url} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-slate-300">
+                                            <GraduationCap className="w-12 h-12" />
+                                        </div>
+                                    )}
+                                    <div className="absolute top-4 left-4">
+                                        <span className="bg-white/90 backdrop-blur-sm text-emerald-700 text-[10px] font-black uppercase px-2 py-1 rounded-md shadow-sm">
+                                            {item.category}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="p-6 flex flex-col flex-1">
+                                    <h3 className="font-bold text-slate-900 text-base mb-3 line-clamp-2 min-h-[3rem]">{item.title}</h3>
+
+                                    <div className="space-y-2 mb-6">
+                                        <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
+                                            <Clock className="w-3.5 h-3.5 text-slate-400" />
+                                            <span>Inicia em: {item.date}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
+                                            <Tag className="w-3.5 h-3.5 text-slate-400" />
+                                            <span className="text-emerald-600 font-black">{item.price}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-xs text-slate-400">
+                                            <div className="flex-1 h-1 bg-slate-100 rounded-full overflow-hidden">
+                                                <div
+                                                    className="h-full bg-emerald-500 rounded-full"
+                                                    style={{ width: `${Math.min(100, (item.spots_filled || 0) / (item.spots_total || 1) * 100)}%` }}
+                                                />
+                                            </div>
+                                            <span className="font-bold text-[10px] uppercase">{item.spots_filled || 0}/{item.spots_total || 0} Vagas</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-auto flex items-center gap-2 pt-4 border-t border-slate-50">
+                                        {showBin ? (
+                                            <Button
+                                                onClick={() => handleRestore(item)}
+                                                className="flex-1 rounded-xl text-xs font-black uppercase tracking-widest h-10 bg-emerald-600 hover:bg-emerald-700 text-white"
+                                            >
+                                                Restaurar
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                onClick={() => {
+                                                    setEditingItem(item);
+                                                    setIsFormOpen(true);
+                                                }}
+                                                variant="outline" className="flex-1 rounded-xl text-xs font-black uppercase tracking-widest h-10"
+                                            >
+                                                Editar
+                                            </Button>
+                                        )}
+                                        <Button
+                                            onClick={() => handleDelete(item)}
+                                            variant="ghost" className="size-10 rounded-xl text-rose-500 hover:text-rose-600 hover:bg-rose-50 p-0"
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )
+            )}
+
+            <ConfirmationModal
+                key={showBin ? 'perm' : 'soft'}
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={confirmDelete}
+                title={showBin ? "Eliminar Permanentemente" : "Mover para Lixeira"}
+                description={
+                    showBin
+                        ? `Tem a certeza que deseja eliminar PERMANENTEMENTE a formação "${itemToDelete?.title}"? Esta acção NÃO pode ser desfeita.`
+                        : `A formação "${itemToDelete?.title}" será movida para a lixeira. Poderá restaurá-la mais tarde.`
+                }
+                confirmLabel={showBin ? "Eliminar de vez" : "Mover para Lixeira"}
+                variant="destructive"
+            />
+
+            <ConfirmationModal
+                isOpen={showEmptyBinConfirm}
+                onClose={() => setShowEmptyBinConfirm(false)}
+                onConfirm={handleEmptyBin}
+                title="Esvaziar Lixeira"
+                description="Tem a certeza que deseja eliminar PERMANENTEMENTE todos os itens na lixeira? Esta acção NÃO pode ser desfeita."
+                confirmLabel="Esvaziar Lixeira"
+                variant="destructive"
+            />
 
             {isFormOpen && (
                 <TrainingForm
-                    onClose={() => setFormOpen(false)}
+                    onClose={() => setIsFormOpen(false)}
                     onSuccess={() => {
-                        setRefreshTrigger(prev => prev + 1);
+                        fetchData();
+                        setIsFormOpen(false);
                     }}
-                    initialData={editingCourse}
+                    initialData={editingItem}
                 />
             )}
-        </AdminShell>
+        </div>
     );
 }

@@ -197,7 +197,7 @@ export default function RepositorioPage() {
 
             <SearchSection isOpen={isSearchOpen} withBottomBorder={true} />
 
-            <main className="max-w-[1350px] mx-auto px-4 md:px-[60px] py-12">
+            <main className="container-site py-12">
                 <div className="flex flex-col lg:flex-row gap-5">
 
                     <aside className="w-full lg:w-72 shrink-0">

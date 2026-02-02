@@ -132,7 +132,7 @@ export default function FormacaoPage() {
                 />
             </div>
 
-            <div className="w-full max-w-[1350px] px-4 md:px-[60px] relative z-20 mt-[50px] pb-24">
+            <div className="container-site relative z-20 mt-[50px] pb-24">
 
 
                 {/* Main Content Grid */}

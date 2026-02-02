@@ -191,7 +191,7 @@ export default function ArticleReadingPage() {
                 }
             />
 
-            <main className="max-w-[1350px] mx-auto px-4 md:px-[60px] py-16">
+            <main className="container-site py-16">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
                     {/* Main Content Area */}
                     <div className="lg:col-span-9">

@@ -39,7 +39,7 @@ export default function SobrePage() {
                     />
                 </div>
 
-                <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10 py-12 md:py-20 flex justify-start lg:ml-[45%]">
+                <div className="container-site relative z-10 py-12 md:py-20 flex justify-start lg:ml-[45%]">
                     <div className="max-w-xl">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-emerald-600/10 border border-emerald-500/20 mb-6">
                             <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
@@ -106,7 +106,7 @@ export default function SobrePage() {
                     ))}
                 </div>
 
-                <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10">
+                <div className="container-site relative z-10">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                         {/* Missão Card */}
                         <div className="relative bg-white/5 p-5 rounded-lg border border-white/10 transition-all duration-500 group overflow-hidden flex items-start gap-4 hover:bg-white/10">
@@ -167,7 +167,7 @@ export default function SobrePage() {
 
             {/* 3. Dados e Monitoria (SECÇÃO DE CIMA - TRANSPARENTE) */}
             <div className="w-full py-24 border-b border-slate-200">
-                <div className="max-w-[1350px] mx-auto px-4 md:px-[60px]">
+                <div className="container-site">
                     <div className="text-center mb-16">
                         <div className="flex items-center justify-center gap-4 mb-3">
                             <div className="w-10 h-[1.5px] bg-[#f97316]"></div>
@@ -210,7 +210,7 @@ export default function SobrePage() {
                 ></div>
                 <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/60 to-slate-900/30 z-[1]"></div>
 
-                <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10 w-full py-[100px]">
+                <div className="container-site relative z-10 w-full py-[100px]">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                         <div className="max-w-3xl">
 
@@ -256,7 +256,7 @@ export default function SobrePage() {
 
             {/* 5. Impacto em Números (SECÇÃO DE BAIXO - BRANCA) */}
             <div className="w-full bg-white py-24 border-t border-slate-100">
-                <div className="max-w-[1350px] mx-auto px-4 md:px-[60px]">
+                <div className="container-site">
                     <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-16 items-center">
                         <div className="space-y-8">
                             <h2 className="text-[28px] md:text-[35px] font-[900] text-slate-700 leading-[1.1] tracking-tight mb-6">

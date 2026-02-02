@@ -42,7 +42,7 @@ export default function ConteudoPage() {
                 ]}
             />
 
-            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20 mt-[50px] pb-24">
+            <div className="container-site relative z-20 mt-[50px] pb-24">
                 {/* Intro Section - White Box */}
                 <div className="bg-white rounded-[15px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] border border-slate-100 px-8 md:px-10 lg:px-12 py-10 md:py-12 mb-12">
                     <div className="grid grid-cols-1 lg:grid-cols-[7fr_3fr] gap-12">

@@ -144,7 +144,7 @@ export function SearchSection({ isOpen, withBottomBorder = false }: SearchSectio
         <section className={`w-full bg-slate-50 relative overflow-hidden transition-all duration-700 ease-in-out ${isOpen ? "max-h-[2000px] opacity-100 py-6" : "max-h-0 opacity-0 py-0"}`}>
             <div className={`transition-all duration-700 delay-100 ${isOpen ? "translate-y-0 opacity-100" : "-translate-y-10 opacity-0"}`}>
                 {/* Search Bar Container - Google Style Refined */}
-                <div className="w-full px-4 md:px-[60px]">
+                <div className="container-site">
                     <div className="max-w-3xl mx-auto relative z-20">
                         <div className="relative">
                             <div className="relative bg-white rounded-[5px] shadow-sm h-12 flex items-center border border-gray-200 transition-all duration-300 overflow-hidden my-[15px]">
@@ -203,7 +203,7 @@ export function SearchSection({ isOpen, withBottomBorder = false }: SearchSectio
                 </div>
 
                 {searchQuery && (
-                    <div className="max-w-[1350px] mx-auto animate-in slide-in-from-bottom-4 duration-700 px-[60px] pb-12 mt-8">
+                    <div className="container-site animate-in slide-in-from-bottom-4 duration-700 pb-12 mt-8">
 
 
                         {!filteredResults ? (

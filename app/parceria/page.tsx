@@ -51,7 +51,7 @@ export default function ParceriaPage() {
                     />
                 </div>
 
-                <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10">
+                <div className="container-site relative z-10">
                     <div className="grid lg:grid-cols-2 gap-16 lg:gap-12 items-center">
                         {/* Left Column: Image */}
                         <div className="relative h-[450px] rounded-[20px] overflow-hidden shadow-2xl group">
@@ -144,7 +144,7 @@ export default function ParceriaPage() {
                 <div className="absolute top-[-10%] left-[-5%] w-[400px] h-[400px] bg-emerald-100/40 rounded-full blur-[100px] group-hover:translate-x-10 group-hover:translate-y-10 transition-transform duration-[5000ms] ease-out pointer-events-none z-0"></div>
                 <div className="absolute bottom-[-10%] right-[-5%] w-[500px] h-[500px] bg-emerald-100/40 rounded-full blur-[120px] group-hover:-translate-x-16 group-hover:-translate-y-16 transition-transform duration-[7000ms] ease-out pointer-events-none z-0"></div>
                 <div className="absolute top-[30%] left-[30%] -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-orange-100/40 rounded-full blur-[100px] group-hover:scale-110 transition-transform duration-[6000ms] ease-out pointer-events-none z-0"></div>
-                <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10">
+                <div className="container-site relative z-10">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
                         <div className="z-10">
                             <div className="flex items-center gap-3 mb-2">
@@ -298,7 +298,7 @@ export default function ParceriaPage() {
             </section>
 
             {/* Container 2: Premium Partners */}
-            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20 py-24">
+            <div className="container-site relative z-20 py-24">
                 {/* 3. Premium Partners Section */}
                 <section>
                     <div className="text-center mb-10 overflow-hidden">

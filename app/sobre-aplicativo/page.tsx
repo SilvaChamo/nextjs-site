@@ -26,7 +26,7 @@ export default function SobreAplicativoPage() {
             {/* 1. Introdução: Botânica - O seu assistente de campo */}
             <section className="py-24 relative overflow-hidden bg-white">
                 <div className="absolute top-0 right-0 w-1/3 h-full bg-emerald-50/50 -skew-x-12 translate-x-1/4 pointer-events-none"></div>
-                <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10">
+                <div className="container-site relative z-10">
                     <div className="grid lg:grid-cols-2 gap-16 items-center">
                         <div>
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#f97316]/10 border border-[#f97316]/20 mb-6">
@@ -111,7 +111,7 @@ export default function SobreAplicativoPage() {
                     style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2000&auto=format&fit=crop)' }}
                 ></div>
 
-                <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10">
+                <div className="container-site relative z-10">
                     <div className="text-center mb-[25px]">
                         <div className="flex items-center justify-center gap-4 mb-3">
                             <div className="w-10 h-[1.5px] bg-[#f97316]"></div>
@@ -185,7 +185,7 @@ export default function SobreAplicativoPage() {
                     className="absolute inset-0 z-0 bg-cover bg-center opacity-20 pointer-events-none"
                     style={{ backgroundImage: 'url(/images/markets/choppies_bg.png)' }}
                 ></div>
-                <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10">
+                <div className="container-site relative z-10">
 
                     <div className="grid lg:grid-cols-[calc(50%+30px)_1fr] gap-0 items-center">
                         {/* Left Column: Image */}
@@ -250,7 +250,7 @@ export default function SobreAplicativoPage() {
             {/* 4. Full-width CTA Card - Moved Up */}
             <div className="bg-slate-900 md:py-16 relative overflow-hidden group z-20">
                 <div className="absolute top-0 right-0 w-1/2 h-full bg-emerald-600/10 skew-x-12 translate-x-1/4 pointer-events-none"></div>
-                <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
+                <div className="container-site relative z-20 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
                     <div>
                         <h3 className="text-white text-3xl font-black mb-2 uppercase tracking-tight">Pronto para <span className="text-[#f97316]">digitalizar</span> o seu campo?</h3>
                         <p className="text-slate-400 text-base font-medium">Disponível para todos os produtores de Moçambique nas lojas de aplicativos.</p>
@@ -268,7 +268,7 @@ export default function SobreAplicativoPage() {
 
             {/* 5. Innovation / R&D Section - Moved Down to Footer */}
             <section className="py-24 bg-white relative overflow-hidden">
-                <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10">
+                <div className="container-site relative z-10">
                     <div className="bg-emerald-100 rounded-[20px] p-8 md:p-12 border border-emerald-200/60 relative overflow-hidden group shadow-xl shadow-emerald-900/10">
                         <div className="relative z-10 grid lg:grid-cols-[auto_1fr] gap-12 items-center">
                             <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg text-emerald-600 shrink-0">
@@ -289,7 +289,7 @@ export default function SobreAplicativoPage() {
 
                 {/* Overlapping Orange Line (Absolute at bottom of page content) */}
                 <div className="absolute bottom-0 left-0 w-full z-30">
-                    <div className="max-w-[1350px] mx-auto px-4 md:px-[60px]">
+                    <div className="container-site">
                         <div className="w-full h-[6px] bg-[#f97316] shadow-[0_0_15px_rgba(249,115,22,0.6)]" />
                     </div>
                 </div>

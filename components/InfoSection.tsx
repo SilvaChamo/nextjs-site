@@ -201,7 +201,7 @@ export function InfoSection() {
 
                 <div className="absolute inset-0 bg-gradient-to-b from-[#111827]/90 via-[#111827]/40 to-[#111827]/90 z-[1]" />
 
-                <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] text-center space-y-4 relative z-10">
+                <div className="container-site text-center space-y-4 relative z-10">
                     <div className="space-y-4 max-w-4xl mx-auto">
                         <div className="flex items-center justify-center gap-4">
                             <span className="w-[20px] h-[1px] bg-white opacity-60"></span>
@@ -250,7 +250,7 @@ export function InfoSection() {
                 </div>
             </div>
 
-            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20 mt-[40px] pb-24">
+            <div className="container-site relative z-20 mt-[40px] pb-24">
                 <div className="animate-in fade-in duration-700 slide-in-from-bottom-8">
                     {loading ? (
                         <div className="bg-white p-12 rounded-[4px] shadow-lg text-center text-gray-400 border border-slate-100">

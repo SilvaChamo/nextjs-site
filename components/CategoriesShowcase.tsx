@@ -44,7 +44,7 @@ export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
             <div className="absolute top-0 right-0 w-1/3 h-full bg-emerald-50/30 blur-[100px] pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-1/4 h-1/2 bg-orange-50/20 blur-[80px] pointer-events-none" />
 
-            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10">
+            <div className="container-site relative z-10">
                 {/* Header - Fixed margins as requested: mb-[35px] for card spacing, no top/bottom margin for section/title area */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-[35px] gap-4">
                     <div className="flex items-center gap-4">

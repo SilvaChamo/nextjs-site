@@ -57,7 +57,7 @@ export function CommunityBanner() {
             </div>
             <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white via-transparent to-transparent" />
 
-            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10">
+            <div className="container-site relative z-10">
                 <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 max-w-5xl mx-auto">
 
                     {/* Left Side */}

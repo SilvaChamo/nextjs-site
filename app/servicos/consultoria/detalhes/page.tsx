@@ -93,7 +93,7 @@ export default function ConsultoriaDetalhesPage() {
                 ]}
             />
 
-            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20 mt-[50px] pb-24">
+            <div className="container-site relative z-20 mt-[50px] pb-24">
                 {/* Intro */}
                 <div className="bg-white rounded-[15px] shadow-lg shadow-slate-200/50 border border-slate-200 px-8 md:px-10 lg:px-12 py-10 md:py-12 mb-12">
                     <h2 className="text-2xl md:text-[40px] font-heading font-black text-slate-600 tracking-tight leading-[1.2] mb-6">

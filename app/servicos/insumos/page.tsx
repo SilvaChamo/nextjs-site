@@ -53,7 +53,7 @@ export default function InsumosPage() {
                 ]}
             />
 
-            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20 mt-[50px] pb-24">
+            <div className="container-site relative z-20 mt-[50px] pb-24">
 
                 {/* Stores Grid - Using Emprego Card Style */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

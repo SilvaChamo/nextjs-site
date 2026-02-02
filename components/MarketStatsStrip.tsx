@@ -48,7 +48,7 @@ export function MarketStatsStrip() {
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-slate-900/50"></div>
             </div>
 
-            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10 text-white">
+            <div className="container-site relative z-10 text-white">
                 <div className="flex flex-col lg:flex-row justify-between items-center gap-12 lg:gap-8">
 
                     {/* Header Text */}

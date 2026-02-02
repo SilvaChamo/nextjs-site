@@ -22,7 +22,7 @@ export default function ContactosPage() {
                 ]}
             />
 
-            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20 mt-[50px] pb-24">
+            <div className="container-site relative z-20 mt-[50px] pb-24">
 
 
                 {/* Main Content Area - Split Layout */}

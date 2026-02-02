@@ -57,7 +57,7 @@ export default function TrainingDetailPage({ params }: { params: Promise<{ id: s
                 ]}
             />
 
-            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-20 mt-[50px] pb-24">
+            <div className="container-site relative z-20 mt-[50px] pb-24">
                 <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8">
                     {/* Main Content */}
                     <div className="space-y-8">

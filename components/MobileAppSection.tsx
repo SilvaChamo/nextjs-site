@@ -9,7 +9,7 @@ export function MobileAppSection() {
             {/* Background Decor */}
             <div className="absolute top-0 right-0 w-1/2 h-full bg-slate-50/50 -skew-x-12 translate-x-1/4 pointer-events-none"></div>
 
-            <div className="max-w-[1350px] mx-auto px-4 md:px-[60px] relative z-10">
+            <div className="container-site relative z-10">
                 <div className="grid lg:grid-cols-[50%_1fr] gap-16 items-center">
 
                     {/* Left Column: Content */}

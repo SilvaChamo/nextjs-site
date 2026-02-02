@@ -71,7 +71,7 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
             </div>
 
             {/* User Profile Section */}
-            <div className={`py-6 border-b border-emerald-800 ${isCollapsed ? 'px-2 flex justify-center' : 'px-6'}`}>
+            <div className={`py-6 border-b border-emerald-800 ${isCollapsed ? 'px-2 flex justify-center' : 'px-6'} relative group`}>
                 <div className={`flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
                     <div className="w-10 h-10 rounded-full bg-emerald-900 border border-emerald-700 flex items-center justify-center overflow-hidden shrink-0">
                         {user?.user_metadata?.avatar_url ? (
@@ -91,6 +91,26 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
                         </div>
                     )}
                 </div>
+
+                {/* Collapse Button - Absolute positioned on the right */}
+                {!isCollapsed && (
+                    <button
+                        onClick={toggleSidebar}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full text-emerald-400 hover:text-white hover:bg-emerald-800 transition-colors opacity-0 group-hover:opacity-100"
+                        title="Encolher menu"
+                    >
+                        <ChevronLeft className="w-4 h-4" />
+                    </button>
+                )}
+                {isCollapsed && (
+                    <button
+                        onClick={toggleSidebar}
+                        className="absolute -right-3 top-1/2 -translate-y-1/2 p-1 bg-emerald-700 border border-emerald-600 rounded-full text-white shadow-md hover:bg-emerald-600 transition-all z-50"
+                        title="Expandir menu"
+                    >
+                        <ChevronRight className="w-3 h-3" />
+                    </button>
+                )}
             </div>
 
             {/* 2. Main Navigation */}

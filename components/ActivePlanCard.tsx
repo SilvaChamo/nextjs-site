@@ -66,6 +66,7 @@ export function ActivePlanCard() {
     if (loading) return <div className="animate-pulse h-64 bg-slate-100 rounded-xl"></div>;
 
     const currentPlan = planData?.plan || "Gratuito";
+    const formattedPlan = currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1);
     const isFree = currentPlan === "Gratuito";
 
     return (
@@ -82,7 +83,7 @@ export function ActivePlanCard() {
                             {isFree ? "Estado da Conta" : "Plano Atual"}
                         </span>
                     </div>
-                    <h3 className="text-2xl font-black mb-1 text-white">{currentPlan}</h3>
+                    <h3 className="text-2xl font-black mb-1 text-white">{formattedPlan}</h3>
                     {!isFree ? (
                         <p className="text-emerald-400 text-sm font-medium">Renova em: {renewalDate}</p>
                     ) : (
@@ -134,7 +135,7 @@ export function ActivePlanCard() {
                 {/* Action */}
                 <div className="shrink-0 w-full md:w-auto flex flex-col gap-3">
                     <Button
-                        className={`w-full text-white font-bold h-10 shadow-lg uppercase tracking-wide text-xs ${isFree ? "bg-orange-500 hover:bg-orange-600 shadow-orange-900/20" : "bg-[#f97316] hover:bg-[#ea580c] shadow-orange-900/20"}`}
+                        className={`w-full text-white font-bold h-11 px-6 shadow-lg uppercase tracking-wide text-xs transition-all hover:scale-105 ${isFree ? "bg-orange-500 hover:bg-orange-600 shadow-orange-900/20" : "bg-[#f97316] hover:bg-[#ea580c] shadow-orange-900/20"}`}
                         onClick={() => router.push("/planos")}
                     >
                         {isFree ? "Fazer Upgrade Agora" : "Fazer Upgrade"}

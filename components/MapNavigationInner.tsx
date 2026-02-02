@@ -4,7 +4,9 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Polyline, useMap, ZoomControl, useMapEvents, Tooltip } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Navigation, MapPin, MousePointer2, Car, Maximize, Target, ArrowRight } from 'lucide-react';
+import { Navigation, MapPin, MousePointer2, Car, Maximize, Target, ArrowRight, Search } from 'lucide-react';
+import { toast } from 'sonner';
+import { Input } from '@/components/ui/input';
 
 // Fix for Leaflet default icon issues in Next.js
 const DefaultIcon = L.icon({
@@ -102,8 +104,40 @@ export default function MapNavigationInner({ companyCoords: initialCoords, compa
     const [userAddress, setUserAddress] = useState<{ road?: string; suburb?: string }>({});
     const [routeStepMarkers, setRouteStepMarkers] = useState<{ name: string; coords: [number, number] }[]>([]);
     const [gpsAccuracy, setGpsAccuracy] = useState<number | null>(null);
+    const [userSearchQuery, setUserSearchQuery] = useState("");
+    const [isGeocodingUser, setIsGeocodingUser] = useState(false);
     const watchId = useRef<number | null>(null);
     const lastFetchedCoords = useRef<string | null>(null);
+
+    // Search for user location by text
+    const handleSearchUserLocation = async (e?: React.FormEvent) => {
+        if (e) e.preventDefault();
+        if (!userSearchQuery.trim()) return;
+
+        setIsGeocodingUser(true);
+        try {
+            const refinedQuery = `${userSearchQuery}, Moçambique`;
+            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(refinedQuery)}&limit=1`;
+            const res = await fetch(url, { headers: { 'User-Agent': 'BaseAgroData-App' } });
+            const data = await res.json();
+
+            if (data && data.length > 0) {
+                const newCoords: [number, number] = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+                setUserCoords(newCoords);
+                setGpsStatus("found");
+                setSelectingLocation(false);
+                setFitTrigger(v => v + 1);
+                toast.success("Localização encontrada!");
+            } else {
+                toast.error("Localização não encontrada. Tente ser mais específico.");
+            }
+        } catch (err) {
+            console.error("Geocoding error:", err);
+            toast.error("Erro ao pesquisar localização.");
+        } finally {
+            setIsGeocodingUser(false);
+        }
+    };
 
     // 1. Geocoding logic if coords are missing
     useEffect(() => {
@@ -168,7 +202,7 @@ export default function MapNavigationInner({ companyCoords: initialCoords, compa
                             setGpsStatus("found");
                         },
                         (fallbackErr) => {
-                            console.error('[GPS] Fallback also failed:', fallbackErr.message);
+                            console.warn('[GPS] Fallback also failed:', fallbackErr.message);
                             setGpsStatus("error");
                             // Automatically enable manual selection mode when GPS fails
                             setSelectingLocation(true);
@@ -342,6 +376,21 @@ export default function MapNavigationInner({ companyCoords: initialCoords, compa
                             )}
                         </div>
                     </div>
+
+                    {/* Middle: Search Box */}
+                    <form
+                        onSubmit={handleSearchUserLocation}
+                        className="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-lg px-2 h-8 w-40 sm:w-64 mx-2 sm:mx-4"
+                    >
+                        <Search className="w-3.5 h-3.5 text-slate-400" />
+                        <Input
+                            placeholder="Digite sua localização!"
+                            value={userSearchQuery}
+                            onChange={(e) => setUserSearchQuery(e.target.value)}
+                            className="h-full border-none bg-transparent shadow-none focus-visible:ring-0 text-[11px] font-bold p-0 placeholder:font-normal"
+                        />
+                        {isGeocodingUser && <div className="w-3 h-3 border-2 border-orange-500 border-t-transparent animate-spin rounded-full"></div>}
+                    </form>
 
                     {/* Right: Map Controls */}
                     <div className="flex gap-2 shrink-0">

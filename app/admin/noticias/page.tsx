@@ -224,10 +224,10 @@ export default function AdminNoticiasPage() {
                 </Button>
             </div>
 
-            {/* Menu Bar - All Controls */}
-            <div className="flex items-center gap-4 bg-white rounded-lg border border-slate-200 shadow-sm">
-                {/* Left Side - Categories */}
-                <div className="flex items-center gap-1 bg-emerald-50 p-1 rounded-md border border-emerald-200">
+            {/* Toolbar - Merged Tabs and Controls */}
+            <div className="flex items-center gap-4 bg-white p-1 rounded-lg border border-slate-200 shadow-sm overflow-x-auto">
+                {/* Tabs */}
+                <div className="flex items-center gap-1">
                     {tabs.map((tab) => (
                         <button
                             key={tab.id}
@@ -235,9 +235,9 @@ export default function AdminNoticiasPage() {
                                 setActiveTab(tab.id);
                                 setShowBin(false);
                             }}
-                            className={`flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${activeTab === tab.id
-                                ? 'bg-emerald-600 text-white shadow-sm'
-                                : 'text-slate-600 hover:bg-[#f97316] hover:text-white'
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${activeTab === tab.id
+                                ? 'bg-emerald-600 text-white'
+                                : 'text-slate-500 hover:bg-orange-50 hover:text-orange-600'
                                 }`}
                         >
                             <tab.icon className="w-3.5 h-3.5" />
@@ -246,44 +246,47 @@ export default function AdminNoticiasPage() {
                     ))}
                 </div>
 
-                {/* Right Side - Search + View Mode + Bin */}
+                {/* Right Side Controls */}
                 <div className="flex items-center gap-2 ml-auto">
                     {/* Search */}
-                    <div className="relative">
-                        <Search className="absolute left-2.5 top-2.5 w-3.5 h-3.5 text-slate-400" />
+                    <div className="relative w-48 lg:w-64">
+                        <Search className="absolute left-2.5 top-2 w-3.5 h-3.5 text-slate-400" />
                         <Input
-                            placeholder={`Pesquisar...`}
+                            placeholder="Pesquisar..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="pl-8 border-none bg-slate-50 focus-visible:ring-0 text-sm w-48"
+                            className="pl-8 h-8 border-none bg-slate-50 focus-visible:ring-0 text-xs"
                         />
                     </div>
 
+                    <div className="w-px h-4 bg-slate-200 mx-1"></div>
+
                     {/* View Mode */}
-                    <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-md">
+                    <div className="flex items-center gap-0.5 bg-slate-50 p-0.5 rounded-md border border-slate-100">
                         <button
                             onClick={() => setViewMode('grid')}
-                            className={`p-1.5 rounded transition-all ${viewMode === 'grid' ? 'bg-white shadow text-emerald-600' : 'text-slate-400 hover:text-slate-600'}`}
+                            className={`p-1.5 rounded-md transition-all ${viewMode === 'grid' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'}`}
                         >
                             <LayoutGrid className="w-3.5 h-3.5" />
                         </button>
                         <button
                             onClick={() => setViewMode('list')}
-                            className={`p-1.5 rounded transition-all ${viewMode === 'list' ? 'bg-white shadow text-emerald-600' : 'text-slate-400 hover:text-slate-600'}`}
+                            className={`p-1.5 rounded-md transition-all ${viewMode === 'list' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'}`}
                         >
                             <List className="w-3.5 h-3.5" />
                         </button>
                     </div>
 
-                    {/* Bin Button - Last on right */}
-                    <div className="relative">
-                        <button
-                            onClick={() => setShowBin(!showBin)}
-                            className={`px-4 py-2.5 rounded-md text-xs font-bold transition-all flex items-center gap-2 ${showBin ? 'bg-rose-50 text-rose-600 ring-1 ring-rose-200' : 'text-slate-500 hover:bg-slate-50'}`}
-                        >
-                            <Trash2 className="w-4 h-4" />
-                        </button>
-                    </div>
+                    <div className="w-px h-4 bg-slate-200 mx-1"></div>
+
+                    {/* Bin Button */}
+                    <button
+                        onClick={() => setShowBin(!showBin)}
+                        className={`p-1.5 rounded-md transition-all ${showBin ? 'bg-rose-50 text-rose-600' : 'text-slate-400 hover:text-rose-600'}`}
+                        title="Lixeira"
+                    >
+                        <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                 </div>
             </div>
 

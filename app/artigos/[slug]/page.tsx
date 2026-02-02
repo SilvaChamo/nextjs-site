@@ -108,14 +108,23 @@ export default function ArticleReadingPage() {
                     }
                 }
 
-                // Fetch recommended articles (excluding current)
-                const { data: recData } = await supabase
+                // Fetch recommended articles (excluding current) -- Randomized & Contextual
+                let recQuery = supabase
                     .from('articles')
                     .select('*')
                     .neq('slug', slug)
-                    .limit(4);
+                    .limit(20); // Fetch more to randomize from
 
-                setRecommended(recData || []);
+                // Attempt to filter by same category if available
+                if (articleData?.type) {
+                    recQuery = recQuery.eq('type', articleData.type);
+                }
+
+                const { data: recData } = await recQuery;
+
+                // Client-side shuffle for randomness
+                const shuffled = recData ? recData.sort(() => 0.5 - Math.random()) : [];
+                setRecommended(shuffled.slice(0, 4));
             } catch (error) {
                 console.error("Error fetching article:", error);
             } finally {

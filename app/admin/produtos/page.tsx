@@ -252,25 +252,6 @@ export default function AdminProductsPage() {
                         </button>
                     </div>
 
-                    {/* View Toggle */}
-                    {activeTab !== 'mercado' && (
-                        <div className="flex items-center bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
-                            <button
-                                onClick={() => setViewMode('grid')}
-                                className={`p-2 rounded-md transition-all ${viewMode === 'grid' ? 'bg-slate-100 text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                                title="Vista de Grelha"
-                            >
-                                <LayoutGrid className="w-4 h-4" />
-                            </button>
-                            <button
-                                onClick={() => setViewMode('list')}
-                                className={`p-2 rounded-md transition-all ${viewMode === 'list' ? 'bg-slate-100 text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                                title="Vista de Lista"
-                            >
-                                <List className="w-4 h-4" />
-                            </button>
-                        </div>
-                    )}
 
                     <Button
                         onClick={handleAdd}

@@ -9,11 +9,11 @@ import { AdminDataTable } from "@/components/admin/AdminDataTable";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
-import { NewsCard } from "@/components/NewsCard";
+import { DocumentCard } from "@/components/admin/DocumentCard";
 
 export default function AdminDocumentosPage() {
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-    const [activeTab, setActiveTab] = useState('Relatórios');
+    const [activeTab, setActiveTab] = useState('todos');
     const [articles, setArticles] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
@@ -25,17 +25,21 @@ export default function AdminDocumentosPage() {
     const [showEmptyBinConfirm, setShowEmptyBinConfirm] = useState(false);
 
     const tabs = [
-        { id: 'Relatórios', label: 'Relatórios', icon: FileText },
-        { id: 'Políticas Agrárias', label: 'Políticas Agrárias', icon: Scale },
-        { id: 'Documento', label: 'Documentos', icon: FileText },
+        { id: 'todos', label: 'Todos', icon: Layers, types: [] },
+        { id: 'relatorios', label: 'Relatórios', icon: FileText, types: ['Relatório', 'Relatórios'] },
+        { id: 'legislacao', label: 'Legislação', icon: Scale, types: ['Legislação', 'Políticas Agrárias'] },
+        { id: 'outros', label: 'Outros Documentos', icon: Layers, types: ['Documento', 'document', 'PDF', 'Artigo Técnico'] },
     ];
 
     const fetchArticles = async () => {
         setLoading(true);
+        // Collect all types from all tabs
+        const allTypes = tabs.flatMap(t => t.types);
+
         let query = supabase
             .from('articles')
             .select('*')
-            .in('type', tabs.map(t => t.id))
+            .in('type', allTypes)
             .order('created_at', { ascending: false });
 
         if (showBin) {
@@ -106,11 +110,12 @@ export default function AdminDocumentosPage() {
 
     const handleEmptyBin = async () => {
         try {
+            const allTypes = tabs.flatMap(t => t.types);
             const { error } = await supabase
                 .from('articles')
                 .delete()
                 .not('deleted_at', 'is', null)
-                .in('type', tabs.map(t => t.id));
+                .in('type', allTypes);
 
             if (error) throw error;
             toast.success("Lixeira esvaziada com sucesso!");
@@ -140,7 +145,11 @@ export default function AdminDocumentosPage() {
 
     const filteredArticles = articles.filter(a => {
         const matchesSearch = a.title.toLowerCase().includes(search.toLowerCase());
-        const matchesType = a.type === activeTab;
+
+        if (activeTab === 'todos') return matchesSearch;
+
+        const activeTabObj = tabs.find(t => t.id === activeTab);
+        const matchesType = activeTabObj ? activeTabObj.types.includes(a.type) : false;
         return matchesSearch && matchesType;
     });
 
@@ -157,7 +166,15 @@ export default function AdminDocumentosPage() {
                             <FileText className="w-4 h-4 text-slate-300" />
                         )}
                     </div>
-                    <span className="font-bold text-slate-800 line-clamp-1">{val}</span>
+                    <div className="flex flex-col min-w-0">
+                        <span className="font-bold text-slate-800 line-clamp-1 text-sm">{val}</span>
+                        {row.subtitle && (
+                            <span className="text-[10px] text-slate-500 line-clamp-1">{row.subtitle}</span>
+                        )}
+                        {row.source && (
+                            <span className="text-[9px] font-black text-emerald-600 uppercase tracking-wider mt-0.5">{row.source}</span>
+                        )}
+                    </div>
                 </div>
             )
         },
@@ -247,7 +264,7 @@ export default function AdminDocumentosPage() {
 
                     <Button
                         onClick={() => {
-                            setEditingArticle({ type: activeTab });
+                            setEditingArticle({ type: 'Relatório' }); // Default to Relatório if ambiguous, or map back from id? logic below
                             setIsFormOpen(true);
                         }}
                         className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-widest text-xs h-10 px-6 rounded-lg gap-2"
@@ -286,16 +303,17 @@ export default function AdminDocumentosPage() {
             ) : filteredArticles.length === 0 ? (
                 <div className="text-center py-20 text-slate-400 italic font-medium">Nenhum documento encontrado nesta categoria.</div>
             ) : viewMode === 'grid' ? (
-                // GRID VIEW
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                // GRID VIEW (Now Stacked for Documents)
+                <div className="flex flex-col gap-4">
                     {filteredArticles.map((article) => (
-                        <NewsCard
+                        <DocumentCard
                             key={article.id}
                             title={article.title}
                             subtitle={article.subtitle}
                             category={article.type}
                             date={article.date || article.created_at}
-                            image={article.image_url}
+                            source={article.source}
+                            sourceUrl={article.source_url}
                             slug={article.slug}
                             isDeleted={showBin}
                             onRestore={() => handleRestore(article)}
@@ -308,7 +326,7 @@ export default function AdminDocumentosPage() {
                 // LIST VIEW
                 <div className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
                     <AdminDataTable
-                        title={activeTab}
+                        title={tabs.find(t => t.id === activeTab)?.label || "Documentos"}
                         columns={columns}
                         data={filteredArticles}
                         loading={loading}

@@ -57,7 +57,7 @@ export function ArticleForm({ onClose, onSuccess, initialData }: ArticleFormProp
         }
     }, [formData, initialData]);
 
-    const categories = ["Notícia", "Artigo Técnico", "Guia", "Documento", "Internacional", "Oportunidade", "Evento", "Recursos", "Política Agrária", "Curiosidade"];
+    const categories = ["Notícia", "Artigo Técnico", "Guia", "Relatório", "Legislação", "Documento", "Internacional", "Oportunidade", "Evento", "Recursos", "Política Agrária", "Curiosidade"];
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -246,7 +246,7 @@ export function ArticleForm({ onClose, onSuccess, initialData }: ArticleFormProp
                                         />
                                     </div>
                                     <div className="space-y-1.5">
-                                        <label className="text-[10px] font-bold text-slate-400 uppercase">Link Original</label>
+                                        <label className="text-[10px] font-bold text-slate-400 uppercase">Link do Documento / Fonte Original</label>
                                         <div className="relative">
                                             <LinkIcon className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
                                             <Input

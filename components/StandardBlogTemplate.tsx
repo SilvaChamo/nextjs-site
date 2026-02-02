@@ -4,7 +4,7 @@ import React, { ReactNode } from "react";
 import { PageHeader } from "./PageHeader";
 
 interface StandardBlogTemplateProps {
-    title: string;
+    title: string | ReactNode;
     breadcrumbs: { label: string; href?: string }[];
     sidebarComponents: ReactNode;
     children: ReactNode;

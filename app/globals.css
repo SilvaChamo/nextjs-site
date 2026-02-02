@@ -85,7 +85,7 @@
   --sidebar-border: #e2e8f0;
   --sidebar-ring: #059669;
 
-  --site-max-width: 1350px;
+  --site-max-width: 1460px;
 }
 
 .dark {
@@ -184,8 +184,8 @@
 
 @layer components {
   .container-site {
-    @apply w-full max-w-[1350px] mx-auto px-4 md:px-[60px];
-    max-width: var(--site-max-width);
+    @apply w-full max-w-[1460px] mx-auto px-4 md:px-[60px];
+    max-width: 1460px;
   }
 
   /* STANDARD CARD COMPONENT */

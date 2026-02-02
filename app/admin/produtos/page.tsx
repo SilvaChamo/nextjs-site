@@ -5,18 +5,18 @@ import { supabase } from "@/lib/supabaseClient";
 import { AdminDataTable } from "@/components/admin/AdminDataTable";
 import { Button } from "@/components/ui/button";
 import { MarketProductForm } from "@/components/admin/MarketProductForm";
-import { ShoppingCart, LayoutGrid, List, Pencil, Trash2, Plus, Tag, Building2, Package, FileText, RotateCcw } from "lucide-react";
+import { ShoppingCart, LayoutGrid, List, Pencil, Trash2, Plus, Tag, Building2, Package, FileText, RotateCcw, Archive, ExternalLink } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { toast } from "sonner";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 
 export default function AdminProductsPage() {
     const router = useRouter();
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-    const [view, setView] = useState<'products' | 'market'>('products');
     const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState("produtos");
+    const [activeTab, setActiveTab] = useState<'empresas' | 'mercado' | 'servicos' | 'outros'>('empresas');
     const [showBin, setShowBin] = useState(false);
     const [showBinDropdown, setShowBinDropdown] = useState(false);
     const [showEmptyBinConfirm, setShowEmptyBinConfirm] = useState(false);
@@ -26,69 +26,41 @@ export default function AdminProductsPage() {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<any>(null);
+    const [deleteAction, setDeleteAction] = useState<'soft' | 'hard'>('soft');
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
     async function fetchData() {
         setLoading(true);
-        console.log("=== FETCH PRODUCTS DEBUG ===");
-        console.log("Active Tab:", activeTab);
-        console.log("Show Bin:", showBin);
 
-        let query = supabase.from('products').select('*, companies(name)');
+        // Determine which table to fetch from
+        let query;
 
-        // Filter by deleted status
+        if (activeTab === "mercado") {
+            query = supabase.from('market_prices').select('*');
+        } else {
+            // Default: Empresas (Products table)
+            query = supabase.from('products').select('*, companies(id, name)');
+        }
+
+        // Apply deleted_at filter to BOTH tables
         if (showBin) {
-            console.log("Fetching products from BIN (deleted_at NOT NULL)");
             query = query.not('deleted_at', 'is', null);
         } else {
-            console.log("Fetching ACTIVE products (deleted_at IS NULL)");
             query = query.is('deleted_at', null);
         }
 
-        // Filter based on active tab
-        if (activeTab === "produtos") {
-            console.log("Filtering PRODUTOS - showing only products");
-            // Show only regular products
-            query = query.in('category', ['insumo', 'tecnologia', 'financiamento', 'turismo']);
-        } else if (activeTab === "mercado") {
-            console.log("Filtering MERCADO - showing market prices");
-            // Show market prices (handled separately)
-            const { data, error } = await supabase
-                .from('market_prices')
-                .select('*')
-                .order('product', { ascending: true });
-
-            if (error) console.error(error);
-            else setData(data || []);
-            setLoading(false);
-            return;
-        } else if (activeTab === "servicos") {
-            console.log("Filtering SERVIÇOS - showing only services");
-            // Show only services
-            query = query.in('category', ['servico', 'serviço', 'service', 'consultoria', 'manutencao', 'manutenção', 'assistencia', 'assistência']);
+        // Apply sorting
+        if (activeTab === "mercado") {
+            query = query.order('product', { ascending: true });
         } else {
-            console.log("Filtering OUTROS - showing other categories");
-            // Show other categories (excluding products, market, and services)
-            const excludeCategories = ['insumo', 'tecnologia', 'financiamento', 'turismo', 'servico', 'serviço', 'service', 'consultoria', 'manutencao', 'manutenção', 'assistencia', 'assistência'];
-            query = query.not('category', 'in', excludeCategories);
+            query = query.order('created_at', { ascending: false });
         }
-
-        query = query.order('created_at', { ascending: false });
 
         const { data, error } = await query;
-
-        console.log("Fetch result:", { error, count: data?.length || 0 });
-        if (data) {
-            console.log("Products found:");
-            data.forEach(product => {
-                console.log(`- [${product.deleted_at ? 'DELETED' : 'ACTIVE'}] ${product.nome} (ID: ${product.id})`);
-            });
-        }
 
         if (error) console.error(error);
         else setData(data || []);
         setLoading(false);
-        console.log("=== END FETCH DEBUG ===");
     }
 
     useEffect(() => {
@@ -100,8 +72,8 @@ export default function AdminProductsPage() {
         try {
             const table = activeTab === 'mercado' ? 'market_prices' : 'products';
 
-            if (showBin || activeTab === 'mercado') {
-                // Hard Delete (Market prices don't have soft-delete yet, or item is already in bin)
+            if (deleteAction === 'hard' || showBin || activeTab === 'mercado') {
+                // Hard Delete
                 const { error } = await supabase
                     .from(table)
                     .delete()
@@ -109,13 +81,13 @@ export default function AdminProductsPage() {
                 if (error) throw error;
                 toast.success("Eliminado permanentemente!");
             } else {
-                // Soft Delete
+                // Soft Delete (Archive)
                 const { error } = await supabase
                     .from(table)
                     .update({ deleted_at: new Date().toISOString() })
                     .eq('id', itemToDelete.id);
                 if (error) throw error;
-                toast.success("Movido para a lixeira!");
+                toast.success("Item arquivado com sucesso!");
             }
             await fetchData();
         } catch (error: any) {
@@ -164,7 +136,7 @@ export default function AdminProductsPage() {
             // Optimistic update
             setData(prev => prev.filter(item => !selectedIds.includes(item.id)));
 
-            const table = view === 'market' ? 'market_prices' : 'products';
+            const table = activeTab === 'mercado' ? 'market_prices' : 'products';
             const { error } = await supabase
                 .from(table)
                 .delete()
@@ -172,7 +144,7 @@ export default function AdminProductsPage() {
 
             if (error) throw error;
 
-            toast.success(`${selectedIds.length} ${view === 'market' ? 'cotações' : 'produtos'} eliminados!`);
+            toast.success(`${selectedIds.length} ${activeTab === 'mercado' ? 'cotações' : 'produtos'} eliminados!`);
             setSelectedIds([]);
         } catch (error: any) {
             setData(previousData);
@@ -247,53 +219,58 @@ export default function AdminProductsPage() {
                     <select
                         value={activeTab}
                         onChange={(e) => {
-                            setActiveTab(e.target.value);
-                            // If switching to mercado, potentially reset showBin as market_prices might not have soft-delete
-                            if (e.target.value === 'mercado') setShowBin(false);
+                            const val = e.target.value as any;
+                            setActiveTab(val);
+                            if (val === 'mercado') {
+                                setShowBin(false);
+                                setViewMode('list');
+                            } else {
+                                setViewMode('grid');
+                            }
                         }}
-                        className="bg-white border border-slate-200 text-slate-600 text-xs font-bold uppercase tracking-wide rounded-lg px-4 py-2 outline-none focus:border-emerald-500 h-10 w-full md:w-40"
+                        className="bg-white border border-slate-200 text-slate-600 text-xs font-bold uppercase tracking-wide rounded-lg px-4 py-2 outline-none focus:border-emerald-500 h-10 w-full md:w-32"
                     >
-                        <option value="produtos">Produtos</option>
-                        <option value="mercado">Mercado</option>
-                        <option value="servicos">Serviços</option>
-                        <option value="outros">Outros</option>
+                        <option value="empresas">Empresas</option>
+                        <option value="mercado">Cotações</option>
                     </select>
 
-                    {/* Status Filter (Bin) */}
+                    {/* Status Filter (Archive) */}
                     <div className="flex items-center bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
                         <button
                             onClick={() => setShowBin(false)}
                             className={`p-2 rounded-md transition-all ${!showBin ? 'bg-slate-100 text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                            title="Publicados"
+                            title="Activos"
                         >
                             <List className="w-4 h-4" />
                         </button>
                         <button
                             onClick={() => setShowBin(true)}
-                            className={`p-2 rounded-md transition-all ${showBin ? 'bg-rose-50 text-rose-600 shadow-sm' : 'text-slate-400 hover:text-rose-600'}`}
-                            title="Lixeira"
+                            className={`p-2 rounded-md transition-all ${showBin ? 'bg-amber-50 text-amber-600 shadow-sm' : 'text-slate-400 hover:text-amber-600'}`}
+                            title="Arquivados"
                         >
-                            <Trash2 className="w-4 h-4" />
+                            <Archive className="w-4 h-4" />
                         </button>
                     </div>
 
                     {/* View Toggle */}
-                    <div className="flex items-center bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
-                        <button
-                            onClick={() => setViewMode('grid')}
-                            className={`p-2 rounded-md transition-all ${viewMode === 'grid' ? 'bg-slate-100 text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                            title="Vista de Grelha"
-                        >
-                            <LayoutGrid className="w-4 h-4" />
-                        </button>
-                        <button
-                            onClick={() => setViewMode('list')}
-                            className={`p-2 rounded-md transition-all ${viewMode === 'list' ? 'bg-slate-100 text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                            title="Vista de Lista"
-                        >
-                            <List className="w-4 h-4" />
-                        </button>
-                    </div>
+                    {activeTab !== 'mercado' && (
+                        <div className="flex items-center bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
+                            <button
+                                onClick={() => setViewMode('grid')}
+                                className={`p-2 rounded-md transition-all ${viewMode === 'grid' ? 'bg-slate-100 text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                                title="Vista de Grelha"
+                            >
+                                <LayoutGrid className="w-4 h-4" />
+                            </button>
+                            <button
+                                onClick={() => setViewMode('list')}
+                                className={`p-2 rounded-md transition-all ${viewMode === 'list' ? 'bg-slate-100 text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                                title="Vista de Lista"
+                            >
+                                <List className="w-4 h-4" />
+                            </button>
+                        </div>
+                    )}
 
                     <Button
                         onClick={handleAdd}
@@ -327,7 +304,7 @@ export default function AdminProductsPage() {
 
             {viewMode === 'list' ? (
                 <AdminDataTable
-                    title={activeTab === "mercado" ? "Cotações SIMA" : activeTab === "servicos" ? "Serviços" : activeTab === "outros" ? "Outros Itens" : "Produtos de Empresas"}
+                    title={activeTab === "mercado" ? "Cotações" : "Empresas"}
                     columns={activeTab === "mercado" ? marketColumns : productColumns}
                     data={data}
                     loading={loading}
@@ -365,17 +342,31 @@ export default function AdminProductsPage() {
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
                     </div>
                 ) : data.length === 0 ? (
-                    <div className="text-center py-20 text-slate-400 italic">Nenhum item encontrado.</div>
+                    <div className="text-center py-20 bg-slate-50/50 rounded-2xl border-2 border-dashed border-slate-100">
+                        <div className="mb-4 flex justify-center">
+                            <div className="w-16 h-16 bg-white rounded-full shadow-sm flex items-center justify-center">
+                                {activeTab === 'empresas' ? <Package className="w-8 h-8 text-slate-200" /> : <Tag className="text-slate-200 w-8 h-8" />}
+                            </div>
+                        </div>
+                        <h3 className="font-bold text-slate-900 mb-1">
+                            {activeTab === 'empresas' ? "Nenhum produto de empresa" : "Nenhuma cotação encontrada"}
+                        </h3>
+                        <p className="text-sm text-slate-400 italic max-w-xs mx-auto">
+                            {activeTab === 'empresas'
+                                ? "Não há produtos físicos registados no momento. Adicione um novo produto para começar."
+                                : "A base de dados de cotações do mercado está vazia."}
+                        </p>
+                    </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {data.map((item) => (
                             <div key={item.id} className="bg-white rounded-2xl border border-slate-100 hover:shadow-lg transition-all group relative overflow-hidden flex flex-col">
 
                                 {/* CARD COVER IMAGE */}
-                                <div className="h-32 w-full bg-slate-100 relative">
-                                    {view === 'products' && item.image_url ? (
+                                <div className="h-48 w-full bg-slate-100 relative">
+                                    {activeTab !== 'mercado' && item.image_url ? (
                                         <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
-                                    ) : view === 'market' ? (
+                                    ) : activeTab === 'mercado' ? (
                                         // Market prices - no image, show icon
                                         <div className="w-full h-full bg-emerald-50/50 flex flex-col items-center justify-center gap-2 p-4 text-center border-b border-emerald-100/50">
                                             <div className="bg-white p-2 rounded-full shadow-sm mb-1">
@@ -386,7 +377,7 @@ export default function AdminProductsPage() {
                                     ) : (
                                         <div className="w-full h-full bg-emerald-50/50 flex flex-col items-center justify-center gap-2 p-4 text-center border-b border-emerald-100/50">
                                             <div className="bg-white p-2 rounded-full shadow-sm mb-1">
-                                                {view === 'products' ? <ShoppingCart className="text-emerald-500 w-5 h-5" /> : <Tag className="text-emerald-500 w-5 h-5" />}
+                                                <ShoppingCart className="text-emerald-500 w-5 h-5" />
                                             </div>
                                             <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">{item.category}</span>
                                         </div>
@@ -395,15 +386,15 @@ export default function AdminProductsPage() {
                                     {/* Edit/Delete Overlay */}
                                     <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 p-1 rounded-lg shadow-sm">
                                         {showBin ? (
-                                            <button onClick={() => handleRestore(item)} className="p-1.5 hover:bg-emerald-50 text-emerald-600 rounded" title="Restaurar">
+                                            <button onClick={() => handleRestore(item)} className="p-1.5 hover:bg-emerald-50 text-emerald-600 rounded" title="Restaurar de Arquivados">
                                                 <RotateCcw className="w-4 h-4" />
                                             </button>
                                         ) : (
-                                            <button onClick={() => handleEdit(item)} className="p-1.5 hover:bg-emerald-50 text-emerald-600 rounded">
-                                                <Pencil className="w-4 h-4" />
+                                            <button onClick={() => { setDeleteAction('soft'); handleDelete(item); }} className="p-1.5 hover:bg-amber-50 text-amber-600 rounded" title="Arquivar">
+                                                <Archive className="w-4 h-4" />
                                             </button>
                                         )}
-                                        <button onClick={() => handleDelete(item)} className="p-1.5 hover:bg-rose-50 text-rose-600 rounded">
+                                        <button onClick={() => { setDeleteAction('hard'); handleDelete(item); }} className="p-1.5 hover:bg-rose-50 text-rose-600 rounded" title="Eliminar Permanentemente">
                                             <Trash2 className="w-4 h-4" />
                                         </button>
                                     </div>
@@ -420,24 +411,33 @@ export default function AdminProductsPage() {
                                     {/* Info Grid */}
                                     <div className="mt-4 space-y-2 text-xs text-slate-500">
                                         {/* Price Display */}
-                                        {(item.price || item.preco) && (
-                                            <div className="mt-2 flex items-center gap-2">
-                                                <span className="text-emerald-600 font-black text-xl">
-                                                    {(item.price || item.preco)?.toLocaleString()} MT
-                                                </span>
-                                                {item.unit && <span className="text-slate-400 font-medium text-[10px] uppercase">/ {item.unit}</span>}
+                                        {(item.price || item.preco || item.price === 0 || item.preco === 0) && (
+                                            <div className="mt-2 flex items-center justify-between">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-emerald-600 font-black text-xl">
+                                                        {(item.price || item.preco)?.toLocaleString()} MT
+                                                    </span>
+                                                    {item.unit && <span className="text-slate-400 font-medium text-[10px] uppercase">/ {item.unit}</span>}
+                                                </div>
+                                                {!showBin && activeTab !== 'mercado' && (
+                                                    <button onClick={() => handleEdit(item)} className="p-1.5 hover:bg-slate-100 text-slate-400 hover:text-emerald-600 rounded-full transition-colors" title="Editar">
+                                                        <Pencil className="w-4 h-4" />
+                                                    </button>
+                                                )}
                                             </div>
                                         )}
                                         {/* Company Name if Product */}
-                                        {view === 'products' && item.companies && (
+                                        {activeTab === 'empresas' && item.companies && (
                                             <div className="mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
                                                 <Building2 className="w-3 h-3" />
-                                                {item.companies.name}
+                                                <Link href={`/admin/empresas/${item.companies.id}`} className="hover:text-emerald-600 hover:underline transition-colors">
+                                                    {item.companies.name}
+                                                </Link>
                                             </div>
                                         )}
 
                                         {/* Market Location for Market Prices */}
-                                        {view === 'market' && item.location && (
+                                        {activeTab === 'mercado' && item.location && (
                                             <div className="mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
                                                 <ShoppingCart className="w-3 h-3" />
                                                 {item.location}
@@ -446,8 +446,8 @@ export default function AdminProductsPage() {
                                     </div>
 
                                     {/* Footer */}
-                                    <div className="mt-auto pt-4 flex items-center justify-between border-t border-slate-50/50 mt-4">
-                                        {showBin ? (
+                                    {showBin && (
+                                        <div className="mt-auto pt-4 flex items-center justify-between border-t border-slate-50/50 mt-4">
                                             <Button
                                                 onClick={() => handleRestore(item)}
                                                 variant="ghost"
@@ -455,16 +455,8 @@ export default function AdminProductsPage() {
                                             >
                                                 Restaurar Item
                                             </Button>
-                                        ) : (
-                                            <Button
-                                                onClick={() => handleEdit(item)}
-                                                variant="ghost"
-                                                className="text-[10px] font-bold uppercase text-slate-400 hover:text-emerald-600 ml-auto"
-                                            >
-                                                Editar / Ver
-                                            </Button>
-                                        )}
-                                    </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         ))}
@@ -498,13 +490,13 @@ export default function AdminProductsPage() {
                 isOpen={showDeleteConfirm}
                 onClose={() => setShowDeleteConfirm(false)}
                 onConfirm={confirmDelete}
-                title={showBin ? "Eliminar Permanentemente" : "Mover para Lixeira"}
+                title={showBin || deleteAction === 'hard' ? "Eliminar Permanentemente" : "Arquivar Item"}
                 description={
-                    showBin
+                    showBin || deleteAction === 'hard'
                         ? `Tem a certeza que deseja eliminar PERMANENTEMENTE "${itemToDelete?.name || itemToDelete?.product || itemToDelete?.nome}"? Esta acção NÃO pode ser desfeita.`
-                        : `O item "${itemToDelete?.name || itemToDelete?.product || itemToDelete?.nome}" será movido para a lixeira. Poderá restaurá-lo mais tarde.`
+                        : `O item "${itemToDelete?.name || itemToDelete?.product || itemToDelete?.nome}" será movido para a lista de arquivados. Poderá restaurá-lo mais tarde.`
                 }
-                confirmLabel={showBin ? "Eliminar de vez" : "Mover para Lixeira"}
+                confirmLabel={showBin || deleteAction === 'hard' ? "Eliminar de vez" : "Arquivar Item"}
                 variant="destructive"
             />
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { StandardBlogTemplate } from "@/components/StandardBlogTemplate";
 import { ShoppingBag, Search, ArrowRight, Building2, Sprout, Truck, Droplets, Zap } from "lucide-react";
 import Link from "next/link";
@@ -12,6 +12,7 @@ import { MarketPriceTable } from "@/components/MarketPriceTable";
 
 function ProductsContent() {
     const searchParams = useSearchParams();
+    const router = useRouter();
     const empresaId = searchParams.get("empresa_id");
     const professionalId = searchParams.get("professional_id");
     const initialQuery = searchParams.get("q") || "";
@@ -22,7 +23,15 @@ function ProductsContent() {
     const [contextName, setContextName] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 12;
-    const [activeTab, setActiveTab] = useState<'Empresas' | 'Mercado'>('Empresas');
+    // Persist tab in URL
+    const activeTab = searchParams.get("tab") === 'mercado' ? 'Mercado' : 'Empresas';
+
+    const setActiveTab = (tab: 'Empresas' | 'Mercado') => {
+        const params = new URLSearchParams(searchParams.toString());
+        if (tab === 'Mercado') params.set("tab", "mercado");
+        else params.delete("tab");
+        router.push(`/produtos?${params.toString()}`);
+    };
 
     const slugify = (text: string) => (text || "").toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
 
@@ -72,14 +81,22 @@ function ProductsContent() {
                 if (error) throw error;
 
                 if (data) {
-                    allItems = data.map(p => ({
-                        ...p,
-                        nome: p.name || p.nome,
-                        preco: p.price || p.preco || "Sob Consulta",
-                        image_url: p.image_url || p.imagem || "https://images.unsplash.com/photo-1595152248447-c93d5006b00b?q=80&w=400",
-                        company_slug: p.companies?.slug || "empresa-desconhecida",
-                        company_name: p.companies?.name
-                    }));
+                    allItems = data
+                        .filter(p => {
+                            const cat = (p.category || "").toLowerCase();
+                            // Strict filtering: no services in products page
+                            return !cat.includes('serviço') &&
+                                !cat.includes('consultoria') &&
+                                !cat.includes('logística');
+                        })
+                        .map(p => ({
+                            ...p,
+                            nome: p.name || p.nome,
+                            preco: p.price || p.preco || "Sob Consulta",
+                            image_url: p.image_url || p.imagem || "https://images.unsplash.com/photo-1595152248447-c93d5006b00b?q=80&w=400",
+                            company_slug: p.companies?.slug,
+                            company_name: p.companies?.name
+                        }));
                 }
 
                 setProducts(allItems);
@@ -208,7 +225,7 @@ function ProductsContent() {
                             : "text-slate-500 hover:text-slate-700"
                             }`}
                     >
-                        Produtos de Empresas
+                        Produtos das Empresas
                     </button>
                     <button
                         onClick={() => setActiveTab('Mercado')}
@@ -217,7 +234,7 @@ function ProductsContent() {
                             : "text-slate-500 hover:text-slate-700"
                             }`}
                     >
-                        Cotações de Mercado
+                        Cotações do Mercado
                     </button>
                 </div>
 

@@ -43,7 +43,7 @@ export function NewsCard({
     return (
         <div className="group flex flex-col h-full bg-white rounded-[10px] shadow-lg border border-slate-100 hover:border-[#f97316]/50 transition-all overflow-hidden hover:shadow-xl">
             {/* Image Section */}
-            <Link href={`/artigos/${slug}`} className="relative aspect-[16/10] overflow-hidden block">
+            <Link href={`/artigos/${slug}`} className="relative aspect-[16/10] overflow-hidden block border-b-4 border-[#f97316]">
                 <Image
                     src={image || "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=800&auto=format&fit=crop"}
                     alt={title}

@@ -307,7 +307,7 @@ export function InfoSection() {
                                             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                                         </Link>
                                     </div>
-                                    <div className="relative group/embla">
+                                    <div className="relative group/embla px-[30px]">
                                         <div className="overflow-hidden" ref={emblaRef}>
                                             <div className="flex -mr-[20px]">
                                                 {articlesData.map((news, i) => (
@@ -316,7 +316,7 @@ export function InfoSection() {
                                                             href={news.slug ? `/artigos/${news.slug}` : "#"}
                                                             className="bg-white rounded-[12px] shadow-lg border border-slate-100 flex flex-col group cursor-pointer hover:border-[#f97316] transition-all overflow-hidden h-full"
                                                         >
-                                                            <div className="relative h-48 w-full overflow-hidden">
+                                                            <div className="relative h-48 w-full overflow-hidden border-b-4 border-[#f97316]">
                                                                 <Image
                                                                     src={news.image_url || "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?q=80&w=800&auto=format&fit=crop"}
                                                                     alt={news.title || "Notícia"}

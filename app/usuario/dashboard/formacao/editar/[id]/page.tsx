@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { TrainingForm } from "@/components/admin/TrainingForm";
+import { TrainingEditor } from "@/components/admin/TrainingEditor";
 import { DashboardPageHeader } from "@/components/DashboardPageHeader";
 import { supabase } from "@/lib/supabaseClient";
 import { toast } from "sonner";
@@ -66,7 +66,7 @@ export default function EditTrainingPage() {
             </div>
 
             <div className="bg-white p-8 rounded-[15px] shadow-sm border border-slate-100">
-                <TrainingForm
+                <TrainingEditor
                     isPage={true}
                     initialData={training}
                     onClose={() => router.back()}

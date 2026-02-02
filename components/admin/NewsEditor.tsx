@@ -64,7 +64,7 @@ export function NewsEditor({ initialData, isNew = false }: NewsEditorProps) {
         }
     }, [formData, isNew]);
 
-    const categories = ["Notícia", "Artigo Técnico", "Guia", "Relatório", "Legislação", "Documento", "Internacional", "Oportunidade", "Evento", "Recursos", "Política Agrária", "Curiosidade"];
+    const categories = ["Notícia", "Mulher Agro", "Artigo Técnico", "Guia", "Relatório", "Legislação", "Documento", "Internacional", "Oportunidade", "Evento", "Recursos", "Política Agrária", "Curiosidade"];
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

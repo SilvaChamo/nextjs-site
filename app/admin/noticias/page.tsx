@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { AdminDataTable } from "@/components/admin/AdminDataTable";
 import { Button } from "@/components/ui/button";
-import { Plus, LayoutGrid, List, Pencil, Trash2, Calendar, Link as LinkIcon, Search, FileText, Globe, BookOpen, Lightbulb, RotateCcw } from "lucide-react";
+import { Plus, LayoutGrid, List, Pencil, Trash2, Calendar, Link as LinkIcon, Search, FileText, Globe, BookOpen, Lightbulb, RotateCcw, Users } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
@@ -31,6 +31,7 @@ export default function AdminNoticiasPage() {
     const tabs = [
         { id: 'Todas', label: 'Todas', icon: List },
         { id: 'Notícia', label: 'Notícias', icon: FileText },
+        { id: 'Mulher Agro', label: 'Mulher Agro', icon: Users },
         { id: 'Guia', label: 'Guias', icon: BookOpen },
         { id: 'Dicas', label: 'Dicas', icon: Lightbulb },
         { id: 'Internacional', label: 'Internacional', icon: Globe },
@@ -41,7 +42,7 @@ export default function AdminNoticiasPage() {
         let query = supabase
             .from('articles')
             .select('*')
-            .in('type', ['Notícia', 'Guia', 'Dicas', 'Internacional'])
+            .in('type', ['Notícia', 'Guia', 'Dicas', 'Internacional', 'Mulher Agro', 'Oportunidade', 'Evento', 'Recursos', 'Curiosidade'])
             .order('created_at', { ascending: false });
 
         if (showBin) {

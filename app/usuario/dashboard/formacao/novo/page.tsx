@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { TrainingForm } from "@/components/admin/TrainingForm";
+import { TrainingEditor } from "@/components/admin/TrainingEditor";
 import { DashboardPageHeader } from "@/components/DashboardPageHeader";
 import { toast } from "sonner";
 import { ChevronLeft } from "lucide-react";
@@ -26,7 +26,7 @@ export default function NewTrainingPage() {
             </div>
 
             <div className="bg-white p-8 rounded-[15px] shadow-sm border border-slate-100">
-                <TrainingForm
+                <TrainingEditor
                     isPage={true}
                     onClose={() => router.back()}
                     onSuccess={() => {

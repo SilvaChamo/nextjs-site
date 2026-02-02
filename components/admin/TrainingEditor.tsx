@@ -14,9 +14,12 @@ import { useRouter } from "next/navigation";
 interface TrainingEditorProps {
     initialData?: any;
     isNew?: boolean;
+    isPage?: boolean;
+    onClose?: () => void;
+    onSuccess?: () => void;
 }
 
-export function TrainingEditor({ initialData, isNew = false }: TrainingEditorProps) {
+export function TrainingEditor({ initialData, isNew = false, isPage = false, onClose, onSuccess }: TrainingEditorProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
@@ -88,8 +91,13 @@ export function TrainingEditor({ initialData, isNew = false }: TrainingEditorPro
             }
 
             if (error) throw error;
-            router.push('/admin/formacao');
-            router.refresh();
+
+            if (onSuccess) {
+                onSuccess();
+            } else {
+                router.push('/admin/formacao');
+                router.refresh();
+            }
         } catch (error: any) {
             console.error(error);
             alert("Erro ao salvar formação: " + error.message);
@@ -98,12 +106,20 @@ export function TrainingEditor({ initialData, isNew = false }: TrainingEditorPro
         }
     };
 
+    const handleCancel = () => {
+        if (onClose) {
+            onClose();
+        } else {
+            router.back();
+        }
+    };
+
     return (
         <div className="bg-white rounded-agro-lg shadow-[0_0_10px_rgba(0,0,0,0.1)] border border-slate-200 flex flex-col">
             <div className="px-6 py-8 border-b border-slate-200 flex items-center justify-between bg-slate-300/40 transition-all shrink-0">
                 <div className="flex items-center gap-4 flex-1 min-w-0">
                     <button
-                        onClick={() => router.back()}
+                        onClick={handleCancel}
                         className="p-2 hover:bg-slate-300 rounded-full transition-colors flex-shrink-0 flex items-center justify-center"
                     >
                         <ArrowLeft className="w-5 h-5 text-slate-500" />
@@ -362,7 +378,7 @@ export function TrainingEditor({ initialData, isNew = false }: TrainingEditorPro
                 </div>
 
                 <div className="pt-8 border-t border-slate-100 flex items-center justify-end gap-3">
-                    <Button type="button" variant="outline" onClick={() => router.back()} className="px-8 h-10 rounded-lg text-xs font-black text-slate-500 uppercase tracking-widest bg-white hover:bg-slate-50">
+                    <Button type="button" variant="outline" onClick={handleCancel} className="px-8 h-10 rounded-lg text-xs font-black text-slate-500 uppercase tracking-widest bg-white hover:bg-slate-50">
                         Cancelar
                     </Button>
                     <Button

@@ -40,12 +40,10 @@ export function NewsCard({
         year: 'numeric'
     });
 
-    const displayDescription = subtitle || excerpt || "Leia mais sobre este artigo no nosso blog...";
-
     return (
         <div className="group flex flex-col h-full bg-white rounded-[10px] shadow-lg border border-slate-100 hover:border-[#f97316]/50 transition-all overflow-hidden hover:shadow-xl">
             {/* Image Section */}
-            <div className="relative aspect-[16/10] overflow-hidden">
+            <Link href={`/artigos/${slug}`} className="relative aspect-[16/10] overflow-hidden block">
                 <Image
                     src={image || "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=800&auto=format&fit=crop"}
                     alt={title}
@@ -56,7 +54,7 @@ export function NewsCard({
                 <div className="absolute top-4 left-4 bg-[#f97316] text-white text-[10px] font-black uppercase px-3.5 py-1.5 rounded-[6px] shadow-lg">
                     {category || "Artigo"}
                 </div>
-            </div>
+            </Link>
 
             {/* Content Section */}
             <div className="p-5 flex flex-col flex-1">
@@ -73,11 +71,6 @@ export function NewsCard({
                             {title}
                         </h3>
                     </Link>
-
-                    {/* Subtitle/Excerpt */}
-                    <p className="text-[13px] text-slate-500 leading-[1.4] tracking-tight line-clamp-3">
-                        {displayDescription}
-                    </p>
                 </div>
 
                 {/* Footer/Actions */}

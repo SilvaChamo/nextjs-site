@@ -17,7 +17,7 @@ export function WeatherSidebar() {
     ];
 
     return (
-        <div className="relative rounded-[20px] text-white overflow-hidden shadow-2xl border border-white/5 group min-h-max">
+        <div className="relative rounded-[10px] text-white overflow-hidden shadow-2xl border border-white/5 group min-h-max">
             {/* Background: Using the local 'tempo.webp' image provided by the user */}
             <div className="absolute inset-0 z-0">
                 <Image

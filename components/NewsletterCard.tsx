@@ -20,7 +20,7 @@ export function NewsletterCard() {
     };
 
     return (
-        <div className="bg-slate-900 rounded-[15px] p-5 text-white relative overflow-hidden group border border-white/5">
+        <div className="bg-slate-900 rounded-[10px] p-5 text-white relative overflow-hidden group border border-white/5">
             <div className="absolute top-0 right-0 size-40 bg-[#f97316]/10 blur-3xl rounded-full"></div>
             <div className="absolute bottom-0 left-0 size-32 bg-emerald-500/10 blur-3xl rounded-full"></div>
 

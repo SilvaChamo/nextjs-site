@@ -26,6 +26,7 @@ export default function AdminArtigosCientificosPage() {
 
     const tabs = [
         { id: 'Dissertações', label: 'Dissertações', icon: GraduationCap },
+        { id: 'Documento', label: 'Documentos', icon: FileText },
         { id: 'Artigos', label: 'Artigos Científicos', icon: FileText },
         { id: 'Livros', label: 'Livros & Manuais', icon: BookOpen },
         { id: 'Outros', label: 'Outros', icon: Layers },
@@ -160,47 +161,55 @@ export default function AdminArtigosCientificosPage() {
                 </Button>
             </div>
 
-            {/* Tabs */}
-            <div className="flex items-center gap-2 bg-white p-1.5 rounded-2xl shadow-sm border border-slate-100 w-fit overflow-x-auto">
-                {tabs.map((tab) => (
-                    <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
-                        className={`flex items-center gap-2 px-4 md:px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === tab.id
-                            ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
-                            : 'text-slate-400 hover:bg-slate-50'
-                            }`}
-                    >
-                        <tab.icon className="w-4 h-4" />
-                        {tab.label}
-                    </button>
-                ))}
-            </div>
-
-            {/* Controls */}
-            <div className="flex items-center justify-between gap-4 bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
-                <div className="relative flex-1 max-w-sm">
-                    <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
-                    <Input
-                        placeholder={`Pesquisar em ${activeTab}...`}
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="pl-9 border-none bg-slate-50 focus-visible:ring-0"
-                    />
+            {/* Toolbar - Merged Tabs and Controls */}
+            <div className="flex items-center gap-4 bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
+                {/* Tabs */}
+                <div className="flex items-center gap-1">
+                    {tabs.map((tab) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id)}
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${activeTab === tab.id
+                                ? 'bg-emerald-600 text-white'
+                                : 'text-slate-500 hover:bg-orange-50 hover:text-orange-600'
+                                }`}
+                        >
+                            <tab.icon className="w-4 h-4" />
+                            {tab.label}
+                        </button>
+                    ))}
                 </div>
-                <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg">
-                    <button
-                        onClick={() => setViewMode('grid')}
-                        className={`p-2 rounded-md transition-all ${viewMode === 'grid' ? 'bg-white shadow text-emerald-600' : 'text-slate-400 hover:text-slate-600'}`}
-                    >
-                        <LayoutGrid className="w-4 h-4" />
-                    </button>
-                    <button
-                        onClick={() => setViewMode('list')}
-                        className={`p-2 rounded-md transition-all ${viewMode === 'list' ? 'bg-white shadow text-emerald-600' : 'text-slate-400 hover:text-slate-600'}`}
-                    >
-                        <List className="w-4 h-4" />
-                    </button>
+
+                {/* Right Side Controls */}
+                <div className="flex items-center gap-2 ml-auto">
+                    {/* Search */}
+                    <div className="relative w-48 lg:w-64">
+                        <Search className="absolute left-2.5 top-2 w-3.5 h-3.5 text-slate-400" />
+                        <Input
+                            placeholder={`Pesquisar...`}
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="pl-8 h-8 border-none bg-slate-50 focus-visible:ring-0 text-xs"
+                        />
+                    </div>
+
+                    <div className="w-px h-4 bg-slate-200 mx-1"></div>
+
+                    {/* View Mode */}
+                    <div className="flex items-center gap-0.5 bg-slate-50 p-0.5 rounded-md border border-slate-100">
+                        <button
+                            onClick={() => setViewMode('grid')}
+                            className={`p-1.5 rounded-md transition-all ${viewMode === 'grid' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'}`}
+                        >
+                            <LayoutGrid className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                            onClick={() => setViewMode('list')}
+                            className={`p-1.5 rounded-md transition-all ${viewMode === 'list' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'}`}
+                        >
+                            <List className="w-3.5 h-3.5" />
+                        </button>
+                    </div>
                 </div>
             </div>
 

@@ -57,7 +57,7 @@ export function ArticleForm({ onClose, onSuccess, initialData }: ArticleFormProp
         }
     }, [formData, initialData]);
 
-    const categories = ["Notícia", "Artigo Técnico", "Guia", "Internacional", "Oportunidade", "Evento", "Recursos", "Política Agrária", "Curiosidade"];
+    const categories = ["Notícia", "Artigo Técnico", "Guia", "Documento", "Internacional", "Oportunidade", "Evento", "Recursos", "Política Agrária", "Curiosidade"];
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

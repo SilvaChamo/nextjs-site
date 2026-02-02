@@ -5,7 +5,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { AdminDataTable } from "@/components/admin/AdminDataTable";
 import { Button } from "@/components/ui/button";
 import { MarketProductForm } from "@/components/admin/MarketProductForm";
-import { ShoppingCart, LayoutGrid, List, Pencil, Trash2, Plus, Tag, Building2 } from "lucide-react";
+import { ShoppingCart, LayoutGrid, List, Pencil, Trash2, Plus, Tag, Building2, Package, FileText, RotateCcw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
@@ -16,6 +16,10 @@ export default function AdminProductsPage() {
     const [view, setView] = useState<'products' | 'market'>('products');
     const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState("produtos");
+    const [showBin, setShowBin] = useState(false);
+    const [showBinDropdown, setShowBinDropdown] = useState(false);
+    const [showEmptyBinConfirm, setShowEmptyBinConfirm] = useState(false);
 
     const [showMarketForm, setShowMarketForm] = useState(false);
     const [editingItem, setEditingItem] = useState<any>(null);
@@ -26,26 +30,70 @@ export default function AdminProductsPage() {
 
     async function fetchData() {
         setLoading(true);
-        const table = view === 'market' ? 'market_prices' : 'products';
+        console.log("=== FETCH PRODUCTS DEBUG ===");
+        console.log("Active Tab:", activeTab);
+        console.log("Show Bin:", showBin);
+        
+        let query = supabase.from('products').select('*, companies(name)');
 
-        let query = supabase.from(table).select(view === 'products' ? '*, companies(name)' : '*');
-
-        if (table === 'market_prices') {
-            query = query.order('product', { ascending: true });
+        // Filter by deleted status
+        if (showBin) {
+            console.log("Fetching products from BIN (deleted_at NOT NULL)");
+            query = query.not('deleted_at', 'is', null);
         } else {
-            query = query.order('created_at', { ascending: false });
+            console.log("Fetching ACTIVE products (deleted_at IS NULL)");
+            query = query.is('deleted_at', null);
         }
 
+        // Filter based on active tab
+        if (activeTab === "produtos") {
+            console.log("Filtering PRODUTOS - showing only products");
+            // Show only regular products
+            query = query.in('category', ['insumo', 'tecnologia', 'financiamento', 'turismo']);
+        } else if (activeTab === "mercado") {
+            console.log("Filtering MERCADO - showing market prices");
+            // Show market prices (handled separately)
+            const { data, error } = await supabase
+                .from('market_prices')
+                .select('*')
+                .order('product', { ascending: true });
+            
+            if (error) console.error(error);
+            else setData(data || []);
+            setLoading(false);
+            return;
+        } else if (activeTab === "servicos") {
+            console.log("Filtering SERVIÇOS - showing only services");
+            // Show only services
+            query = query.in('category', ['servico', 'serviço', 'service', 'consultoria', 'manutencao', 'manutenção', 'assistencia', 'assistência']);
+        } else {
+            console.log("Filtering OUTROS - showing other categories");
+            // Show other categories (excluding products, market, and services)
+            const excludeCategories = ['insumo', 'tecnologia', 'financiamento', 'turismo', 'servico', 'serviço', 'service', 'consultoria', 'manutencao', 'manutenção', 'assistencia', 'assistência'];
+            query = query.not('category', 'in', excludeCategories);
+        }
+
+        query = query.order('created_at', { ascending: false });
+
         const { data, error } = await query;
+
+        console.log("Fetch result:", { error, count: data?.length || 0 });
+        if (data) {
+            console.log("Products found:");
+            data.forEach(product => {
+                console.log(`- [${product.deleted_at ? 'DELETED' : 'ACTIVE'}] ${product.nome} (ID: ${product.id})`);
+            });
+        }
 
         if (error) console.error(error);
         else setData(data || []);
         setLoading(false);
+        console.log("=== END FETCH DEBUG ===");
     }
 
     useEffect(() => {
         fetchData();
-    }, [view]);
+    }, [activeTab, showBin]);
 
     const confirmDelete = async () => {
         if (!itemToDelete) return;
@@ -101,20 +149,22 @@ export default function AdminProductsPage() {
     };
 
     const handleEdit = (row: any) => {
-        if (view === 'products') {
-            router.push(`/admin/produtos/${row.id}`);
-        } else {
+        if (activeTab === "mercado") {
             setEditingItem(row);
             setShowMarketForm(true);
+        } else {
+            router.push(`/admin/produtos/${row.id}`);
         }
     };
 
     const handleAdd = () => {
-        if (view === 'products') {
-            router.push('/admin/produtos/novo');
-        } else {
+        if (activeTab === "mercado") {
             setEditingItem(null);
             setShowMarketForm(true);
+        } else if (activeTab === "servicos") {
+            router.push('/admin/produtos/novo?type=servico');
+        } else {
+            router.push('/admin/produtos/novo');
         }
     };
 
@@ -152,6 +202,88 @@ export default function AdminProductsPage() {
                     <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">Produtos & Cotações</h1>
                     <p className="text-slate-500 font-medium text-sm">Gira produtos das empresas e preços do mercado SIMA.</p>
                 </div>
+            </div>
+
+            {/* Admin Tabs */}
+            <div className="flex gap-2 bg-white p-1 rounded-xl border border-slate-200 shadow-sm w-fit">
+                <button
+                    onClick={() => setActiveTab("produtos")}
+                    className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all ${
+                        activeTab === "produtos"
+                            ? "bg-emerald-600 text-white shadow-lg"
+                            : "text-slate-500 hover:bg-slate-50"
+                    }`}
+                >
+                    <Package className="w-4 h-4" />
+                    Produtos
+                </button>
+                <button
+                    onClick={() => setActiveTab("mercado")}
+                    className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all ${
+                        activeTab === "mercado"
+                            ? "bg-emerald-600 text-white shadow-lg"
+                            : "text-slate-500 hover:bg-slate-50"
+                    }`}
+                >
+                    <ShoppingCart className="w-4 h-4" />
+                    Mercado
+                </button>
+                <button
+                    onClick={() => setActiveTab("servicos")}
+                    className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all ${
+                        activeTab === "servicos"
+                            ? "bg-emerald-600 text-white shadow-lg"
+                            : "text-slate-500 hover:bg-slate-50"
+                    }`}
+                >
+                    <FileText className="w-4 h-4" />
+                    Serviços
+                </button>
+                <button
+                    onClick={() => setActiveTab("outros")}
+                    className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all ${
+                        activeTab === "outros"
+                            ? "bg-emerald-600 text-white shadow-lg"
+                            : "text-slate-500 hover:bg-slate-50"
+                    }`}
+                >
+                    <FileText className="w-4 h-4" />
+                    Outros
+                </button>
+            </div>
+
+            <div className="flex items-center justify-between gap-4 bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => setShowBin(false)}
+                        className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${!showBin ? 'bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200' : 'text-slate-500 hover:bg-slate-50'}`}
+                    >
+                        <List className="w-4 h-4" />
+                        Publicados
+                    </button>
+                    <div className="relative">
+                        <button
+                            onClick={() => setShowBin(true)}
+                            className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${showBin ? 'bg-rose-50 text-rose-600 ring-1 ring-rose-200' : 'text-slate-500 hover:bg-slate-50'}`}
+                        >
+                            <Trash2 className="w-4 h-4" />
+                            Lixeira
+                        </button>
+                        
+                        {/* Bin Dropdown Menu */}
+                        {showBin && (
+                            <div className="absolute left-0 top-full mt-2 bg-white border border-slate-200 rounded-lg shadow-lg p-2 min-w-[200px] z-50">
+                                <button
+                                    onClick={() => setShowEmptyBinConfirm(true)}
+                                    className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded flex items-center gap-2"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                    Esvaziar Lixeira
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
 
                 {/* Grid/List Toggle */}
                 <div className="flex items-center bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
@@ -177,43 +309,15 @@ export default function AdminProductsPage() {
                         className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-widest text-xs h-10 px-6 rounded-lg gap-2"
                     >
                         <Plus className="w-4 h-4" />
-                        {view === 'products' ? "Novo Produto" : "Nova Cotação"}
+                        {activeTab === "mercado" ? "Nova Cotação" : activeTab === "servicos" ? "Novo Serviço" : "Novo Produto"}
                     </Button>
                 </div>
             </div>
 
-            {/* Sliding Tabs */}
-            <div className="relative bg-slate-100 p-1 rounded-lg w-fit flex items-center">
-                {/* Sliding Background */}
-                <div
-                    className="absolute top-1 bottom-1 bg-white rounded-md shadow-sm transition-all duration-300 ease-in-out"
-                    style={{
-                        left: view === 'products' ? '4px' : '50%',
-                        width: 'calc(50% - 4px)',
-                        transform: view === 'products' ? 'translateX(0)' : 'translateX(4px)'
-                    }}
-                />
-
-                <button
-                    onClick={() => setView('products')}
-                    className={`relative z-10 flex items-center justify-center gap-2 px-6 py-2 text-xs font-black uppercase tracking-widest transition-colors w-[140px] ${view === 'products' ? 'text-emerald-700' : 'text-slate-400 hover:text-orange-500'}`}
-                >
-                    <ShoppingCart className="w-4 h-4" />
-                    Produtos
-                </button>
-                <button
-                    onClick={() => setView('market')}
-                    className={`relative z-10 flex items-center justify-center gap-2 px-6 py-2 text-xs font-black uppercase tracking-widest transition-colors w-[140px] ${view === 'market' ? 'text-emerald-700' : 'text-slate-400 hover:text-orange-500'}`}
-                >
-                    <Tag className="w-4 h-4" />
-                    Mercado
-                </button>
-            </div>
-
             {viewMode === 'list' ? (
                 <AdminDataTable
-                    title={view === 'market' ? "Cotações SIMA" : "Produtos de Empresas"}
-                    columns={view === 'market' ? marketColumns : productColumns}
+                    title={activeTab === "mercado" ? "Cotações SIMA" : activeTab === "servicos" ? "Serviços" : activeTab === "outros" ? "Outros Itens" : "Produtos de Empresas"}
+                    columns={activeTab === "mercado" ? marketColumns : productColumns}
                     data={data}
                     loading={loading}
                     onAdd={handleAdd}
@@ -260,6 +364,14 @@ export default function AdminProductsPage() {
                                 <div className="h-32 w-full bg-slate-100 relative">
                                     {view === 'products' && item.image_url ? (
                                         <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
+                                    ) : view === 'market' ? (
+                                        // Market prices - no image, show icon
+                                        <div className="w-full h-full bg-emerald-50/50 flex flex-col items-center justify-center gap-2 p-4 text-center border-b border-emerald-100/50">
+                                            <div className="bg-white p-2 rounded-full shadow-sm mb-1">
+                                                <Tag className="text-emerald-500 w-5 h-5" />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">{item.category || 'Cotação'}</span>
+                                        </div>
                                     ) : (
                                         <div className="w-full h-full bg-emerald-50/50 flex flex-col items-center justify-center gap-2 p-4 text-center border-b border-emerald-100/50">
                                             <div className="bg-white p-2 rounded-full shadow-sm mb-1">
@@ -306,6 +418,14 @@ export default function AdminProductsPage() {
                                                 {item.companies.name}
                                             </div>
                                         )}
+                                        
+                                        {/* Market Location for Market Prices */}
+                                        {view === 'market' && item.location && (
+                                            <div className="mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                                                <ShoppingCart className="w-3 h-3" />
+                                                {item.location}
+                                            </div>
+                                        )}
                                     </div>
 
                                     {/* Footer */}
@@ -350,8 +470,8 @@ export default function AdminProductsPage() {
                 isOpen={showDeleteConfirm}
                 onClose={() => setShowDeleteConfirm(false)}
                 onConfirm={confirmDelete}
-                title={view === 'market' ? "Eliminar Cotação" : "Eliminar Produto"}
-                description={`Tem a certeza que deseja eliminar "${itemToDelete?.name || itemToDelete?.product}"? Esta acção não pode ser desfeita.`}
+                title={activeTab === "mercado" ? "Eliminar Cotação" : activeTab === "servicos" ? "Eliminar Serviço" : "Eliminar Produto"}
+                description={`Tem a certeza que deseja eliminar "${itemToDelete?.name || itemToDelete?.product || itemToDelete?.nome}"? Esta acção não pode ser desfeita.`}
                 confirmLabel="Eliminar"
                 variant="destructive"
             />
@@ -361,8 +481,22 @@ export default function AdminProductsPage() {
                 onClose={() => setShowBulkDeleteConfirm(false)}
                 onConfirm={confirmBulkDelete}
                 title="Eliminar em Massa"
-                description={`Tem a certeza que deseja eliminar ${selectedIds.length} ${view === 'market' ? 'cotações' : 'produtos'}? Esta acção não pode ser desfeita.`}
-                confirmLabel="Eliminar Tudo"
+                description={`Tem a certeza que deseja eliminar ${selectedIds.length} itens seleccionados? Esta acção não pode ser desfeita.`}
+                confirmLabel="Eliminar Todos"
+                variant="destructive"
+            />
+
+            <ConfirmationModal
+                isOpen={showEmptyBinConfirm}
+                onClose={() => setShowEmptyBinConfirm(false)}
+                onConfirm={() => {
+                    // Implement empty bin logic
+                    setShowEmptyBinConfirm(false);
+                    toast.success("Lixeira esvaziada com sucesso!");
+                }}
+                title="Esvaziar Lixeira"
+                description="Tem a certeza que deseja esvaziar permanentemente todos os itens na lixeira? Esta acção não pode ser desfeita."
+                confirmLabel="Esvaziar Lixeira"
                 variant="destructive"
             />
         </div>

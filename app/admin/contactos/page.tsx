@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { AdminDataTable } from "@/components/admin/AdminDataTable";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
     Phone,
     Mail,
@@ -458,51 +458,36 @@ export default function AdminContactosPage() {
 
     return (
         <div className="flex flex-col">
-            {/* Toolbar - Merged Controls */}
-            <div className="flex items-center gap-4 bg-white p-1 rounded-lg border border-slate-200 shadow-sm mb-6">
-                <div className="flex items-center gap-2 pl-2">
-                    <Users className="w-4 h-4 text-slate-400" />
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Contactos</span>
-                    <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded-md font-bold">
-                        {filteredContacts.length}
-                    </span>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-0 pb-0">
+                <div className="flex items-center gap-4">
+                    <h1 className="text-2xl font-black text-slate-800 tracking-tight m-0 p-0 leading-none">Gestão de Contactos</h1>
+                    <span className="text-slate-400 text-sm font-medium mt-1">({filteredContacts.length})</span>
                 </div>
-
-                {/* Right Side Controls */}
-                <div className="flex items-center gap-2 ml-auto">
-                    {/* Search */}
-                    <div className="relative w-48 lg:w-64">
-                        <Search className="absolute left-2.5 top-2 w-3.5 h-3.5 text-slate-400" />
-                        <Input
+                <div className="flex items-center gap-2">
+                    <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <input
+                            type="text"
                             placeholder="Pesquisar..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-8 h-8 border-none bg-slate-50 focus-visible:ring-0 text-xs"
+                            className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium focus:ring-2 focus:ring-orange-500/20 transition-all outline-none w-48 md:w-64"
                         />
                     </div>
-
-                    <div className="w-px h-4 bg-slate-200 mx-1"></div>
-
-                    {/* Actions */}
                     <Button
-                        variant="ghost"
-                        size="sm"
+                        variant="outline"
                         onClick={handleScrape}
-                        className="h-8 text-[10px] font-bold uppercase tracking-wider text-slate-500 hover:text-orange-600 hover:bg-orange-50 gap-2"
+                        className="border-slate-200 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200 gap-2 text-xs font-bold rounded-md h-8 px-3 transition-all"
                         disabled={importing}
                     >
-                        <Globe className="w-3.5 h-3.5" />
-                        {importing ? 'A recolher...' : 'Websites'}
+                        <Globe className="w-4 h-4" />
+                        Importar de Websites
                     </Button>
-
-                    <div className="w-px h-4 bg-slate-200 mx-1"></div>
-
                     <Button
                         onClick={() => { resetForm(); setEditingContact(null); setShowModal(true); }}
-                        size="sm"
-                        className="bg-emerald-600 hover:bg-emerald-700 h-8 px-4 rounded-md text-[10px] font-black uppercase tracking-wider"
+                        className="bg-emerald-600 hover:bg-orange-600 text-white gap-2 text-xs font-bold rounded-md h-8 px-3 transition-all shadow-sm"
                     >
-                        <Plus className="w-3.5 h-3.5 mr-1" />
+                        <Plus className="w-4 h-4" />
                         Novo
                     </Button>
                 </div>

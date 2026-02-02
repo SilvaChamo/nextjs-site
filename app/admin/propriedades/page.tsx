@@ -73,7 +73,6 @@ export default function AdminPropertiesPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">Gestão de Propriedades</h1>
-                    <p className="text-slate-500 font-medium text-sm">Gira as propriedades e activos registados.</p>
                 </div>
 
                 <div className="flex items-center gap-3">

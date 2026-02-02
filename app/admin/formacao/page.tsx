@@ -78,7 +78,6 @@ export default function AdminFormacaoPage({ userEmail }: { userEmail?: string })
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-3xl font-black text-slate-900 tracking-tight">Gestão de Formações</h1>
-                        <p className="text-slate-500">Organize e publique cursos de capacitação agrícola.</p>
                     </div>
                     <Button
                         onClick={() => {

@@ -216,7 +216,6 @@ export default function AdminSettingsPage() {
             <div className="flex items-center justify-between sticky top-0 bg-slate-100/95 backdrop-blur z-30 py-4 border-b border-white/5">
                 <div>
                     <h1 className="text-2xl font-black text-slate-900 tracking-tight">Configurações & Editor Visual</h1>
-                    <p className="text-slate-500 font-medium text-sm">Personalize textos e aparência do site em tempo real.</p>
                 </div>
                 <div className="flex items-center gap-3">
                     {saving && <span className="text-xs font-bold text-emerald-600 animate-pulse flex items-center gap-1"><RefreshCw className="w-3 h-3 animate-spin" /> A guardar...</span>}

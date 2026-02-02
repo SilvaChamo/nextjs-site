@@ -72,8 +72,8 @@ export default function AdminUsersPage() {
             key: "role",
             render: (val: string) => (
                 <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${val === 'admin'
-                        ? 'bg-purple-100 text-purple-700'
-                        : 'bg-slate-100 text-slate-500'
+                    ? 'bg-purple-100 text-purple-700'
+                    : 'bg-slate-100 text-slate-500'
                     }`}>
                     {val === 'admin' ? <ShieldAlert className="w-3 h-3" /> : <Shield className="w-3 h-3" />}
                     {val || 'User'}

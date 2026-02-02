@@ -153,7 +153,6 @@ export default function AdminArtigosCientificosPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-black text-slate-900 tracking-tight">Artigos Científicos</h1>
-                    <p className="text-slate-500">Gestão de produção científica e académica.</p>
                 </div>
                 <Button onClick={() => { setEditingArticle({ type: activeTab }); setIsFormOpen(true); }} className="bg-emerald-600 hover:bg-emerald-700">
                     <Plus className="w-4 h-4 mr-2" />

@@ -223,7 +223,7 @@ export default function EventosPage() {
                         Oferecemos cobertura media, gestão de convites e logística para o seu evento agrário.
                     </p>
                     <Link
-                        href="/contacto"
+                        href="/contactos"
                         className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/30 text-white font-bold px-8 py-4 rounded-lg transition-all duration-300 hover:scale-105 hover:bg-white/20 hover:text-[#f97316] hover:border-[#f97316] shadow-lg relative z-10"
                     >
                         Solicitar Apoio

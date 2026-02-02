@@ -72,7 +72,7 @@ export default function ConsultoriaPage() {
                         Entre em contacto connosco e descubra como a nossa consultoria pode impulsionar o seu negócio.
                     </p>
                     <Link
-                        href="/contacto"
+                        href="/contactos"
                         className="inline-flex items-center gap-2 bg-[#f97316] hover:bg-[#ea6a0a] text-white font-bold px-8 py-4 rounded-lg transition-all duration-300 hover:scale-105"
                     >
                         Solicitar Consultoria

@@ -82,7 +82,7 @@ export default function MercadoPage() {
                             <span className="w-2 h-2 rounded-full bg-[#f97316] animate-pulse"></span>
                             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70">Inteligência Estratégica</span>
                         </div>
-                        <h2 className="text-white text-[32px] md:text-[42px] font-black leading-tight mb-4 tracking-tight">
+                        <h2 className="text-white text-[28px] md:text-[45px] font-black leading-tight mb-4 tracking-tight">
                             Acompanhe as <span className="text-[#f97316]">Tendências</span> do Mercado em Tempo Real
                         </h2>
                         <p className="text-slate-400 font-medium leading-relaxed">
@@ -144,7 +144,7 @@ export default function MercadoPage() {
                         <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-emerald-100/50 rounded-full blur-3xl pointer-events-none"></div>
 
                         <div className="max-w-xl relative z-10">
-                            <h2 className="text-[28px] md:text-[36px] font-black text-emerald-950 leading-tight mb-4">
+                            <h2 className="text-[28px] md:text-[45px] font-black text-emerald-950 leading-tight mb-4">
                                 Quer vender os seus produtos <br />
                                 no nosso <span className="text-emerald-600">Mercado Digital?</span>
                             </h2>

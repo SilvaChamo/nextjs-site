@@ -20,7 +20,7 @@ export function ContactForm() {
     };
 
     return (
-        <div className="card-agro-lg relative overflow-hidden flex flex-col">
+        <div className="card-agro-lg relative overflow-hidden flex flex-col p-[40px]">
 
             <div className="pb-6">
                 <h4 className="text-[45px] font-black text-slate-800/80 mb-2 leading-[1.1]">
@@ -50,7 +50,7 @@ export function ContactForm() {
                         name="nome"
                         required
                         placeholder="Insira o seu nome"
-                        className="w-full bg-white border border-slate-200 rounded-[6px] px-5 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#f97316]/20 focus:border-[#f97316] transition-all font-medium text-[14px] text-slate-700"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-[6px] px-5 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#f97316]/20 focus:border-[#f97316] transition-all font-medium text-[14px] text-slate-700"
                     />
                 </div>
 
@@ -62,7 +62,7 @@ export function ContactForm() {
                         name="email"
                         required
                         placeholder="exemplo@email.com"
-                        className="w-full bg-white border border-slate-200 rounded-[6px] px-5 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#f97316]/20 focus:border-[#f97316] transition-all font-medium text-[14px] text-slate-700"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-[6px] px-5 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#f97316]/20 focus:border-[#f97316] transition-all font-medium text-[14px] text-slate-700"
                     />
                 </div>
 
@@ -73,7 +73,7 @@ export function ContactForm() {
                         name="mensagem"
                         required
                         placeholder="Como podemos ajudar?"
-                        className="w-full bg-white border border-slate-200 rounded-[6px] px-5 py-3 focus:outline-none focus:ring-2 focus:ring-[#f97316]/20 focus:border-[#f97316] transition-all font-medium text-[14px] text-slate-700 h-56 resize-none"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-[6px] px-5 py-3 focus:outline-none focus:ring-2 focus:ring-[#f97316]/20 focus:border-[#f97316] transition-all font-medium text-[14px] text-slate-700 h-56 resize-none"
                     ></textarea>
                 </div>
 

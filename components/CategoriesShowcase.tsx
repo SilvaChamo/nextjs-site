@@ -39,18 +39,33 @@ export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
     if (items.length === 0) return null;
 
     return (
-        <section className="w-full bg-transparent pt-[35px] pb-[35px] relative overflow-hidden">
+        <section className="w-full bg-transparent pt-[60px] pb-[60px] relative overflow-hidden">
             {/* Background Decorative Elements */}
             <div className="absolute top-0 right-0 w-1/3 h-full bg-emerald-50/30 blur-[100px] pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-1/4 h-1/2 bg-orange-50/20 blur-[80px] pointer-events-none" />
 
             <div className="container-site relative z-10">
                 {/* Header - Fixed margins as requested: mb-[35px] for card spacing, no top/bottom margin for section/title area */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-[35px] gap-4">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-[35px] gap-4 px-[10px]">
                     <div className="flex items-center gap-4">
-                        <h2 className="text-[32px] leading-none font-heading font-extrabold text-slate-600 uppercase tracking-tight">
+                        <h2 className="text-[28px] md:text-[45px] leading-none font-heading font-extrabold text-slate-600 uppercase tracking-tight">
                             Empresas em destaque
                         </h2>
+                    </div>
+                    {/* Navigation Arrows relocated here */}
+                    <div className="hidden md:flex items-center gap-3">
+                        <button
+                            onClick={scrollPrev}
+                            className="w-10 h-10 rounded-full bg-white shadow-md border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all"
+                        >
+                            <ChevronLeft className="h-6 w-6" />
+                        </button>
+                        <button
+                            onClick={scrollNext}
+                            className="w-10 h-10 rounded-full bg-white shadow-md border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all"
+                        >
+                            <ChevronRight className="h-6 w-6" />
+                        </button>
                     </div>
                 </div>
 
@@ -134,19 +149,6 @@ export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
                         </div>
                     </div>
 
-                    {/* Navigation Arrows */}
-                    <button
-                        onClick={scrollPrev}
-                        className="absolute top-[calc(50%-20px)] -left-4 md:-left-12 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all z-10"
-                    >
-                        <ChevronLeft className="h-6 w-6" />
-                    </button>
-                    <button
-                        onClick={scrollNext}
-                        className="absolute top-[calc(50%-20px)] -right-4 md:-right-12 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all z-10"
-                    >
-                        <ChevronRight className="h-6 w-6" />
-                    </button>
                 </div>
             </div>
         </section>

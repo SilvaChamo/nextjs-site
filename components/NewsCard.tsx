@@ -67,7 +67,7 @@ export function NewsCard({
 
                     {/* Title */}
                     <Link href={`/artigos/${slug}`} className="block">
-                        <h3 className="text-[17px] font-black text-slate-800 group-hover:text-[#f97316] transition-colors line-clamp-3 leading-[1.25] py-[7px] tracking-tighter first-letter:uppercase my-0 overflow-hidden">
+                        <h3 className="text-[17px] font-black text-slate-800 group-hover:text-[#f97316] transition-colors line-clamp-3 leading-[1.25] py-[7px] tracking-tighter first-letter:uppercase my-0 mb-[10px] overflow-hidden">
                             {title}
                         </h3>
                     </Link>

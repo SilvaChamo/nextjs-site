@@ -85,7 +85,7 @@
   --sidebar-border: #e2e8f0;
   --sidebar-ring: #059669;
 
-  --site-max-width: 1460px;
+  --site-max-width: 1380px;
 }
 
 .dark {
@@ -141,7 +141,7 @@
   }
 
   h2 {
-    @apply font-heading font-black text-[28px] md:text-[35px] leading-[1.2] tracking-tight mb-4 text-slate-700 dark:text-white;
+    @apply font-heading font-black text-[28px] md:text-[45px] leading-[1.2] tracking-tight mb-4 text-slate-700 dark:text-white;
   }
 
   h3 {
@@ -184,8 +184,8 @@
 
 @layer components {
   .container-site {
-    @apply w-full max-w-[1460px] mx-auto px-4 md:px-[60px];
-    max-width: 1460px;
+    @apply w-full max-w-[1380px] mx-auto px-4 md:px-[60px];
+    max-width: 1380px;
   }
 
   /* STANDARD CARD COMPONENT */

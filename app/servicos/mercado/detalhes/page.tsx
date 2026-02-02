@@ -77,7 +77,7 @@ export default function MercadoDetalhesPage() {
             <div className="container-site relative z-20 mt-[50px] pb-24">
                 {/* Intro */}
                 <div className="bg-white rounded-[15px] shadow-lg shadow-slate-200/50 border border-slate-200 px-8 md:px-10 lg:px-12 py-10 md:py-12 mb-12">
-                    <h2 className="text-2xl md:text-[40px] font-heading font-black text-slate-600 tracking-tight leading-[1.2] mb-6">
+                    <h2 className="text-2xl md:text-[45px] font-heading font-black text-slate-600 tracking-tight leading-[1.2] mb-6">
                         O mercado agrário na palma da <span className="text-[#f97316]">mão</span>
                     </h2>
                     <p className="text-sm text-slate-500 font-medium leading-relaxed">
@@ -157,14 +157,14 @@ export default function MercadoDetalhesPage() {
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Link
-                            href="/contacto"
+                            href="/contactos"
                             className="inline-flex items-center justify-center gap-2 bg-[#f97316] hover:bg-[#ea6a0a] text-white font-bold px-8 py-4 rounded-lg transition-all duration-300 hover:scale-105"
                         >
                             Registar como Produtor
                             <ArrowRight className="w-5 h-5" />
                         </Link>
                         <Link
-                            href="/contacto"
+                            href="/contactos"
                             className="inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-100 text-slate-900 font-bold px-8 py-4 rounded-lg transition-all duration-300 hover:scale-105"
                         >
                             Registar como Comprador

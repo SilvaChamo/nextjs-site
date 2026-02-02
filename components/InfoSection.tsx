@@ -106,7 +106,7 @@ export function InfoSection() {
                 supabase.from('agricultural_stats').select('*').limit(3),
                 supabase.from('articles').select('id, title, subtitle, image_url, date, slug, type')
                     .is('deleted_at', null)
-                    .in('type', ['Notícia', 'Internacional', 'Artigo', 'Artigo Técnico', 'Comunicado', 'Evento', 'Oportunidade', 'Curiosidade', 'Relatório', 'Guia'])
+                    .in('type', ['Notícia', 'Internacional', 'Artigo', 'Artigo Técnico', 'Comunicado', 'Evento', 'Oportunidade', 'Curiosidade', 'Guia'])
                     .order('created_at', { ascending: false })
                     .limit(5)
             ]);
@@ -210,7 +210,7 @@ export function InfoSection() {
                             </span>
                             <span className="w-[20px] h-[1px] bg-white opacity-60"></span>
                         </div>
-                        <h2 className="text-[48px] font-black text-white tracking-tight mt-3">
+                        <h2 className="text-[28px] md:text-[45px] font-black text-white tracking-tight mt-3">
                             Mantenha-se informado
                         </h2>
                         <p className="text-slate-200 text-sm leading-tight max-w-3xl mx-auto font-medium">
@@ -264,7 +264,7 @@ export function InfoSection() {
                                         <Link
                                             key={idx}
                                             href={card.href || "#"}
-                                            className={`p-[24px] rounded-agro text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex items-start gap-[15px] group cursor-pointer border h-full ${card.dark
+                                            className={`p-[15px] rounded-agro text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col gap-[15px] group cursor-pointer border h-full ${card.dark
                                                 ? "bg-[#374151] text-white border-slate-600 shadow-xl shadow-slate-900/20"
                                                 : "bg-white text-[#3a3f47] border-slate-200 shadow-lg shadow-slate-200/50"
                                                 }`}
@@ -278,14 +278,14 @@ export function InfoSection() {
                                                 } ${card.iconBg || ""}`}>
                                                 <card.icon className={`h-7 w-7 ${card.dark ? card.iconColor : "text-slate-600"}`} />
                                             </div>
-                                            <div className="flex flex-col gap-2 h-full">
-                                                <h3 className={`text-lg font-black leading-tight mt-3 first-letter:uppercase lowercase ${card.dark ? "text-white" : "text-[#3a3f47]"}`} suppressHydrationWarning>
+                                            <div className="flex flex-col gap-1 h-full">
+                                                <h3 className={`text-xl font-black leading-tight first-letter:uppercase lowercase ${card.dark ? "text-white" : "text-[#3a3f47]"}`} suppressHydrationWarning>
                                                     <span>{card.title}</span>
                                                 </h3>
-                                                <p className={`text-sm leading-relaxed ${card.dark ? "text-slate-300" : "text-slate-500"} line-clamp-4`}>
+                                                <p className={`text-base leading-tight ${card.dark ? "text-slate-300" : "text-slate-500"} line-clamp-4`}>
                                                     {card.description}
                                                 </p>
-                                                <div className={`mt-auto pt-2 flex items-center gap-2 text-xs font-bold tracking-wide ${card.dark ? "text-white/70 group-hover:text-white" : "text-slate-400 group-hover:text-[#f97316]"} transition-colors`}>
+                                                <div className={`mt-auto pt-2 flex items-center gap-2 text-xs font-bold tracking-wide ${card.dark ? "text-white/70" : "text-slate-400"} group-hover:text-[#f97316] transition-colors`}>
                                                     Ver detalhes
                                                     <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
                                                 </div>
@@ -301,13 +301,29 @@ export function InfoSection() {
 
                             {activeTab === "informacoes" && (
                                 <div className="space-y-6">
-                                    <div className="flex justify-end px-4 md:px-0">
+                                    <div className="flex items-center justify-between px-4 md:px-[10px] mb-4">
+                                        <div className="flex items-center gap-3">
+                                            <button
+                                                onClick={scrollPrev}
+                                                className="w-10 h-10 rounded-full bg-white shadow-md border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all"
+                                                aria-label="Notícia anterior"
+                                            >
+                                                <ChevronLeft className="h-6 w-6" />
+                                            </button>
+                                            <button
+                                                onClick={scrollNext}
+                                                className="w-10 h-10 rounded-full bg-white shadow-md border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all"
+                                                aria-label="Próxima notícia"
+                                            >
+                                                <ChevronRight className="h-6 w-6" />
+                                            </button>
+                                        </div>
                                         <Link href="/blog" className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-[#f97316] transition-colors group">
                                             Ver mais notícias
                                             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                                         </Link>
                                     </div>
-                                    <div className="relative group/embla px-[30px]">
+                                    <div className="relative group/embla">
                                         <div className="overflow-hidden" ref={emblaRef}>
                                             <div className="flex -mr-[20px]">
                                                 {articlesData.map((news, i) => (
@@ -329,18 +345,18 @@ export function InfoSection() {
                                                                 </div>
                                                             </div>
                                                             <div className="p-5 flex flex-col flex-1">
-                                                                <div className="space-y-3">
+                                                                <div className="space-y-2">
                                                                     <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400">
                                                                         <span>{new Date(news.date).toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' }).replace('.', '').replace(' de ', ' ')}</span>
                                                                     </div>
-                                                                    <h3 className="text-lg font-black text-slate-600 group-hover:text-[#f97316] transition-colors line-clamp-2 first-letter:uppercase lowercase my-0" suppressHydrationWarning>
+                                                                    <h3 className="text-lg font-black text-slate-600 group-hover:text-[#f97316] transition-colors line-clamp-2 first-letter:uppercase lowercase my-0 mb-[10px]" suppressHydrationWarning>
                                                                         <span>{news.title}</span>
                                                                     </h3>
-                                                                    <p className="text-xs text-slate-500 leading-relaxed line-clamp-3">
+                                                                    <p className="text-xs text-slate-500 leading-relaxed line-clamp-2">
                                                                         {news.subtitle || news.description}
                                                                     </p>
                                                                 </div>
-                                                                <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 group-hover:text-[#f97316] transition-colors mt-auto pt-6">
+                                                                <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 group-hover:text-[#f97316] transition-colors mt-auto pt-[15px]">
                                                                     Explorar <ArrowRight className="h-3 w-3" />
                                                                 </div>
                                                             </div>
@@ -350,18 +366,6 @@ export function InfoSection() {
                                             </div>
                                         </div>
 
-                                        <button
-                                            onClick={scrollPrev}
-                                            className="absolute top-1/2 -left-4 md:-left-12 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all z-10"
-                                        >
-                                            <ChevronLeft className="h-6 w-6" />
-                                        </button>
-                                        <button
-                                            onClick={scrollNext}
-                                            className="absolute top-1/2 -right-4 md:-right-12 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all z-10"
-                                        >
-                                            <ChevronRight className="h-6 w-6" />
-                                        </button>
                                     </div>
 
                                     <div className="flex justify-center gap-2 mt-10">

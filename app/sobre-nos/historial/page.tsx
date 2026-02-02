@@ -8,8 +8,8 @@ export default function HistorialPage() {
     return (
         <main className="min-h-screen bg-slate-50">
             {/* Header / Breadcrumbs */}
-            <div className="bg-white border-b border-slate-200 py-4 px-6 md:px-12">
-                <div className="max-w-[1440px] mx-auto flex items-center justify-between">
+            <div className="bg-white border-b border-slate-200 py-4">
+                <div className="container-site flex items-center justify-between">
                     <Link href="/sobre-nos" className="flex items-center gap-2 text-slate-500 hover:text-emerald-600 transition-colors group">
                         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                         <span className="text-sm font-bold uppercase tracking-widest">Voltar para Sobre Nós</span>
@@ -21,10 +21,10 @@ export default function HistorialPage() {
                 </div>
             </div>
 
-            <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row min-h-[calc(100vh-65px)]">
+            <div className="container-site flex flex-col md:flex-row min-h-[calc(100vh-65px)]">
 
                 {/* Left Column (Menu / Identity) */}
-                <aside className="w-full md:w-[350px] bg-white border-b md:border-b-0 md:border-r border-slate-200 p-8 md:p-12 pb-24 space-y-8 md:sticky md:top-[80px] md:self-start md:h-[calc(100vh-80px)] overflow-y-auto">
+                <aside className="w-full md:w-[350px] bg-white border-b md:border-b-0 md:border-r border-slate-200 p-[25px] space-y-8 md:sticky md:top-[80px] md:self-start md:h-[calc(100vh-80px)] overflow-y-auto">
                     <div className="space-y-2.5">
                         <div>
                             <h2 className="text-2xl font-black text-slate-800 leading-tight">Base de Dados <br /><span className="text-emerald-600">Agrícola</span></h2>
@@ -34,7 +34,7 @@ export default function HistorialPage() {
                         </p>
                     </div>
 
-                    <nav className="space-y-0.5">
+                    <nav className="space-y-[15px]">
                         {[
                             { icon: BookOpen, label: "A origem", active: true },
                             { icon: ScrollText, label: "O jornal agrícola", active: false },
@@ -43,7 +43,7 @@ export default function HistorialPage() {
                         ].map((item, i) => (
                             <div
                                 key={i}
-                                className={`flex items-center gap-4 py-2 px-4 rounded-[12px] transition-all cursor-pointer border ${item.active ? 'bg-emerald-50 text-emerald-700 shadow-sm border-emerald-100 font-semibold' : 'text-slate-500 border-transparent hover:bg-slate-50 hover:text-slate-700 font-medium'}`}
+                                className={`flex items-center gap-4 py-2 px-4 rounded-[8px] transition-all cursor-pointer border ${item.active ? 'bg-emerald-50 text-emerald-700 shadow-sm border-emerald-400 font-semibold' : 'text-slate-500 border-slate-200 hover:bg-slate-50 hover:text-slate-700 font-medium'}`}
                             >
                                 <item.icon className={`w-5 h-5 ${item.active ? 'text-emerald-600' : 'text-slate-400'}`} />
                                 <span className="text-[15px] tracking-tight">{item.label}</span>
@@ -52,7 +52,7 @@ export default function HistorialPage() {
                     </nav>
 
                     <div className="pt-10 pb-12 border-t border-slate-300">
-                        <div className="bg-orange-100 rounded-[20px] p-8 border border-orange-300/40 shadow-md">
+                        <div className="bg-orange-100 rounded-[10px] p-8 border border-orange-400 shadow-md">
                             <p className="text-[11px] font-black text-orange-600 uppercase tracking-widest mb-3">Próximo capítulo</p>
                             <p className="text-[14px] font-bold text-slate-700 leading-relaxed italic">
                                 "Não paramos no diagnóstico; agora estamos a construir o futuro da robótica no campo."
@@ -62,14 +62,14 @@ export default function HistorialPage() {
                 </aside>
 
                 {/* Right Column (The History Content) */}
-                <section className="flex-1 bg-white md:bg-transparent p-8 md:p-16 lg:p-24 pb-32">
+                <section className="flex-1 bg-white md:bg-transparent py-8 md:py-16 lg:py-24 md:pl-16 lg:pl-24 pb-32">
                     <div>
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-emerald-600/10 border border-emerald-500/20 mb-6">
                             <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
                             <span className="text-xs font-black uppercase tracking-[0.2em] text-emerald-700">Trajectória de Inovação</span>
                         </div>
 
-                        <h1 className="text-[28px] md:text-[35px] font-[900] text-slate-800/80 leading-[1.1] mb-6 tracking-tight">
+                        <h1 className="text-[28px] md:text-[45px] font-[900] text-slate-800/80 leading-[1.1] mb-6 tracking-tight">
                             O nosso <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f97316] to-orange-600">Historial</span>
                         </h1>
 
@@ -99,11 +99,11 @@ export default function HistorialPage() {
                                     </h3>
                                     <div className="space-y-2.5">
                                         <p className="text-[19px] text-slate-600 leading-tight font-medium">
-                                            Tudo começou com o **Jornal Agrícola**, uma iniciativa registada junto às entidades de comunicação nacional como um hub de projectos para o desenvolvimento comunitário.
+                                            Tudo começou com o **O Jornal EntreCCAMPOS — Jornal Agrícola**, uma iniciativa registada pelo GABINFO em 2015, como um Orgão de comunicação destinada à divulgação de informações relacionadas com a Agricultura e Desenvolvimento Comunitário, criação e gestão de projectos para o desenvolvimento das comunidades a nível nacional.
                                         </p>
                                         <div className="w-full h-[1.5px] bg-slate-100"></div>
                                         <p className="text-[15px] text-slate-500 leading-relaxed font-medium">
-                                            Durante anos, o jornal foi a voz do campo, reportando notícias e desafios enfrentados pelos agricultores. No entanto, percebemos que reportar os factos era apenas o início. Para realmente transformar a vida no campo, era necessário entregar **soluções tangíveis**.
+                                            Durante anos, o jornal foi a voz do campo, reportando notícias e desafios enfrentados pelos agricultores. No entanto, percebemos que reportar os factos era apenas o início. Para realmente transformar a vida no campo, era necessário entregar **soluções tangíveis**, é dái que surge a ideia de criar a base de dados agrícolas.
                                         </p>
                                     </div>
                                 </div>
@@ -163,9 +163,9 @@ export default function HistorialPage() {
                                 </div>
                             </div>
 
-                            {/* Quote Section (Final Milestone) */}
-                            <div className="pt-12 -ml-8 md:-ml-16 lg:-ml-24">
-                                <div className="bg-gradient-to-br from-emerald-950 via-emerald-900 to-slate-900 rounded-r-[20px] rounded-l-none py-10 px-12 md:py-12 md:px-16 text-left relative overflow-hidden group border-y border-r border-emerald-800/30">
+                            {/* Quote Section (Final Milestone) - Adjusted to stay within content bounds */}
+                            <div className="pt-12">
+                                <div className="bg-gradient-to-br from-emerald-950 via-emerald-900 to-slate-900 rounded-[20px] py-10 px-12 md:py-12 md:px-16 text-left relative overflow-hidden group border border-emerald-800/30">
                                     <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[100px] rounded-full"></div>
                                     <div className="relative z-10 max-w-3xl">
                                         <h4 className="text-emerald-400 text-[32px] font-[900] tracking-tight mb-8">Para produzir soluções tangíveis</h4>

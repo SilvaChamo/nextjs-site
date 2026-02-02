@@ -33,7 +33,7 @@ export default function SobreAplicativoPage() {
                                 <span className="w-2 h-2 rounded-full bg-[#f97316]"></span>
                                 <span className="text-xs font-bold uppercase tracking-widest text-orange-700">Inovação Tecnológica de Ponta</span>
                             </div>
-                            <h2 className="text-[28px] md:text-[35px] font-[900] text-slate-600 leading-[1.1] mb-6 tracking-tight">
+                            <h2 className="text-[28px] md:text-[45px] font-[900] text-slate-600 leading-[1.1] mb-6 tracking-tight">
                                 Transformamos o seu smartphone num <span className="text-emerald-600">Engenheiro Agrónomo</span> pessoal
                             </h2>
                             <p className="text-slate-600 text-lg leading-relaxed mb-8 font-medium italic border-l-4 border-[#f97316] pl-6">
@@ -118,7 +118,7 @@ export default function SobreAplicativoPage() {
                             <span className="text-[#f97316] font-bold text-sm uppercase tracking-[0.3em]">estratégia digital</span>
                             <div className="w-10 h-[1.5px] bg-[#f97316]"></div>
                         </div>
-                        <h2 className="text-[28px] md:text-[35px] font-[900] leading-[1.1] mb-4 text-white">
+                        <h2 className="text-[28px] md:text-[45px] font-[900] leading-[1.1] mb-4 text-white">
                             Destaque sua empresa no{" "}
                             <span className="notranslate inline-flex drop-shadow-sm">
                                 <span className="text-[#4285F4]">G</span>
@@ -201,7 +201,7 @@ export default function SobreAplicativoPage() {
                         {/* Right Column: Vertical Mini Cards with Styled Container */}
                         <div className="p-[20px] md:p-[40px]">
                             <div className="mb-8">
-                                <h2 className="text-[28px] md:text-[35px] font-[900] text-slate-600 leading-tight mb-2">
+                                <h2 className="text-[28px] md:text-[45px] font-[900] text-slate-600 leading-tight mb-2">
                                     Capacidades <span className="text-[#f97316]">Técnicas</span>
                                 </h2>
                                 <p className="text-slate-500 text-sm leading-relaxed font-medium">

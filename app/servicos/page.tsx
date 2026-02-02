@@ -141,19 +141,22 @@ export default function ServicesIndexPage() {
                 </div>
 
                 {/* Bottom CTA */}
-                <div className="mt-20 bg-[#111827] rounded-[12px] p-12 text-left relative overflow-hidden border border-slate-800 shadow-2xl shadow-slate-900/20">
+                <div className="mt-20 bg-gradient-to-br from-emerald-950 via-[#011a14] to-emerald-950 rounded-[12px] p-12 text-left relative overflow-hidden border border-emerald-900/30 shadow-2xl shadow-slate-900/40">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[100px]" />
                     <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <div className="space-y-6">
-                            <h3 className="text-[35px] md:text-[48px] font-[900] text-white leading-[1.1] tracking-tight">Precisa de um serviço personalizado?</h3>
+                            <h3 className="text-[28px] md:text-[45px] font-[900] text-white leading-[1.1] tracking-tight">Precisa de um serviço personalizado?</h3>
                             <p className="text-slate-400 font-medium leading-relaxed">
                                 Estamos prontos para criar soluções à medida das necessidades da sua empresa ou projecto agrário. Entre em contacto com a nossa equipa técnica.
                             </p>
                         </div>
                         <div className="lg:text-right">
-                            <button className="px-12 py-4 bg-[#f97316] text-white rounded-md font-bold text-base transition-all shadow-lg hover:scale-105 active:scale-95">
+                            <Link
+                                href="/contactos"
+                                className="inline-flex items-center justify-center px-12 py-4 bg-[#f97316] text-white rounded-md font-bold text-base transition-all shadow-lg hover:scale-105 active:scale-95"
+                            >
                                 Contactar Consultoria
-                            </button>
+                            </Link>
                         </div>
                     </div>
                 </div>

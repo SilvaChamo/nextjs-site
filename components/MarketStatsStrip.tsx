@@ -53,7 +53,7 @@ export function MarketStatsStrip() {
 
                     {/* Header Text */}
                     <div className="lg:max-w-md text-center lg:text-left">
-                        <h3 className="text-[35px] md:text-[48px] font-[900] leading-[1.1] tracking-tight mb-4 text-white">
+                        <h3 className="text-[28px] md:text-[45px] font-[900] leading-[1.1] tracking-tight mb-4 text-white">
                             Nossa Posição no <br />
                             <span className="text-[#f97316]">Mercado Agrário</span>
                         </h3>

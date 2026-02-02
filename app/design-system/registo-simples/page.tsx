@@ -697,7 +697,7 @@ export default function SimpleRegistrationPage() {
                                                             body: JSON.stringify({
                                                                 phoneNumber: paymentPhoneNumber.startsWith('258') ? paymentPhoneNumber : `258${paymentPhoneNumber}`,
                                                                 amount: '1500',
-                                                                reference: `REG_${Date.now()}`
+                                                                reference: `REG_${Math.random().toString(36).substring(2, 6).toUpperCase()}_${Date.now()}`
                                                             })
                                                         });
 
@@ -762,67 +762,20 @@ export default function SimpleRegistrationPage() {
                                         </div>
                                     )}
 
-                                    {/* M-Pesa Phone Input */}
+                                    {/* M-Pesa Info */}
                                     {selectedPaymentMethod === 'mpesa' && (
-                                        <div className="bg-emerald-950/30 p-3 rounded-lg border border-emerald-500/10 space-y-3 animate-in fade-in slide-in-from-top-2">
-                                            <div className="space-y-1">
-                                                <label className="text-[10px] font-bold text-emerald-200 uppercase tracking-wider">
-                                                    Número Vodacom
-                                                </label>
-                                                <Input
-                                                    placeholder="258 84/85 xxx xxxx"
-                                                    value={paymentPhoneNumber}
-                                                    onChange={(e) => setPaymentPhoneNumber(e.target.value)}
-                                                    onClick={(e) => e.stopPropagation()}
-                                                    className="h-9 bg-emerald-900/50 border-emerald-800 text-white placeholder:text-emerald-600 text-xs font-mono"
-                                                />
+                                        <div className="bg-emerald-950/30 p-3 rounded-lg border border-emerald-500/10 space-y-2 animate-in fade-in slide-in-from-top-2">
+                                            <p className="text-[10px] text-emerald-200 text-center uppercase tracking-wider font-bold">
+                                                Instruções M-Pesa
+                                            </p>
+                                            <div className="text-[10px] text-emerald-100 bg-emerald-900/40 p-2 rounded border border-emerald-500/20 space-y-1">
+                                                <p>1. Insira o seu número Vodacom abaixo</p>
+                                                <p>2. Clique em "Pagar 1 500 Mt"</p>
+                                                <p>3. Autorize o pagamento no seu telemóvel</p>
                                             </div>
-                                            <Button
-                                                size="sm"
-                                                disabled={isSubmitting}
-                                                onClick={async (e) => {
-                                                    e.stopPropagation();
-
-                                                    // Basic validation
-                                                    if (paymentPhoneNumber.length < 9) {
-                                                        alert("Por favor, insira um número de telefone válido.");
-                                                        return;
-                                                    }
-
-                                                    setIsSubmitting(true);
-
-                                                    try {
-                                                        const res = await fetch('/api/payment/mpesa', {
-                                                            method: 'POST',
-                                                            headers: { 'Content-Type': 'application/json' },
-                                                            body: JSON.stringify({
-                                                                phoneNumber: paymentPhoneNumber.startsWith('258') ? paymentPhoneNumber : `258${paymentPhoneNumber}`,
-                                                                amount: '1500',
-                                                                reference: `REG_${Date.now()}`
-                                                            })
-                                                        });
-
-                                                        const data = await res.json();
-
-                                                        if (data.success) {
-                                                            alert(`Pedido enviado! Verifique o seu telemóvel (${paymentPhoneNumber}) e insira o PIN do M-Pesa.`);
-                                                        } else {
-                                                            // Fallback for mock/error
-                                                            alert(data.message || "Erro ao processar pagamento. Tente novamente.");
-                                                        }
-                                                    } catch (err) {
-                                                        console.error(err);
-                                                        alert("Erro de conexão. Verifique sua internet.");
-                                                    } finally {
-                                                        setIsSubmitting(false);
-                                                    }
-                                                }}
-                                                className={`w-full h-8 text-xs font-black uppercase text-white hover:text-white ${selectedPaymentMethod === 'mpesa' ? 'bg-[#E60000] hover:bg-[#cc0000]' : 'bg-[#4B0082] hover:bg-[#3a0066]'}`}
-                                            >
-                                                {isSubmitting ? 'Processando...' : 'Pagar 1 500 Mt'}
-                                            </Button>
                                         </div>
                                     )}
+
 
                                     {/* Visa Info */}
                                     {selectedPaymentMethod === 'visa' && (

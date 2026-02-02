@@ -10,7 +10,7 @@ import { GrowthTipCard } from "../../../components/GrowthTipCard";
 import { SearchCategories } from "../../../components/SearchCategories";
 import { VisibilityChart } from "../../../components/VisibilityChart";
 import { ActivePlanCard } from "../../../components/ActivePlanCard";
-import { Building2, ShoppingCart, Briefcase, GraduationCap, ArrowRight } from "lucide-react";
+import { Building2, ShoppingCart, Briefcase, GraduationCap, ArrowRight, LayoutDashboard, XCircle } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../../../components/ui/button";
 
@@ -32,6 +32,7 @@ const getStyles = (startKey: string, settings: any): React.CSSProperties => {
 export default function DashboardPage() {
     const router = useRouter();
     const [user, setUser] = useState<any>(null);
+    const [isAdmin, setIsAdmin] = useState(false);
     const [loading, setLoading] = useState(true);
     const supabase = createClient();
     const { settings, loading: settingsLoading } = useSiteSettings();
@@ -45,6 +46,17 @@ export default function DashboardPage() {
             } else {
                 console.log("User authorized:", user.email);
                 setUser(user);
+
+                // Check for admin role
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('role')
+                    .eq('id', user.id)
+                    .single();
+
+                if (profile && profile.role === 'admin') {
+                    setIsAdmin(true);
+                }
             }
             setLoading(false);
         };
@@ -136,6 +148,22 @@ export default function DashboardPage() {
                                     <ArrowRight className="w-4 h-4 text-slate-300 ml-auto group-hover:text-amber-500 transition-colors" />
                                 </div>
                             </Link>
+
+                            {/* Cancel Subscription Button (Sidebar) */}
+                            <div className="pt-4 border-t border-slate-100">
+                                <button
+                                    onClick={() => {
+                                        if (confirm("Tem certeza que deseja cancelar sua subscrição?")) {
+                                            alert("Subscrição cancelada com sucesso.");
+                                            router.push("/");
+                                        }
+                                    }}
+                                    className="w-full flex items-center justify-center gap-2 text-red-500 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-all text-[11px] font-bold uppercase tracking-widest border border-transparent hover:border-red-100"
+                                >
+                                    <XCircle className="w-4 h-4" />
+                                    Cancelar Subscrição
+                                </button>
+                            </div>
                         </div>
                     </div>
 

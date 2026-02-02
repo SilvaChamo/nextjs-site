@@ -17,8 +17,14 @@ import {
     TrendingUp,
     Eye,
     Truck,
-    Clock
+    Clock,
+    MessageSquare,
+    Send,
+    X
 } from 'lucide-react';
+import { useState } from 'react';
+import { createClient } from '@/utils/supabase/client';
+import { toast } from 'sonner';
 import Link from 'next/link';
 
 interface Company {
@@ -73,6 +79,38 @@ export default function ProductDetailClient({
     similarProducts?: (Product & { companySlug: string })[]
 }) {
 
+    const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const supabase = createClient();
+
+    const handleQuoteSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setSubmitting(true);
+        const formData = new FormData(e.currentTarget);
+
+        const data = {
+            sender_name: formData.get("sender_name") as string,
+            sender_email: formData.get("sender_email") as string,
+            sender_phone: formData.get("sender_phone") as string,
+            message: formData.get("message") as string,
+            product_id: product.id,
+            company_id: company.id,
+            status: 'pending'
+        };
+
+        try {
+            const { error } = await supabase.from('quotations').insert(data);
+            if (error) throw error;
+            toast.success("Solicitação enviada com sucesso!");
+            setIsQuoteModalOpen(false);
+        } catch (error) {
+            console.error("Error sending quote:", error);
+            toast.error("Erro ao enviar solicitação. Tente novamente.");
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
     const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
 
     const handleShare = (type: 'whatsapp' | 'facebook' | 'linkedin' | 'twitter' | 'copy') => {
@@ -109,6 +147,10 @@ export default function ProductDetailClient({
         } else {
             alert('Esta empresa ainda não disponibilizou um contacto de WhatsApp.');
         }
+    };
+
+    const handleQuoteRequest = () => {
+        setIsQuoteModalOpen(true);
     };
 
     return (
@@ -172,6 +214,79 @@ export default function ProductDetailClient({
             }
         >
             <div className="space-y-agro pb-20">
+                {/* QUOTE MODAL */}
+                {isQuoteModalOpen && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+                        <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl animate-in zoom-in-95 duration-200 relative">
+                            <button
+                                onClick={() => setIsQuoteModalOpen(false)}
+                                className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 rounded-full transition-all"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+
+                            <h3 className="text-xl font-black text-slate-800 mb-1">Solicitar Cotação</h3>
+                            <p className="text-sm text-slate-500 mb-6 font-medium">Preencha os dados e a empresa receberá sua solicitação.</p>
+
+                            <form onSubmit={handleQuoteSubmit} className="space-y-4">
+                                <input name="product_id" type="hidden" value={product.id || ""} />
+                                <input name="company_id" type="hidden" value={company.id || ""} />
+
+                                <div>
+                                    <label className="block text-[11px] font-black uppercase tracking-wider text-slate-500 mb-1.5">Seu Nome</label>
+                                    <input
+                                        name="sender_name"
+                                        required
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                                        placeholder="Nome completo"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-[11px] font-black uppercase tracking-wider text-slate-500 mb-1.5">Seu Email</label>
+                                    <input
+                                        name="sender_email"
+                                        type="email"
+                                        required
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                                        placeholder="email@exemplo.com"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-[11px] font-black uppercase tracking-wider text-slate-500 mb-1.5">Telefone (Opcional)</label>
+                                    <input
+                                        name="sender_phone"
+                                        type="tel"
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                                        placeholder="+258 84 123 4567"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-[11px] font-black uppercase tracking-wider text-slate-500 mb-1.5">Mensagem</label>
+                                    <textarea
+                                        name="message"
+                                        required
+                                        rows={3}
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm font-medium text-slate-700 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 resize-none"
+                                        defaultValue={`Olá, gostaria de receber uma cotação para o produto: ${product.name}.`}
+                                    />
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={submitting}
+                                    className="w-full bg-[#f97316] hover:bg-[#ea580c] text-white font-black uppercase tracking-wider text-xs py-3.5 rounded-xl shadow-lg shadow-orange-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                                >
+                                    {submitting ? "Enviando..." : "Enviar Solicitação"}
+                                    {!submitting && <Send className="w-4 h-4" />}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                )}
+
                 {/* MAIN CONTENT (RIGHT COLUMN) - Strictly no forced uppercase */}
                 <div className="bg-white border border-slate-200 rounded-[15px] shadow-sm min-h-[600px] p-10">
                     <h1 className="text-2xl font-black text-black/75 mb-[46px] flex items-center gap-2 relative">
@@ -323,13 +438,23 @@ export default function ProductDetailClient({
                                 </div>
                             </div>
 
-                            <div className="pt-2">
+                            <div className="pt-2 flex flex-col gap-3">
+                                {/* New Quote Button */}
+                                <button
+                                    onClick={handleQuoteRequest}
+                                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase tracking-wider text-xs py-3.5 rounded-xl shadow-lg shadow-emerald-600/20 transition-all flex items-center justify-center gap-2"
+                                >
+                                    <MessageSquare className="w-4 h-4" />
+                                    Solicitar Cotação
+                                </button>
+
+                                {/* Existing Order Button */}
                                 <button
                                     onClick={handleOrder}
-                                    className="btn-primary py-3 px-10 rounded-[10px] h-auto text-sm shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-2"
+                                    className="w-full bg-white border border-emerald-100 hover:bg-emerald-50 text-emerald-700 font-bold uppercase tracking-wider text-xs py-3.5 rounded-xl transition-all flex items-center justify-center gap-2"
                                 >
-                                    <WhatsAppIcon className="w-5 h-5" />
-                                    Encomendar agora
+                                    <WhatsAppIcon className="w-5 h-5 text-emerald-600" />
+                                    Encomendar via WhatsApp
                                 </button>
                             </div>
                         </div>

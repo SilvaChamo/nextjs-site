@@ -64,7 +64,7 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
         <aside className="w-full h-full bg-emerald-950 flex flex-col text-slate-300 shrink-0 transition-all duration-300">
             {/* 1. Header Area with Dashboard Title */}
             <div className={`h-16 flex items-center ${isCollapsed ? 'justify-center px-2' : 'px-6'} border-b border-emerald-900 transition-all`}>
-                <Link href="/usuario/dashboard" className={`flex items-center ${isCollapsed ? 'justify-center w-10 h-10 p-0' : 'w-full gap-3 px-4 py-3'} bg-orange-500 text-white hover:bg-orange-600 transition-all group rounded-md shadow-lg shadow-orange-500/20`}>
+                <Link href="/usuario/dashboard" className={`flex items-center ${isCollapsed ? 'justify-center w-10 h-10 p-0' : 'w-full gap-3 px-4 py-3'} bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white transition-all group rounded-md shadow-lg shadow-orange-500/20`}>
                     <LayoutDashboard className="w-5 h-5 text-white" />
                     {!isCollapsed && <span className="font-heading font-bold text-base tracking-wide uppercase">Dashboard</span>}
                 </Link>
@@ -127,49 +127,28 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
                 </div>
             </nav>
 
-            {/* 3. Footer Area (Collapse Button) */}
-            <div className={`p-4 bg-emerald-950 border-t border-emerald-900 ${isCollapsed ? 'flex justify-center' : ''}`}>
-                {/* Upgrade Card - Hide when collapsed */}
+            {/* 3. Footer Area (Upgrade Notification) */}
+            <div className="mt-auto border-t border-emerald-900 bg-emerald-950">
+                {/* Upgrade Notification - Full Width */}
                 {!isCollapsed && (
-                    <div className="mb-4 p-4 rounded-xl bg-gradient-to-br from-emerald-900 to-emerald-950 border border-emerald-800 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-2 opacity-10">
-                            <Crown className="w-12 h-12 text-white" />
+                    <div className="w-full bg-white/5 backdrop-blur-md border-t border-white/5 p-4 relative overflow-hidden group hover:bg-white/10 transition-all cursor-pointer">
+                        <div className="absolute top-0 right-0 p-2 opacity-5 group-hover:opacity-10 transition-opacity">
+                            <Crown className="w-16 h-16 text-white" />
                         </div>
-                        <div className="relative z-10">
-                            <div className="flex items-center gap-2 mb-2">
-                                <Crown className="w-4 h-4 text-orange-400" />
-                                <span className="text-[10px] font-black text-orange-400 uppercase tracking-wider">PREMIUM</span>
+                        <Link href="/planos" className="relative z-10 flex flex-col gap-1">
+                            <div className="flex items-center gap-2">
+                                <Crown className="w-4 h-4 text-orange-500" />
+                                <span className="text-[10px] font-black text-orange-500 uppercase tracking-wider">UPGRADE DISPONÍVEL</span>
                             </div>
-                            <h4 className="text-white font-bold text-sm mb-1">Faça Upgrade</h4>
-                            <p className="text-[11px] text-slate-400 mb-3 leading-tight">
-                                Tenha acesso a todos os recursos.
-                            </p>
-                            <Link href="/planos" className="block w-full">
-                                <Button size="sm" className="w-full bg-orange-500 hover:bg-orange-600 text-white border-none h-7 text-xs font-bold uppercase tracking-wide">
-                                    Ver Planos
-                                </Button>
-                            </Link>
-                        </div>
+                            <h4 className="text-white font-bold text-sm leading-tight">
+                                Desbloqueie todos os recursos
+                            </h4>
+                            <div className="mt-2 flex items-center gap-2 text-[10px] text-white/90 font-medium bg-white/5 hover:bg-white/10 w-fit px-2 py-1 rounded transition-colors">
+                                <span>Ver Planos &rarr;</span>
+                            </div>
+                        </Link>
                     </div>
                 )}
-
-                {/* Logout Button */}
-                <button
-                    onClick={handleLogout}
-                    className={`flex items-center justify-center rounded-lg text-slate-400 hover:text-red-400 transition-colors ${isCollapsed ? 'w-10 h-10 mx-auto' : 'w-10 h-10 ml-auto'}`}
-                    title="Terminar Sessão"
-                >
-                    <LogOut className="w-5 h-5" />
-                </button>
-                
-                {/* Sidebar Toggle Button */}
-                <button
-                    onClick={toggleSidebar}
-                    className={`flex items-center justify-center rounded-lg text-slate-400 hover:text-[#f97316] transition-colors ${isCollapsed ? 'w-10 h-10 mx-auto mt-2' : 'w-10 h-10 ml-auto mt-2'}`}
-                    title={isCollapsed ? "Expandir Barra" : "Encolher Barra"}
-                >
-                    <ChevronRight className={`w-4 h-4 transition-transform duration-300 ${!isCollapsed ? 'rotate-180' : ''}`} />
-                </button>
             </div>
         </aside >
     );

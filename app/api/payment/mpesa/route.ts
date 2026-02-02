@@ -50,6 +50,10 @@ export async function POST(request: Request) {
         const password = Buffer.from(`${shortcode}${passkey}${timestamp}`).toString('base64');
 
         // 5. Send STK Push (C2B)
+        // Ensure ThirdPartyReference is UNVERSALLY unique to avoid 409 Duplicate Transaction errors from M-Pesa
+        const salt = Math.random().toString(36).substring(2, 6).toUpperCase();
+        const uniqueReference = `REG_${salt}_${Date.now()}`;
+
         const paymentResponse = await fetch('https://api.sandbox.vm.co.mz/ipg/v1x/c2bPayment/singleStage/', {
             method: 'POST',
             headers: {
@@ -58,10 +62,10 @@ export async function POST(request: Request) {
                 'Origin': 'developer.mpesa.vm.co.mz'
             },
             body: JSON.stringify({
-                input_TransactionReference: reference || `TX_${Date.now()}`,
+                input_TransactionReference: reference || uniqueReference,
                 input_CustomerMSISDN: phoneNumber, // Format: 25884xxxxxxx
                 input_Amount: amount,
-                input_ThirdPartyReference: reference || `REF_${Date.now()}`,
+                input_ThirdPartyReference: uniqueReference, // M-Pesa uses this for duplicate detection
                 input_ServiceProviderCode: shortcode,
             })
         });

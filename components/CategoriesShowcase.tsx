@@ -89,8 +89,16 @@ export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
                                         .join(" "); // Junta novamente
                                 };
 
+                                // Função para limpar tags HTML da descrição rica
+                                const stripHtml = (html: string) => {
+                                    if (!html) return "";
+                                    return html.replace(/<[^>]*>?/gm, "") || "";
+                                };
+
                                 const category = refineText(parts[0] || "Empresa");
-                                const activity = refineText(parts[1] || company.sub || "Actividade");
+                                // Prioritiza a descrição (limpa), fallback para activity, fallback para o sub (antigo)
+                                const rawDescription = company.description || company.activity || refineText(parts[1] || company.sub || "Actividade");
+                                const description = stripHtml(rawDescription);
                                 const location = company.location || "Moçambique";
 
                                 return (
@@ -134,8 +142,8 @@ export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
                                                     {company.title}
                                                 </h3>
 
-                                                <p className="text-slate-400 text-xs leading-relaxed mb-2 flex-1 line-clamp-2">
-                                                    {activity}
+                                                <p className="text-slate-500 text-[11px] leading-relaxed mb-2 flex-1 line-clamp-2">
+                                                    {description}
                                                 </p>
 
                                                 <div className="pt-2 border-t border-slate-50 flex items-center justify-start gap-2 text-slate-400 group-hover:text-[#f97316] transition-colors">

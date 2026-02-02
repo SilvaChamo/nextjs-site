@@ -15,7 +15,7 @@ export default async function Home() {
   // Parallel Data Fetching
   const [statsResult, companiesResult] = await Promise.all([
     supabase.from('dashboard_indicators').select('slug, value, trend').eq('location', 'hero'),
-    supabase.from('companies').select('id, name, slug, category, location, logo_url').eq('is_archived', false).order('is_featured', { ascending: false }).limit(10)
+    supabase.from('companies').select('id, name, slug, category, location, logo_url, activity, description').eq('is_archived', false).eq('is_featured', true).order('created_at', { ascending: false }).limit(10)
   ]);
 
   // Process Stats
@@ -34,6 +34,8 @@ export default async function Home() {
       sub: c.category,
       location: c.location,
       logo: c.logo_url,
+      activity: c.activity,
+      description: c.description,
       // icon property removed. Client component handles fallback.
     }))
     : [];

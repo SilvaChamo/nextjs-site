@@ -40,7 +40,7 @@ export default function EditTrainingPage() {
     if (!data) return null;
 
     return (
-        <div className="h-[calc(100vh-80px)] p-6">
+        <div className="w-full max-w-none mx-auto py-8">
             <TrainingEditor initialData={data} />
         </div>
     );

@@ -225,22 +225,20 @@ export function PropertyEditor({ initialData, isNew = false }: PropertyEditorPro
                             </h3>
 
                             <div className="space-y-4">
-                                <input
+                                <ImageUpload
+                                    label="Imagem de Capa"
                                     value={formData.image_url}
-                                    onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                                    placeholder="URL da Imagem..."
-                                    className="w-full h-11 px-4 bg-white border border-slate-200 rounded-lg text-sm font-medium outline-none focus:ring-2 focus:ring-emerald-500"
+                                    onChange={(url) => setFormData({ ...formData, image_url: url })}
+                                    recommendedSize="1200x675px"
+                                    maxSizeMB={1}
+                                    bucket="public-assets"
+                                    folder="properties"
+                                    aspectRatio="video"
+                                    imageClassName="w-full h-full object-cover rounded-lg"
+                                    showRecommendedBadge={false}
+                                    maxWidth={1200}
+                                    maxHeight={675}
                                 />
-                                {formData.image_url ? (
-                                    <div className="aspect-video rounded-lg overflow-hidden border border-slate-200 bg-white shadow-sm relative group">
-                                        <img src={formData.image_url} alt="Propriedade" className="w-full h-full object-cover" />
-                                    </div>
-                                ) : (
-                                    <div className="aspect-video rounded-lg border-2 border-dashed border-slate-300 flex items-center justify-center flex-col gap-2 text-slate-400 bg-white">
-                                        <MapPin className="w-8 h-8 opacity-50" />
-                                        <span className="text-xs font-medium">Sem imagem</span>
-                                    </div>
-                                )}
                             </div>
                         </div>
 

@@ -99,7 +99,7 @@ export function TrainingEditor({ initialData, isNew = false }: TrainingEditorPro
     };
 
     return (
-        <div className="bg-white rounded-agro-lg shadow-[0_0_10px_rgba(0,0,0,0.1)] border border-slate-200 flex flex-col h-full">
+        <div className="bg-white rounded-agro-lg shadow-[0_0_10px_rgba(0,0,0,0.1)] border border-slate-200 flex flex-col">
             <div className="px-6 py-8 border-b border-slate-200 flex items-center justify-between bg-slate-300/40 transition-all shrink-0">
                 <div className="flex items-center gap-4 flex-1 min-w-0">
                     <button
@@ -132,7 +132,7 @@ export function TrainingEditor({ initialData, isNew = false }: TrainingEditorPro
                 </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="flex-1 p-10 space-y-8 overflow-y-auto">
+            <form onSubmit={handleSubmit} className="p-10 space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {/* Main Content */}
                     <div className="md:col-span-2 space-y-8">

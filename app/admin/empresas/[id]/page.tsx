@@ -12,7 +12,7 @@ export default async function EditCompanyPage({ params }: { params: Promise<{ id
     }
 
     return (
-        <div className="max-w-5xl mx-auto py-8">
+        <div className="w-full max-w-none mx-auto py-8">
             <CompanyEditor initialData={company} />
         </div>
     );

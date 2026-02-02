@@ -69,10 +69,10 @@ export function ImageUpload({
     }, []);
     const [pendingFile, setPendingFile] = useState<File | null>(null);
     const [resizeDetails, setResizeDetails] = useState<{ width: number, height: number } | null>(null);
-    const [resolveResize, setResolveResize] = useState<((value: boolean) => void) | null>(null);
+    const [resolveResize, setResolveResize] = useState<((value: boolean | null) => void) | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const checkAndResize = (file: File): Promise<boolean> => {
+    const checkAndResize = (file: File): Promise<boolean | null> => {
         return new Promise((resolve) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -82,7 +82,7 @@ export function ImageUpload({
                 img.onload = () => {
                     const width = img.width;
                     const height = img.height;
-                    const needsResizing = (maxWidth && width > maxWidth) || (maxHeight && height > maxHeight);
+                    const needsResizing = (maxWidth && width > maxWidth) || (maxHeight && height > maxHeight) || (file.size > maxSizeMB * 1024 * 1024);
 
                     if (needsResizing) {
                         setResizeDetails({ width, height });
@@ -178,7 +178,12 @@ export function ImageUpload({
         }
 
         const shouldResize = await checkAndResize(file);
-        if (shouldResize === undefined) return; // Modal will handle it
+
+        // If null, user cancelled
+        if (shouldResize === null) {
+            if (fileInputRef.current) fileInputRef.current.value = "";
+            return;
+        }
 
         await startUpload(file, shouldResize);
     };
@@ -244,10 +249,11 @@ export function ImageUpload({
 
     const handleResizeConfirm = (confirm: boolean) => {
         setShowResizeModal(false);
-        if (resolveResize && pendingFile) {
-            startUpload(pendingFile, confirm);
+        if (resolveResize) {
+            resolveResize(confirm ? true : null);
             setPendingFile(null);
             setResizeDetails(null);
+            setResolveResize(null);
         }
     };
 
@@ -258,11 +264,7 @@ export function ImageUpload({
 
     return (
         <div className={cn("flex flex-col gap-2", useBackgroundImage && "h-full")}>
-            {!useBackgroundImage && (
-                <div className="flex items-center justify-between">
-                    <label className="text-xs font-black uppercase text-slate-500 tracking-widest">{label}</label>
-                </div>
-            )}
+            {/* Label removed as per request */}
 
             <div
                 className={cn(

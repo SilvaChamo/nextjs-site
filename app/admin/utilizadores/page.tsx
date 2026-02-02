@@ -23,20 +23,20 @@ export default function AdminUsersPage() {
     const [inviteEmail, setInviteEmail] = useState("");
     const [inviteRole, setInviteRole] = useState("admin");
 
-    async function fetchUsers() {
-        setLoading(true);
-        // Fetch profiles
-        const { data, error } = await supabase
-            .from('profiles')
-            .select('*')
-            .order('created_at', { ascending: false });
-
-        if (error) console.error(error);
-        else setUsers(data || []);
-        setLoading(false);
-    }
-
     useEffect(() => {
+        async function fetchUsers() {
+            setLoading(true);
+            // Fetch profiles
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) console.error(error);
+            else setUsers(data || []);
+            setLoading(false);
+        }
+
         fetchUsers();
     }, []);
 

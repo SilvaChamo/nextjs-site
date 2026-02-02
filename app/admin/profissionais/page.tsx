@@ -19,23 +19,23 @@ export default function AdminProfessionalsPage() {
     const [itemToDelete, setItemToDelete] = useState<any>(null);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-    async function fetchData() {
-        setLoading(true);
-        const { data, error } = await supabase
-            .from('professionals')
-            .select('*')
-            .order('name', { ascending: true });
-
-        if (error) {
-            console.error(error);
-            toast.error("Erro ao carregar profissionais");
-        } else {
-            setData(data || []);
-        }
-        setLoading(false);
-    }
-
     useEffect(() => {
+        async function fetchData() {
+            setLoading(true);
+            const { data, error } = await supabase
+                .from('professionals')
+                .select('*')
+                .order('name', { ascending: true });
+
+            if (error) {
+                console.error(error);
+                toast.error("Erro ao carregar profissionais");
+            } else {
+                setData(data || []);
+            }
+            setLoading(false);
+        }
+
         fetchData();
     }, []);
 

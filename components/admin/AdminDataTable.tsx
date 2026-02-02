@@ -74,6 +74,7 @@ export function AdminDataTable({
             // If we have data (empty or not) and we are online, trust the server
             // Or if we have data > 0 (even if offline, it might be prop-passed), trust it
             if (isOnline || data.length > 0) {
+                // eslint-disable-next-line react-hooks/set-state-in-effect
                 setLocalData(data);
                 syncManager.saveSnapshot(title, data);
             }

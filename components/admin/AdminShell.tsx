@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { syncManager } from "@/lib/syncManager";
 import { toast } from "sonner";
@@ -24,7 +25,8 @@ import {
     ShoppingCart,
     Contact,
     GraduationCap,
-    LandPlot
+    LandPlot,
+    Database
 } from "lucide-react";
 
 interface AdminShellProps {
@@ -34,11 +36,28 @@ interface AdminShellProps {
 
 export function AdminShell({ children, userEmail }: AdminShellProps) {
     const pathname = usePathname();
+    const router = useRouter();
+    const supabase = createClient();
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { isOnline } = useNetworkStatus();
     const [isSyncing, setIsSyncing] = useState(false);
+    const [isSigningOut, setIsSigningOut] = useState(false);
     const [pendingCount, setPendingCount] = useState(0);
+
+    const handleSignOut = async () => {
+        setIsSigningOut(true);
+        try {
+            await supabase.auth.signOut();
+            router.refresh();
+            router.push('/login');
+            toast.success("Sessão terminada.");
+        } catch (error) {
+            toast.error("Erro ao sair.");
+        } finally {
+            setIsSigningOut(false);
+        }
+    };
 
     useEffect(() => {
         const checkQueue = () => {
@@ -76,7 +95,7 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
         return (
             <Link
                 href={href}
-                className={`flex items-center gap-3 px-4 py-2.5 text-sm font-semibold rounded-xl transition-all group whitespace-nowrap ${active
+                className={`flex items-center gap-3 px-4 py-2 text-sm font-semibold rounded-xl transition-all group whitespace-nowrap ${active
                     ? "text-orange-500"
                     : "text-slate-400 hover:text-orange-500"
                     } ${isCollapsed ? "justify-center px-2" : ""}`}
@@ -141,7 +160,7 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
                     </div>
 
                     {/* Nav */}
-                    <nav className="flex-1 px-2 py-6 flex flex-col gap-0 overflow-y-auto custom-scrollbar overflow-x-hidden">
+                    <nav className="flex-1 px-2 py-2 flex flex-col gap-0 overflow-hidden">
 
                         {/* Section 1: Dashboard */}
                         <LinkItem href="/admin" icon={LayoutDashboard} label="Dashboard" />
@@ -163,7 +182,7 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
                         <div className={`my-2 border-b border-slate-700 ${isCollapsed ? "mx-2" : "mx-4"}`}></div>
 
                         {/* Section 3: Analysis & Interaction */}
-                        <div className="flex flex-col gap-1">
+                        <div className="flex flex-col gap-0">
                             <LinkItem href="/admin/estatisticas" icon={BarChart3} label="Estatísticas" />
                             <LinkItem href="/admin/mensagens" icon={MessageSquare} label="Interacções" />
                             <LinkItem href="/admin/contactos" icon={Contact} label="Contactos" />
@@ -172,9 +191,10 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
                         <div className={`my-2 border-b border-slate-700 ${isCollapsed ? "mx-2" : "mx-4"}`}></div>
 
                         {/* Section 4: Configuration */}
-                        <div className="flex flex-col gap-1 mt-auto">
+                        <div className="flex flex-col gap-0 mt-auto">
                             <LinkItem href="/admin/indicadores" icon={Target} label="Indicadores" />
                             <LinkItem href="/admin/configuracoes" icon={Grid2X2} label="Configurações" />
+
                             <LinkItem href="/admin/utilizadores" icon={Users} label="Utilizadores" />
                         </div>
                     </nav>
@@ -193,39 +213,17 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
                             </div>
                         )}
 
-                        {/* Status Bar */}
-                        <div className="px-2 mb-4 space-y-2">
-                            <div className={`flex items-center gap-2 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors ${isOnline ? "bg-emerald-500/10 text-emerald-400" : "bg-orange-500/10 text-orange-400 animate-pulse"
-                                }`}>
-                                {isOnline ? <Wifi className="w-3.5 h-3.5" /> : <WifiOff className="w-3.5 h-3.5" />}
-                                {!isCollapsed && (isOnline ? "Sistema Online" : "Modo Offline")}
-                            </div>
-
-                            {pendingCount > 0 && !isCollapsed && (
-                                <button
-                                    onClick={handleSync}
-                                    disabled={isSyncing}
-                                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-orange-500 text-white text-[10px] font-black uppercase tracking-widest hover:bg-orange-600 transition-all shadow-lg"
-                                >
-                                    <div className="flex items-center gap-2">
-                                        {isSyncing ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
-                                        Sincronizar
-                                    </div>
-                                    <span className="bg-white/20 px-1.5 py-0.5 rounded-md text-[9px]">{pendingCount}</span>
-                                </button>
-                            )}
-                        </div>
-
-                        <form action="/auth/signout" method="post">
-                            <button
-                                className={`w-full flex items-center gap-2 py-2 text-xs font-bold text-rose-500 hover:bg-rose-500/10 rounded-md transition-colors ${isCollapsed ? "justify-center" : "justify-start px-2"
-                                    }`}
-                                title="Terminar Sessão"
-                            >
-                                <LogOut className="w-4 h-4 min-w-[16px]" />
-                                {!isCollapsed && "Terminar Sessão"}
-                            </button>
-                        </form>
+                        {/* Logout Button */}
+                        <button
+                            onClick={handleSignOut}
+                            disabled={isSigningOut}
+                            className={`w-full flex items-center gap-2 py-2 text-xs font-bold text-slate-400 hover:text-orange-500 transition-colors ${isCollapsed ? "justify-center" : "justify-start px-2"
+                                }`}
+                            title="Terminar Sessão"
+                        >
+                            {isSigningOut ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogOut className="w-4 h-4 min-w-[16px]" />}
+                            {!isCollapsed && (isSigningOut ? "A sair..." : "Terminar Sessão")}
+                        </button>
                     </div>
                 </div>
             </aside>

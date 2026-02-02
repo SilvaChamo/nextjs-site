@@ -22,44 +22,44 @@ export default function FormacaoPage() {
     const [modalType, setModalType] = useState<"no-login" | "restricted-plan" | "already-allowed">("no-login");
     const router = useRouter();
 
-    const fetchTrainings = async () => {
-        setIsLoadingTrainings(true);
-        const { data, error } = await supabase
-            .from('trainings')
-            .select('*')
-            .is('deleted_at', null)
-            .order('created_at', { ascending: false });
-
-        if (data) {
-            // Logic to separate upcoming and past
-            // For now, let's assume items with an older created_at or explicitly marked are 'past'
-            // We can also use the 'date' field if we parse it, but for simplicity we'll split or filter
-
-            // Filter upcoming (not past)
-            setUpcomingTrainings(data.slice(0, 10)); // Just showing a subset for upcoming
-
-            // Populate "Programs" (Cursos Passados) area dynamically too
-            const mappedPrograms = data.slice(-3).map((t, i) => {
-                const configs = [
-                    { icon: Laptop, bg: "bg-blue-50", color: "text-blue-500" },
-                    { icon: BookOpen, bg: "bg-emerald-50", color: "text-emerald-500" },
-                    { icon: Users, bg: "bg-indigo-50", color: "text-indigo-500" }
-                ];
-                const config = configs[i % configs.length];
-                return {
-                    title: t.title,
-                    description: t.description?.substring(0, 100) + "...",
-                    icon: config.icon,
-                    iconBg: config.bg,
-                    iconColor: config.color
-                };
-            });
-            setPrograms(mappedPrograms);
-        }
-        setIsLoadingTrainings(false);
-    };
-
     useEffect(() => {
+        const fetchTrainings = async () => {
+            setIsLoadingTrainings(true);
+            const { data, error } = await supabase
+                .from('trainings')
+                .select('*')
+                .is('deleted_at', null)
+                .order('created_at', { ascending: false });
+
+            if (data) {
+                // Logic to separate upcoming and past
+                // For now, let's assume items with an older created_at or explicitly marked are 'past'
+                // We can also use the 'date' field if we parse it, but for simplicity we'll split or filter
+
+                // Filter upcoming (not past)
+                setUpcomingTrainings(data.slice(0, 10)); // Just showing a subset for upcoming
+
+                // Populate "Programs" (Cursos Passados) area dynamically too
+                const mappedPrograms = data.slice(-3).map((t, i) => {
+                    const configs = [
+                        { icon: Laptop, bg: "bg-blue-50", color: "text-blue-500" },
+                        { icon: BookOpen, bg: "bg-emerald-50", color: "text-emerald-500" },
+                        { icon: Users, bg: "bg-indigo-50", color: "text-indigo-500" }
+                    ];
+                    const config = configs[i % configs.length];
+                    return {
+                        title: t.title,
+                        description: t.description?.substring(0, 100) + "...",
+                        icon: config.icon,
+                        iconBg: config.bg,
+                        iconColor: config.color
+                    };
+                });
+                setPrograms(mappedPrograms);
+            }
+            setIsLoadingTrainings(false);
+        };
+
         fetchTrainings();
     }, []);
 

@@ -6,7 +6,7 @@ import { DashboardPageHeader } from "@/components/DashboardPageHeader";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { toast } from "sonner";
-import { TrainingForm } from "@/components/admin/TrainingForm";
+
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { PermissionModal } from "@/components/modals/PermissionModal";

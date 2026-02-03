@@ -22,6 +22,10 @@ export default function AdminUsersPage() {
     const [isInviteOpen, setIsInviteOpen] = useState(false);
     const [inviteEmail, setInviteEmail] = useState("");
     const [inviteRole, setInviteRole] = useState("admin");
+    const [filterPlan, setFilterPlan] = useState<string>("all");
+
+    // Plans for filtering
+    const PLANS = ["Visitante", "Basic", "Profissional", "Premium", "Parceiro"];
 
     useEffect(() => {
         async function fetchUsers() {
@@ -68,8 +72,29 @@ export default function AdminUsersPage() {
             )
         },
         {
-            header: "Função",
-            key: "role",
+            )
+},
+{
+    header: "Plano",
+        key: "plan",
+            render: (val: string) => {
+                const colors: Record<string, string> = {
+                    Visitante: "bg-slate-100 text-slate-500",
+                    Basic: "bg-blue-50 text-blue-600",
+                    Profissional: "bg-orange-50 text-orange-600",
+                    Premium: "bg-purple-50 text-purple-600",
+                    Parceiro: "bg-emerald-50 text-emerald-600"
+                };
+                return (
+                    <span className={`px-2 py-1 rounded text-[10px] font-black uppercase tracking-wider ${colors[val] || "bg-slate-100 text-slate-500"}`}>
+                        {val || 'Visitante'}
+                    </span>
+                );
+            }
+},
+{
+    header: "Função",
+        key: "role",
             render: (val: string) => (
                 <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${val === 'admin'
                     ? 'bg-purple-100 text-purple-700'
@@ -79,24 +104,34 @@ export default function AdminUsersPage() {
                     {val || 'User'}
                 </span>
             )
-        },
-        {
-            header: "Data Registo",
-            key: "created_at",
+},
+{
+    header: "Data Registo",
+        key: "created_at",
             render: (val: string) => (
                 <span className="text-slate-400 text-xs font-medium">
                     {val ? new Date(val).toLocaleDateString() : '-'}
                 </span>
             )
-        }
+}
     ];
 
-    return (
-        <div className="space-y-8">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Utilizadores</h1>
-                </div>
+return (
+    <div className="space-y-8">
+        <div className="flex items-center justify-between">
+            <div>
+                <h1 className="text-3xl font-black text-slate-900 tracking-tight">Utilizadores</h1>
+            </div>
+
+            <div className="flex gap-2">
+                <select
+                    className="h-10 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+                    value={filterPlan}
+                    onChange={(e) => setFilterPlan(e.target.value)}
+                >
+                    <option value="all">Todos os Planos</option>
+                    {PLANS.map(p => <option key={p} value={p}>{p}</option>)}
+                </select>
 
                 <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
                     <DialogTrigger asChild>
@@ -141,14 +176,15 @@ export default function AdminUsersPage() {
                     </DialogContent>
                 </Dialog>
             </div>
-
-            <AdminDataTable
-                title="Utilizadores do Sistema"
-                columns={columns}
-                data={users}
-                loading={loading}
-                onDelete={() => alert("Funcionalidade de eliminação de utilizadores sensível.")}
-            />
         </div>
-    );
+
+        <AdminDataTable
+            title="Utilizadores do Sistema"
+            columns={columns}
+            data={filterPlan === 'all' ? users : users.filter(u => (u.plan || 'Visitante') === filterPlan)}
+            loading={loading}
+            onDelete={() => alert("Funcionalidade de eliminação de utilizadores sensível.")}
+        />
+    </div>
+);
 }

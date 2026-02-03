@@ -58,6 +58,24 @@ export default function SimpleRegistrationPage() {
     const [fetchedCategories, setFetchedCategories] = useState<string[]>(COMPANY_CATEGORIES);
     const [bio, setBio] = useState("");
 
+    const [user, setUser] = useState<any>(null);
+    const [loadingAuth, setLoadingAuth] = useState(true);
+
+    // Auth Check
+    useEffect(() => {
+        async function checkAuth() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                // Redirect to login with return URL
+                window.location.href = `/login?redirectTo=/destaque`;
+            } else {
+                setUser(session.user);
+                setLoadingAuth(false);
+            }
+        }
+        checkAuth();
+    }, []);
+
     // Mandatory Free Fields State
     const [companyName, setCompanyName] = useState("");
     const [address, setAddress] = useState("");
@@ -232,6 +250,14 @@ export default function SimpleRegistrationPage() {
         alert("Empresa publicada com sucesso!");
     };
 
+
+    if (loadingAuth) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-slate-100">
+                <Loader2 className="w-8 h-8 text-emerald-600 animate-spin" />
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-slate-100 font-sans pb-20">
@@ -454,66 +480,6 @@ export default function SimpleRegistrationPage() {
                     className="w-full lg:w-[420px] pb-8 pt-0 px-0 shrink-0 sticky right-0 overflow-y-auto space-y-8"
                     style={{ top: '80px', height: 'calc(100vh - 80px)' }}
                 >
-                    {/* SERVIÇOS - Refactored to single field + list */}
-                    <div
-                        className="bg-white p-6 border border-slate-200 shadow-sm"
-                        style={{ borderRadius: '15px' }}
-                    >
-                        <h3 className="relative text-sm font-black text-slate-800 uppercase tracking-widest mb-6 flex items-center justify-between gap-2">
-                            <div className="flex items-center gap-2">
-                                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                                Serviços
-                            </div>
-                            <PlanBadge plan="Basic" />
-                        </h3>
-
-                        <div className="space-y-4">
-                            <div className="flex gap-2">
-                                <Input
-                                    value={newService}
-                                    onChange={(e) => setNewService(e.target.value)}
-                                    onKeyDown={(e) => e.key === "Enter" && addService()}
-                                    placeholder="Adicionar um serviço..."
-                                    className="flex-1 h-10 border-slate-200 text-xs bg-slate-50 font-bold placeholder:text-slate-400 cursor-not-allowed"
-                                    style={{ borderRadius: '8px' }}
-                                    disabled
-                                />
-                                <Button
-                                    onClick={addService}
-                                    size="sm"
-                                    className="bg-emerald-600/50 text-white font-bold h-10 w-10 flex items-center justify-center cursor-not-allowed"
-                                    style={{ borderRadius: '8px' }}
-                                    disabled
-                                >
-                                    <Plus className="w-4 h-4" />
-                                </Button>
-                            </div>
-
-                            <div className="flex flex-wrap gap-2 pt-2">
-                                {services.length > 0 ? (
-                                    services.map((service, index) => (
-                                        <div
-                                            key={index}
-                                            className="h-9 px-4 bg-emerald-50 text-emerald-700 flex items-center gap-2 border border-emerald-100 group animate-in zoom-in-95 duration-200"
-                                            style={{ borderRadius: '8px' }}
-                                        >
-                                            <span className="text-[10px] font-black uppercase tracking-tighter">{service}</span>
-                                            <button
-                                                onClick={() => removeService(service)}
-                                                className="hover:text-rose-500 transition-colors"
-                                            >
-                                                <X className="w-3 h-3" />
-                                            </button>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <div className="w-full py-4 text-center border border-dashed border-slate-200" style={{ borderRadius: '8px' }}>
-                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Nenhum serviço adicionado</p>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
 
                     {/* HIGHLIGHT OPTION */}
                     <div

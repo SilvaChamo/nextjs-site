@@ -53,22 +53,32 @@ export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
                             Empresas em destaque
                         </h2>
                     </div>
-                    {/* Navigation Arrows relocated here */}
-                    <div className="hidden md:flex items-center gap-3">
-                        <button
-                            onClick={scrollPrev}
-                            className="w-10 h-10 rounded-full bg-white shadow-md border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all"
+
+                    <div className="flex items-center gap-3">
+                        <Link
+                            href="/destaque"
+                            className="inline-flex items-center h-8 px-4 border-2 border-emerald-600 text-emerald-600 text-[10px] font-black uppercase tracking-widest hover:border-[#f97316] hover:text-[#f97316] transition-all duration-300 rounded-md mr-2"
                         >
-                            <ChevronLeft className="h-6 w-6" />
-                        </button>
-                        <button
-                            onClick={scrollNext}
-                            className="w-10 h-10 rounded-full bg-white shadow-md border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all"
-                        >
-                            <ChevronRight className="h-6 w-6" />
-                        </button>
+                            Destaque a sua
+                        </Link>
+
+                        <div className="hidden md:flex items-center gap-3">
+                            <button
+                                onClick={scrollPrev}
+                                className="w-10 h-10 rounded-full bg-white shadow-md border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all"
+                            >
+                                <ChevronLeft className="h-6 w-6" />
+                            </button>
+                            <button
+                                onClick={scrollNext}
+                                className="w-10 h-10 rounded-full bg-white shadow-md border border-slate-100 flex items-center justify-center text-[#f97316] hover:bg-[#f97316] hover:text-white transition-all"
+                            >
+                                <ChevronRight className="h-6 w-6" />
+                            </button>
+                        </div>
                     </div>
                 </div>
+
 
                 {/* Slider Container */}
                 <div className="relative group/embla">

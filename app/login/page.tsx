@@ -66,8 +66,12 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
 
                 if (error) throw error;
 
-                if (data.session) {
-                    router.push("/usuario/dashboard");
+                if (data.session && data.user) {
+                    await supabase.from('profiles').update({ plan: 'Visitante' }).eq('id', data.user.id);
+                    // Check for redirect param
+                    const params = new URLSearchParams(window.location.search);
+                    const redirectTo = params.get('redirectTo');
+                    router.push(redirectTo || "/usuario/dashboard");
                     router.refresh();
                 } else {
                     const { error: signInError } = await supabase.auth.signInWithPassword({

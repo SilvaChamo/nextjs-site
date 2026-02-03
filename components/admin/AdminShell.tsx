@@ -45,6 +45,13 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
     const [isSyncing, setIsSyncing] = useState(false);
     const [isSigningOut, setIsSigningOut] = useState(false);
     const [pendingCount, setPendingCount] = useState(0);
+    const [openSubmenus, setOpenSubmenus] = useState<string[]>([]);
+
+    const toggleSubmenu = (menu: string) => {
+        setOpenSubmenus(prev =>
+            prev.includes(menu) ? prev.filter(m => m !== menu) : [...prev, menu]
+        );
+    };
 
     const handleSignOut = async () => {
         setIsSigningOut(true);
@@ -186,7 +193,45 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
                         {/* Section 3: Analysis & Interaction */}
                         <div className="flex flex-col gap-0">
                             <LinkItem href="/admin/estatisticas" icon={BarChart3} label="Estatísticas" />
-                            <LinkItem href="/admin/mensagens" icon={MessageSquare} label="Interacções" />
+
+                            {/* Interactions Dropdown */}
+                            <div className="flex flex-col gap-1">
+                                <button
+                                    onClick={() => toggleSubmenu('interactions')}
+                                    className={`flex items-center gap-3 px-4 py-2 text-sm font-semibold rounded-xl transition-all group whitespace-nowrap w-full text-left
+                                        ${pathname.startsWith('/admin/mensagens') ? "text-orange-500" : "text-slate-400 hover:text-orange-500"} 
+                                        ${isCollapsed ? "justify-center px-2" : ""}
+                                    `}
+                                    title="Interacções"
+                                >
+                                    <MessageSquare className={`w-5 h-5 min-w-[20px] transition-colors ${pathname.startsWith('/admin/mensagens') ? "text-orange-500" : "text-slate-500 group-hover:text-orange-500"}`} />
+                                    {!isCollapsed && (
+                                        <>
+                                            <span className="flex-1">Interacções</span>
+                                            {openSubmenus.includes('interactions') ? (
+                                                <div className="w-1.5 h-1.5 rounded-full bg-orange-500"></div>
+                                            ) : (
+                                                <div className="w-1.5 h-1.5 rounded-full bg-slate-700"></div>
+                                            )}
+                                        </>
+                                    )}
+                                </button>
+
+                                {openSubmenus.includes('interactions') && !isCollapsed && (
+                                    <div className="flex flex-col gap-1 pl-12 pr-2 animate-in slide-in-from-left-2 fade-in duration-200">
+                                        <Link href="/admin/mensagens" className={`text-xs py-1.5 hover:text-orange-500 transition-colors ${pathname === '/admin/mensagens' ? "text-orange-500 font-bold" : "text-slate-500"}`}>
+                                            Mensagem
+                                        </Link>
+                                        <Link href="/admin/mensagens?mode=email" className={`text-xs py-1.5 hover:text-orange-500 transition-colors ${pathname.includes('mode=email') ? "text-orange-500 font-bold" : "text-slate-500"}`}>
+                                            Email
+                                        </Link>
+                                        <Link href="/admin/mensagens/newsletter" className={`text-xs py-1.5 hover:text-orange-500 transition-colors ${pathname === '/admin/mensagens/newsletter' ? "text-orange-500 font-bold" : "text-slate-500"}`}>
+                                            Newsletter
+                                        </Link>
+                                    </div>
+                                )}
+                            </div>
+
                             <LinkItem href="/admin/contactos" icon={Contact} label="Contactos" />
                         </div>
 
@@ -236,7 +281,7 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
 
             {/* Main Content */}
             <main className={`flex-1 bg-slate-100 min-h-screen transition-all duration-300 mt-16 lg:mt-0 ${isCollapsed ? "lg:ml-20" : "lg:ml-64"}`}>
-                <div className="p-8 max-w-7xl mx-auto">
+                <div className={`mx-auto ${pathname.startsWith('/admin/mensagens/newsletter') ? "p-0 max-w-full" : "p-8 max-w-7xl"}`}>
                     {children}
                 </div>
             </main>

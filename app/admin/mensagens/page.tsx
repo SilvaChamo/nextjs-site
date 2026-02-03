@@ -247,10 +247,15 @@ export default function AdminMessagesPage() {
                                 {/* Newsletter Builder Link */}
                                 <a
                                     href="/admin/mensagens/newsletter"
-                                    className="text-[10px] bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-full font-bold uppercase tracking-wider flex items-center gap-2 transition-colors"
+                                    className="text-[10px] text-white px-4 py-2 rounded-full font-bold uppercase tracking-wider flex items-center gap-2 transition-transform hover:scale-105 shadow-md hover:shadow-lg"
+                                    style={{
+                                        background: "linear-gradient(90deg, #10b981, #f97316, #a3e635)", // Emerald, Orange, Lime (Fluorescentish)
+                                        backgroundSize: "200% 200%",
+                                        animation: "gradient-move 3s ease infinite"
+                                    }}
                                 >
-                                    <span>Editor Visual (Newsletter)</span>
-                                    <span className="bg-indigo-500 px-1.5 py-0.5 rounded text-[9px]">BETA</span>
+                                    <span className="drop-shadow-sm">Editor Visual (Newsletter)</span>
+                                    <span className="bg-white/20 px-1.5 py-0.5 rounded text-[9px] backdrop-blur-sm">BETA</span>
                                 </a>
                             </div>
                             <label className="text-xs font-bold text-slate-500 uppercase">Conteúdo da Mensagem</label>

@@ -32,20 +32,22 @@ export default function NewsletterBuilderPage() {
                 </div>
             </div>
 
-            {/* Builder Workspace (Placeholder) */}
-            <div className="flex p-6 gap-6 h-[calc(100vh-80px)]">
+            {/* Builder Workspace */}
+            <div className="flex bg-slate-100 h-[calc(100vh-65px)] overflow-hidden">
 
                 {/* Sidebar Tools */}
-                <div className="w-72 bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-col gap-4">
-                    <h3 className="text-xs font-black uppercase text-slate-400 tracking-wider">Blocos</h3>
-                    <div className="grid grid-cols-2 gap-3">
+                <div className="w-80 bg-white border-r border-slate-200 flex flex-col h-full overflow-y-auto shrink-0 z-10">
+                    <div className="p-4 border-b border-slate-100">
+                        <h3 className="text-xs font-black uppercase text-slate-400 tracking-wider">Blocos</h3>
+                    </div>
+                    <div className="p-4 grid grid-cols-2 gap-3">
                         <ToolBlock icon={<LayoutTemplate className="w-5 h-5" />} label="Layout" />
                         <ToolBlock icon={<Type className="w-5 h-5" />} label="Texto" />
                         <ToolBlock icon={<ImageIcon className="w-5 h-5" />} label="Imagem" />
                         <ToolBlock icon={<div className="w-5 h-5 border-2 border-current rounded-md flex items-center justify-center text-[10px] font-bold">BTN</div>} label="Botão" />
                     </div>
 
-                    <div className="mt-auto p-4 bg-indigo-50 rounded-lg border border-indigo-100">
+                    <div className="mt-auto p-4 m-4 bg-indigo-50 rounded-lg border border-indigo-100">
                         <h4 className="font-bold text-indigo-900 text-sm mb-1">Coming Soon</h4>
                         <p className="text-xs text-indigo-700 leading-relaxed">
                             O editor "Drag & Drop" tipo Mailchimp está em desenvolvimento. Por enquanto, utilize o editor padrão ou HTML direto.
@@ -53,12 +55,19 @@ export default function NewsletterBuilderPage() {
                     </div>
                 </div>
 
-                {/* Canvas */}
-                <div className="flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-8 flex items-center justify-center bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]">
-                    <div className="w-[600px] min-h-[800px] bg-white shadow-2xl rounded-lg p-8 border border-slate-100 flex flex-col gap-4 items-center justify-center text-center">
-                        <img src="/placeholder-email-builder.png" alt="" className="w-32 h-32 opacity-20 mb-4" />
-                        <h2 className="text-2xl font-bold text-slate-300">Área de Construção</h2>
-                        <p className="text-slate-400 max-w-xs">Arraste blocos para aqui para começar a construir seu email.</p>
+                {/* Canvas Area */}
+                <div className="flex-1 bg-slate-100 relative overflow-hidden flex flex-col">
+                    {/* Toolbar / Breadcrumbs placeholder could go here */}
+
+                    <div className="flex-1 overflow-auto p-8 flex justify-center items-start">
+                        {/* The Email Canvas Itself */}
+                        <div className="w-full max-w-[800px] min-h-[1000px] bg-white shadow-xl rounded-none border border-slate-200 flex flex-col gap-4 items-center justify-center text-center relative mx-auto my-8">
+                            <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:24px_24px] opacity-30 pointer-events-none"></div>
+
+                            <img src="/placeholder-email-builder.png" alt="" className="w-32 h-32 opacity-20 mb-4 mix-blend-multiply" />
+                            <h2 className="text-2xl font-bold text-slate-300">Área de Construção</h2>
+                            <p className="text-slate-400 max-w-xs">Arraste blocos para aqui para começar a construir seu email.</p>
+                        </div>
                     </div>
                 </div>
 

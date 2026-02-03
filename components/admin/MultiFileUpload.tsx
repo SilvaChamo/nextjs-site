@@ -15,6 +15,7 @@ interface MultiFileUploadProps {
     bucket?: string;
     folder?: string;
     showList?: boolean;
+    layout?: 'default' | 'minimal';
     className?: string;
 }
 

@@ -1,175 +1,325 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { AdminDataTable } from "@/components/admin/AdminDataTable";
-import { Mail, Clock, Trash2, Users } from "lucide-react";
-import { toast } from "sonner";
-import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { RichTextEditor } from "@/components/RichTextEditor";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Loader2, Send, FileText, FileArchive, File as FileIcon, X } from "lucide-react";
+import { MultiFileUpload } from "@/components/admin/MultiFileUpload";
+import { SenderEmailSelector } from "@/components/admin/SenderEmailSelector";
 
-
+const PLANS = ["Visitante", "Basic", "Profissional", "Premium", "Parceiro", "Vendedor", "Subscritores (Newsletter)"];
 
 export default function AdminMessagesPage() {
-    const [activeTab, setActiveTab] = useState<'messages' | 'newsletter'>('messages');
-    const [messages, setMessages] = useState<any[]>([]);
-    const [subscribers, setSubscribers] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-    const [itemToDelete, setItemToDelete] = useState<any>(null);
+    const [subject, setSubject] = useState("");
+    const [content, setContent] = useState("");
+    const [selectedPlans, setSelectedPlans] = useState<string[]>([]);
+    const [senderEmail, setSenderEmail] = useState("admin@baseagrodata.com");
+    const [attachments, setAttachments] = useState<string[]>([]);
 
-    async function fetchData() {
-        setLoading(true);
-        if (activeTab === 'messages') {
-            const { data, error } = await supabase
-                .from('contact_messages')
-                .select('*')
-                .order('created_at', { ascending: false });
+    const [isSending, setIsSending] = useState(false);
 
-            if (error) console.error(error);
-            else setMessages(data || []);
+    const handlePlanToggle = (plan: string) => {
+        if (selectedPlans.includes(plan)) {
+            setSelectedPlans(selectedPlans.filter(p => p !== plan));
         } else {
-            const { data, error } = await supabase
-                .from('newsletter_subscribers')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            if (error) console.error(error);
-            else setSubscribers(data || []);
+            setSelectedPlans([...selectedPlans, plan]);
         }
-        setLoading(false);
-    }
+    };
 
-    useEffect(() => {
-        fetchData();
-    }, [activeTab]);
+    const handleSend = async () => {
+        if (!subject || !content || selectedPlans.length === 0) {
+            alert("Por favor, preencha o assunto, conteúdo e selecione pelo menos um grupo de destinatários.");
+            return;
+        }
 
-    const confirmDelete = async () => {
-        if (!itemToDelete) return;
-        const table = activeTab === 'messages' ? 'contact_messages' : 'newsletter_subscribers';
+        setIsSending(true);
+
         try {
-            const { error } = await supabase
-                .from(table)
-                .delete()
-                .eq('id', itemToDelete.id);
+            // Append attachments to content
+            let finalContent = content;
+            if (attachments.length > 0) {
+                finalContent += `<br/><div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;"><strong>Anexos:</strong><ul style="list-style: none; padding: 0; margin-top: 8px;">`;
+                attachments.forEach(url => {
+                    const fileName = url.split('/').pop() || "Documento";
+                    finalContent += `<li style="margin-bottom: 8px;"><a href="${url}" target="_blank" style="color: #2563eb; text-decoration: underline; display: inline-flex; align-items: center; gap: 4px;">📎 ${fileName}</a></li>`;
+                });
+                finalContent += `</ul></div>`;
+            }
 
-            if (error) throw error;
-            toast.success(activeTab === 'messages' ? "Mensagem eliminada!" : "Subscritor removido!");
-            fetchData();
+            // 1. Create Message Record
+            const { data: msgData, error: msgError } = await supabase
+                .from('messages')
+                .insert({
+                    subject,
+                    content: finalContent,
+                    sender_email: senderEmail,
+                    target_roles: selectedPlans
+                })
+                .select()
+                .single();
+
+            if (msgError) throw msgError;
+
+            // 2. Find Users and Newsletter Subscribers
+            let allRecipients: { id?: string, email: string }[] = [];
+
+            // A. Fetch Registered Users
+            const userPlans = selectedPlans.filter(p => p !== "Subscritores (Newsletter)");
+            if (userPlans.length > 0) {
+                const { data: users, error: userError } = await supabase
+                    .from('profiles')
+                    .select('id, email')
+                    .in('plan', userPlans);
+
+                if (userError) throw userError;
+                if (users) allRecipients = [...allRecipients, ...users];
+            }
+
+            // B. Fetch Newsletter Subscribers
+            if (selectedPlans.includes("Subscritores (Newsletter)")) {
+                const { data: subscribers, error: subError } = await supabase
+                    .from('newsletter_subscribers')
+                    .select('email');
+
+                if (subError) throw subError;
+                if (subscribers) {
+                    const mappedSubs = subscribers.map(s => ({ email: s.email }));
+                    allRecipients = [...allRecipients, ...mappedSubs];
+                }
+            }
+
+            if (allRecipients.length === 0) {
+                alert("Nenhum destinatário encontrado para os grupos selecionados.");
+                setIsSending(false);
+                return;
+            }
+
+            // Remove duplicates (users might be in newsletter too)
+            const uniqueEmails = Array.from(new Set(allRecipients.map(r => r.email)));
+            const uniqueRecipients = uniqueEmails.map(email => allRecipients.find(r => r.email === email)!);
+
+            // 3. Create Notifications (Only for Registered Users with IDs)
+            const registeredUsers = uniqueRecipients.filter(u => u.id);
+            if (registeredUsers.length > 0) {
+                const notifications = registeredUsers.map(u => ({
+                    user_id: u.id,
+                    message_id: msgData.id,
+                    read: false
+                }));
+
+                const { error: notifError } = await supabase
+                    .from('notifications')
+                    .insert(notifications);
+
+                if (notifError) throw notifError;
+            }
+
+            // 4. Send Email via SMTP API
+            const emailRecipients = uniqueRecipients.map(u => u.email).filter(Boolean);
+
+            if (emailRecipients.length > 0) {
+                const emailResponse = await fetch('/api/messages/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        to: emailRecipients,
+                        subject: subject,
+                        html: finalContent,
+                        attachments: attachments,
+                        replyTo: senderEmail
+                    })
+                });
+
+                if (!emailResponse.ok) {
+                    const errorData = await emailResponse.json();
+                    console.error("SMTPSend Error:", errorData);
+                    alert(`Mensagem salva, mas erro ao enviar emails: ${errorData.error}`);
+                } else {
+                    alert(`Mensagem enviada com sucesso para ${uniqueRecipients.length} destinatários!`);
+                }
+            } else {
+                alert(`Mensagem salva. Notificações criadas para ${registeredUsers.length} usuários (Sem emails válidos para envio).`);
+            }
+
+            // Reset Form (except sender)
+            setSubject("");
+            setContent("");
+            setSelectedPlans([]);
+            setAttachments([]);
+
         } catch (error: any) {
-            toast.error("Erro ao eliminar: " + error.message);
+            console.error(error);
+            alert("Erro ao enviar mensagem: " + error.message);
         } finally {
-            setShowDeleteConfirm(false);
-            setItemToDelete(null);
+            setIsSending(false);
         }
     };
-
-    const handleDelete = (row: any) => {
-        setItemToDelete(row);
-        setShowDeleteConfirm(true);
-    };
-
-    const messageColumns = [
-        {
-            header: "Remetente",
-            key: "name",
-            render: (val: string, row: any) => (
-                <div>
-                    <p className="font-black text-slate-800">{val}</p>
-                    <p className="text-[10px] text-slate-400 font-medium">{row.email}</p>
-                </div>
-            )
-        },
-        {
-            header: "Mensagem",
-            key: "message",
-            render: (val: string) => <p className="line-clamp-2 max-w-md text-slate-600 font-medium">{val}</p>
-        },
-        {
-            header: "Data",
-            key: "created_at",
-            render: (val: string) => (
-                <span className="flex items-center gap-1.5 text-slate-400 text-[10px] font-bold uppercase">
-                    <Clock className="w-3 h-3" />
-                    {new Date(val).toLocaleDateString()}
-                </span>
-            )
-        }
-    ];
-
-    const subscriberColumns = [
-        {
-            header: "Email",
-            key: "email",
-            render: (val: string) => (
-                <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
-                        <Mail className="w-4 h-4" />
-                    </div>
-                    <span className="font-bold text-slate-700">{val}</span>
-                </div>
-            )
-        },
-        {
-            header: "Subscrito em",
-            key: "created_at",
-            render: (val: string) => (
-                <span className="flex items-center gap-1.5 text-slate-400 text-[10px] font-bold uppercase">
-                    <Clock className="w-3 h-3" />
-                    {new Date(val).toLocaleDateString()}
-                </span>
-            )
-        }
-    ];
 
     return (
-        <div className="space-y-8">
+        <div className="w-full max-w-full px-6 space-y-8 pb-20">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Interacções</h1>
-                    <p className="text-slate-500 font-medium text-sm">Gira mensagens de contacto e subscrições de newsletter.</p>
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Enviar Mensagem</h1>
+                    <p className="text-slate-500 mt-2">Envie notificações e emails para grupos de usuários.</p>
                 </div>
             </div>
 
-            {/* View Switcher Tabs */}
-            <div className="flex items-center gap-2 bg-white p-1.5 rounded-2xl shadow-sm border border-slate-100 w-fit">
-                <button
-                    onClick={() => setActiveTab('messages')}
-                    className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'messages' ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20' : 'text-slate-400 hover:bg-slate-50'
-                        }`}
-                >
-                    <Mail className="w-4 h-4" />
-                    Mensagens
-                </button>
-                <button
-                    onClick={() => setActiveTab('newsletter')}
-                    className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'newsletter' ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20' : 'text-slate-400 hover:bg-slate-50'
-                        }`}
-                >
-                    <Users className="w-4 h-4" />
-                    Newsletter
-                </button>
+            <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 space-y-6">
+
+                {/* Sender & Targets */}
+                <div className="space-y-6">
+                    <div className="space-y-3">
+                        <label className="text-xs font-bold text-slate-500 uppercase">Email de Origem</label>
+                        <SenderEmailSelector
+                            value={senderEmail}
+                            onChange={setSenderEmail}
+                        />
+                    </div>
+
+                    <div className="space-y-3">
+                        <div className="flex justify-between items-center">
+                            <label className="text-xs font-bold text-slate-500 uppercase">Destinatários (Planos)</label>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => setSelectedPlans(PLANS)}
+                                    className="text-[10px] uppercase font-bold text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 px-2 py-1 rounded"
+                                >
+                                    Selecionar Todos
+                                </button>
+                                <button
+                                    onClick={() => setSelectedPlans([])}
+                                    className="text-[10px] uppercase font-bold text-slate-400 hover:text-slate-600 hover:bg-slate-50 px-2 py-1 rounded"
+                                >
+                                    Limpar
+                                </button>
+                            </div>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-6 p-4 bg-slate-50 rounded-lg border border-slate-100">
+                            {PLANS.map(plan => (
+                                <div key={plan} className="flex items-center space-x-2">
+                                    <Checkbox
+                                        id={`plan-${plan}`}
+                                        checked={selectedPlans.includes(plan)}
+                                        onChange={() => handlePlanToggle(plan)}
+                                        className="data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600"
+                                    />
+                                    <label
+                                        htmlFor={`plan-${plan}`}
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer text-slate-700"
+                                    >
+                                        {plan}
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Subject */}
+                <div className="space-y-3">
+                    <label className="text-xs font-bold text-slate-500 uppercase">Assunto</label>
+                    <Input
+                        placeholder="Ex: Novidades na Plataforma"
+                        value={subject}
+                        onChange={(e) => setSubject(e.target.value)}
+                        className="text-lg font-semibold"
+                    />
+                </div>
+
+                {/* Attachments */}
+                {/* Content & Attachments Combined */}
+                <div className="space-y-3">
+                    <div className="flex flex-col gap-4">
+                        <div className="flex justify-between items-center">
+                            <div className="flex items-center gap-2">
+                                {/* Mini Attachment Button */}
+                                <MultiFileUpload
+                                    value={attachments}
+                                    onChange={setAttachments}
+                                    folder="admin-messages"
+                                    layout="minimal"
+                                    showList={false}
+                                />
+                                <div className="w-px h-4 bg-slate-200 mx-2"></div>
+                                {/* Newsletter Builder Link */}
+                                <a
+                                    href="/admin/mensagens/newsletter"
+                                    className="text-[10px] bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-full font-bold uppercase tracking-wider flex items-center gap-2 transition-colors"
+                                >
+                                    <span>Editor Visual (Newsletter)</span>
+                                    <span className="bg-indigo-500 px-1.5 py-0.5 rounded text-[9px]">BETA</span>
+                                </a>
+                            </div>
+                            <label className="text-xs font-bold text-slate-500 uppercase">Conteúdo da Mensagem</label>
+                        </div>
+
+                        {/* Custom Grid Layout for Attachments */}
+                        {attachments.length > 0 && (
+                            <div className="grid grid-cols-4 gap-4 animate-in fade-in slide-in-from-top-2">
+                                {attachments.map((url, index) => (
+                                    <div key={index} className="relative group bg-slate-50 border border-slate-200 rounded-lg p-3 flex flex-col gap-2 hover:border-emerald-500 transition-colors">
+                                        <div className="w-full h-24 bg-white rounded border border-slate-100 flex items-center justify-center overflow-hidden">
+                                            {url.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+                                                <img src={url} alt="thumbnail" className="w-full h-full object-cover" />
+                                            ) : url.match(/\.pdf$/i) ? (
+                                                <FileText className="w-10 h-10 text-red-500" />
+                                            ) : url.match(/\.(zip|rar)$/i) ? (
+                                                <FileArchive className="w-10 h-10 text-yellow-600" />
+                                            ) : (
+                                                <FileIcon className="w-10 h-10 text-slate-500" />
+                                            )}
+                                        </div>
+                                        <div className="flex items-center justify-between gap-2">
+                                            <a href={url} target="_blank" rel="noopener noreferrer" className="text-[10px] font-bold text-slate-600 truncate hover:text-blue-600 hover:underline flex-1">
+                                                {url.split('/').pop()}
+                                            </a>
+                                            <button
+                                                onClick={() => setAttachments(attachments.filter(a => a !== url))}
+                                                className="text-slate-400 hover:text-red-500 transition-colors"
+                                                title="Remover anexo"
+                                            >
+                                                <X className="w-3.5 h-3.5" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        <RichTextEditor
+                            value={content}
+                            onChange={setContent}
+                            placeholder="Escreva sua mensagem aqui..."
+                            className="min-h-[300px]"
+                        />
+                    </div>
+                </div>
+
+                {/* Actions */}
+                <div className="pt-4 flex justify-end">
+                    <Button
+                        onClick={handleSend}
+                        disabled={isSending}
+                        className="bg-emerald-600 hover:bg-[#f97316] text-white px-8 h-12 rounded-lg font-bold uppercase tracking-wider shadow-xl shadow-emerald-500/20 transition-all"
+                    >
+                        {isSending ? (
+                            <>
+                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                Enviando...
+                            </>
+                        ) : (
+                            <>
+                                <Send className="w-4 h-4 mr-2" />
+                                Enviar Mensagem
+                            </>
+                        )}
+                    </Button>
+                </div>
+
             </div>
-
-            <AdminDataTable
-                title={activeTab === 'messages' ? "Mensagens Recebidas" : "Lista de Subscritores"}
-                columns={activeTab === 'messages' ? messageColumns : subscriberColumns}
-                data={activeTab === 'messages' ? messages : subscribers}
-                loading={loading}
-                onDelete={handleDelete}
-            />
-
-            <ConfirmationModal
-                isOpen={showDeleteConfirm}
-                onClose={() => setShowDeleteConfirm(false)}
-                onConfirm={confirmDelete}
-                title={activeTab === 'messages' ? "Eliminar Mensagem" : "Remover Subscritor"}
-                description={activeTab === 'messages'
-                    ? `Tem a certeza que deseja eliminar a mensagem de "${itemToDelete?.name}"?`
-                    : `Tem a certeza que deseja remover o email "${itemToDelete?.email}" da newsletter?`
-                }
-                confirmLabel="Eliminar"
-                variant="destructive"
-            />
         </div>
     );
 }

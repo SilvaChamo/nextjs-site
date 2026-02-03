@@ -11,7 +11,8 @@ import {
     ArrowRight,
     TrendingUp,
     Clock,
-    ChevronRight
+    ChevronRight,
+    Mail
 } from "lucide-react";
 import Link from "next/link";
 
@@ -53,6 +54,7 @@ export default function AdminDashboardPage() {
         { name: "Empresas Registadas", value: stats.companies, icon: Building2, color: "text-emerald-600", bg: "bg-emerald-50", href: "/admin/empresas" },
         { name: "Profissionais no Sistema", value: stats.professionals, icon: Users, color: "text-indigo-600", bg: "bg-indigo-50", href: "/admin/profissionais" },
         { name: "Produtos & Insumos", value: stats.products, icon: ShoppingCart, color: "text-orange-600", bg: "bg-orange-50", href: "/admin/produtos" },
+        { name: "Enviar Mensagem", value: "Novo", icon: Mail, color: "text-purple-600", bg: "bg-purple-50", href: "/admin/mensagens" },
     ];
 
     return (

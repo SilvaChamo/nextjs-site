@@ -24,6 +24,7 @@ import {
     Menu,
     ShoppingCart,
     Contact,
+    Mail,
     GraduationCap,
     LandPlot,
     Database
@@ -170,6 +171,7 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
                         {/* Section 2: Management & Content */}
                         <div className="flex flex-col gap-0">
                             <LinkItem href="/admin/empresas" icon={Building2} label="Empresas" />
+                            <LinkItem href="/admin/mensagens" icon={Mail} label="Mensagens" /> {/* Added Messages Link */}
                             <LinkItem href="/admin/propriedades" icon={LandPlot} label="Propriedades" />
                             <LinkItem href="/admin/profissionais" icon={Users} label="Profissionais" />
                             <LinkItem href="/admin/produtos" icon={ShoppingCart} label="Produtos" />

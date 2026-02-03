@@ -14,7 +14,8 @@ import {
     ChevronLeft,
     ChevronRight,
     Building2,
-    GraduationCap
+    GraduationCap,
+    Mail
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "./ui/button";
@@ -23,6 +24,7 @@ import { Button } from "./ui/button";
 const navigation = [
     { name: "Minha Conta", href: "/usuario/dashboard/minha-conta", icon: User },
     { name: "Minha Empresa", href: "/usuario/dashboard/empresa", icon: Building2 },
+    { name: "Minhas Mensagens", href: "/usuario/dashboard/mensagens", icon: Mail },
     { name: "Meu Conteúdo", href: "/usuario/dashboard/produtos", icon: Package },
     { name: "Contactos", href: "/usuario/dashboard/contactos", icon: MessageSquare },
     { name: "Análise", href: "/usuario/dashboard/analises", icon: BarChart3 },

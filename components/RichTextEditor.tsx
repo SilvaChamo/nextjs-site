@@ -83,7 +83,7 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
             <div
                 ref={editorRef}
                 contentEditable
-                className="flex-1 p-4 min-h-[150px] outline-none text-slate-600 text-sm overflow-y-auto prose prose-sm max-w-none prose-p:my-1 prose-headings:my-2 [&_b]:font-black [&_strong]:font-black"
+                className="flex-1 p-4 min-h-[150px] outline-none text-slate-600 text-sm overflow-y-visible prose prose-sm max-w-none prose-p:my-1 prose-headings:my-2 [&_b]:font-black [&_strong]:font-black"
                 onInput={handleInput}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}

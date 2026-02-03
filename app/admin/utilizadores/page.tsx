@@ -72,11 +72,8 @@ export default function AdminUsersPage() {
             )
         },
         {
-            )
-},
-{
-    header: "Plano",
-        key: "plan",
+            header: "Plano",
+            key: "plan",
             render: (val: string) => {
                 const colors: Record<string, string> = {
                     Visitante: "bg-slate-100 text-slate-500",
@@ -91,10 +88,10 @@ export default function AdminUsersPage() {
                     </span>
                 );
             }
-},
-{
-    header: "Função",
-        key: "role",
+        },
+        {
+            header: "Função",
+            key: "role",
             render: (val: string) => (
                 <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${val === 'admin'
                     ? 'bg-purple-100 text-purple-700'
@@ -104,87 +101,87 @@ export default function AdminUsersPage() {
                     {val || 'User'}
                 </span>
             )
-},
-{
-    header: "Data Registo",
-        key: "created_at",
+        },
+        {
+            header: "Data Registo",
+            key: "created_at",
             render: (val: string) => (
                 <span className="text-slate-400 text-xs font-medium">
                     {val ? new Date(val).toLocaleDateString() : '-'}
                 </span>
             )
-}
+        }
     ];
 
-return (
-    <div className="space-y-8">
-        <div className="flex items-center justify-between">
-            <div>
-                <h1 className="text-3xl font-black text-slate-900 tracking-tight">Utilizadores</h1>
+    return (
+        <div className="space-y-8">
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Utilizadores</h1>
+                </div>
+
+                <div className="flex gap-2">
+                    <select
+                        className="h-10 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+                        value={filterPlan}
+                        onChange={(e) => setFilterPlan(e.target.value)}
+                    >
+                        <option value="all">Todos os Planos</option>
+                        {PLANS.map(p => <option key={p} value={p}>{p}</option>)}
+                    </select>
+
+                    <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
+                        <DialogTrigger asChild>
+                            <Button className="bg-emerald-600 hover:bg-emerald-700">
+                                <UserPlus className="w-4 h-4 mr-2" />
+                                Adicionar Utilizador
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Convidar Utilizador</DialogTitle>
+                                <DialogDescription>
+                                    Envie um convite por email para um novo administrador ou editor.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="space-y-4 py-4">
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-slate-500 uppercase">Email</label>
+                                    <Input
+                                        placeholder="email@exemplo.com"
+                                        value={inviteEmail}
+                                        onChange={(e) => setInviteEmail(e.target.value)}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-slate-500 uppercase">Função</label>
+                                    <select
+                                        className="w-full h-10 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+                                        value={inviteRole}
+                                        onChange={(e) => setInviteRole(e.target.value)}
+                                    >
+                                        <option value="admin">Administrador</option>
+                                        <option value="editor">Editor</option>
+                                        <option value="user">Utilizador</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <DialogFooter>
+                                <Button variant="outline" onClick={() => setIsInviteOpen(false)}>Cancelar</Button>
+                                <Button onClick={handleInvite} className="bg-emerald-600 hover:bg-emerald-700">Enviar Convite</Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+                </div>
             </div>
 
-            <div className="flex gap-2">
-                <select
-                    className="h-10 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
-                    value={filterPlan}
-                    onChange={(e) => setFilterPlan(e.target.value)}
-                >
-                    <option value="all">Todos os Planos</option>
-                    {PLANS.map(p => <option key={p} value={p}>{p}</option>)}
-                </select>
-
-                <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
-                    <DialogTrigger asChild>
-                        <Button className="bg-emerald-600 hover:bg-emerald-700">
-                            <UserPlus className="w-4 h-4 mr-2" />
-                            Adicionar Utilizador
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Convidar Utilizador</DialogTitle>
-                            <DialogDescription>
-                                Envie um convite por email para um novo administrador ou editor.
-                            </DialogDescription>
-                        </DialogHeader>
-                        <div className="space-y-4 py-4">
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-slate-500 uppercase">Email</label>
-                                <Input
-                                    placeholder="email@exemplo.com"
-                                    value={inviteEmail}
-                                    onChange={(e) => setInviteEmail(e.target.value)}
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-slate-500 uppercase">Função</label>
-                                <select
-                                    className="w-full h-10 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
-                                    value={inviteRole}
-                                    onChange={(e) => setInviteRole(e.target.value)}
-                                >
-                                    <option value="admin">Administrador</option>
-                                    <option value="editor">Editor</option>
-                                    <option value="user">Utilizador</option>
-                                </select>
-                            </div>
-                        </div>
-                        <DialogFooter>
-                            <Button variant="outline" onClick={() => setIsInviteOpen(false)}>Cancelar</Button>
-                            <Button onClick={handleInvite} className="bg-emerald-600 hover:bg-emerald-700">Enviar Convite</Button>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
-            </div>
+            <AdminDataTable
+                title="Utilizadores do Sistema"
+                columns={columns}
+                data={filterPlan === 'all' ? users : users.filter(u => (u.plan || 'Visitante') === filterPlan)}
+                loading={loading}
+                onDelete={() => alert("Funcionalidade de eliminação de utilizadores sensível.")}
+            />
         </div>
-
-        <AdminDataTable
-            title="Utilizadores do Sistema"
-            columns={columns}
-            data={filterPlan === 'all' ? users : users.filter(u => (u.plan || 'Visitante') === filterPlan)}
-            loading={loading}
-            onDelete={() => alert("Funcionalidade de eliminação de utilizadores sensível.")}
-        />
-    </div>
-);
+    );
 }

@@ -8,15 +8,43 @@ export function NewsletterCard() {
     const [email, setEmail] = useState("");
     const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle');
 
-    const handleSubscribe = (e: React.FormEvent) => {
+    const handleSubscribe = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!email) return;
+
         setStatus('loading');
-        setTimeout(() => {
+
+        try {
+            const { createClient } = await import("@/utils/supabase/client");
+            const supabase = createClient();
+
+            // Check if email already exists
+            const { data: existing } = await supabase
+                .from('newsletter_subscribers')
+                .select('id')
+                .eq('email', email)
+                .single();
+
+            if (existing) {
+                toast.error("Este email já está inscrito na newsletter.");
+                setStatus('idle');
+                return;
+            }
+
+            const { error } = await supabase
+                .from('newsletter_subscribers')
+                .insert({ email });
+
+            if (error) throw error;
+
             setStatus('success');
             setEmail("");
             toast.success("Inscrição realizada com sucesso!");
-        }, 1500);
+        } catch (error) {
+            console.error("Newsletter error:", error);
+            toast.error("Erro ao subscrever via newsletter.");
+            setStatus('idle');
+        }
     };
 
     return (

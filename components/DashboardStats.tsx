@@ -21,9 +21,9 @@ export function DashboardStats({
 }: DashboardStatsProps) {
     const [quotationsCount, setQuotationsCount] = useState(0);
     const [stats, setStats] = useState({
-        impressions: 0,
-        clicks: 0,
-        ctr: 0
+        impressions: 1248,
+        clicks: 84,
+        ctr: 6.7
     });
     const supabase = createClient();
 
@@ -63,12 +63,6 @@ export function DashboardStats({
 
     // Oscillating/Live stats simulation
     useEffect(() => {
-        // Initialize with some base values for "active" look
-        setStats({
-            impressions: 1248,
-            clicks: 84,
-            ctr: 6.7
-        });
 
         const interval = setInterval(() => {
             setStats(prev => {

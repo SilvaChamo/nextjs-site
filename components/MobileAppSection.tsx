@@ -120,7 +120,6 @@ export function MobileAppSection() {
                             </div>
                         </Link>
                     </div>
-
                 </div>
             </div>
         </section>

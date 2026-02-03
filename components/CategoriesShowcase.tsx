@@ -97,7 +97,7 @@ export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
 
                                 const category = refineText(parts[0] || "Empresa");
                                 // Prioritiza a descrição (limpa), fallback para activity, fallback para o sub (antigo)
-                                const rawDescription = company.description || company.activity || refineText(parts[1] || company.sub || "Actividade");
+                                const rawDescription = company.activity || company.description || refineText(parts[1] || company.sub || "Actividade");
                                 const description = stripHtml(rawDescription);
                                 const location = company.location || "Moçambique";
 

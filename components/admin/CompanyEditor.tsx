@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Building2, Globe, Mail, MapPin, Phone, Target, Eye, Heart, List, X, Loader2, FileText, Star, ShoppingBag, Plus, Trash2, ChevronDown, Check, Pencil } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { RichTextEditor } from "../RichTextEditor";
-import { MOZ_DATA, SECTORS, SECTOR_CATEGORIES, VALUE_CHAINS, COMPANY_DESIGNATIONS, COMPANY_SIZES } from "@/lib/agro-data";
+import { MOZ_DATA, SECTORS, SECTOR_CATEGORIES, VALUE_CHAINS, COMPANY_DESIGNATIONS, COMPANY_SIZES, ALL_CATEGORIES } from "@/lib/agro-data";
 import { useRouter } from "next/navigation";
 import { ImageUpload } from "./ImageUpload";
 import { toSentenceCase } from "@/lib/utils";
@@ -281,6 +281,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                     >
                         <option value="free">🆓 Grátis</option>
                         <option value="basic">⭐ Básico</option>
+                        <option value="business">💼 Business</option>
                         <option value="premium">💎 Premium</option>
                         <option value="partner">🤝 Parceiro</option>
                     </select>
@@ -355,8 +356,8 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                 <div className="space-y-4 pt-5">
                     <h3 className="text-xs font-black uppercase text-emerald-600 tracking-widest border-b border-emerald-100 pb-2 mb-4">Informação Básica</h3>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="relative">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div className="md:col-span-4 relative">
                             <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                             <input
                                 required
@@ -366,13 +367,33 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                 className="pl-12 pr-4 py-[11px] bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-medium text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                             />
                         </div>
-                        <div className="relative">
+                        <div className="md:col-span-2 relative">
                             <List className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                             <input
                                 value={formData.activity}
-                                onChange={(e) => setFormData({ ...formData, activity: toSentenceCase(e.target.value) })}
-                                placeholder="Actividade Principal"
-                                maxLength={50}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    const wordCount = val.trim().split(/\s+/).filter(Boolean).length;
+                                    if (wordCount <= 10) {
+                                        setFormData({ ...formData, activity: toSentenceCase(val) });
+                                    }
+                                }}
+                                placeholder="Actividade Principal (Máx. 10 palavras)"
+                                className="pl-12 pr-4 py-[11px] bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-medium text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
+                            />
+                        </div>
+                        <div className="md:col-span-2 relative">
+                            <Target className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <input
+                                value={formData.sub_category}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    const wordCount = val.trim().split(/\s+/).filter(Boolean).length;
+                                    if (wordCount <= 10) {
+                                        setFormData({ ...formData, sub_category: toSentenceCase(val) });
+                                    }
+                                }}
+                                placeholder="Área de Actuação (Máx. 10 palavras)"
                                 className="pl-12 pr-4 py-[11px] bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-medium text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                             />
                         </div>
@@ -554,33 +575,14 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                                 {COMPANY_SIZES.map((sz: string) => <option key={sz} value={sz}>{sz}</option>)}
                             </select>
                             <select
-                                value={formData.category} // Using category for High-level Sector
-                                onChange={(e) => {
-                                    setFormData({ ...formData, category: e.target.value, sub_category: "" });
-                                }}
+                                value={formData.category} // High-level Sector
+                                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                                 className="py-3 px-3 bg-slate-100 border border-slate-200 rounded-agro-btn text-sm font-medium text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none w-full transition-all"
                             >
                                 <option value="">Sector de Actividade...</option>
-                                {SECTORS.map((s: string) => <option key={s} value={s}>{s}</option>)}
+                                {ALL_CATEGORIES.map((s: string) => <option key={s} value={s}>{s}</option>)}
                             </select>
                         </div>
-
-                        {/* Nested Sub-category Selection */}
-                        {formData.category && SECTOR_CATEGORIES[formData.category] && (
-                            <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-                                <label className="text-[10px] font-black uppercase text-emerald-600 tracking-widest mb-2 block">Seleccione a Categoria Específica</label>
-                                <select
-                                    value={formData.sub_category}
-                                    onChange={(e) => setFormData({ ...formData, sub_category: e.target.value })}
-                                    className="py-3 px-4 bg-emerald-50 border-2 border-emerald-100 rounded-xl text-sm font-bold text-emerald-900 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none w-full transition-all"
-                                >
-                                    <option value="">Escolha uma categoria de {formData.category}...</option>
-                                    {SECTOR_CATEGORIES[formData.category].map((cat: string) => (
-                                        <option key={cat} value={cat}>{cat}</option>
-                                    ))}
-                                </select>
-                            </div>
-                        )}
                     </div>
                 </div>
 

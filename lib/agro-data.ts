@@ -93,3 +93,9 @@ export const COMPANY_SIZES = [
     "Média Empresa",
     "Grande Empresa"
 ];
+
+export const ALL_CATEGORIES = Array.from(
+    new Set(
+        Object.values(SECTOR_CATEGORIES).flat()
+    )
+).sort((a, b) => a.localeCompare(b));

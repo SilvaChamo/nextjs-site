@@ -19,6 +19,7 @@ export default function EmpresasPage() {
     const [selectedCategory, setSelectedCategory] = useState("");
     const [selectedSize, setSelectedSize] = useState("");
     const [selectedProvince, setSelectedProvince] = useState("");
+    const [showFeaturedOnly, setShowFeaturedOnly] = useState(false);
 
     useEffect(() => {
         async function fetchCompanies() {
@@ -56,6 +57,9 @@ export default function EmpresasPage() {
         if (selectedProvince) {
             filtered = filtered.filter(c => c.province === selectedProvince);
         }
+        if (showFeaturedOnly) {
+            filtered = filtered.filter(c => c.is_featured);
+        }
 
         setFilteredCompanies(filtered);
     };
@@ -78,6 +82,20 @@ export default function EmpresasPage() {
                         </h4>
 
                         <div className="space-y-5">
+                            {/* Featured Toggle */}
+                            <div className="flex items-center justify-between bg-slate-50 p-3 rounded-lg border border-slate-100 shadow-inner">
+                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                                    <CheckCircle2 className="w-3 h-3 text-[#f97316]" />
+                                    Apenas Destaques
+                                </span>
+                                <button
+                                    onClick={() => setShowFeaturedOnly(!showFeaturedOnly)}
+                                    className={`w-8 h-4 rounded-full relative transition-colors ${showFeaturedOnly ? 'bg-[#f97316]' : 'bg-slate-300'}`}
+                                >
+                                    <div className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all shadow-sm ${showFeaturedOnly ? 'translate-x-[18px]' : 'translate-x-[2px]'}`} />
+                                </button>
+                            </div>
+
                             {/* 1. Sector (Chapéu) */}
                             <div>
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Sector Principal</label>

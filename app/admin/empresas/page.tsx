@@ -28,7 +28,9 @@ export default function AdminEmpresasPage() {
     async function fetchData() {
         setLoading(true);
         let query = supabase.from('companies').select('*');
-        const { data: result, error } = await query.order('created_at', { ascending: false });
+        const { data: result, error } = await query
+            .order('is_featured', { ascending: false })
+            .order('created_at', { ascending: false });
 
         if (error) console.error(error);
         else setData(result || []);
@@ -203,14 +205,7 @@ export default function AdminEmpresasPage() {
             key: "category",
             render: (val: string) => val || <span className="text-slate-300 text-xs">Não definido</span>
         },
-        {
-            header: "Localização",
-            key: "province",
-            render: (val: string, row: any) => {
-                const location = [row.district, row.province].filter(Boolean).join(', ') || row.address;
-                return location ? <span className="flex items-center gap-1 text-slate-400 text-xs"><MapPin className="w-3 h-3" />{location}</span> : null;
-            }
-        },
+
         {
             header: "Contacto",
             key: "contact",
@@ -423,9 +418,12 @@ export default function AdminEmpresasPage() {
                                 <div key={item.id} className="bg-white rounded-2xl border border-slate-100 hover:shadow-lg transition-all group relative overflow-hidden flex flex-col">
 
                                     {/* CARD COVER IMAGE */}
-                                    <div className="h-40 w-full bg-slate-100 relative">
+                                    <div
+                                        onClick={() => router.push(`/admin/empresas/${item.id}`)}
+                                        className="h-40 w-full bg-slate-100 relative cursor-pointer group/image"
+                                    >
                                         {item.banner_url ? (
-                                            <img src={item.banner_url} alt="Cover" className="w-full h-full object-cover" />
+                                            <img src={item.banner_url} alt="Cover" className="w-full h-full object-cover transition-transform duration-500 group-hover/image:scale-105" />
                                         ) : (
                                             <div className="w-full h-full bg-gradient-to-r from-slate-100 to-slate-200 flex items-center justify-center">
                                                 <Building2 className="text-slate-300 w-8 h-8" />
@@ -433,11 +431,18 @@ export default function AdminEmpresasPage() {
                                         )}
 
                                         {/* Delete Overlay */}
-                                        <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 p-1 rounded-lg shadow-sm">
-                                            <button onClick={() => toggleArchive(item)} className="p-1.5 hover:bg-orange-50 text-orange-600 rounded" title={item.is_archived ? "Repor" : "Arquivar"}>
+                                        <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 p-1 rounded-lg shadow-sm z-20">
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); toggleArchive(item); }}
+                                                className="p-1.5 hover:bg-orange-50 text-orange-600 rounded"
+                                                title={item.is_archived ? "Repor" : "Arquivar"}
+                                            >
                                                 {item.is_archived ? <ArchiveRestore className="w-4 h-4" /> : <Archive className="w-4 h-4" />}
                                             </button>
-                                            <button onClick={() => handleDelete(item)} className="p-1.5 hover:bg-rose-50 text-rose-600 rounded">
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); handleDelete(item); }}
+                                                className="p-1.5 hover:bg-rose-50 text-rose-600 rounded"
+                                            >
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
                                         </div>
@@ -446,7 +451,10 @@ export default function AdminEmpresasPage() {
                                     {/* CARD CONTENT */}
                                     <div className="p-6 pt-0 flex-1 flex flex-col">
                                         {/* Avatar */}
-                                        <div className="-mt-10 mb-3 relative z-10">
+                                        <div
+                                            onClick={() => router.push(`/admin/empresas/${item.id}`)}
+                                            className="-mt-10 mb-3 relative z-10 w-fit cursor-pointer hover:scale-105 transition-transform"
+                                        >
                                             {item.logo_url ? (
                                                 <img src={item.logo_url} alt={item.name} className="h-14 w-auto min-w-[56px] max-w-[140px] rounded-md object-contain bg-white p-1.5 shadow-sm border border-slate-100" />
                                             ) : (
@@ -458,14 +466,14 @@ export default function AdminEmpresasPage() {
 
                                         {/* Title & Subtitle */}
                                         <div className="flex items-center gap-3">
-                                            <button
-                                                onClick={() => toggleFeatured(item)}
-                                                className={`w-8 h-4 rounded-full relative transition-colors shrink-0 ${item.is_featured ? 'bg-amber-500' : 'bg-slate-200'}`}
-                                            >
-                                                <div className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all ${item.is_featured ? 'translate-x-[18px]' : 'translate-x-0.5'}`} />
-                                            </button>
+
                                             <div className="flex-1 min-w-0">
-                                                <h3 className="font-bold text-slate-900 line-clamp-1 text-lg">{item.name}</h3>
+                                                <h3
+                                                    onClick={() => router.push(`/admin/empresas/${item.id}`)}
+                                                    className="font-bold text-slate-900 line-clamp-1 text-lg cursor-pointer hover:text-emerald-600 transition-colors"
+                                                >
+                                                    {item.name}
+                                                </h3>
                                                 <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">
                                                     {item.category || item.activity || "Entidade"}
                                                 </p>
@@ -493,6 +501,24 @@ export default function AdminEmpresasPage() {
                                                     <span className="font-medium">Editado: {new Date(item.updated_at).toLocaleDateString('pt-MZ', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
                                                 </div>
                                             )}
+                                            <div className="flex items-center justify-between gap-1 pt-2 border-t border-slate-50 mt-2">
+                                                <div className="flex items-center gap-2">
+                                                    <Calendar className="w-3.5 h-3.5 text-slate-300" />
+                                                    <span className="text-slate-400 text-[10px]">
+                                                        Registo: {new Date(item.created_at).toLocaleDateString('pt-MZ')}
+                                                    </span>
+                                                </div>
+
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[9px] font-bold text-slate-300 uppercase">Destaque</span>
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); toggleFeatured(item); }}
+                                                        className={`w-7 h-4 rounded-full relative transition-colors ${item.is_featured ? 'bg-amber-500' : 'bg-slate-200'}`}
+                                                    >
+                                                        <div className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all shadow-sm ${item.is_featured ? 'translate-x-[14px]' : 'translate-x-[2px]'}`} />
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         {/* Footer */}
@@ -513,12 +539,25 @@ export default function AdminEmpresasPage() {
                                                 {(!item.plan || item.plan === '' || item.plan === null) && <span className="bg-slate-50 text-slate-400 px-2 py-0.5 rounded text-[10px] font-bold border border-slate-200">Sem Plano</span>}
                                             </div>
 
-                                            <Button
-                                                onClick={() => router.push(`/admin/empresas/${item.id}`)}
-                                                className="text-[10px] font-bold uppercase text-white bg-emerald-600 hover:bg-emerald-700 ml-auto h-7 px-3"
-                                            >
-                                                Editar / Ver
-                                            </Button>
+                                            <div className="flex items-center gap-2 ml-auto">
+                                                <div className="flex items-center gap-2 mr-2 bg-slate-50 px-2 py-1 rounded-full border border-slate-100">
+                                                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Verificado</span>
+                                                    <button
+                                                        onClick={() => toggleVerify(item)}
+                                                        className={`w-7 h-4 rounded-full relative transition-colors ${item.is_verified ? 'bg-emerald-500' : 'bg-slate-200'}`}
+                                                    >
+                                                        <div className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all shadow-sm ${item.is_verified ? 'translate-x-[14px]' : 'translate-x-[2px]'}`} />
+                                                    </button>
+                                                </div>
+
+                                                <button
+                                                    onClick={() => router.push(`/admin/empresas/${item.id}`)}
+                                                    className="w-8 h-8 flex items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all shadow-sm border border-emerald-100 hover:border-emerald-600"
+                                                    title="Editar Detalhes"
+                                                >
+                                                    <Pencil className="w-4 h-4" />
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

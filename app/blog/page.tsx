@@ -225,7 +225,7 @@ function BlogContent() {
             </div>
 
             {/* News Articles Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 px-[30px]">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {displayedArticles.map((article, i) => (
                     <NewsCard
                         key={i}

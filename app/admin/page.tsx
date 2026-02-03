@@ -49,10 +49,10 @@ export default function AdminDashboardPage() {
     }, []);
 
     const cards = [
-        { name: "Artigos Publicados", value: stats.articles, icon: FileText, color: "text-blue-600", bg: "bg-blue-50" },
-        { name: "Empresas Registadas", value: stats.companies, icon: Building2, color: "text-emerald-600", bg: "bg-emerald-50" },
-        { name: "Profissionais no Empresas", value: stats.professionals, icon: Users, color: "text-indigo-600", bg: "bg-indigo-50" },
-        { name: "Produtos & Insumos", value: stats.products, icon: ShoppingCart, color: "text-orange-600", bg: "bg-orange-50" },
+        { name: "Artigos Publicados", value: stats.articles, icon: FileText, color: "text-blue-600", bg: "bg-blue-50", href: "/admin/artigos" },
+        { name: "Empresas Registadas", value: stats.companies, icon: Building2, color: "text-emerald-600", bg: "bg-emerald-50", href: "/admin/empresas" },
+        { name: "Profissionais no Sistema", value: stats.professionals, icon: Users, color: "text-indigo-600", bg: "bg-indigo-50", href: "/admin/profissionais" },
+        { name: "Produtos & Insumos", value: stats.products, icon: ShoppingCart, color: "text-orange-600", bg: "bg-orange-50", href: "/admin/produtos" },
     ];
 
     return (
@@ -65,7 +65,11 @@ export default function AdminDashboardPage() {
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {cards.map((card) => (
-                    <div key={card.name} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between group hover:shadow-md transition-all cursor-default">
+                    <Link
+                        key={card.name}
+                        href={card.href}
+                        className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between group hover:shadow-md transition-all cursor-pointer"
+                    >
                         <div>
                             <p className="text-xs font-black uppercase tracking-widest text-slate-400 mb-1">{card.name}</p>
                             <h3 className="text-2xl font-black text-slate-800">{loading ? "..." : card.value}</h3>
@@ -73,7 +77,7 @@ export default function AdminDashboardPage() {
                         <div className={`size-12 rounded-xl ${card.bg} ${card.color} flex items-center justify-center transition-transform group-hover:scale-110`}>
                             <card.icon className="w-6 h-6" />
                         </div>
-                    </div>
+                    </Link>
                 ))}
             </div>
 

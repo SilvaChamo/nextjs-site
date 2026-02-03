@@ -49,7 +49,7 @@ export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4 px-[10px]">
                     <div className="flex items-center gap-4">
                         <div className="w-[5px] h-[30px] bg-[#f97316] rounded-none" />
-                        <h2 className="text-[30px] leading-none font-heading font-extrabold text-slate-600 uppercase tracking-tight m-0">
+                        <h2 className="text-[28px] leading-none font-heading font-extrabold text-slate-600 uppercase tracking-tight m-0">
                             Empresas em destaque
                         </h2>
                     </div>
@@ -112,18 +112,16 @@ export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
                                                 <div className="flex justify-between items-start mb-2">
                                                     <div className="shrink-0">
                                                         {company.logo ? (
-                                                            <div className="w-[60px] h-[60px] rounded-[10px] overflow-hidden border border-gray-100 bg-white flex items-center justify-center p-1">
-                                                                <Image
+                                                            <div className="h-[45px] w-auto max-w-[120px] rounded-[8px] overflow-hidden border border-gray-100 bg-white flex items-center justify-center p-0.5">
+                                                                <img
                                                                     src={company.logo}
                                                                     alt={company.title || "Empresa"}
-                                                                    width={60}
-                                                                    height={60}
-                                                                    className="w-full h-full object-contain"
+                                                                    className="h-full w-auto object-contain"
                                                                 />
                                                             </div>
                                                         ) : (
-                                                            <div className="w-[60px] h-[60px] rounded-[10px] flex items-center justify-center bg-emerald-50 text-emerald-600 group-hover:bg-[#f97316] group-hover:text-white transition-all duration-500">
-                                                                <Icon className="w-8 h-8" />
+                                                            <div className="w-[45px] h-[45px] rounded-[8px] flex items-center justify-center bg-emerald-50 text-emerald-600 group-hover:bg-[#f97316] group-hover:text-white transition-all duration-500">
+                                                                <Icon className="w-6 h-6" />
                                                             </div>
                                                         )}
                                                     </div>
@@ -142,13 +140,20 @@ export function CategoriesShowcase({ companies }: CategoriesShowcaseProps) {
                                                     {company.title}
                                                 </h3>
 
-                                                <p className="text-slate-500 text-[11px] leading-relaxed mb-2 flex-1 line-clamp-2">
-                                                    {description}
-                                                </p>
+                                                <div className="flex-1 relative mb-2 min-h-[40px]">
+                                                    <p className="text-slate-500 text-[11px] leading-relaxed line-clamp-2">
+                                                        {description}
+                                                    </p>
+                                                </div>
 
-                                                <div className="pt-2 border-t border-slate-50 flex items-center justify-start gap-2 text-slate-400 group-hover:text-[#f97316] transition-colors">
-                                                    <span className="text-[10px] font-black uppercase tracking-wider">Ver detalhes</span>
-                                                    <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                                                <div className="pt-2 border-t border-slate-200 flex items-center justify-between gap-2 text-slate-400">
+                                                    <div className="flex items-center gap-2 group-hover:text-[#f97316] transition-colors">
+                                                        <span className="text-[10px] font-black uppercase tracking-wider">Ver detalhes</span>
+                                                        <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                                                    </div>
+                                                    <span className="text-[10px] text-slate-500 font-mono font-medium">
+                                                        ID: #{company.id?.toString().slice(0, 4)}
+                                                    </span>
                                                 </div>
                                             </div>
                                         </Link>

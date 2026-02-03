@@ -15,7 +15,7 @@ export default async function Home() {
   // Parallel Data Fetching
   const [statsResult, companiesResult] = await Promise.all([
     supabase.from('dashboard_indicators').select('slug, value, trend').eq('location', 'hero'),
-    supabase.from('companies').select('id, name, slug, category, location, logo_url, activity, description').eq('is_archived', false).eq('is_featured', true).order('created_at', { ascending: false }).limit(10)
+    supabase.from('companies').select('id, name, slug, category, province, location, logo_url, activity, description').eq('is_archived', false).eq('is_featured', true).order('created_at', { ascending: false }).limit(10)
   ]);
 
   // Process Stats
@@ -29,10 +29,11 @@ export default async function Home() {
   // Process Companies
   const companies = companiesResult.data
     ? companiesResult.data.map(c => ({
+      id: c.id,
       title: c.name,
       slug: c.slug,
       sub: c.category,
-      location: c.location,
+      location: c.province || c.location || "Moçambique",
       logo: c.logo_url,
       activity: c.activity,
       description: c.description,

@@ -521,14 +521,7 @@ export default function SimpleRegistrationPage() {
                             </div>
                         </div>
 
-                        {/* PROMOTIONAL IMAGE */}
-                        <div className="w-full rounded-xl overflow-hidden shadow-sm border border-slate-200">
-                            <img
-                                src="/assets/promocional-perfil.png"
-                                alt="Exemplo de Perfil Corporativo"
-                                className="w-full h-auto object-cover"
-                            />
-                        </div>
+
 
                         <div className="pt-6 flex justify-start">
                             <Button
@@ -768,7 +761,7 @@ export default function SimpleRegistrationPage() {
                                             <p className="text-[10px] text-emerald-200 text-center uppercase tracking-wider font-bold">
                                                 Instruções M-Pesa
                                             </p>
-                                            <div className="text-[10px] text-emerald-100 bg-emerald-900/40 p-2 rounded border border-emerald-500/20 space-y-1">
+                                            <div className="text-[10px] text-white/50 bg-emerald-900/40 p-2 rounded border border-emerald-500/20 space-y-1">
                                                 <p>1. Insira o seu número Vodacom abaixo</p>
                                                 <p>2. Clique em "Pagar 1 500 Mt"</p>
                                                 <p>3. Autorize o pagamento no seu telemóvel</p>

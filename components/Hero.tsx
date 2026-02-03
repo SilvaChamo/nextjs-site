@@ -22,7 +22,7 @@ export function Hero({ onToggleSearch, isSearchOpen, stats }: HeroProps) {
             <div className="absolute inset-0 z-0">
                 <Image
                     src="/assets/hero-bg-new.webp"
-                    alt="Agriculture Background"
+                    alt="Paisagem agrícola de fundo"
                     fill
                     className="object-cover"
                     priority

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { User, Mail, Phone, MapPin, Camera, Save, X, Loader2, BadgeCheck, GraduationCap, Briefcase, Map, ShoppingBag, Building2, Facebook, Instagram, Linkedin, Globe, Eye, TrendingUp } from "lucide-react";
+import { User, Mail, Phone, MapPin, Camera, Save, X, Loader2, BadgeCheck, GraduationCap, Briefcase, Map, ShoppingBag, Building2, Facebook, Instagram, Linkedin, Globe, Eye, TrendingUp, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DashboardPageHeader } from "@/components/DashboardPageHeader";
@@ -17,6 +17,7 @@ export default function MinhaContaPage() {
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const [isCancelling, setIsCancelling] = useState(false); // New state for cancellation
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     // Form State
@@ -122,6 +123,31 @@ export default function MinhaContaPage() {
         }
     };
 
+    // Account Deletion Handler
+    const handleDeleteAccount = async () => {
+        if (confirm("ATENÇÃO: Tem certeza que deseja cancelar sua subscrição e apagar sua conta permanentemente? Esta ação é irreversível e todos os seus dados serão perdidos.")) {
+            setIsCancelling(true);
+            try {
+                const res = await fetch('/api/user/delete-account', {
+                    method: 'POST',
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    alert("Sua conta foi apagada com sucesso.");
+                    window.location.href = "/"; // Force hard redirect
+                } else {
+                    alert("Erro ao apagar conta: " + (data.error || "Erro desconhecido"));
+                    setIsCancelling(false);
+                }
+            } catch (err) {
+                console.error("Error deleting account:", err);
+                alert("Erro de conexão. Tente novamente.");
+                setIsCancelling(false);
+            }
+        }
+    };
+
     // Helper to get display avatar
     const getAvatarSrc = () => {
         if (formData.avatarUrl) return formData.avatarUrl;
@@ -134,7 +160,7 @@ export default function MinhaContaPage() {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4">
             <DashboardPageHeader
                 title="Minha Conta"
                 description="Gerencie suas informações pessoais e preferências."
@@ -215,11 +241,11 @@ export default function MinhaContaPage() {
                     </div>
 
                     <div className="pl-8 py-8 pr-[50px] flex-1">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                             {/* COLUNA 1 (50%): Formulário de Dados */}
                             <div className="">
-                                <div className="space-y-8 w-full">
+                                <div className="space-y-5 w-full">
                                     {/* Email */}
                                     <div className="flex items-center gap-4 text-slate-700">
                                         <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
@@ -459,9 +485,23 @@ export default function MinhaContaPage() {
                                 </Button>
                             </>
                         ) : (
-                            <Button variant="outline" className="bg-white border-slate-200 shadow-sm" onClick={() => setIsEditing(true)}>
-                                Editar Perfil
-                            </Button>
+                            // View Mode Actions -> Split Layout
+                            <div className="flex w-full justify-between items-center">
+                                {/* Left Side: Edit Profile */}
+                                <Button variant="outline" className="bg-white border-slate-200 shadow-sm" onClick={() => setIsEditing(true)}>
+                                    Editar Perfil
+                                </Button>
+
+                                {/* Right Side: Cancel Subscription/Delete Account */}
+                                <button
+                                    onClick={handleDeleteAccount}
+                                    disabled={isCancelling}
+                                    className="flex items-center gap-1.5 text-[10px] font-bold text-red-400 hover:text-red-500 hover:bg-red-50 px-3 py-2 rounded-lg transition-colors uppercase tracking-widest disabled:opacity-50"
+                                >
+                                    {isCancelling ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
+                                    {isCancelling ? "A apagar..." : "Cancelar Subscrição"}
+                                </button>
+                            </div>
                         )}
                     </div>
                 </div>

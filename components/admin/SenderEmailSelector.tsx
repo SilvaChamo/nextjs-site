@@ -47,6 +47,7 @@ export function SenderEmailSelector({ value, onChange }: SenderEmailSelectorProp
                 const parsed = JSON.parse(saved);
                 // Merge with defaults significantly to ensure defaults always exist but priority to saved
                 const merged = Array.from(new Set([...DEFAULT_EMAILS, ...parsed]));
+                // eslint-disable-next-line
                 setEmails(merged);
             } catch (e) {
                 console.error("Failed to parse saved emails", e);

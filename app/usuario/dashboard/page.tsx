@@ -34,6 +34,7 @@ export default function DashboardPage() {
     const [user, setUser] = useState<any>(null);
     const [isAdmin, setIsAdmin] = useState(false);
     const [loading, setLoading] = useState(true);
+
     const supabase = createClient();
     const { settings, loading: settingsLoading } = useSiteSettings();
 
@@ -149,21 +150,7 @@ export default function DashboardPage() {
                                 </div>
                             </Link>
 
-                            {/* Cancel Subscription Button (Sidebar) */}
-                            <div className="pt-4 border-t border-slate-100">
-                                <button
-                                    onClick={() => {
-                                        if (confirm("Tem certeza que deseja cancelar sua subscrição?")) {
-                                            alert("Subscrição cancelada com sucesso.");
-                                            router.push("/");
-                                        }
-                                    }}
-                                    className="w-full flex items-center justify-center gap-2 text-red-500 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-all text-[11px] font-bold uppercase tracking-widest border border-transparent hover:border-red-100"
-                                >
-                                    <XCircle className="w-4 h-4" />
-                                    Cancelar Subscrição
-                                </button>
-                            </div>
+
                         </div>
                     </div>
 

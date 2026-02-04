@@ -218,7 +218,7 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
             />
 
             <div className="w-full max-w-[420px] px-4 relative z-10">
-                <div className="bg-white/95 backdrop-blur-md rounded-[20px] shadow-[0_20px_50px_rgba(0,0,0,0.1)] p-6 border border-slate-100 form-premium-card">
+                <div className="bg-white rounded-[20px] shadow-[0_20px_50px_rgba(0,0,0,0.1)] p-6 border border-slate-100 form-premium-card">
 
                     <div className="text-center mb-7">
                         <Link href="/" className="inline-block transition-transform hover:scale-105 duration-300">
@@ -275,7 +275,7 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                                                 type="text"
                                                 required={!isLogin}
                                                 placeholder="Seu Nome Completo"
-                                                className="pl-11 h-10 bg-white/90 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-900 placeholder:opacity-100 rounded-md transition-all duration-300 relative z-10"
+                                                className="pl-11 h-10 bg-slate-50 border-slate-200 focus:bg-white focus:border-emerald-500 shadow-sm text-[13px] text-slate-900 placeholder:text-slate-500 placeholder:opacity-100 rounded-md transition-all duration-300 relative z-10"
                                                 value={formData.fullName}
                                                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                                             />
@@ -290,7 +290,7 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                                                 type="tel"
                                                 required={!isLogin}
                                                 placeholder="Seu Número de Telefone (+258...)"
-                                                className="pl-11 h-10 bg-white/90 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-900 placeholder:opacity-100 rounded-md transition-all duration-300 relative z-10"
+                                                className="pl-11 h-10 bg-slate-50 border-slate-200 focus:bg-white focus:border-emerald-500 shadow-sm text-[13px] text-slate-900 placeholder:text-slate-500 placeholder:opacity-100 rounded-md transition-all duration-300 relative z-10"
                                                 value={formData.phoneNumber}
                                                 onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
                                             />
@@ -311,7 +311,7 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                                             type="email"
                                             required
                                             placeholder="Endereço de E-mail"
-                                            className="pl-11 h-10 bg-white/90 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-900 placeholder:opacity-100 rounded-md transition-all duration-300 relative z-10"
+                                            className="pl-11 h-10 bg-slate-50 border-slate-200 focus:bg-white focus:border-emerald-500 shadow-sm text-[13px] text-slate-900 placeholder:text-slate-500 placeholder:opacity-100 rounded-md transition-all duration-300 relative z-10"
                                             value={formData.email}
                                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                         />
@@ -326,7 +326,7 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                                                 type={showPassword ? "text" : "password"}
                                                 required
                                                 placeholder="Sua Senha"
-                                                className="pl-11 pr-10 h-10 bg-white/90 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-900 placeholder:opacity-100 rounded-md transition-all duration-300 relative z-10"
+                                                className="pl-11 pr-10 h-10 bg-slate-50 border-slate-200 focus:bg-white focus:border-emerald-500 shadow-sm text-[13px] text-slate-900 placeholder:text-slate-500 placeholder:opacity-100 rounded-md transition-all duration-300 relative z-10"
                                                 value={formData.password}
                                                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                             />
@@ -354,7 +354,7 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                                                 type="tel"
                                                 required
                                                 placeholder="Seu Número de Telefone (ex: +258...)"
-                                                className="pl-11 h-10 bg-white/90 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-900 placeholder:opacity-100 rounded-md transition-all duration-300 relative z-10"
+                                                className="pl-11 h-10 bg-slate-50 border-slate-200 focus:bg-white focus:border-emerald-500 shadow-sm text-[13px] text-slate-900 placeholder:text-slate-500 placeholder:opacity-100 rounded-md transition-all duration-300 relative z-10"
                                                 value={formData.phoneNumber}
                                                 onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
                                             />
@@ -371,7 +371,7 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                                                 type="text"
                                                 required
                                                 placeholder="Insira o Código SMS"
-                                                className="pl-11 h-10 bg-white/90 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-900 placeholder:opacity-100 rounded-md transition-all duration-300 relative z-10"
+                                                className="pl-11 h-10 bg-slate-50 border-slate-200 focus:bg-white focus:border-emerald-500 shadow-sm text-[13px] text-slate-900 placeholder:text-slate-500 placeholder:opacity-100 rounded-md transition-all duration-300 relative z-10"
                                                 value={otpCode}
                                                 onChange={(e) => setOtpCode(e.target.value)}
                                             />
@@ -450,7 +450,7 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                                             type="number"
                                             required
                                             placeholder="Sua Resposta"
-                                            className="pl-24 h-10 bg-white/90 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-900 placeholder:opacity-100 rounded-md transition-all duration-300 relative z-10"
+                                            className="pl-24 h-10 bg-slate-50 border-slate-200 focus:bg-white focus:border-emerald-500 shadow-sm text-[13px] text-slate-900 placeholder:text-slate-500 placeholder:opacity-100 rounded-md transition-all duration-300 relative z-10"
                                             value={userCaptchaAnswer}
                                             onChange={(e) => setUserCaptchaAnswer(e.target.value)}
                                         />

@@ -86,20 +86,16 @@ export default function PresentationsGalleryPage() {
 
                                         {/* Main Text */}
                                         <div className="space-y-2">
-                                            <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">
-                                                <Calendar className="w-3.5 h-3.5" />
-                                                {new Date(item.created_at).toLocaleDateString('pt-PT')}
-                                            </div>
 
-                                            <h3 className="text-2xl font-black text-white leading-tight tracking-tighter group-hover:text-emerald-400 transition-colors duration-300 uppercase">
-                                                {item.title}
+                                            <h3 className="text-xl font-bold text-white leading-tight tracking-tight group-hover:text-emerald-400 transition-colors duration-300 first-letter:uppercase">
+                                                {item.title.toLowerCase()}
                                             </h3>
 
-                                            <p className="text-sm text-slate-300 leading-relaxed font-medium line-clamp-3 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-100">
+                                            <p className="text-xs text-slate-300 leading-relaxed font-medium line-clamp-2 transition-all duration-500">
                                                 {item.description || "Explora conteúdo interactivo e dados actualizados sobre o sector agro-pecuário em Moçambique."}
                                             </p>
 
-                                            <div className="pt-4">
+                                            <div className="pt-4 flex items-center justify-between">
                                                 <Link
                                                     href={`/apresentacao/${item.id}`}
                                                     className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white text-slate-950 rounded-full text-[9px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition-all duration-300"
@@ -107,6 +103,10 @@ export default function PresentationsGalleryPage() {
                                                     Abrir Projecto
                                                     <ArrowRight className="w-3 h-3" />
                                                 </Link>
+                                                <div className="flex items-center gap-2 text-[9px] font-bold text-white/40 uppercase tracking-widest">
+                                                    <Calendar className="w-3 h-3" />
+                                                    {new Date(item.created_at).toLocaleDateString('pt-PT')}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

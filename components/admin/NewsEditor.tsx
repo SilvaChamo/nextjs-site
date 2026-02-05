@@ -298,14 +298,13 @@ export function NewsEditor({ initialData, isNew = false }: NewsEditorProps) {
                                     </div>
                                     <input
                                         type="checkbox"
-                                        disabled={!!initialData?.shared_on_facebook_at}
-                                        checked={formData.share_facebook || !!initialData?.shared_on_facebook_at}
+                                        checked={formData.share_facebook}
                                         onChange={(e) => setFormData({ ...formData, share_facebook: e.target.checked })}
                                         className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                                     />
                                 </div>
                                 {initialData?.shared_on_facebook_at && (
-                                    <p className="text-[10px] text-emerald-600 font-bold uppercase text-center">Já partilhado ✅</p>
+                                    <p className="text-[10px] text-emerald-600 font-bold uppercase text-center">Já partilhado em {new Date(initialData.shared_on_facebook_at).toLocaleDateString()} ✅</p>
                                 )}
 
                                 <div className={`flex items-center justify-between p-3 rounded-lg border ${formData.share_linkedin ? 'bg-sky-50 border-sky-200' : 'bg-slate-50 border-slate-200'} transition-all`}>
@@ -315,14 +314,13 @@ export function NewsEditor({ initialData, isNew = false }: NewsEditorProps) {
                                     </div>
                                     <input
                                         type="checkbox"
-                                        disabled={!!initialData?.shared_on_linkedin_at}
-                                        checked={formData.share_linkedin || !!initialData?.shared_on_linkedin_at}
+                                        checked={formData.share_linkedin}
                                         onChange={(e) => setFormData({ ...formData, share_linkedin: e.target.checked })}
                                         className="w-5 h-5 rounded border-slate-300 text-sky-700 focus:ring-sky-600"
                                     />
                                 </div>
                                 {initialData?.shared_on_linkedin_at && (
-                                    <p className="text-[10px] text-emerald-600 font-bold uppercase text-center">Já partilhado ✅</p>
+                                    <p className="text-[10px] text-emerald-600 font-bold uppercase text-center">Já partilhado em {new Date(initialData.shared_on_linkedin_at).toLocaleDateString()} ✅</p>
                                 )}
                             </div>
 

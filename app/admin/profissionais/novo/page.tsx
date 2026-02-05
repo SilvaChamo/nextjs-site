@@ -1,11 +1,12 @@
 "use client";
 
-import { ProfessionalEditor } from "@/components/admin/ProfessionalEditor";
+import { ProfessionalRegistrationForm } from "@/components/ProfessionalRegistrationForm";
 
 export default function NewProfessionalPage() {
     return (
-        <div className="h-[calc(100vh-80px)] p-6">
-            <ProfessionalEditor isNew={true} />
+        <div className="max-w-5xl mx-auto py-8">
+            <h1 className="text-2xl font-black text-slate-800 mb-6 px-6">Novo Profissional</h1>
+            <ProfessionalRegistrationForm isAdmin={true} />
         </div>
     );
 }

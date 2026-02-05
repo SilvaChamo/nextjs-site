@@ -1,6 +1,6 @@
 "use client";
 
-import { ProfessionalEditor } from "@/components/admin/ProfessionalEditor";
+import { ProfessionalRegistrationForm } from "@/components/ProfessionalRegistrationForm";
 import { createClient } from "@/utils/supabase/client";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -40,8 +40,9 @@ export default function EditProfessionalPage() {
     if (!data) return null;
 
     return (
-        <div className="h-[calc(100vh-80px)] p-6">
-            <ProfessionalEditor initialData={data} />
+        <div className="max-w-5xl mx-auto py-8">
+            <h1 className="text-2xl font-black text-slate-800 mb-6 px-6">Editar Profissional</h1>
+            <ProfessionalRegistrationForm initialData={data} isAdmin={true} />
         </div>
     );
 }

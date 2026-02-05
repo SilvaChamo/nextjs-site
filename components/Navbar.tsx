@@ -111,13 +111,13 @@ export function Navbar() {
                 {/* Logo Section */}
                 <div className="flex items-center flex-shrink-0">
                     <Link href="/">
-                        <div className="hover:opacity-80 transition-opacity duration-300">
+                        <div className="group">
                             <Image
                                 src="/Logo.svg"
                                 alt="Base Agro Data Logo"
                                 width={160}
                                 height={60}
-                                className="h-10 md:h-12 w-auto object-contain"
+                                className="h-10 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-110"
                                 priority
                             />
                         </div>

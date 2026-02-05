@@ -46,7 +46,7 @@ export function CompanyCard({ company }: CompanyCardProps) {
                                 alt={company.name || "Empresa"}
                                 width={100}
                                 height={100}
-                                className="w-full h-full object-contain rounded-md"
+                                className="w-full h-full object-contain rounded-md transition-transform duration-300 group-hover:scale-110"
                             />
                         </div>
 

@@ -50,7 +50,12 @@ const formSchema = z.object({
     photo_url: z.string().optional(),
 });
 
-export function ProfessionalRegistrationForm() {
+interface ProfessionalFormProps {
+    initialData?: any;
+    isAdmin?: boolean;
+}
+
+export function ProfessionalRegistrationForm({ initialData, isAdmin }: ProfessionalFormProps) {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const router = useRouter();
@@ -59,68 +64,92 @@ export function ProfessionalRegistrationForm() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            name: "",
-            role: "",
-            category: "",
-            location: "",
-            province: "",
-            district: "",
-            email: "",
-            phone: "",
-            whatsapp: "",
-            linkedin: "",
-            facebook: "",
-            instagram: "",
-            bio: "",
-            specialties: "",
-            academic_level: "",
-            profession: "",
-            photo_url: "",
+            name: initialData?.name || "",
+            role: initialData?.role || "",
+            category: initialData?.category || "",
+            location: initialData?.location || "",
+            province: initialData?.province || "",
+            district: initialData?.district || "",
+            email: initialData?.email || "",
+            phone: initialData?.phone || "",
+            whatsapp: initialData?.whatsapp || "",
+            linkedin: initialData?.linkedin || "",
+            facebook: initialData?.facebook || "",
+            instagram: initialData?.instagram || "",
+            bio: initialData?.bio || "",
+            specialties: initialData?.specialties || "",
+            academic_level: initialData?.academic_level || "",
+            profession: initialData?.profession || "",
+            photo_url: initialData?.photo_url || "",
         },
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setLoading(true);
         try {
-            const { error } = await supabase
-                .from("professionals")
-                .insert({
-                    name: values.name,
-                    role: values.role,
-                    category: values.category,
-                    location: values.location,
-                    province: values.province,
-                    district: values.district,
-                    email: values.email,
-                    phone: values.phone,
-                    whatsapp: values.whatsapp,
-                    linkedin: values.linkedin,
-                    facebook: values.facebook,
-                    instagram: values.instagram,
-                    bio: values.bio,
-                    specialties: values.specialties,
-                    academic_level: values.academic_level,
-                    profession: values.profession,
-                    photo_url: values.photo_url,
-                    status: "pending",
-                    rating: 5.0,
-                    created_at: new Date().toISOString(),
-                });
+            const payload = {
+                name: values.name,
+                role: values.role,
+                category: values.category,
+                location: values.location,
+                province: values.province,
+                district: values.district,
+                email: values.email,
+                phone: values.phone,
+                whatsapp: values.whatsapp,
+                linkedin: values.linkedin,
+                facebook: values.facebook,
+                instagram: values.instagram,
+                bio: values.bio,
+                specialties: values.specialties,
+                academic_level: values.academic_level,
+                profession: values.profession,
+                photo_url: values.photo_url,
+                // Status: if admin editing, keep existing status, otherwise default to pending
+                status: isAdmin ? (initialData?.status || "active") : "pending",
+                rating: initialData?.rating || 5.0,
+                updated_at: new Date().toISOString(),
+            };
+
+            let error;
+
+            if (initialData?.id) {
+                // Update
+                const { error: err } = await supabase
+                    .from("professionals")
+                    .update(payload)
+                    .eq("id", initialData.id);
+                error = err;
+            } else {
+                // Create
+                const { error: err } = await supabase
+                    .from("professionals")
+                    .insert({
+                        ...payload,
+                        created_at: new Date().toISOString(),
+                    });
+                error = err;
+            }
 
             if (error) throw error;
 
-            setSuccess(true);
-            toast.success("Registo enviado com sucesso!", {
-                description: "O seu perfil será analisado pela nossa equipa."
-            });
-
-            setTimeout(() => {
-                router.push("/servicos/talentos");
-            }, 3000);
+            if (isAdmin) {
+                toast.success(initialData ? "Profissional actualizado!" : "Profissional criado!");
+                router.push("/admin/profissionais");
+                router.refresh();
+            } else {
+                setSuccess(true);
+                toast.success("Registo enviado com sucesso!", {
+                    description: "O seu perfil será analisado pela nossa equipa."
+                });
+                setTimeout(() => {
+                    router.push("/servicos/talentos");
+                }, 3000);
+            }
 
         } catch (error: any) {
-            console.error("Erro ao registar:", error);
-            toast.error("Erro ao submeter registo", {
+            console.error("Erro ao guardar:", error);
+            toast.error("Erro ao submeter", {
                 description: error.message || "Tente novamente mais tarde."
             });
         } finally {
@@ -128,7 +157,7 @@ export function ProfessionalRegistrationForm() {
         }
     }
 
-    if (success) {
+    if (success && !isAdmin) {
         return (
             <div className="flex flex-col items-center justify-center py-16 text-center animate-in fade-in zoom-in duration-500">
                 <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-6">
@@ -551,7 +580,7 @@ export function ProfessionalRegistrationForm() {
                                 A enviar...
                             </>
                         ) : (
-                            "Registar Perfil Profissional"
+                            initialData ? "Guardar Alterações" : "Registar Perfil Profissional"
                         )}
                     </Button>
                 </div>

@@ -195,13 +195,24 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
                     <div className="space-y-6">
                         <div className="flex items-center justify-between">
                             <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">Slides da Apresentação</h3>
-                            <Button
-                                onClick={handleAddSlide}
-                                className="bg-slate-900 hover:bg-black text-white font-bold h-10 rounded-full gap-2 px-6"
-                            >
-                                <Plus className="w-4 h-4" />
-                                Adicionar Slide
-                            </Button>
+                            <div className="flex items-center gap-3">
+                                <Button
+                                    onClick={handleSave}
+                                    disabled={saving}
+                                    variant="outline"
+                                    className="border-emerald-600 text-emerald-600 hover:bg-emerald-50 font-bold h-10 rounded-full gap-2 px-6"
+                                >
+                                    {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                                    Salvar Alterações
+                                </Button>
+                                <Button
+                                    onClick={handleAddSlide}
+                                    className="bg-slate-900 hover:bg-black text-white font-bold h-10 rounded-full gap-2 px-6"
+                                >
+                                    <Plus className="w-4 h-4" />
+                                    Adicionar Slide
+                                </Button>
+                            </div>
                         </div>
 
                         <div className="space-y-6">

@@ -170,7 +170,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                         </div>
 
                                         {/* Body: Two Columns */}
-                                        <div className="w-full grid grid-cols-1 lg:grid-cols-[550px_1fr] gap-[25px] items-start flex-1">
+                                        <div className="w-full grid grid-cols-1 lg:grid-cols-[550px_1fr] gap-[35px] items-start flex-1">
 
                                             {/* Column 1: Photo - Fixed 550x600 area */}
                                             <div className="relative group flex justify-start">
@@ -195,7 +195,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                             </div>
 
                                             {/* Column 2: Description */}
-                                            <div className="space-y-[30px]">
+                                            <div className="space-y-[30px] py-[25px]">
                                                 {slide.antetitulo && (
                                                     <div className="space-y-2">
                                                         <span className="text-orange-500 font-black uppercase tracking-[0.3em] text-xs">

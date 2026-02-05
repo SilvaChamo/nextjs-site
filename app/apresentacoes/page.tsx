@@ -85,7 +85,7 @@ export default function PresentationsGalleryPage() {
                                         </div>
 
                                         {/* Main Text */}
-                                        <div className="space-y-4">
+                                        <div className="space-y-2">
                                             <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">
                                                 <Calendar className="w-3.5 h-3.5" />
                                                 {new Date(item.created_at).toLocaleDateString('pt-PT')}
@@ -99,10 +99,10 @@ export default function PresentationsGalleryPage() {
                                                 {item.description || "Explora conteúdo interactivo e dados actualizados sobre o sector agro-pecuário em Moçambique."}
                                             </p>
 
-                                            <div className="pt-6">
+                                            <div className="pt-4">
                                                 <Link
                                                     href={`/apresentacao/${item.id}`}
-                                                    className="inline-flex items-center gap-2 px-6 py-3 bg-white text-slate-950 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition-all duration-300"
+                                                    className="inline-flex items-center gap-2 px-4 py-2 bg-white text-slate-950 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition-all duration-300"
                                                 >
                                                     Abrir Projecto
                                                     <ArrowRight className="w-3.5 h-3.5" />

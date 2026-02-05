@@ -26,7 +26,7 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
         title: "",
         description: "",
         slides: [
-            { id: crypto.randomUUID(), title: "Título do Slide", antetitulo: "Antetítulo do Slide", content: "Conteúdo aqui...", image_url: "" }
+            { id: crypto.randomUUID(), title: "Título do Slide", antetitulo: "Antetítulo do Slide", content: "Conteúdo aqui...", image_url: "", image_side: "left", cta_text: "", cta_link: "" }
         ]
     });
 
@@ -45,7 +45,11 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
                 setPresentation({
                     title: data.title,
                     description: data.description || "",
-                    slides: data.slides || []
+                    slides: (data.slides || []).map((s: any, idx: number) => ({
+                        ...s,
+                        id: s.id || `slide-${idx}-${Date.now()}`,
+                        image_side: s.image_side || 'left'
+                    }))
                 });
                 setLoading(false);
             } else if (isMounted) {
@@ -68,7 +72,11 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
             setPresentation({
                 title: data.title,
                 description: data.description || "",
-                slides: data.slides || []
+                slides: (data.slides || []).map((s: any, idx: number) => ({
+                    ...s,
+                    id: s.id || `slide-${idx}-${Date.now()}`,
+                    image_side: s.image_side || 'left'
+                }))
             });
         }
         setLoading(false);
@@ -77,7 +85,7 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
     const handleAddSlide = () => {
         setPresentation(prev => ({
             ...prev,
-            slides: [...prev.slides, { id: crypto.randomUUID(), title: "Novo Slide", antetitulo: "", content: "", image_url: "" }]
+            slides: [...prev.slides, { id: crypto.randomUUID(), title: "Novo Slide", antetitulo: "", content: "", image_url: "", image_side: "left", cta_text: "", cta_link: "" }]
         }));
     };
 
@@ -333,14 +341,23 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
                                 <div className="flex flex-col md:flex-row gap-10 items-start shrink-0">
                                     <div className="flex-1 space-y-8 w-full">
                                         <div className="space-y-2">
-                                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Título do Slide</label>
+                                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Antetítulo</label>
                                             <Input
-                                                value={activeSlide?.title}
+                                                value={activeSlide?.title || ""}
                                                 onChange={(e) => updateSlide(activeSlide.id, { title: e.target.value })}
-                                                placeholder="Digita o título impactante aqui..."
-                                                className="h-16 text-3xl font-black bg-transparent border-none p-0 focus-visible:ring-0 placeholder:text-slate-200"
+                                                placeholder="Ex: Estratégia"
+                                                className="h-10 text-xl font-bold bg-white/50 border-slate-200 focus:ring-emerald-500 rounded-lg shadow-sm"
                                             />
-                                            <div className="h-1 w-20 bg-emerald-500 rounded-full" />
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Título</label>
+                                            <Textarea
+                                                value={activeSlide?.antetitulo || ""}
+                                                onChange={(e) => updateSlide(activeSlide.id, { antetitulo: e.target.value })}
+                                                placeholder="Digite aqui o título..."
+                                                className="min-h-[130px] text-lg font-bold bg-white/50 border-slate-200 focus:ring-emerald-500 rounded-lg shadow-sm resize-none"
+                                            />
                                         </div>
 
                                     </div>
@@ -362,18 +379,35 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
                                                 imageClassName="object-cover object-center"
                                             />
                                         </div>
+                                        {/* Image Positioning Toggle */}
+                                        <div className="flex items-center justify-between gap-2 p-2 bg-slate-50 rounded-lg border border-slate-200">
+                                            <span className="text-[10px] font-black uppercase text-slate-400">Lado da Imagem</span>
+                                            <div className="flex bg-white rounded-md border border-slate-200 p-0.5">
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); updateSlide(activeSlide.id, { image_side: 'left' }); }}
+                                                    className={cn(
+                                                        "px-3 py-1 text-[9px] font-black uppercase rounded transition-all",
+                                                        (activeSlide?.image_side || 'left') === 'left' ? "bg-emerald-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-600"
+                                                    )}
+                                                >
+                                                    Esquerda
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); updateSlide(activeSlide.id, { image_side: 'right' }); }}
+                                                    className={cn(
+                                                        "px-3 py-1 text-[9px] font-black uppercase rounded transition-all",
+                                                        activeSlide?.image_side === 'right' ? "bg-emerald-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-600"
+                                                    )}
+                                                >
+                                                    Direita
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div className="space-y-3 shrink-0">
-                                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Antetítulo (Texto de impacto largura total)</label>
-                                    <Textarea
-                                        value={activeSlide?.antetitulo || ""}
-                                        onChange={(e) => updateSlide(activeSlide.id, { antetitulo: e.target.value })}
-                                        placeholder="Digite aqui o seu ante-título ou introdução curta..."
-                                        className="min-h-[120px] text-xl font-bold bg-white border-slate-200 focus:ring-emerald-500 rounded-xl shadow-sm resize-none"
-                                    />
-                                </div>
 
                                 {/* Content Section: FULL WIDTH & EXPANDED */}
                                 <div className="flex flex-col gap-3 flex-1 min-h-[500px]">
@@ -389,6 +423,28 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
                                             className="bg-transparent"
                                         />
                                     </div>
+                                </div>
+                            </div>
+
+                            {/* Call to Action (CTA) Section */}
+                            <div className="grid grid-cols-4 gap-4 pt-4 border-t border-slate-100 px-8 pb-6">
+                                <div className="space-y-3 col-span-1">
+                                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Texto do Botão (CTA)</label>
+                                    <Input
+                                        value={activeSlide?.cta_text || ""}
+                                        onChange={(e) => updateSlide(activeSlide.id, { cta_text: e.target.value })}
+                                        placeholder="Ex: Saiba Mais"
+                                        className="font-bold bg-white border-slate-200 focus:ring-emerald-500 rounded-md shadow-sm"
+                                    />
+                                </div>
+                                <div className="space-y-3 col-span-3">
+                                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Link do Botão (URL)</label>
+                                    <Input
+                                        value={activeSlide?.cta_link || ""}
+                                        onChange={(e) => updateSlide(activeSlide.id, { cta_link: e.target.value })}
+                                        placeholder="Ex: /sobre-nos"
+                                        className="font-bold bg-white border-slate-200 focus:ring-emerald-500 rounded-md shadow-sm"
+                                    />
                                 </div>
                             </div>
 

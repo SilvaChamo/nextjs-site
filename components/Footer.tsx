@@ -125,12 +125,12 @@ export function Footer() {
 
                     {/* Bottom Bar: Legal Links & Socials */}
                     <div className="border-t border-gray-500/30 py-6 flex flex-col md:flex-row justify-between items-center gap-6">
-                        <div className="flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-2 text-gray-400 text-[10px] font-black uppercase tracking-widest">
+                        <div className="flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-2 text-gray-300 text-[10px] font-black uppercase tracking-widest">
                             <Link href="/politica-privacidade" className="hover:text-[#f97316] transition-colors">Política de privacidade</Link>
                             <Link href="/termos" className="hover:text-[#f97316] transition-colors">Termos e condições</Link>
                             <Link href="/contactos" className="hover:text-[#f97316] transition-colors">Suporte</Link>
-                            <Link href="/design-system" className="hover:text-[#f97316] transition-colors text-emerald-600/50">Kit Padrão</Link>
-                            <Link href="/admin" className="hover:text-[#f97316] transition-colors text-gray-400/20 hover:text-emerald-600">Cozinha</Link>
+                            <Link href="/design-system" className="hover:text-[#f97316] transition-colors text-emerald-600/70">Kit Padrão</Link>
+                            <Link href="/admin" className="hover:text-[#f97316] transition-colors text-white/30 hover:text-emerald-600">Cozinha</Link>
                         </div>
                         <div className="flex items-center gap-4">
                             <SocialIcon Icon={Facebook} />
@@ -146,8 +146,8 @@ export function Footer() {
             {/* Copyright Bar - Ultra Dark Integrated */}
             <div className="bg-[#000d0a] py-4 border-t border-white/5 relative z-20">
                 <div className="container-site text-center">
-                    <p className="text-[12px] text-gray-400 tracking-wider">
-                        Copyright © 2023 Base de dados agrícola | Powered by <a href="https://visualdesigne.com" target="_blank" rel="noopener noreferrer" className="text-emerald-600/80 font-bold hover:text-[#f97316] transition-colors hover:underline">VisualDESIGN</a> Services, Lda.
+                    <p className="text-[12px] text-gray-300 tracking-wider">
+                        Copyright © 2023 Base de dados agrícola | Powered by <a href="https://visualdesigne.com" target="_blank" rel="noopener noreferrer" className="text-emerald-500 font-bold hover:text-[#f97316] transition-colors hover:underline">VisualDESIGN</a> Services, Lda.
                     </p>
                 </div>
             </div>

@@ -103,7 +103,7 @@ export default function PresentationsGalleryPage() {
                                                     Abrir Projecto
                                                     <ArrowRight className="w-3 h-3" />
                                                 </Link>
-                                                <div className="flex items-center gap-2 text-[9px] font-bold text-emerald-400 uppercase tracking-widest">
+                                                <div className="flex items-center gap-2 text-[9px] font-bold text-white/40 uppercase tracking-widest">
                                                     <Calendar className="w-3 h-3" />
                                                     {new Date(item.created_at).toLocaleDateString('pt-PT')}
                                                 </div>

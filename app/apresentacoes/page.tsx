@@ -55,7 +55,7 @@ export default function PresentationsGalleryPage() {
                             const firstSlideImage = item.slides?.[0]?.image_url;
 
                             return (
-                                <div key={item.id} className="group relative h-[250px] rounded-[32px] overflow-hidden bg-slate-900 border border-white/5 shadow-2xl hover:shadow-emerald-900/20 transition-all duration-700 flex flex-col">
+                                <div key={item.id} className="group relative h-[250px] rounded-[15px] overflow-hidden bg-slate-900 border border-white/5 shadow-2xl hover:shadow-emerald-900/20 transition-all duration-700 flex flex-col">
                                     {/* Full Background Image */}
                                     <div className="absolute inset-0 z-0">
                                         {firstSlideImage ? (
@@ -75,7 +75,7 @@ export default function PresentationsGalleryPage() {
                                     </div>
 
                                     {/* Content Overlay */}
-                                    <div className="relative z-20 p-8 h-full flex flex-col">
+                                    <div className="relative z-20 p-5 h-full flex flex-col">
                                         {/* Header Info */}
                                         <div className="flex items-center justify-between mb-auto">
                                             <span className="px-4 py-1.5 bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] font-black uppercase tracking-widest rounded-full">

@@ -159,7 +159,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
 
                                         {/* Header: Title & Subtitle */}
                                         <div className="space-y-[30px]">
-                                            <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase leading-none">
+                                            <h1 className="text-[40px] md:text-[50px] font-black tracking-tighter text-white uppercase leading-none">
                                                 {slide.title}
                                             </h1>
                                             <div className="flex items-center gap-4 mt-2">

@@ -75,9 +75,6 @@ export default function RootLayout({
               <main className="flex-1 flex flex-col">
                 {children}
               </main>
-              <FloatingChatButton />
-              <GoogleTranslate />
-              <PWAInstallPrompt />
             </NavFooterToggle>
           </LanguageProvider>
           <Toaster position="top-right" richColors closeButton />

@@ -74,7 +74,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
     if (loading) {
         return (
             <div className="fixed inset-0 bg-slate-950 flex items-center justify-center">
-                <Loader2 className="w-10 h-10 animate-spin text-emerald-500" />
+                <Loader2 className="w-10 h-10 animate-spin text-orange-500" />
             </div>
         );
     }
@@ -95,28 +95,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
     return (
         <div className={`fixed inset-0 bg-slate-950 text-white overflow-hidden select-none`}>
 
-            {/* Top Bar - Auto Hide */}
-            <div className="absolute top-0 left-0 right-0 p-6 flex justify-between items-center z-50 opacity-0 hover:opacity-100 transition-opacity bg-gradient-to-b from-black/80 to-transparent">
-                <div className="flex items-center gap-4">
-                    <button onClick={() => router.back()} className="p-2 hover:bg-white/10 rounded-full transition-colors">
-                        <X className="w-6 h-6" />
-                    </button>
-                    <div>
-                        <h2 className="text-sm font-black uppercase tracking-widest text-emerald-500">{presentation.title}</h2>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase">Slide {currentIndex + 1} de {slides.length}</p>
-                    </div>
-                </div>
 
-                <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full backdrop-blur-md">
-                        <Clock className="w-4 h-4 text-emerald-500" />
-                        <span className="text-xs font-mono font-bold">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                    </div>
-                    <button onClick={toggleFullscreen} className="p-3 bg-white/10 hover:bg-emerald-600 rounded-full transition-all">
-                        <Maximize2 className="w-5 h-5" />
-                    </button>
-                </div>
-            </div>
 
             {/* Slides Container */}
             <div className="h-full embla" ref={emblaRef}>
@@ -135,35 +114,65 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                             )}
 
                             {/* Content Layouts */}
-                            <div className="relative z-10 max-w-6xl w-full px-12 py-20 flex flex-col items-center text-center">
+                            {/* Universal Slide Layout: Title Top Left + Subtitle + 2 Columns (Photo | Text) */}
+                            <div className="w-full h-full flex flex-col items-start text-left animate-in fade-in duration-700">
 
-                                {index === 0 ? (
-                                    /* Cover Slide */
-                                    <div className="space-y-8 animate-in fade-in zoom-in duration-1000">
-                                        <div className="flex justify-center mb-6">
-                                            <div className="w-20 h-1 bg-emerald-500 rounded-full"></div>
-                                        </div>
-                                        <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-none uppercase">
-                                            {slide.title}
-                                        </h1>
-                                        <div className="text-xl md:text-2xl text-emerald-400 font-medium max-w-3xl mx-auto" dangerouslySetInnerHTML={{ __html: slide.content }}></div>
-                                        <div className="pt-12">
-                                            <p className="text-xs font-black uppercase tracking-[0.5em] text-slate-500">BaseAgroData &bull; 2026</p>
-                                        </div>
+                                {/* Header: Title & Subtitle */}
+                                <div className="mb-12 space-y-2">
+                                    <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-white uppercase leading-none">
+                                        {slide.title}
+                                    </h1>
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-1 bg-orange-500 rounded-full"></div>
+                                        <p className="text-orange-500 font-bold uppercase tracking-[0.2em] text-sm md:text-lg">
+                                            {presentation.title} {index === 0 ? "• Introdução" : `• Slide ${index + 1}`}
+                                        </p>
                                     </div>
-                                ) : (
-                                    /* Content Slide */
-                                    <div className="w-full grid grid-cols-1 lg:grid-cols-1 gap-12 text-left">
-                                        <div className="space-y-8">
-                                            <h2 className="text-4xl md:text-6xl font-black tracking-tight text-white border-l-8 border-emerald-500 pl-8 leading-tight">
-                                                {slide.title}
-                                            </h2>
-                                            <div className="text-xl md:text-2xl leading-relaxed text-slate-300 font-medium space-y-4 prose prose-invert max-w-none prose-p:my-4 prose-strong:text-white prose-strong:font-black"
-                                                dangerouslySetInnerHTML={{ __html: slide.content }}>
+                                </div>
+
+                                {/* Body: Two Columns */}
+                                <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center flex-1">
+
+                                    {/* Column 1: Photo */}
+                                    <div className="relative group">
+                                        <div className="absolute -inset-4 bg-orange-500/10 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                        {slide.image_url ? (
+                                            <div className="relative aspect-video rounded-2xl overflow-hidden border-4 border-white/10 shadow-2xl">
+                                                <img src={slide.image_url} alt="" className="w-full h-full object-cover" />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
+                                                    <span className="text-[10px] font-black uppercase tracking-widest text-white/50">Recurso Visual • {index + 1}</span>
+                                                </div>
                                             </div>
+                                        ) : (
+                                            <div className="aspect-video rounded-2xl bg-white/5 border-2 border-dashed border-white/10 flex items-center justify-center">
+                                                <div className="text-center">
+                                                    <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                                                        <Loader2 className="w-8 h-8 text-white/20 animate-spin" />
+                                                    </div>
+                                                    <p className="text-xs font-bold text-white/20 uppercase tracking-widest">Sem recurso visual</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Column 2: Description */}
+                                    <div className="space-y-6">
+                                        <div className="prose prose-invert max-w-none 
+                                                prose-p:text-xl md:prose-p:text-2xl prose-p:leading-relaxed prose-p:text-slate-200 prose-p:font-medium
+                                                prose-strong:text-orange-500 prose-strong:font-black
+                                                prose-ul:list-disc prose-li:text-slate-300"
+                                            dangerouslySetInnerHTML={{ __html: slide.content }}>
+                                        </div>
+
+                                        {/* Footer line for the slide */}
+                                        <div className="pt-8 border-t border-white/5 flex items-center gap-4">
+                                            <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">BaseAgroData &bull; Estratégia Digital</span>
+                                            <div className="h-4 w-px bg-white/5"></div>
+                                            <span className="text-[8px] font-black text-orange-500/50 uppercase tracking-widest">Acesso Reservado</span>
                                         </div>
                                     </div>
-                                )}
+
+                                </div>
                             </div>
                         </div>
                     ))}
@@ -173,7 +182,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
             {/* Progress Bar */}
             <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/5 z-50">
                 <div
-                    className="h-full bg-emerald-500 transition-all duration-300 shadow-[0_0_10px_#10b981]"
+                    className="h-full bg-orange-600 transition-all duration-300 shadow-[0_0_10px_#ea580c]"
                     style={{ width: `${((currentIndex + 1) / slides.length) * 100}%` }}
                 ></div>
             </div>
@@ -181,24 +190,20 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
             {/* Navigation Buttons (Visible on Hover/Mobile) */}
             <button
                 onClick={() => emblaApi?.scrollPrev()}
-                className="absolute left-6 top-1/2 -translate-y-1/2 p-4 bg-white/5 hover:bg-emerald-600 rounded-full transition-all opacity-0 hover:opacity-100 z-50 disabled:opacity-0"
+                className="absolute left-6 top-1/2 -translate-y-1/2 p-4 bg-white/5 hover:bg-orange-600 rounded-full transition-all opacity-0 hover:opacity-100 z-50 disabled:opacity-0"
                 disabled={currentIndex === 0}
             >
                 <ChevronLeft className="w-8 h-8" />
             </button>
             <button
                 onClick={() => emblaApi?.scrollNext()}
-                className="absolute right-6 top-1/2 -translate-y-1/2 p-4 bg-white/5 hover:bg-emerald-600 rounded-full transition-all opacity-0 hover:opacity-100 z-50 disabled:opacity-0"
+                className="absolute right-6 top-1/2 -translate-y-1/2 p-4 bg-white/5 hover:bg-orange-600 rounded-full transition-all opacity-0 hover:opacity-100 z-50 disabled:opacity-0"
                 disabled={currentIndex === slides.length - 1}
             >
                 <ChevronRight className="w-8 h-8" />
             </button>
 
-            {/* Footer Status */}
-            <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 z-50 opacity-50">
-                <span>BaseAgroData.com</span>
-                <span className="text-emerald-500/50">Modo Apresentação Aktivo</span>
-            </div>
+
 
         </div>
     );

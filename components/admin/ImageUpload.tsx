@@ -310,7 +310,7 @@ export function ImageUpload({
                                 src={value}
                                 alt={label}
                                 className={cn(
-                                    "w-full h-full transition-transform group-hover:scale-105 object-cover rounded-lg",
+                                    "w-full h-full transition-transform group-hover:scale-105 object-cover",
                                     imageClassName
                                 )}
                             />

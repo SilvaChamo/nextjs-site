@@ -354,13 +354,14 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
                                             <ImageIcon className="w-3 h-3 text-emerald-500" />
                                             Imagem / Fundo do Slide
                                         </label>
-                                        <div className="bg-white rounded-2xl border-2 border-dashed border-slate-200 p-4 transition-all hover:border-emerald-500 hover:bg-emerald-50/5 shadow-sm group">
+                                        <div className="bg-white rounded-lg border-2 border-dashed border-slate-200 transition-all hover:border-emerald-500 hover:bg-emerald-50/5 shadow-sm group overflow-hidden aspect-video">
                                             <ImageUpload
                                                 value={activeSlide?.image_url}
                                                 onChange={(url) => updateSlide(activeSlide.id, { image_url: url })}
                                                 label="Mudar Fundo"
                                                 bucket="public-assets"
                                                 folder="presentations"
+                                                className="border-none bg-transparent rounded-none h-full"
                                             />
                                         </div>
                                     </div>

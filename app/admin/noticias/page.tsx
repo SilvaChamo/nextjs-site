@@ -72,8 +72,12 @@ export default function AdminNoticiasPage() {
 
                     if (statusFilter === 'deleted') {
                         fallbackQuery = fallbackQuery.not('deleted_at', 'is', null);
-                    } else {
+                    } else if (statusFilter === 'active') {
                         fallbackQuery = fallbackQuery.is('deleted_at', null);
+                    } else {
+                        // Archived mode - if column missing, we can't have archived items
+                        setArticles([]);
+                        return;
                     }
                     const { data: fallbackData, error: fallbackError } = await fallbackQuery;
                     if (fallbackError) throw fallbackError;
@@ -275,7 +279,7 @@ export default function AdminNoticiasPage() {
             {/* Header & Controls */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">Gestão de Notícias</h1>
+                    <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">Notícias</h1>
                 </div>
 
                 <div className="flex flex-col md:flex-row items-center gap-3">
@@ -330,34 +334,7 @@ export default function AdminNoticiasPage() {
                         </button>
                     </div>
 
-                    {/* Maintenance Menu */}
-                    <Popover>
-                        <PopoverTrigger asChild>
-                            <button className="p-2 rounded-lg bg-white border border-slate-200 text-slate-400 hover:text-slate-600 hover:border-slate-300 transition-all shadow-sm">
-                                <MoreVertical className="w-4 h-4" />
-                            </button>
-                        </PopoverTrigger>
-                        <PopoverContent align="end" className="w-56 p-1 bg-white border border-slate-200 shadow-lg rounded-md z-50">
-                            <div className="flex flex-col">
-                                <button
-                                    onClick={handleRestoreAll}
-                                    className="flex items-center gap-2 px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 w-full text-left rounded-sm font-medium transition-colors"
-                                >
-                                    <RotateCcw className="w-4 h-4" />
-                                    Restaurar Tudo
-                                </button>
-                                {statusFilter === 'deleted' && (
-                                    <button
-                                        onClick={() => setShowEmptyBinConfirm(true)}
-                                        className="flex items-center gap-2 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 w-full text-left rounded-sm font-medium transition-colors"
-                                    >
-                                        <Trash2 className="w-4 h-4" />
-                                        Esvaziar Lixeira
-                                    </button>
-                                )}
-                            </div>
-                        </PopoverContent>
-                    </Popover>
+
 
                     {/* View Toggles */}
                     <div className="flex items-center bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
@@ -450,7 +427,7 @@ export default function AdminNoticiasPage() {
             ) : (
                 // List View
                 <AdminDataTable
-                    title={activeTab}
+                    title={statusFilter === 'deleted' ? "Reciclagem de Notícias" : statusFilter === 'archived' ? "Arquivo de Notícias" : activeTab}
                     columns={columns}
                     data={filteredArticles}
                     loading={loading}
@@ -482,15 +459,24 @@ export default function AdminNoticiasPage() {
                         )
                     }
                     headerMenu={
-                        statusFilter === 'deleted' && filteredArticles.length > 0 ? (
+                        (statusFilter === 'deleted' || statusFilter === 'archived') && filteredArticles.length > 0 ? (
                             <div className="flex flex-col">
                                 <button
-                                    onClick={() => setShowEmptyBinConfirm(true)}
-                                    className="flex items-center gap-2 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 w-full text-left rounded-sm font-medium transition-colors"
+                                    onClick={handleRestoreAll}
+                                    className="flex items-center gap-2 px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 w-full text-left rounded-sm font-medium transition-colors"
                                 >
-                                    <Trash2 className="w-4 h-4" />
-                                    Esvaziar Lixeira
+                                    <RotateCcw className="w-4 h-4" />
+                                    Restaurar Tudo
                                 </button>
+                                {statusFilter === 'deleted' && (
+                                    <button
+                                        onClick={() => setShowEmptyBinConfirm(true)}
+                                        className="flex items-center gap-2 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 w-full text-left rounded-sm font-medium transition-colors"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                        Esvaziar Lixeira
+                                    </button>
+                                )}
                             </div>
                         ) : null
                     }
@@ -516,7 +502,7 @@ export default function AdminNoticiasPage() {
                             </button>
                         );
                     }}
-                    hideHeader={true}
+                    hideHeader={statusFilter === 'active'}
                     pageSize={50}
                 />
             )}

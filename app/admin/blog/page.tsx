@@ -66,8 +66,13 @@ export default function AdminArticlesPage() {
 
                 if (statusFilter === 'deleted') {
                     fallbackQuery = fallbackQuery.not('deleted_at', 'is', null);
-                } else {
+                } else if (statusFilter === 'active') {
                     fallbackQuery = fallbackQuery.is('deleted_at', null);
+                } else {
+                    // Archived mode - if column missing, we can't have archived items
+                    setArticles([]);
+                    setLoading(false);
+                    return;
                 }
                 const { data: fallbackData, error: fallbackError } = await fallbackQuery;
                 if (fallbackError) throw fallbackError;
@@ -441,33 +446,7 @@ export default function AdminArticlesPage() {
                         </button>
                     </div>
 
-                    <Popover>
-                        <PopoverTrigger asChild>
-                            <button className="p-2 rounded-lg bg-white border border-slate-200 text-slate-400 hover:text-slate-600 hover:border-slate-300 transition-all shadow-sm">
-                                <MoreVertical className="w-4 h-4" />
-                            </button>
-                        </PopoverTrigger>
-                        <PopoverContent align="end" className="w-56 p-1 bg-white border border-slate-200 shadow-lg rounded-md z-50">
-                            <div className="flex flex-col">
-                                <button
-                                    onClick={handleRestoreAll}
-                                    className="flex items-center gap-2 px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 w-full text-left rounded-sm font-medium transition-colors"
-                                >
-                                    <RotateCcw className="w-4 h-4" />
-                                    Restaurar Tudo
-                                </button>
-                                {statusFilter === 'deleted' && (
-                                    <button
-                                        onClick={() => setShowEmptyBinConfirm(true)}
-                                        className="flex items-center gap-2 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 w-full text-left rounded-sm font-medium transition-colors"
-                                    >
-                                        <Trash2 className="w-4 h-4" />
-                                        Esvaziar Lixeira
-                                    </button>
-                                )}
-                            </div>
-                        </PopoverContent>
-                    </Popover>
+
                 </div>
 
                 <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg">
@@ -517,7 +496,7 @@ export default function AdminArticlesPage() {
                 </div>
             ) : (
                 <AdminDataTable
-                    title={statusFilter === 'deleted' ? "Lixeira" : statusFilter === 'archived' ? "Arquivo" : "Artigos Activos"}
+                    title={statusFilter === 'deleted' ? "Lixeira de Artigos & Notícias" : statusFilter === 'archived' ? "Arquivo de Artigos & Notícias" : "Artigos Activos"}
                     columns={columns}
                     data={articles}
                     loading={loading}
@@ -530,6 +509,28 @@ export default function AdminArticlesPage() {
                         router.push(`${route}/${row.id}`);
                     } : undefined}
                     onDelete={handleDelete}
+                    headerMenu={
+                        (statusFilter === 'deleted' || statusFilter === 'archived') && articles.length > 0 ? (
+                            <div className="flex flex-col">
+                                <button
+                                    onClick={handleRestoreAll}
+                                    className="flex items-center gap-2 px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 w-full text-left rounded-sm font-medium transition-colors"
+                                >
+                                    <RotateCcw className="w-4 h-4" />
+                                    Restaurar Tudo
+                                </button>
+                                {statusFilter === 'deleted' && (
+                                    <button
+                                        onClick={() => setShowEmptyBinConfirm(true)}
+                                        className="flex items-center gap-2 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 w-full text-left rounded-sm font-medium transition-colors"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                        Esvaziar Lixeira
+                                    </button>
+                                )}
+                            </div>
+                        ) : null
+                    }
                     customActions={(row: any) => {
                         if (statusFilter === 'deleted') {
                             return (
@@ -552,6 +553,7 @@ export default function AdminArticlesPage() {
                             </button>
                         );
                     }}
+                    hideHeader={statusFilter === 'active'}
                 />
             )}
 

@@ -16,7 +16,8 @@ import {
     Copy,
     Share2,
     ExternalLink,
-    X
+    X,
+    Check
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { syncManager } from "@/lib/syncManager";
@@ -186,12 +187,15 @@ export function AdminDataTable({
                         <tr>
                             {onSelectAll && (
                                 <th className="px-4 py-2 w-10 border-b border-slate-100">
-                                    <input
-                                        type="checkbox"
-                                        className="size-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
-                                        checked={paginatedData.length > 0 && paginatedData.every(row => selectedIds.includes(row.id))}
-                                        onChange={(e) => onSelectAll(e.target.checked)}
-                                    />
+                                    <div className="relative flex items-center justify-center">
+                                        <input
+                                            type="checkbox"
+                                            className="peer appearance-none size-4 rounded-full border border-slate-300 checked:bg-emerald-600 checked:border-emerald-600 bg-slate-100 cursor-pointer transition-all focus:ring-2 focus:ring-emerald-500/20 outline-none"
+                                            checked={paginatedData.length > 0 && paginatedData.every(row => selectedIds.includes(row.id))}
+                                            onChange={(e) => onSelectAll(e.target.checked)}
+                                        />
+                                        <Check className="w-2.5 h-2.5 text-white absolute pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" strokeWidth={4} />
+                                    </div>
                                 </th>
                             )}
                             {columns.map((col) => (
@@ -224,12 +228,15 @@ export function AdminDataTable({
                                 <tr key={i} className="hover:bg-slate-50/80 transition-colors group">
                                     {onSelectAll && (
                                         <td className="px-4 py-2 w-10">
-                                            <input
-                                                type="checkbox"
-                                                className="size-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
-                                                checked={selectedIds.includes(row.id)}
-                                                onChange={(e) => onSelectRow?.(row.id, e.target.checked)}
-                                            />
+                                            <div className="relative flex items-center justify-center">
+                                                <input
+                                                    type="checkbox"
+                                                    className="peer appearance-none size-4 rounded-full border border-slate-300 checked:bg-emerald-600 checked:border-emerald-600 bg-slate-100 cursor-pointer transition-all focus:ring-2 focus:ring-emerald-500/20 outline-none"
+                                                    checked={selectedIds.includes(row.id)}
+                                                    onChange={(e) => onSelectRow?.(row.id, e.target.checked)}
+                                                />
+                                                <Check className="w-2.5 h-2.5 text-white absolute pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" strokeWidth={4} />
+                                            </div>
                                         </td>
                                     )}
                                     {columns.map((col) => (

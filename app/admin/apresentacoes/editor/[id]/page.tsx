@@ -6,10 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { ArrowLeft, Plus, Trash2, Save, Loader2, Play, Image as ImageIcon, FileText, ChevronUp, ChevronDown, Layout } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Save, Loader2, Play, Image as ImageIcon, FileText, ChevronUp, ChevronDown, Layout, Sidebar as SidebarIcon, Menu, Maximize2, Monitor } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { RichTextEditor } from "@/components/RichTextEditor";
+import { cn } from "@/lib/utils";
 
 export default function PresentationEditorPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
@@ -19,6 +20,8 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
 
     const [loading, setLoading] = useState(!isNew);
     const [saving, setSaving] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [activeIndex, setActiveIndex] = useState(0);
     const [presentation, setPresentation] = useState({
         title: "",
         description: "",
@@ -117,6 +120,8 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
         setSaving(false);
     };
 
+    const activeSlide = presentation.slides[activeIndex] || presentation.slides[0];
+
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
@@ -126,185 +131,246 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
     }
 
     return (
-        <div className="max-w-7xl mx-auto space-y-8 pb-20">
-
-            {/* Header */}
-            <div className="flex items-center justify-between sticky top-0 z-50 bg-slate-100/80 backdrop-blur-md py-4 border-b border-slate-200">
+        <div className="flex flex-col h-[calc(100vh-64px)] -m-8 overflow-hidden bg-slate-50">
+            {/* Header Toolbar */}
+            <div className="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between shrink-0 z-30 shadow-sm">
                 <div className="flex items-center gap-4">
-                    <button onClick={() => router.push('/admin/apresentacoes')} className="p-2 hover:bg-white rounded-full transition-colors border border-slate-200 shadow-sm bg-white">
-                        <ArrowLeft className="w-5 h-5 text-slate-600" />
+                    <button onClick={() => router.push('/admin/apresentacoes')} className="p-2 hover:bg-slate-100 rounded-lg transition-colors border border-slate-200">
+                        <ArrowLeft className="w-4 h-4 text-slate-600" />
                     </button>
-                    <div>
-                        <h1 className="text-xl font-black text-slate-900 leading-none uppercase tracking-tight">
-                            {isNew ? "Nova Apresentação" : "Editar Apresentação"}
+                    <div className="flex flex-col">
+                        <h1 className="text-sm font-black text-slate-900 leading-none uppercase tracking-tight truncate max-w-[200px] md:max-w-md">
+                            {presentation.title || "Sem Título"}
                         </h1>
-                        <p className="text-[10px] text-emerald-600 font-black tracking-widest uppercase mt-1">Editor de Slides Premium</p>
+                        <span className="text-[10px] text-emerald-600 font-bold uppercase tracking-widest mt-0.5">Editor de Apresentações</span>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                        className={cn(
+                            "p-2 rounded-lg transition-all border",
+                            isSidebarOpen ? "bg-slate-100 text-slate-900 border-slate-300" : "text-slate-400 border-slate-200 hover:text-slate-600"
+                        )}
+                        title={isSidebarOpen ? "Esconder Barra Lateral" : "Mostrar Barra Lateral"}
+                    >
+                        <SidebarIcon className="w-4 h-4" />
+                    </button>
+
+                    <div className="h-4 w-px bg-slate-200 mx-2" />
+
                     {!isNew && (
                         <Button
                             variant="outline"
                             onClick={() => window.open(`/apresentacao/${id}`, '_blank')}
-                            className="bg-white text-slate-600 font-bold border-slate-200 h-10 gap-2"
+                            className="bg-white text-slate-600 font-bold border-slate-200 h-9 gap-2 text-xs"
                         >
-                            <Play className="w-4 h-4 fill-slate-600" />
-                            Visualizar
+                            <Play className="w-3.5 h-3.5 fill-slate-600" />
+                            Apresentar
                         </Button>
                     )}
                     <Button
                         onClick={handleSave}
                         disabled={saving}
-                        className="bg-emerald-600 hover:bg-emerald-700 text-white font-black h-10 px-8 rounded-xl shadow-lg shadow-emerald-600/20 gap-2 uppercase tracking-widest text-xs"
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white font-black h-9 px-6 rounded-lg shadow-sm gap-2 uppercase tracking-widest text-[10px]"
                     >
-                        {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                        {isNew ? "Criar Apresentação" : "Guardar Alterações"}
+                        {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+                        {isNew ? "Criar" : "Guardar"}
                     </Button>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-
-                {/* Main Content (Editor) */}
-                <div className="lg:col-span-2 space-y-8">
-
-                    {/* Basic Info */}
-                    <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm space-y-6">
-                        <h3 className="text-xs font-black uppercase text-emerald-600 flex items-center gap-2 border-b border-emerald-50 pb-3">
-                            <FileText className="w-4 h-4" />
-                            Informações Gerais
-                        </h3>
-                        <div className="space-y-4">
-                            <Input
-                                value={presentation.title}
-                                onChange={(e) => setPresentation({ ...presentation, title: e.target.value })}
-                                placeholder="Título da Apresentação"
-                                className="h-14 text-xl font-black bg-slate-50 border-slate-100 rounded-2xl focus:ring-emerald-500"
-                            />
-                            <Textarea
-                                value={presentation.description}
-                                onChange={(e) => setPresentation({ ...presentation, description: e.target.value })}
-                                placeholder="Breve descrição da apresentação (opcional)..."
-                                className="bg-slate-50 border-slate-100 rounded-2xl min-h-[100px] resize-none"
-                            />
-                        </div>
+            <div className="flex flex-1 overflow-hidden">
+                {/* Sidebar - Slide Thumbnails */}
+                <aside
+                    className={cn(
+                        "bg-slate-100 border-r border-slate-200 flex flex-col transition-all duration-300 shadow-inner overflow-hidden",
+                        isSidebarOpen ? "w-64" : "w-0 border-none"
+                    )}
+                >
+                    <div className="p-4 border-b border-slate-200 flex items-center justify-between shrink-0 bg-slate-50">
+                        <h3 className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Slides</h3>
+                        <button
+                            onClick={handleAddSlide}
+                            className="p-1.5 hover:bg-emerald-50 text-emerald-600 rounded-md transition-colors"
+                            title="Novo Slide"
+                        >
+                            <Plus className="w-4 h-4" />
+                        </button>
                     </div>
 
-                    {/* Slides Management */}
-                    <div className="space-y-6">
-                        <div className="flex items-center justify-between">
-                            <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">Slides da Apresentação</h3>
-                            <div className="flex items-center gap-3">
-                                <Button
-                                    onClick={handleSave}
-                                    disabled={saving}
-                                    variant="outline"
-                                    className="border-emerald-600 text-emerald-600 hover:bg-emerald-50 font-bold h-10 rounded-full gap-2 px-6"
-                                >
-                                    {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                                    Salvar Alterações
-                                </Button>
-                                <Button
-                                    onClick={handleAddSlide}
-                                    className="bg-slate-900 hover:bg-black text-white font-bold h-10 rounded-full gap-2 px-6"
-                                >
-                                    <Plus className="w-4 h-4" />
-                                    Adicionar Slide
-                                </Button>
+                    <div className="flex-1 overflow-y-auto p-3 space-y-3 custom-scrollbar">
+                        {presentation.slides.map((slide, index) => (
+                            <div
+                                key={slide.id}
+                                onClick={() => setActiveIndex(index)}
+                                className={cn(
+                                    "relative group cursor-pointer transition-all rounded-lg overflow-hidden border-2",
+                                    activeIndex === index
+                                        ? "border-emerald-500 shadow-md ring-2 ring-emerald-500/10"
+                                        : "border-slate-200 hover:border-slate-300 bg-white"
+                                )}
+                            >
+                                <div className="aspect-video bg-slate-50 relative overflow-hidden flex items-center justify-center">
+                                    {slide.image_url ? (
+                                        <img src={slide.image_url} alt="" className="w-full h-full object-cover opacity-60" />
+                                    ) : (
+                                        <div className="p-4 text-center">
+                                            <p className="text-[8px] font-bold text-slate-300 uppercase truncate px-2">{slide.title || "Slide sem título"}</p>
+                                        </div>
+                                    )}
+                                    <div className="absolute top-1 left-1 size-5 bg-white/80 rounded flex items-center justify-center text-[10px] font-black text-slate-600 border border-slate-200">
+                                        {index + 1}
+                                    </div>
+
+                                    {/* Action Buttons */}
+                                    <div className="absolute top-1 right-1 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); handleMoveSlide(index, 'up'); }}
+                                            disabled={index === 0}
+                                            className="p-1 bg-white hover:bg-slate-50 text-slate-400 disabled:opacity-30 rounded border shadow-sm"
+                                        >
+                                            <ChevronUp className="w-3 h-3" />
+                                        </button>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); handleMoveSlide(index, 'down'); }}
+                                            disabled={index === presentation.slides.length - 1}
+                                            className="p-1 bg-white hover:bg-slate-50 text-slate-400 disabled:opacity-30 rounded border shadow-sm"
+                                        >
+                                            <ChevronDown className="w-3 h-3" />
+                                        </button>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); handleRemoveSlide(slide.id); }}
+                                            className="p-1 bg-white hover:bg-rose-50 text-rose-500 rounded border shadow-sm mt-1"
+                                        >
+                                            <Trash2 className="w-3 h-3" />
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="p-2 bg-white flex items-center">
+                                    <p className="text-[9px] font-bold text-slate-600 truncate">{slide.title || `Slide ${index + 1}`}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </aside>
+
+                {/* Main Workspace (Canvas) */}
+                <main className="flex-1 overflow-y-auto bg-slate-200 relative p-8 flex flex-col items-center custom-scrollbar">
+
+                    {/* The Active Slide "Canvas" */}
+                    <div className="w-full max-w-5xl space-y-8 pb-12">
+
+                        {/* Slide Title Input - Integrated */}
+                        <div className="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+                            <div className="px-6 py-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+                                <span className="text-[10px] font-black uppercase text-emerald-600 tracking-wider">Metadados da Apresentação</span>
+                                <Monitor className="w-3.5 h-3.5 text-slate-300" />
+                            </div>
+                            <div className="p-6 space-y-4">
+                                <Input
+                                    value={presentation.title}
+                                    onChange={(e) => setPresentation({ ...presentation, title: e.target.value })}
+                                    placeholder="Nome do Projecto"
+                                    className="h-12 text-lg font-black bg-white border-slate-200 rounded-lg focus:ring-emerald-500"
+                                />
+                                <Textarea
+                                    value={presentation.description}
+                                    onChange={(e) => setPresentation({ ...presentation, description: e.target.value })}
+                                    placeholder="Notas da apresentação..."
+                                    className="bg-white border-slate-200 rounded-lg min-h-[60px] resize-none text-xs"
+                                />
                             </div>
                         </div>
 
-                        <div className="space-y-6">
-                            {presentation.slides.map((slide, index) => (
-                                <div key={slide.id} className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden group">
-                                    <div className="bg-slate-50 px-6 py-4 flex items-center justify-between border-b border-slate-100">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-black text-xs">
-                                                {index + 1}
-                                            </div>
-                                            <span className="font-black text-xs uppercase text-slate-400 tracking-widest">
-                                                {index === 0 ? "Slide de Capa" : "Slide de Conteúdo"}
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button onClick={() => handleMoveSlide(index, 'up')} className="p-2 hover:bg-white rounded-full border border-slate-200 text-slate-400 hover:text-emerald-600 disabled:opacity-30" disabled={index === 0}>
-                                                <ChevronUp className="w-4 h-4" />
-                                            </button>
-                                            <button onClick={() => handleMoveSlide(index, 'down')} className="p-2 hover:bg-white rounded-full border border-slate-200 text-slate-400 hover:text-emerald-600 disabled:opacity-30" disabled={index === presentation.slides.length - 1}>
-                                                <ChevronDown className="w-4 h-4" />
-                                            </button>
-                                            <button onClick={() => handleRemoveSlide(slide.id)} className="p-2 hover:bg-rose-50 rounded-full border border-slate-200 text-slate-400 hover:text-rose-600 ml-2">
-                                                <Trash2 className="w-4 h-4" />
-                                            </button>
+                        {/* Current Slide Editor (THE CANVAS) */}
+                        <div className="bg-white rounded-xl shadow-2xl border border-slate-300 overflow-hidden flex flex-col min-h-[600px] relative translate-z-0">
+                            {/* Slide Canvas Grid Background */}
+                            <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:32px_32px] opacity-40 pointer-events-none"></div>
+
+                            <div className="px-8 py-4 bg-emerald-600 text-white flex items-center justify-between shrink-0 z-10">
+                                <div className="flex items-center gap-3">
+                                    <Layout className="w-4 h-4" />
+                                    <span className="text-xs font-black uppercase tracking-widest">Editor de Slide #{activeIndex + 1}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded font-bold">{activeSlide?.id.split('-')[0]}</span>
+                                </div>
+                            </div>
+
+                            <div className="flex-1 p-10 flex flex-col gap-8 z-10 relative">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Título do Slide</label>
+                                    <Input
+                                        value={activeSlide?.title}
+                                        onChange={(e) => updateSlide(activeSlide.id, { title: e.target.value })}
+                                        placeholder="Digita o título impactante aqui..."
+                                        className="h-16 text-3xl font-black bg-transparent border-none p-0 focus-visible:ring-0 placeholder:text-slate-200"
+                                    />
+                                    <div className="h-1 w-20 bg-emerald-500 rounded-full" />
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-10 flex-1">
+                                    <div className="md:col-span-2 flex flex-col gap-2">
+                                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Conteúdo & Storytelling</label>
+                                        <div className="flex-1 bg-slate-50/50 rounded-xl border border-slate-100 overflow-hidden shadow-inner min-h-[300px]">
+                                            <RichTextEditor
+                                                value={activeSlide?.content}
+                                                onChange={(val) => updateSlide(activeSlide.id, { content: val })}
+                                                placeholder="Descreva sua visão para este slide..."
+                                                className="bg-transparent"
+                                            />
                                         </div>
                                     </div>
-                                    <div className="p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
-                                        <div className="md:col-span-2 space-y-6">
-                                            <Input
-                                                value={slide.title}
-                                                onChange={(e) => updateSlide(slide.id, { title: e.target.value })}
-                                                placeholder="Título do Slide"
-                                                className="h-12 font-bold text-lg bg-slate-50 border-slate-100 rounded-xl"
-                                            />
-                                            <RichTextEditor
-                                                value={slide.content}
-                                                onChange={(val) => updateSlide(slide.id, { content: val })}
-                                                placeholder="Escreva o conteúdo deste slide..."
-                                                className="bg-slate-50 rounded-xl border-slate-100 min-h-[200px]"
-                                            />
-                                        </div>
+
+                                    <div className="flex flex-col gap-6">
                                         <div className="space-y-4">
-                                            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 border-dashed">
+                                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Imagem / Fundo</label>
+                                            <div className="bg-white rounded-xl border-2 border-dashed border-slate-200 p-4 transition-all hover:border-emerald-500 hover:bg-emerald-50/10">
                                                 <ImageUpload
-                                                    value={slide.image_url}
-                                                    onChange={(url) => updateSlide(slide.id, { image_url: url })}
-                                                    label="Imagem de Fundo"
+                                                    value={activeSlide?.image_url}
+                                                    onChange={(url) => updateSlide(activeSlide.id, { image_url: url })}
+                                                    label="Solte uma imagem"
                                                     bucket="public-assets"
                                                     folder="presentations"
                                                 />
                                             </div>
-                                            <div className="bg-amber-50 rounded-2xl p-4 flex gap-3 text-[10px] text-amber-700 font-medium">
-                                                <ImageIcon className="w-4 h-4 shrink-0" />
-                                                <span>A imagem será exibida como fundo com opacidade reduzida para garantir a leitura.</span>
+                                        </div>
+
+                                        <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-100 space-y-2">
+                                            <div className="flex items-center gap-2 text-emerald-700 font-bold text-[10px] uppercase">
+                                                <ImageIcon className="w-3.5 h-3.5" />
+                                                <span>Fundo Dinâmico</span>
                                             </div>
+                                            <p className="text-[10px] text-emerald-600/80 leading-relaxed font-medium">
+                                                A imagem será adaptada automaticamente como plano de fundo com contraste inteligente.
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
+                            </div>
 
-                {/* Sidebar (Small Preview / Quick Stats) */}
-                <div className="space-y-6 sticky top-24">
-                    <div className="bg-slate-900 rounded-3xl p-8 text-white shadow-2xl">
-                        <div className="flex items-center gap-3 mb-6">
-                            <Layout className="w-6 h-6 text-emerald-500" />
-                            <h3 className="font-black uppercase tracking-widest text-sm">Estrutura</h3>
-                        </div>
-                        <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                            {presentation.slides.map((s, i) => (
-                                <div key={s.id} className="flex items-center gap-4 group">
-                                    <span className="text-xs font-black text-slate-600 w-4">{i + 1}</span>
-                                    <div className={`flex-1 p-3 rounded-xl border transition-all cursor-pointer ${i === 0 ? 'bg-emerald-600/20 border-emerald-500/30' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
-                                        <p className="text-[10px] font-bold line-clamp-1">{s.title || "Sem título"}</p>
-                                    </div>
+                            {/* Canvas Toolbar / Status */}
+                            <div className="bg-slate-50 border-t border-slate-100 px-8 py-3 flex items-center justify-between text-[10px] font-bold text-slate-400 shrink-0">
+                                <div className="flex items-center gap-4">
+                                    <span className="flex items-center gap-1.5"><Maximize2 className="w-3 h-3" /> 1920x1080 Aspect</span>
+                                    <span className="flex items-center gap-1.5"><Menu className="w-3 h-3" /> Layer Principal</span>
                                 </div>
-                            ))}
+                                <span>Edição em Tempo Real Activa</span>
+                            </div>
                         </div>
-                        <div className="mt-8 pt-8 border-t border-white/10 text-center">
-                            <p className="text-[10px] font-black uppercase text-slate-500 tracking-[0.3em]">Total de {presentation.slides.length} Slides</p>
-                        </div>
-                    </div>
 
-                    <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm text-center">
-                        <p className="text-xs text-slate-400 font-bold uppercase mb-4 tracking-widest">Dica de mestre</p>
-                        <p className="text-sm text-slate-600 leading-relaxed italic">
-                            "Use pouco texto em cada slide. Deixe que as imagens e as manchetes contem a história."
-                        </p>
+                        {/* Shortcut Tip */}
+                        <div className="flex justify-center">
+                            <div className="px-6 py-3 bg-white/50 backdrop-blur rounded-full border border-slate-200 flex items-center gap-4 shadow-sm text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                                <div className="flex items-center gap-1"><span className="bg-slate-200 px-1.5 py-0.5 rounded text-slate-600">CMD</span> + <span className="bg-slate-200 px-1.5 py-0.5 rounded text-slate-600">S</span> PARA SALVAR</div>
+                                <div className="w-px h-3 bg-slate-200" />
+                                <div className="flex items-center gap-1"><span className="bg-slate-200 px-1.5 py-0.5 rounded text-slate-600">SHIFT</span> + <span className="bg-slate-200 px-1.5 py-0.5 rounded text-slate-600">+</span> NOVO SLIDE</div>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </main>
             </div>
         </div>
     );

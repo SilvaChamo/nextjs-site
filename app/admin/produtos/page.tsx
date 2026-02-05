@@ -64,6 +64,18 @@ export default function AdminProductsPage() {
                     } else {
                         fallbackQuery = fallbackQuery.order('created_at', { ascending: false });
                     }
+
+                    if (statusFilter === 'deleted') {
+                        // We rely on status column for deleted too in this fallback, but maybe we should use deleted_at if available
+                        // For now keep it consistent with the user's request: if column missing, Archive is empty.
+                        setData([]);
+                        setLoading(false);
+                        return;
+                    } else if (statusFilter === 'archived') {
+                        setData([]);
+                        setLoading(false);
+                        return;
+                    }
                     const { data: fallbackData, error: fallbackError } = await fallbackQuery;
                     if (fallbackError) throw fallbackError;
                     processData(fallbackData || []);
@@ -390,34 +402,7 @@ export default function AdminProductsPage() {
                         </button>
                     </div>
 
-                    {/* Maintenance Menu */}
-                    <Popover>
-                        <PopoverTrigger asChild>
-                            <button className="p-2 rounded-lg bg-white border border-slate-200 text-slate-400 hover:text-slate-600 hover:border-slate-300 transition-all shadow-sm">
-                                <MoreVertical className="w-4 h-4" />
-                            </button>
-                        </PopoverTrigger>
-                        <PopoverContent align="end" className="w-56 p-1 bg-white border border-slate-200 shadow-lg rounded-md z-50">
-                            <div className="flex flex-col">
-                                <button
-                                    onClick={handleBulkRestore} // Assuming this restores all for simplicity or reuse handleRestoreAll
-                                    className="flex items-center gap-2 px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 w-full text-left rounded-sm font-medium transition-colors"
-                                >
-                                    <RotateCcw className="w-4 h-4" />
-                                    Restaurar Tudo
-                                </button>
-                                {statusFilter === 'deleted' && (
-                                    <button
-                                        onClick={() => setShowEmptyBinConfirm(true)}
-                                        className="flex items-center gap-2 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 w-full text-left rounded-sm font-medium transition-colors"
-                                    >
-                                        <Trash2 className="w-4 h-4" />
-                                        Esvaziar Lixeira
-                                    </button>
-                                )}
-                            </div>
-                        </PopoverContent>
-                    </Popover>
+
 
                     {/* View Toggles */}
                     <div className="flex items-center bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
@@ -448,7 +433,7 @@ export default function AdminProductsPage() {
 
             {viewMode === 'list' ? (
                 <AdminDataTable
-                    title={activeTab === "mercado" ? "Cotações" : "Empresas"}
+                    title={statusFilter === 'deleted' ? (activeTab === "mercado" ? "Reciclagem de Cotações" : "Reciclagem de Produtos") : statusFilter === 'archived' ? (activeTab === "mercado" ? "Arquivo de Cotações" : "Arquivo de Produtos") : (activeTab === "mercado" ? "Cotações" : "Empresas")}
                     columns={activeTab === "mercado" ? marketColumns : productColumns}
                     data={data}
                     loading={loading}
@@ -473,25 +458,24 @@ export default function AdminProductsPage() {
                         ) : null
                     }
                     headerMenu={
-                        statusFilter === 'deleted' && data.length > 0 ? (
+                        (statusFilter === 'deleted' || statusFilter === 'archived') && data.length > 0 ? (
                             <div className="flex flex-col">
                                 <button
-                                    onClick={() => setShowEmptyBinConfirm(true)}
-                                    className="flex items-center gap-2 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 w-full text-left rounded-sm font-medium transition-colors"
+                                    onClick={handleBulkRestore}
+                                    className="flex items-center gap-2 px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 w-full text-left rounded-sm font-medium transition-colors"
                                 >
-                                    <Trash2 className="w-4 h-4" />
-                                    Esvaziar Reciclagem
+                                    <RotateCcw className="w-4 h-4" />
+                                    Restaurar Tudo
                                 </button>
-                            </div>
-                        ) : statusFilter === 'archived' && data.length > 0 ? (
-                            <div className="flex flex-col">
-                                <button
-                                    onClick={() => setData(prev => prev.map(p => ({ ...p, status: 'active' })))} // Optimistic for now, should call a handler
-                                    className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 w-full text-left rounded-sm font-medium transition-colors"
-                                >
-                                    <Archive className="w-4 h-4" />
-                                    Repor Tudo
-                                </button>
+                                {statusFilter === 'deleted' && (
+                                    <button
+                                        onClick={() => setShowEmptyBinConfirm(true)}
+                                        className="flex items-center gap-2 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 w-full text-left rounded-sm font-medium transition-colors"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                        Esvaziar Reciclagem
+                                    </button>
+                                )}
                             </div>
                         ) : null
                     }
@@ -517,6 +501,7 @@ export default function AdminProductsPage() {
                             </button>
                         );
                     }}
+                    hideHeader={statusFilter === 'active'}
                 />
             ) : (
                 /* GRID VIEW */

@@ -223,12 +223,6 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                     dangerouslySetInnerHTML={{ __html: slide.content }}>
                                                 </div>
 
-                                                {/* Footer line for the slide */}
-                                                <div className="pt-8 border-t border-white/5 flex items-center gap-[30px]">
-                                                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">BaseAgroData &bull; Estratégia Digital</span>
-                                                    <div className="h-6 w-px bg-white/5"></div>
-                                                    <span className="text-[10px] font-black text-orange-500/50 uppercase tracking-[0.3em]">Acesso Reservado</span>
-                                                </div>
                                             </div>
 
                                         </div>

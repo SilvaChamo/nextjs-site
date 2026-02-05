@@ -155,7 +155,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
 
                                 <div className="relative z-10 max-w-full w-full h-full">
                                     {/* Universal Slide Layout: Title Top Left + Subtitle + 2 Columns (Photo | Text) */}
-                                    <div className="w-full h-full flex flex-col items-start text-left animate-in fade-in duration-700 gap-[30px]">
+                                    <div className="w-full h-full flex flex-col items-start text-left animate-in fade-in duration-700 gap-[45px]">
 
                                         {/* Header: Title & Subtitle */}
                                         <div className="space-y-2">

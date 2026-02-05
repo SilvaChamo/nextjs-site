@@ -43,106 +43,119 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
 
     useEffect(() => {
         let isMounted = true;
-        const load = async () => {
-            const { data } = await supabase
-                .from('presentations')
-                .select('*')
-                .eq('id', id)
-                .single();
+        const { data } = await supabase
+            .from('presentations')
+            .select('*')
+            .eq('id', id)
+            .single();
 
-            if (isMounted) {
-                if (data) setPresentation(data);
-                setLoading(false);
-            }
-        };
-        load();
-        return () => { isMounted = false; };
-    }, [id, supabase]);
-
-    const toggleFullscreen = useCallback(() => {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen();
-            setIsFullscreen(true);
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-                setIsFullscreen(false);
-            }
+        if (isMounted) {
+            if (data) setPresentation(data);
+            setLoading(false);
         }
-    }, []);
+    };
+    load();
+    return () => { isMounted = false; };
+}, [id, supabase]);
 
-    // Keyboard navigation
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "ArrowRight" || e.key === " ") emblaApi?.scrollNext();
-            if (e.key === "ArrowLeft") emblaApi?.scrollPrev();
-            if (e.key === "Escape" && isFullscreen) toggleFullscreen();
-        };
-        window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [emblaApi, isFullscreen, toggleFullscreen]);
+const toggleFullscreen = useCallback(() => {
+    const element = document.getElementById("presentation-root");
+    if (!element) return;
 
-    if (loading) {
-        return (
-            <div className="fixed inset-0 bg-slate-950 flex items-center justify-center">
-                <Loader2 className="w-10 h-10 animate-spin text-orange-500" />
-            </div>
-        );
+    if (!document.fullscreenElement) {
+        element.requestFullscreen().catch((err) => {
+            console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+        });
+        setIsFullscreen(true);
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+            setIsFullscreen(false);
+        }
     }
+}, []);
 
-    if (!presentation || !presentation.slides || presentation.slides.length === 0) {
-        return (
-            <div className="fixed inset-0 bg-slate-950 flex flex-col items-center justify-center text-white p-6">
-                <h1 className="text-2xl font-bold mb-4">Apresentação não encontrada</h1>
-                <Button onClick={() => router.back()} variant="outline" className="text-white border-white/20 hover:bg-white/10">
-                    Voltar
-                </Button>
-            </div>
-        );
-    }
+// Keyboard navigation
+useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "ArrowRight" || e.key === " ") emblaApi?.scrollNext();
+        if (e.key === "ArrowLeft") emblaApi?.scrollPrev();
+        if (e.key === "Escape" && isFullscreen) toggleFullscreen();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+}, [emblaApi, isFullscreen, toggleFullscreen]);
 
-    const slides = presentation.slides;
-
+if (loading) {
     return (
-        <div className={`fixed inset-0 bg-slate-950 text-white overflow-hidden select-none`}>
+        <div className="fixed inset-0 bg-slate-950 flex items-center justify-center">
+            <Loader2 className="w-10 h-10 animate-spin text-orange-500" />
+        </div>
+    );
+}
 
-            {/* Floating Controls (Canvas Style) */}
-            <div className="absolute top-10 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-2 p-1.5 bg-black/60 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl transition-all duration-300">
-                <button
-                    onClick={() => emblaApi?.scrollPrev()}
-                    disabled={currentIndex === 0}
-                    className="flex items-center gap-2 px-4 py-2 hover:bg-white/10 rounded-xl transition-all disabled:opacity-20 disabled:hover:bg-transparent"
-                >
-                    <ChevronLeft className="w-4 h-4 text-orange-500" />
-                    <span className="text-xs font-black uppercase tracking-widest">Anterior</span>
-                </button>
-                <div className="w-px h-4 bg-white/10"></div>
-                <button
-                    onClick={() => emblaApi?.scrollNext()}
-                    disabled={currentIndex === slides.length - 1}
-                    className="flex items-center gap-2 px-4 py-2 hover:bg-orange-600 rounded-xl transition-all disabled:opacity-20 disabled:hover:bg-transparent group"
-                >
-                    <span className="text-xs font-black uppercase tracking-widest">Próximo</span>
-                    <ChevronRight className="w-4 h-4 text-orange-500 group-hover:text-white" />
-                </button>
-                <div className="w-px h-4 bg-white/10"></div>
+if (!presentation || !presentation.slides || presentation.slides.length === 0) {
+    return (
+        <div className="fixed inset-0 bg-slate-950 flex flex-col items-center justify-center text-white p-6">
+            <h1 className="text-2xl font-bold mb-4">Apresentação não encontrada</h1>
+            <Button onClick={() => router.back()} variant="outline" className="text-white border-white/20 hover:bg-white/10">
+                Voltar
+            </Button>
+        </div>
+    );
+}
+
+const slides = presentation.slides;
+
+return (
+    <div
+        id="presentation-root"
+        className={`fixed inset-0 bg-slate-950 text-white overflow-hidden select-none transition-all duration-700`}
+    >
+        {/* Top Right: Actions & Timer */}
+        <div className="absolute top-10 right-10 z-[100] flex items-center gap-4">
+            <div className="flex items-center gap-6 px-8 py-3 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl">
+                <div className="flex items-center gap-2 text-white/50">
+                    <Maximize2
+                        className={`w-4 h-4 cursor-pointer hover:text-orange-500 transition-colors ${isFullscreen ? 'text-orange-500' : ''}`}
+                        onClick={toggleFullscreen}
+                    />
+                </div>
+                <div className="w-px h-6 bg-white/10"></div>
                 <button
                     onClick={() => {
                         if (document.fullscreenElement) document.exitFullscreen();
                         router.back();
                     }}
-                    className="flex items-center gap-2 px-4 py-2 hover:bg-red-500/20 text-red-400 rounded-xl transition-all"
+                    className="flex items-center gap-2 text-red-400 font-black uppercase tracking-[0.2em] text-[10px] hover:text-red-300 transition-colors group"
                 >
-                    <X className="w-4 h-4" />
-                    <span className="text-xs font-black uppercase tracking-widest">Sair</span>
+                    <X className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
+                    Sair
                 </button>
             </div>
+        </div>
 
-            {/* Slides Container */}
-            <div className="h-full overflow-hidden" ref={emblaRef}>
-                <div className="h-full flex">
-                    {slides.map((slide: any, index: number) => (
-                        <div key={index} className="h-full relative p-[70px] flex items-center justify-center overflow-hidden min-w-0 shrink-0 grow-0 basis-full">
+        {/* Header Hint (Optional) */}
+        {!isFullscreen && (
+            <div className="absolute top-6 left-1/2 -translate-x-1/2 z-[50] animate-pulse">
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/20">
+                    Pressione F11 ou clique no ícone para Fullscreen Total
+                </p>
+            </div>
+        )}
+
+        {/* Slides Container - DISSOLVE EFFECT */}
+        <div className="h-full relative overflow-hidden" ref={emblaRef}>
+            <div className="h-full flex">
+                {slides.map((slide: any, index: number) => {
+                    const isActive = index === currentIndex;
+                    return (
+                        <div
+                            key={index}
+                            className={`h-full absolute inset-0 p-[70px] flex items-center justify-center transition-all duration-[1000ms] ease-in-out ${isActive ? 'opacity-100 z-10 scale-100' : 'opacity-0 z-0 scale-[1.02] pointer-events-none'
+                                }`}
+                            style={{ minWidth: '100%' }}
+                        >
 
                             {/* Background */}
                             {slide.image_url ? (
@@ -226,44 +239,44 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                             </div>
                         </div>
                     ))}
-                </div>
             </div>
-
-            {/* Bottom Right Navigation Controls */}
-            <div className="absolute bottom-8 right-8 z-[100] flex items-center gap-4 pointer-events-auto">
-                <button
-                    type="button"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        emblaApi?.scrollPrev();
-                    }}
-                    disabled={currentIndex === 0}
-                    className="p-2 text-white/50 hover:text-orange-500 disabled:opacity-0 transition-all hover:scale-110 cursor-pointer"
-                >
-                    <ChevronLeft className="w-8 h-8" />
-                </button>
-                <div className="w-px h-6 bg-white/10"></div>
-                <button
-                    type="button"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        emblaApi?.scrollNext();
-                    }}
-                    disabled={currentIndex === slides.length - 1}
-                    className="p-2 text-white/50 hover:text-orange-500 disabled:opacity-0 transition-all hover:scale-110 cursor-pointer"
-                >
-                    <ChevronRight className="w-8 h-8" />
-                </button>
-            </div>
-
-            {/* Progress Bar */}
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/5 z-50">
-                <div
-                    className="h-full bg-orange-600 transition-all duration-300 shadow-[0_0_10px_#ea580c]"
-                    style={{ width: `${((currentIndex + 1) / slides.length) * 100}%` }}
-                ></div>
-            </div>
-
         </div>
-    );
+
+        {/* Bottom Right Navigation Controls */}
+        <div className="absolute bottom-8 right-8 z-[100] flex items-center gap-4 pointer-events-auto">
+            <button
+                type="button"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    emblaApi?.scrollPrev();
+                }}
+                disabled={currentIndex === 0}
+                className="p-2 text-white/50 hover:text-orange-500 disabled:opacity-0 transition-all hover:scale-110 cursor-pointer"
+            >
+                <ChevronLeft className="w-8 h-8" />
+            </button>
+            <div className="w-px h-6 bg-white/10"></div>
+            <button
+                type="button"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    emblaApi?.scrollNext();
+                }}
+                disabled={currentIndex === slides.length - 1}
+                className="p-2 text-white/50 hover:text-orange-500 disabled:opacity-0 transition-all hover:scale-110 cursor-pointer"
+            >
+                <ChevronRight className="w-8 h-8" />
+            </button>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/5 z-50">
+            <div
+                className="h-full bg-orange-600 transition-all duration-300 shadow-[0_0_10px_#ea580c]"
+                style={{ width: `${((currentIndex + 1) / slides.length) * 100}%` }}
+            ></div>
+        </div>
+
+    </div>
+);
 }

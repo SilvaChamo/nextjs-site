@@ -31,11 +31,34 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
     });
 
     useEffect(() => {
-        if (!isNew) fetchPresentation();
-    }, [id]);
+        if (isNew) return;
+        let isMounted = true;
+
+        const load = async () => {
+            const { data } = await supabase
+                .from('presentations')
+                .select('*')
+                .eq('id', id)
+                .single();
+
+            if (isMounted && data) {
+                setPresentation({
+                    title: data.title,
+                    description: data.description || "",
+                    slides: data.slides || []
+                });
+                setLoading(false);
+            } else if (isMounted) {
+                setLoading(false);
+            }
+        };
+
+        load();
+        return () => { isMounted = false; };
+    }, [id, isNew, supabase]);
 
     const fetchPresentation = async () => {
-        const { data, error } = await supabase
+        const { data } = await supabase
             .from('presentations')
             .select('*')
             .eq('id', id)

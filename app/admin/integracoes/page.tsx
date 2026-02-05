@@ -22,9 +22,42 @@ export default function IntegracoesPage() {
         is_active: false
     });
 
+    useEffect(() => {
+        let isMounted = true;
+        const load = async () => {
+            const { data } = await supabase
+                .from('integrations')
+                .select('*');
+
+            if (isMounted && data) {
+                const fb = data.find(i => i.provider === 'facebook');
+                const li = data.find(i => i.provider === 'linkedin');
+
+                if (fb) {
+                    setFacebookData({
+                        page_id: fb.credentials?.page_id || "",
+                        access_token: fb.credentials?.access_token || "",
+                        is_active: fb.is_active
+                    });
+                }
+                if (li) {
+                    setLinkedinData({
+                        person_id: li.credentials?.person_id || "",
+                        access_token: li.credentials?.access_token || "",
+                        is_active: li.is_active
+                    });
+                }
+                setLoading(false);
+            } else if (isMounted) {
+                setLoading(false);
+            }
+        };
+        load();
+        return () => { isMounted = false; };
+    }, [supabase]);
+
     const fetchIntegrations = useCallback(async () => {
-        setLoading(true);
-        const { data, error } = await supabase
+        const { data } = await supabase
             .from('integrations')
             .select('*');
 
@@ -49,10 +82,6 @@ export default function IntegracoesPage() {
         }
         setLoading(false);
     }, [supabase]);
-
-    useEffect(() => {
-        fetchIntegrations();
-    }, [fetchIntegrations]);
 
     const handleSave = async (provider: 'facebook' | 'linkedin', data: any) => {
         setSaving(provider);

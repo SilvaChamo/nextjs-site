@@ -19,9 +19,25 @@ export default function AdminApresentacoesPage() {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<any>(null);
 
+    useEffect(() => {
+        let isMounted = true;
+        const load = async () => {
+            const { data } = await supabase
+                .from('presentations')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (isMounted) {
+                if (data) setPresentations(data);
+                setLoading(false);
+            }
+        };
+        load();
+        return () => { isMounted = false; };
+    }, [supabase]);
+
     const fetchPresentations = async () => {
-        setLoading(true);
-        const { data, error } = await supabase
+        const { data } = await supabase
             .from('presentations')
             .select('*')
             .order('created_at', { ascending: false });
@@ -29,10 +45,6 @@ export default function AdminApresentacoesPage() {
         if (data) setPresentations(data);
         setLoading(false);
     };
-
-    useEffect(() => {
-        fetchPresentations();
-    }, []);
 
     const handleDelete = async () => {
         if (!itemToDelete) return;

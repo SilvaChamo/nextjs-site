@@ -223,19 +223,27 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
             </div>
 
             {/* Bottom Right Navigation Controls */}
-            <div className="absolute bottom-8 right-8 z-[100] flex items-center gap-4">
+            <div className="absolute bottom-8 right-8 z-[100] flex items-center gap-4 pointer-events-auto">
                 <button
-                    onClick={() => emblaApi?.scrollPrev()}
+                    type="button"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        emblaApi?.scrollPrev();
+                    }}
                     disabled={currentIndex === 0}
-                    className="p-2 text-white/50 hover:text-orange-500 disabled:opacity-0 transition-all hover:scale-110"
+                    className="p-2 text-white/50 hover:text-orange-500 disabled:opacity-0 transition-all hover:scale-110 cursor-pointer"
                 >
                     <ChevronLeft className="w-8 h-8" />
                 </button>
                 <div className="w-px h-6 bg-white/10"></div>
                 <button
-                    onClick={() => emblaApi?.scrollNext()}
+                    type="button"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        emblaApi?.scrollNext();
+                    }}
                     disabled={currentIndex === slides.length - 1}
-                    className="p-2 text-white/50 hover:text-orange-500 disabled:opacity-0 transition-all hover:scale-110"
+                    className="p-2 text-white/50 hover:text-orange-500 disabled:opacity-0 transition-all hover:scale-110 cursor-pointer"
                 >
                     <ChevronRight className="w-8 h-8" />
                 </button>

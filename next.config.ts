@@ -16,7 +16,9 @@ const withPWA = withPWAInit({
 
 const nextConfig: NextConfig = {
   transpilePackages: ['recharts'],
-  turbopack: {},
+  turbopack: {
+    root: process.cwd(),
+  },
   images: {
     dangerouslyAllowSVG: true,
     remotePatterns: [

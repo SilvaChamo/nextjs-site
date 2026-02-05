@@ -146,8 +146,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                         return (
                             <div
                                 key={index}
-                                className={`h-full absolute inset-0 p-[70px] flex items-center justify-center transition-all duration-[1000ms] ease-in-out ${isActive ? 'opacity-100 z-10 scale-100' : 'opacity-0 z-0 scale-[1.02] pointer-events-none'
-                                    }`}
+                                className={`h-full absolute inset-0 p-[70px] flex items-center justify-center transition-all duration-[1000ms] ease-in-out ${isActive ? 'opacity-100 z-10 scale-100' : 'opacity-0 z-0 scale-[1.02] pointer-events-none'}`}
                                 style={{ minWidth: '100%' }}
                             >
 
@@ -178,29 +177,41 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                             </div>
                                         </div>
 
-                                        {/* Body: Two Columns */}
                                         <div className="w-full grid grid-cols-1 lg:grid-cols-[550px_1fr] gap-[35px] items-start flex-1">
 
-                                            {/* Column 1: Photo - Fixed 550x600 area */}
-                                            <div className="relative group flex justify-start">
-                                                <div className="absolute -inset-4 bg-orange-500/10 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                                {slide.image_url ? (
-                                                    <div className="relative w-[550px] h-[600px] max-w-full rounded-3xl overflow-hidden border-[6px] border-white/10 shadow-2xl">
-                                                        <img src={slide.image_url} alt="" className="w-full h-full object-cover" />
-                                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-8">
-                                                            <span className="text-xs font-black uppercase tracking-widest text-white/50">recurso visual • {index + 1}</span>
-                                                        </div>
-                                                    </div>
-                                                ) : (
-                                                    <div className="w-[550px] h-[600px] max-w-full rounded-3xl bg-white/5 border-2 border-dashed border-white/10 flex items-center justify-center">
-                                                        <div className="text-center">
-                                                            <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
-                                                                <Loader2 className="w-8 h-8 text-white/20 animate-spin" />
+                                            {/* Column 1: Photo + Footer */}
+                                            <div className="flex flex-col items-center lg:items-start w-full">
+                                                <div className="relative group flex justify-start">
+                                                    <div className="absolute -inset-4 bg-orange-500/10 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                                    {slide.image_url ? (
+                                                        <div className="relative w-[550px] h-[600px] max-w-full rounded-3xl overflow-hidden border-[6px] border-white/10 shadow-2xl bg-slate-900">
+                                                            <img src={slide.image_url} alt="" className="w-full h-full object-cover" />
+                                                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-8">
+                                                                <span className="text-xs font-black uppercase tracking-widest text-white/50">recurso visual • {index + 1}</span>
                                                             </div>
-                                                            <p className="text-xs font-bold text-white/20 uppercase tracking-widest">Sem recurso visual</p>
                                                         </div>
+                                                    ) : (
+                                                        <div className="w-[550px] h-[600px] max-w-full rounded-3xl bg-white/5 border-2 border-dashed border-white/10 flex items-center justify-center">
+                                                            <div className="text-center">
+                                                                <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                                                                    <Loader2 className="w-8 h-8 text-white/20 animate-spin" />
+                                                                </div>
+                                                                <p className="text-xs font-bold text-white/20 uppercase tracking-widest">Sem recurso visual</p>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                {/* Footer line for the slide */}
+                                                <div className="mt-8 pt-6 border-t border-white/5 flex flex-col items-center gap-4 w-full max-w-[550px]">
+                                                    <div className="flex items-center gap-4 text-slate-500 font-medium lowercase tracking-normal text-[12px]">
+                                                        <span>baseagrodata</span>
+                                                        <span className="opacity-20">•</span>
+                                                        <span>estratégia digital</span>
                                                     </div>
-                                                )}
+                                                    <div className="w-12 h-px bg-orange-500/30"></div>
+                                                    <span className="text-[10px] font-bold text-orange-500/40 lowercase tracking-normal">acesso reservado</span>
+                                                </div>
                                             </div>
 
                                             {/* Column 2: Description */}
@@ -269,6 +280,6 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                 ></div>
             </div>
 
-        </div>
+        </div >
     );
 }

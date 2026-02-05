@@ -170,7 +170,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                         </div>
 
                                         {/* Body: Two Columns */}
-                                        <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-[30px] items-center flex-1">
+                                        <div className="w-full grid grid-cols-1 lg:grid-cols-[550px_1fr] gap-[25px] items-start flex-1">
 
                                             {/* Column 1: Photo - Fixed 550x600 area */}
                                             <div className="relative group flex justify-start">

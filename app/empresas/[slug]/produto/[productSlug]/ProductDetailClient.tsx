@@ -20,7 +20,8 @@ import {
     Clock,
     MessageSquare,
     Send,
-    X
+    X,
+    CheckCircle2
 } from 'lucide-react';
 import { useState } from 'react';
 import { createClient } from '@/utils/supabase/client';

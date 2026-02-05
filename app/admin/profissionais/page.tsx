@@ -48,12 +48,20 @@ export default function AdminProfessionalsPage() {
                 .order('name', { ascending: true });
 
             if (error) {
-                console.error(error);
+                console.error('Erro ao carregar dados:', error);
                 toast.error("Erro ao carregar profissionais da BD");
-                setData(MOCK_DATA);
+                // Keep MOCK_DATA on error
             } else {
-                // Combine DB data with MOCK data for organization preview
-                setData([...MOCK_DATA, ...(dbData || [])]);
+                // Normalize status for DB records and combine with MOCK_DATA
+                const normalizedDbData = (dbData || []).map(item => ({
+                    ...item,
+                    status: item.status || 'active' // Default to active if null/undefined
+                }));
+
+                // MOCK_DATA always comes first, then DB data
+                const combinedData = [...MOCK_DATA, ...normalizedDbData];
+                console.log('Profissionais carregados:', combinedData.length, 'total');
+                setData(combinedData);
             }
             setLoading(false);
         }

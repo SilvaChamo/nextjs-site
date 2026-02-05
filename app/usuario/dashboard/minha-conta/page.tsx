@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { User, Mail, Phone, MapPin, Camera, Save, X, Loader2, BadgeCheck, GraduationCap, Briefcase, Map, ShoppingBag, Building2, Facebook, Instagram, Linkedin, Globe, Eye, TrendingUp, Trash2 } from "lucide-react";
+import { User, Mail, Phone, MapPin, Camera, Save, X, Loader2, BadgeCheck, GraduationCap, Briefcase, Map, ShoppingBag, Building2, Facebook, Instagram, Linkedin, Globe, Eye, TrendingUp, Trash2, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DashboardPageHeader } from "@/components/DashboardPageHeader";

@@ -53,7 +53,7 @@ export default function DashboardPage() {
                 // Check for admin role
                 const { data: profile } = await supabase
                     .from('profiles')
-                    .select('role')
+                    .select('role, sms_notifications')
                     .eq('id', user.id)
                     .single();
 

@@ -322,66 +322,63 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
                                 </div>
                             </div>
 
-                            <div className="flex-1 p-10 flex flex-col gap-8 z-10 relative">
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Título do Slide</label>
-                                    <Input
-                                        value={activeSlide?.title}
-                                        onChange={(e) => updateSlide(activeSlide.id, { title: e.target.value })}
-                                        placeholder="Digita o título impactante aqui..."
-                                        className="h-16 text-3xl font-black bg-transparent border-none p-0 focus-visible:ring-0 placeholder:text-slate-200"
-                                    />
-                                    <div className="h-1 w-20 bg-emerald-500 rounded-full" />
-                                </div>
+                            <div className="flex-1 p-10 flex flex-col gap-10 z-10 relative">
+                                {/* Header Section: Title/Antetitulo (Left) & Image (Right) */}
+                                <div className="flex flex-col md:flex-row gap-10 items-start shrink-0">
+                                    <div className="flex-1 space-y-8 w-full">
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Título do Slide</label>
+                                            <Input
+                                                value={activeSlide?.title}
+                                                onChange={(e) => updateSlide(activeSlide.id, { title: e.target.value })}
+                                                placeholder="Digita o título impactante aqui..."
+                                                className="h-16 text-3xl font-black bg-transparent border-none p-0 focus-visible:ring-0 placeholder:text-slate-200"
+                                            />
+                                            <div className="h-1 w-20 bg-emerald-500 rounded-full" />
+                                        </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-10 flex-1">
-                                    <div className="md:col-span-2 flex flex-col gap-6">
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Antetítulo (Texto curto antes do corpo)</label>
                                             <Input
                                                 value={activeSlide?.antetitulo || ""}
                                                 onChange={(e) => updateSlide(activeSlide.id, { antetitulo: e.target.value })}
                                                 placeholder="Ex: Introdução ao Mercado..."
-                                                className="h-10 text-sm font-bold bg-white border-slate-200 focus:ring-emerald-500"
+                                                className="h-11 text-md font-bold bg-white border-slate-200 focus:ring-emerald-500 rounded-lg shadow-sm"
                                             />
-                                        </div>
-
-                                        <div className="flex flex-col gap-2 flex-1">
-                                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Conteúdo & Storytelling</label>
-                                            <div className="flex-1 bg-slate-50/50 rounded-xl border border-slate-100 overflow-hidden shadow-inner min-h-[300px]">
-                                                <RichTextEditor
-                                                    value={activeSlide?.content}
-                                                    onChange={(val) => updateSlide(activeSlide.id, { content: val })}
-                                                    placeholder="Descreva sua visão para este slide..."
-                                                    className="bg-transparent"
-                                                />
-                                            </div>
                                         </div>
                                     </div>
 
-                                    <div className="flex flex-col gap-6">
-                                        <div className="space-y-4">
-                                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Imagem / Fundo</label>
-                                            <div className="bg-white rounded-xl border-2 border-dashed border-slate-200 p-4 transition-all hover:border-emerald-500 hover:bg-emerald-50/10">
-                                                <ImageUpload
-                                                    value={activeSlide?.image_url}
-                                                    onChange={(url) => updateSlide(activeSlide.id, { image_url: url })}
-                                                    label="Solte uma imagem"
-                                                    bucket="public-assets"
-                                                    folder="presentations"
-                                                />
-                                            </div>
+                                    {/* Compact Image Selector Top-Right */}
+                                    <div className="w-full md:w-80 shrink-0 space-y-3">
+                                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter flex items-center gap-2">
+                                            <ImageIcon className="w-3 h-3 text-emerald-500" />
+                                            Imagem / Fundo do Slide
+                                        </label>
+                                        <div className="bg-white rounded-2xl border-2 border-dashed border-slate-200 p-4 transition-all hover:border-emerald-500 hover:bg-emerald-50/5 shadow-sm group">
+                                            <ImageUpload
+                                                value={activeSlide?.image_url}
+                                                onChange={(url) => updateSlide(activeSlide.id, { image_url: url })}
+                                                label="Mudar Fundo"
+                                                bucket="public-assets"
+                                                folder="presentations"
+                                            />
                                         </div>
+                                    </div>
+                                </div>
 
-                                        <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-100 space-y-2">
-                                            <div className="flex items-center gap-2 text-emerald-700 font-bold text-[10px] uppercase">
-                                                <ImageIcon className="w-3.5 h-3.5" />
-                                                <span>Fundo Dinâmico</span>
-                                            </div>
-                                            <p className="text-[10px] text-emerald-600/80 leading-relaxed font-medium">
-                                                A imagem será adaptada automaticamente como plano de fundo com contraste inteligente.
-                                            </p>
-                                        </div>
+                                {/* Content Section: FULL WIDTH & EXPANDED */}
+                                <div className="flex flex-col gap-3 flex-1 min-h-[500px]">
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Conteúdo & Storytelling (Área Expandida)</label>
+                                        <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-bold">Auto-save activo</span>
+                                    </div>
+                                    <div className="flex-1 bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xl ring-1 ring-slate-950/5 min-h-[400px]">
+                                        <RichTextEditor
+                                            value={activeSlide?.content}
+                                            onChange={(val) => updateSlide(activeSlide.id, { content: val })}
+                                            placeholder="Descreva sua visão para este slide de forma detalhada..."
+                                            className="bg-transparent"
+                                        />
                                     </div>
                                 </div>
                             </div>

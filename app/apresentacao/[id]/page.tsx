@@ -198,7 +198,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                             <div className="space-y-[30px] py-[40px]">
                                                 {slide.antetitulo && (
                                                     <div className="mb-4">
-                                                        <span className="text-white font-bold lowercase tracking-tight text-[35px] leading-tight block">
+                                                        <span className="text-white font-bold first-letter:uppercase lowercase tracking-tight text-[40px] leading-tight block">
                                                             {slide.antetitulo}
                                                         </span>
                                                     </div>

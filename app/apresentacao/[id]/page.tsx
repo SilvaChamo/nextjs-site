@@ -213,7 +213,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                     </div>
                                                 )}
                                                 <div className="prose prose-invert max-w-none 
-                                                    prose-p:text-2xl md:prose-p:text-4xl prose-p:leading-relaxed prose-p:text-slate-200 prose-p:font-medium
+                                                    prose-p:text-[22px] prose-p:leading-relaxed prose-p:text-slate-200 prose-p:font-medium
                                                     prose-h5:text-[22px] prose-h5:font-normal prose-h5:text-white prose-h5:leading-[1.5]
                                                     prose-strong:text-orange-500 prose-strong:font-black
                                                     prose-ul:list-disc prose-ul:pl-10 prose-ul:space-y-4

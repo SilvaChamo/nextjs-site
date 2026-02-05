@@ -52,7 +52,7 @@ export async function POST(request: Request) {
 
         // 4. Send SMS (Mocked)
         const results = await Promise.all(subscribers.map(async (sub) => {
-            console.log(`[SMS MOCK] To ${sub.phone} (${sub.province}): ${message}`);
+
             return { phone: sub.phone, status: 'sent_mock' };
         }));
 

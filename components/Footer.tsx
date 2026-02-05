@@ -49,7 +49,7 @@ export function Footer() {
                             <ul className="space-y-1 text-[15px] text-gray-400">
                                 <li><Link href="/sobre-nos" className="hover:text-[#f97316] transition-colors">Sobre nós</Link></li>
                                 <li><Link href="/login" className="hover:text-[#f97316] transition-colors">Minha conta</Link></li>
-                                <li><Link href="/relatorios" className="hover:text-[#f97316] transition-colors">Relatórios</Link></li>
+                                <li><Link href="/ajuda" className="hover:text-[#f97316] transition-colors">Ajuda</Link></li>
                                 <li><Link href="/artigos" className="hover:text-[#f97316] transition-colors">Actividades</Link></li>
                                 <li><Link href="/blog" className="hover:text-[#f97316] transition-colors">Blog do Agro</Link></li>
                                 <li><Link href="/usuario/dashboard" className="hover:text-[#f97316] transition-colors">Dashboard</Link></li>
@@ -71,12 +71,12 @@ export function Footer() {
                         <div className="col-span-1 lg:col-span-2 space-y-4 pt-[30px]">
                             <h3 className="text-lg font-bold text-gray-200">Nossos Serviços</h3>
                             <ul className="space-y-1 text-[15px] text-gray-400">
+                                <li><Link href="/apresentacoes" className="hover:text-[#f97316] transition-colors text-emerald-400 font-bold">Apresentações</Link></li>
                                 <li><Link href="/servicos/transporte" className="hover:text-[#f97316] transition-colors">Logística & Transporte</Link></li>
                                 <li><Link href="/servicos/insumos" className="hover:text-[#f97316] transition-colors">Lojas de Insumos</Link></li>
                                 <li><Link href="/servicos/mercado" className="hover:text-[#f97316] transition-colors">Compra & Venda</Link></li>
-                                <li><Link href="/servicos/emprego" className="hover:text-[#f97316] transition-colors">Vagas de Emprego</Link></li>
+                                <li><Link href="/repositorio" className="hover:text-[#f97316] transition-colors">Repositório</Link></li>
                                 <li><Link href="/servicos/consultoria" className="hover:text-[#f97316] transition-colors">Consultoria Digital</Link></li>
-                                <li><Link href="/servicos/anuncios" className="hover:text-[#f97316] transition-colors">Publicidade & Anúncios</Link></li>
                             </ul>
                         </div>
 
@@ -128,7 +128,7 @@ export function Footer() {
                         <div className="flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-2 text-gray-400 text-[10px] font-black uppercase tracking-widest">
                             <Link href="/politica-privacidade" className="hover:text-[#f97316] transition-colors">Política de privacidade</Link>
                             <Link href="/termos" className="hover:text-[#f97316] transition-colors">Termos e condições</Link>
-                            <Link href="/suporte" className="hover:text-[#f97316] transition-colors">Suporte</Link>
+                            <Link href="/contactos" className="hover:text-[#f97316] transition-colors">Suporte</Link>
                             <Link href="/design-system" className="hover:text-[#f97316] transition-colors text-emerald-600/50">Kit Padrão</Link>
                             <Link href="/admin" className="hover:text-[#f97316] transition-colors text-gray-400/20 hover:text-emerald-600">Cozinha</Link>
                         </div>

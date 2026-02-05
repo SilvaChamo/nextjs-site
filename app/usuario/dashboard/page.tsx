@@ -44,10 +44,8 @@ export default function DashboardPage() {
         const checkUser = async () => {
             const { data: { user }, error } = await supabase.auth.getUser();
             if (error || !user) {
-                console.log("No user found in Dashboard, redirecting...", error);
                 router.push("/login");
             } else {
-                console.log("User authorized:", user.email);
                 setUser(user);
 
                 // Check for admin role

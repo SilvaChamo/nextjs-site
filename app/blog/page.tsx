@@ -47,7 +47,6 @@ function BlogContent() {
         const fetchContent = async () => {
             setLoading(true);
             try {
-                console.log("Fetching content from blog page...");
 
                 // Fetch news articles (explicitly included types)
                 const { data: articlesData, error: articlesError } = await supabase
@@ -62,7 +61,6 @@ function BlogContent() {
                     throw articlesError;
                 }
 
-                console.log("Articles fetched:", articlesData?.length || 0);
                 setArticles(articlesData || []);
             } catch (error) {
                 console.error("Error fetching content:", error);
@@ -83,7 +81,6 @@ function BlogContent() {
     const manualRefresh = async () => {
         setRefreshing(true);
         try {
-            console.log("Manual refresh triggered...");
 
             // Refresh articles
             const { data: articlesData, error: articlesError } = await supabase
@@ -99,7 +96,6 @@ function BlogContent() {
                 throw articlesError;
             }
 
-            console.log("Manual refresh - Articles fetched:", articlesData?.length || 0);
             setArticles(articlesData || []);
         } catch (error) {
             console.error("Manual refresh failed:", error);

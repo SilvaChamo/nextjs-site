@@ -30,9 +30,6 @@ export default function AdminArticlesPage() {
 
     async function fetchArticles() {
         setLoading(true);
-        console.log("=== FETCH ARTICLES DEBUG ===");
-        console.log("Status Filter:", statusFilter);
-        console.log("Active Admin Tab:", activeAdminTab);
 
         let query = supabase
             .from('articles')
@@ -84,18 +81,11 @@ export default function AdminArticlesPage() {
             setArticles(data || []);
         }
 
-        console.log("Fetch result:", { error, count: data?.length || 0 });
-        if (data) {
-            console.log("Articles found:");
-            data.forEach(article => {
-                console.log(`- [${article.deleted_at ? 'DELETED' : 'ACTIVE'}] ${article.title} (ID: ${article.id})`);
-            });
-        }
+
 
         if (error) console.error(error);
         else setArticles(data || []);
         setLoading(false);
-        console.log("=== END FETCH DEBUG ===");
     }
 
     useEffect(() => {
@@ -105,22 +95,17 @@ export default function AdminArticlesPage() {
     const confirmDelete = async () => {
         if (!itemToDelete) return;
 
-        console.log("=== DELETE DEBUG ===");
-        console.log("Item to delete:", itemToDelete);
-        console.log("Status Filter:", statusFilter);
-        console.log("Item ID:", itemToDelete.id);
-        console.log("Item current deleted_at:", itemToDelete.deleted_at);
 
         try {
             if (statusFilter === 'deleted') {
                 // Hard Delete (Permanent) for items already in Bin
-                console.log("Performing HARD DELETE...");
+
                 const { error: hardDeleteError, count: hardDeleteCount } = await supabase
                     .from('articles')
                     .delete({ count: 'exact' })
                     .eq('id', itemToDelete.id);
 
-                console.log("Hard delete result:", { error: hardDeleteError, count: hardDeleteCount });
+
                 if (hardDeleteError) throw hardDeleteError;
                 if (hardDeleteCount === 0) throw new Error("Permissão negada ou item não encontrado.");
 
@@ -135,7 +120,7 @@ export default function AdminArticlesPage() {
                 toast.success("Artigo eliminado permanentemente!");
             } else {
                 // Soft Delete (Move to Bin) for active items
-                console.log("Performing SOFT DELETE...");
+
                 const deleteTime = new Date().toISOString();
 
                 const { error: softDeleteError, count: softDeleteCount } = await supabase
@@ -169,9 +154,7 @@ export default function AdminArticlesPage() {
                 toast.success("Artigo movido para a lixeira!");
             }
 
-            console.log("Delete completed, fetching articles...");
             await fetchArticles();
-            console.log("=== END DELETE DEBUG ===");
         } catch (error: any) {
             console.error("Delete failed:", error);
             toast.error(error.message || "Erro ao eliminar artigo");

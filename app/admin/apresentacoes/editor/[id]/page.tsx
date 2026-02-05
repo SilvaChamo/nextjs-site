@@ -291,19 +291,25 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
                                 <span className="text-[10px] font-black uppercase text-emerald-600 tracking-wider">Metadados da Apresentação</span>
                                 <Monitor className="w-3.5 h-3.5 text-slate-300" />
                             </div>
-                            <div className="p-6 space-y-4">
-                                <Input
-                                    value={presentation.title}
-                                    onChange={(e) => setPresentation({ ...presentation, title: e.target.value })}
-                                    placeholder="Nome do Projecto"
-                                    className="h-12 text-lg font-black bg-white border-slate-200 rounded-lg focus:ring-emerald-500"
-                                />
-                                <Textarea
-                                    value={presentation.description}
-                                    onChange={(e) => setPresentation({ ...presentation, description: e.target.value })}
-                                    placeholder="Notas da apresentação..."
-                                    className="bg-white border-slate-200 rounded-lg min-h-[60px] resize-none text-xs"
-                                />
+                            <div className="p-6 space-y-2">
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Nome do Projecto</label>
+                                    <Input
+                                        value={presentation.title}
+                                        onChange={(e) => setPresentation({ ...presentation, title: e.target.value })}
+                                        placeholder="Nome do Projecto"
+                                        className="h-12 text-2xl font-black bg-transparent border-none p-0 focus-visible:ring-0 placeholder:text-slate-200"
+                                    />
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Notas / Descrição</label>
+                                    <Textarea
+                                        value={presentation.description}
+                                        onChange={(e) => setPresentation({ ...presentation, description: e.target.value })}
+                                        placeholder="Notas da apresentação..."
+                                        className="bg-transparent border-none p-0 focus-visible:ring-0 min-h-[40px] resize-none text-sm font-medium text-slate-600 placeholder:text-slate-300 shadow-none ring-0 focus:ring-0"
+                                    />
+                                </div>
                             </div>
                         </div>
 

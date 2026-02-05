@@ -163,7 +163,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                 {slide.title}
                                             </h1>
                                             <div className="flex items-center gap-[30px] pt-[10px]">
-                                                <div className="w-[3px] h-[30px] bg-orange-500 shrink-0" />
+                                                <div className="w-[5px] h-[30px] bg-orange-500 shrink-0" />
                                                 <p className="text-orange-500 font-bold text-[25px]">
                                                     {presentation.title} {index === 0 ? "introdução" : `slide ${index + 1}`}
                                                 </p>

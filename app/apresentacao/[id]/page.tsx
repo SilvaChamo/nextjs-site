@@ -201,14 +201,12 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                 </div>
 
                                                 {/* Footer line for the slide */}
-                                                <div className="pt-4 flex flex-col items-center gap-3 w-full max-w-[550px]">
-                                                    <div className="flex items-center gap-4 text-slate-500/60 font-medium lowercase tracking-normal text-[11px]">
-                                                        <span>baseagrodata</span>
-                                                        <span className="opacity-20">•</span>
-                                                        <span>estratégia digital</span>
-                                                    </div>
-                                                    <div className="w-8 h-px bg-orange-500/20"></div>
-                                                    <span className="text-[9px] font-bold text-orange-500/30 lowercase tracking-normal">acesso reservado</span>
+                                                <div className="pt-4 flex items-center justify-center gap-4 w-full max-w-[500px] text-slate-500/40 lowercase font-medium text-[10px] tracking-tight">
+                                                    <span>baseagrodata</span>
+                                                    <span className="opacity-20">•</span>
+                                                    <span>estratégia digital</span>
+                                                    <span className="opacity-20">•</span>
+                                                    <span className="font-bold border border-white/5 px-2 py-0.5 rounded">acesso reservado</span>
                                                 </div>
                                             </div>
 

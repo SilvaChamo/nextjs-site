@@ -184,14 +184,14 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                 <div className="relative group w-full max-w-[550px]">
                                                     <div className="absolute -inset-4 bg-orange-500/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                                     {slide.image_url ? (
-                                                        <div className="relative w-full aspect-[4/5.5] rounded-[20px] overflow-hidden border border-white/10 shadow-2xl bg-slate-900">
+                                                        <div className="relative w-full aspect-[4/5] rounded-[20px] overflow-hidden border border-white/10 shadow-2xl bg-slate-900">
                                                             <img src={slide.image_url} alt="" className="w-full h-full object-cover" />
                                                             <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent flex items-end p-6">
                                                                 <span className="text-[10px] font-bold uppercase tracking-wider text-white/40">recurso visual • slide {index + 1}</span>
                                                             </div>
                                                         </div>
                                                     ) : (
-                                                        <div className="relative w-full aspect-[4/5.5] rounded-[20px] bg-white/5 border border-dashed border-white/10 flex items-center justify-center">
+                                                        <div className="relative w-full aspect-[4/5] rounded-[20px] bg-white/5 border border-dashed border-white/10 flex items-center justify-center">
                                                             <div className="text-center">
                                                                 <Loader2 className="w-8 h-8 text-white/10 animate-spin mx-auto mb-3" />
                                                                 <p className="text-[10px] font-bold text-white/10 uppercase tracking-widest">Sem recurso visual</p>

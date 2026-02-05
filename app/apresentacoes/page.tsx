@@ -55,71 +55,64 @@ export default function PresentationsGalleryPage() {
                             const firstSlideImage = item.slides?.[0]?.image_url;
 
                             return (
-                                <div key={item.id} className="group bg-white rounded-[24px] overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col h-full">
-                                    {/* Thumbnail Area */}
-                                    <div className="relative aspect-video overflow-hidden bg-slate-100">
+                                <div key={item.id} className="group relative aspect-[4/5] md:aspect-[3/4] rounded-[32px] overflow-hidden bg-slate-900 border border-white/5 shadow-2xl hover:shadow-emerald-900/20 transition-all duration-700 flex flex-col">
+                                    {/* Full Background Image */}
+                                    <div className="absolute inset-0 z-0">
                                         {firstSlideImage ? (
                                             <img
                                                 src={firstSlideImage}
                                                 alt={item.title}
-                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-60 group-hover:opacity-40"
                                             />
                                         ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-slate-300">
-                                                <Presentation className="w-12 h-12 opacity-20" />
+                                            <div className="w-full h-full flex items-center justify-center opacity-10">
+                                                <Presentation className="w-20 h-20 text-white" />
                                             </div>
                                         )}
-                                        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"></div>
-
-                                        {/* Play Overlay */}
-                                        <Link
-                                            href={`/apresentacao/${item.id}`}
-                                            className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                        >
-                                            <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center text-slate-900 shadow-2xl transform scale-75 group-hover:scale-100 transition-transform">
-                                                <Play className="w-6 h-6 fill-current ml-1" />
-                                            </div>
-                                        </Link>
-
-                                        <div className="absolute bottom-4 left-4">
-                                            <span className="px-3 py-1 bg-emerald-600 text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg">
-                                                {slideCount} Slides
-                                            </span>
-                                        </div>
+                                        {/* Gradient Overlays */}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent z-10"></div>
+                                        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/20 to-transparent z-10"></div>
                                     </div>
 
-                                    {/* Content Area */}
-                                    <div className="p-6 flex-1 flex flex-col">
-                                        <div className="flex items-center gap-4 mb-4 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                            <div className="flex items-center gap-1.5">
+                                    {/* Content Overlay */}
+                                    <div className="relative z-20 p-8 h-full flex flex-col">
+                                        {/* Header Info */}
+                                        <div className="flex items-center justify-between mb-auto">
+                                            <span className="px-4 py-1.5 bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] font-black uppercase tracking-widest rounded-full">
+                                                {slideCount} Slides
+                                            </span>
+                                            <Play className="w-5 h-5 text-white opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0 transition-all duration-500" />
+                                        </div>
+
+                                        {/* Main Text */}
+                                        <div className="space-y-4">
+                                            <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">
                                                 <Calendar className="w-3.5 h-3.5" />
                                                 {new Date(item.created_at).toLocaleDateString('pt-PT')}
                                             </div>
-                                            <div className="w-1 h-1 rounded-full bg-slate-300"></div>
-                                            <div className="flex items-center gap-1.5">
-                                                <User className="w-3.5 h-3.5" />
-                                                BaseAgro
+
+                                            <h3 className="text-2xl font-black text-white leading-tight tracking-tighter group-hover:text-emerald-400 transition-colors duration-300 uppercase">
+                                                {item.title}
+                                            </h3>
+
+                                            <p className="text-sm text-slate-300 leading-relaxed font-medium line-clamp-3 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-100">
+                                                {item.description || "Explora conteúdo interactivo e dados actualizados sobre o sector agro-pecuário em Moçambique."}
+                                            </p>
+
+                                            <div className="pt-6">
+                                                <Link
+                                                    href={`/apresentacao/${item.id}`}
+                                                    className="inline-flex items-center gap-2 px-6 py-3 bg-white text-slate-950 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition-all duration-300"
+                                                >
+                                                    Abrir Projecto
+                                                    <ArrowRight className="w-3.5 h-3.5" />
+                                                </Link>
                                             </div>
                                         </div>
-
-                                        <h3 className="text-xl font-bold text-slate-800 mb-3 group-hover:text-emerald-600 transition-colors line-clamp-2">
-                                            {item.title}
-                                        </h3>
-
-                                        <p className="text-sm text-slate-500 leading-relaxed line-clamp-2 mb-6 font-medium">
-                                            {item.description || "Aceda a esta apresentação interactiva sobre as tendências e desenvolvimentos no sector agrário."}
-                                        </p>
-
-                                        <div className="mt-auto pt-6 border-t border-slate-50">
-                                            <Link
-                                                href={`/apresentacao/${item.id}`}
-                                                className="flex items-center justify-between text-xs font-black uppercase tracking-widest text-emerald-600 group/link"
-                                            >
-                                                <span>Abrir Apresentação</span>
-                                                <ArrowRight className="w-4 h-4 transform group-hover/link:translate-x-1 transition-transform" />
-                                            </Link>
-                                        </div>
                                     </div>
+
+                                    {/* Invisible full-card link for convenience */}
+                                    <Link href={`/apresentacao/${item.id}`} className="absolute inset-0 z-30"></Link>
                                 </div>
                             );
                         })}

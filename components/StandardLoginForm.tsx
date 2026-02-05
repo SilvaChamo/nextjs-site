@@ -21,11 +21,11 @@ export function StandardLoginForm() {
                 <form className="space-y-5 text-left">
                     <div>
                         <label className="block text-sm font-bold text-slate-700 mb-2">Email</label>
-                        <div className="candy-border-wrapper rounded-md">
+                        <div className="candy-border-wrapper rounded-sm">
                             <input
                                 type="email"
                                 placeholder="exemplo@baseagro.com"
-                                className="w-full bg-[#F8FAFC] border-none px-5 py-3 focus-candy outline-none transition-all font-medium text-sm text-slate-700 relative z-10 rounded-md"
+                                className="w-full bg-[#F8FAFC] border-none px-5 py-3 focus-candy outline-none transition-all font-medium text-sm text-slate-700 relative z-10 rounded-sm"
                             />
                         </div>
                     </div>
@@ -37,11 +37,11 @@ export function StandardLoginForm() {
                                 Esqueceu-se?
                             </Link>
                         </div>
-                        <div className="candy-border-wrapper rounded-md">
+                        <div className="candy-border-wrapper rounded-sm">
                             <input
                                 type="password"
                                 placeholder="••••••••"
-                                className="w-full bg-[#F8FAFC] border-none px-5 py-3 focus-candy outline-none transition-all font-medium text-sm text-slate-700 relative z-10 rounded-md"
+                                className="w-full bg-[#F8FAFC] border-none px-5 py-3 focus-candy outline-none transition-all font-medium text-sm text-slate-700 relative z-10 rounded-sm"
                             />
                         </div>
                     </div>

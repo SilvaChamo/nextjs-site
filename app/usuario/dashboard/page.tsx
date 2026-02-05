@@ -34,6 +34,8 @@ export default function DashboardPage() {
     const [user, setUser] = useState<any>(null);
     const [isAdmin, setIsAdmin] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [smsNotifications, setSmsNotifications] = useState(false);
+    const [updatingSms, setUpdatingSms] = useState(false);
 
     const supabase = createClient();
     const { settings, loading: settingsLoading } = useSiteSettings();
@@ -58,6 +60,10 @@ export default function DashboardPage() {
                 if (profile && profile.role === 'admin') {
                     setIsAdmin(true);
                 }
+
+                if (profile) {
+                    setSmsNotifications(profile.sms_notifications || false);
+                }
             }
             setLoading(false);
         };
@@ -69,6 +75,25 @@ export default function DashboardPage() {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#f97316]"></div>
         </div>
     );
+
+    const toggleSms = async () => {
+        if (!user || updatingSms) return;
+        setUpdatingSms(true);
+        try {
+            const nextValue = !smsNotifications;
+            const { error } = await supabase
+                .from('profiles')
+                .update({ sms_notifications: nextValue })
+                .eq('id', user.id);
+
+            if (error) throw error;
+            setSmsNotifications(nextValue);
+        } catch (err) {
+            console.error("Error toggling SMS:", err);
+        } finally {
+            setUpdatingSms(false);
+        }
+    };
 
     return (
         <div>
@@ -149,6 +174,28 @@ export default function DashboardPage() {
                                     <ArrowRight className="w-4 h-4 text-slate-300 ml-auto group-hover:text-amber-500 transition-colors" />
                                 </div>
                             </Link>
+
+                            {/* SMS Alerts Card */}
+                            <div className="block bg-orange-50/50 rounded-lg p-5 shadow-sm border border-orange-100 transition-all group">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center text-[#f97316] group-hover:scale-110 transition-transform">
+                                        <ArrowRight className={`w-5 h-5 transition-transform ${smsNotifications ? 'rotate-0' : 'rotate-180 opacity-30'}`} />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h4 className="font-bold text-slate-800 text-sm">Alertas SMS</h4>
+                                        <p className="text-[10px] text-slate-500">Notificações de novos produtos</p>
+                                    </div>
+                                    <button
+                                        onClick={toggleSms}
+                                        disabled={updatingSms}
+                                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${smsNotifications ? 'bg-[#f97316]' : 'bg-slate-300'} ${updatingSms ? 'opacity-50' : 'cursor-pointer'}`}
+                                    >
+                                        <span
+                                            className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${smsNotifications ? 'translate-x-5' : 'translate-x-1'}`}
+                                        />
+                                    </button>
+                                </div>
+                            </div>
 
 
                         </div>

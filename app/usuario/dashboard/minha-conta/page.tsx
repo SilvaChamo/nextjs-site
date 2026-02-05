@@ -28,7 +28,8 @@ export default function MinhaContaPage() {
         province: "",
         profession: "",
         academicLevel: "",
-        avatarUrl: ""
+        avatarUrl: "",
+        smsNotifications: false
     });
 
     useEffect(() => {
@@ -36,14 +37,23 @@ export default function MinhaContaPage() {
             const { data: { user } } = await supabase.auth.getUser();
             if (user) {
                 setUser(user);
+
+                // Fetch profile data from database
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', user.id)
+                    .single();
+
                 setFormData({
-                    fullName: user.user_metadata?.full_name || user.user_metadata?.name || "",
-                    phone: user.user_metadata?.phone || user.phone || "",
+                    fullName: profile?.full_name || user.user_metadata?.full_name || user.user_metadata?.name || "",
+                    phone: profile?.phone || user.user_metadata?.phone || user.phone || "",
                     address: user.user_metadata?.address || "Maputo, Moçambique",
-                    province: user.user_metadata?.province || "",
+                    province: profile?.province || user.user_metadata?.province || "",
                     profession: user.user_metadata?.profession || "",
                     academicLevel: user.user_metadata?.academic_level || "",
-                    avatarUrl: user.user_metadata?.avatar_url || user.user_metadata?.picture || ""
+                    avatarUrl: profile?.avatar_url || user.user_metadata?.avatar_url || user.user_metadata?.picture || "",
+                    smsNotifications: profile?.sms_notifications || false
                 });
             }
             setLoading(false);
@@ -99,6 +109,21 @@ export default function MinhaContaPage() {
         setLoading(true);
 
         try {
+            // Update Profile in database
+            const { error: profileError } = await supabase
+                .from('profiles')
+                .update({
+                    full_name: formData.fullName,
+                    phone: formData.phone,
+                    province: formData.province,
+                    avatar_url: formData.avatarUrl,
+                    sms_notifications: formData.smsNotifications
+                })
+                .eq('id', user.id);
+
+            if (profileError) throw profileError;
+
+            // Also update Auth metadata for convenience
             const { error } = await supabase.auth.updateUser({
                 data: {
                     full_name: formData.fullName,
@@ -390,6 +415,31 @@ export default function MinhaContaPage() {
                                             </div>
                                         </div>
                                     )}
+
+                                    {/* SMS Notifications Toggle */}
+                                    <div className="pt-4 border-t border-slate-100">
+                                        <div className="flex items-center justify-between p-4 bg-orange-50/50 rounded-xl border border-orange-100 group transition-all hover:bg-orange-50">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center shrink-0">
+                                                    <MessageSquare className="w-5 h-5 text-[#f97316]" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm font-bold text-slate-800">Notificações SMS</p>
+                                                    <p className="text-[11px] text-slate-500">Receber alertas de novos produtos no mercado</p>
+                                                </div>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                disabled={!isEditing}
+                                                onClick={() => setFormData(prev => ({ ...prev, smsNotifications: !prev.smsNotifications }))}
+                                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#f97316] focus:ring-offset-2 ${formData.smsNotifications ? 'bg-[#f97316]' : 'bg-slate-200'} ${!isEditing ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                                            >
+                                                <span
+                                                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${formData.smsNotifications ? 'translate-x-6' : 'translate-x-1'}`}
+                                                />
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 

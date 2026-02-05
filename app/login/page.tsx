@@ -263,18 +263,17 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
             </div>
 
             <div className="w-full max-w-[420px] px-4 relative z-10">
-                <div className="bg-white/90 backdrop-blur-2xl rounded-[35px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15),0_0_20px_rgba(249,115,22,0.05)] p-9 border border-white/60 form-premium-card ring-1 ring-black/[0.02] relative overflow-hidden">
-                    {/* Add a subtle internal gradient to the form background */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-white/50 to-transparent pointer-events-none" />
+                <div className="bg-white rounded-[15px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15),0_0_20px_rgba(249,115,22,0.05)] p-9 border border-slate-100 form-premium-card ring-1 ring-black/[0.05] relative overflow-hidden">
+                    {/* Fundo 100% Sólido para o Logo */}
 
                     <div className="text-center mb-7">
-                        <Link href="/" className="inline-block transition-transform hover:scale-105 duration-300">
+                        <Link href="/" className="inline-block transition-transform duration-300 hover:scale-105 opacity-100 !opacity-100">
                             <Image
                                 src="/Logo.svg"
                                 alt="Base Agro Data"
                                 width={160}
                                 height={64}
-                                className="h-16 w-auto mx-auto object-contain"
+                                className="h-16 w-auto mx-auto object-contain opacity-100 !opacity-100"
                                 priority
                             />
                         </Link>

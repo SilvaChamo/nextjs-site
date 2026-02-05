@@ -90,7 +90,7 @@ export default function MeuConteudoPage() {
             return;
         }
 
-        const { error } = await supabase.from('products').insert({
+        const { error, data: newProduct } = await supabase.from('products').insert({
             user_id: user.id,
             name: productForm.name,
             price: productForm.price,
@@ -98,12 +98,36 @@ export default function MeuConteudoPage() {
             description: productForm.description,
             image_url: productForm.imageUrl,
             company_id: companyId
-        });
+        }).select().single();
 
         if (error) {
             alert("Erro ao salvar: " + error.message);
         } else {
             alert("Produto salvo com sucesso!");
+
+            // Trigger SMS notification for company products
+            try {
+                // Fetch company location for better targeting
+                const { data: compData } = await supabase
+                    .from('companies')
+                    .select('province')
+                    .eq('id', companyId)
+                    .single();
+
+                fetch('/api/sms/notify-new-product', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        product: productForm.name,
+                        price: productForm.price,
+                        location: compData?.province || 'Sua localização',
+                        type: 'company'
+                    })
+                });
+            } catch (smsErr) {
+                console.error("SMS trigger error:", smsErr);
+            }
+
             setIsAddingProduct(false);
             setProductForm({ name: "", price: "", category: "", description: "", imageUrl: "" });
             fetchProducts();
@@ -236,7 +260,19 @@ export default function MeuConteudoPage() {
                                                     )}
                                                 </div>
                                                 <div className="p-4">
-                                                    <h4 className="font-bold text-slate-800 line-clamp-1">{p.name}</h4>
+                                                    <div className="flex items-center justify-between mb-1">
+                                                        <h4 className="font-bold text-slate-800 line-clamp-1">{p.name}</h4>
+                                                        <button
+                                                            onClick={async () => {
+                                                                const newStatus = p.available === false ? true : false;
+                                                                const { error } = await supabase.from('products').update({ available: newStatus }).eq('id', p.id);
+                                                                if (!error) fetchProducts();
+                                                            }}
+                                                            className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border transition-colors ${p.available !== false ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-red-50 text-red-600 border-red-100'}`}
+                                                        >
+                                                            {p.available !== false ? 'Em Stock' : 'Esgotado'}
+                                                        </button>
+                                                    </div>
                                                     <p className="text-orange-600 font-bold text-base">{p.price} MT</p>
                                                     <p className="text-slate-500 text-xs mt-1 line-clamp-2 leading-relaxed">{p.description}</p>
                                                 </div>

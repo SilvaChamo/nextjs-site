@@ -30,10 +30,23 @@ export function MarketProductForm({ onClose, onSuccess, initialData }: MarketPro
 
         try {
             let error;
+            let variation = 0;
+            const newPrice = parseFloat(formData.price);
+            const oldPrice = initialData?.price ? parseFloat(initialData.price) : null;
+
+            if (oldPrice && oldPrice > 0) {
+                variation = Math.round(((newPrice - oldPrice) / oldPrice) * 100);
+            }
+
             if (initialData?.id) {
+                // Ao actualizar, guardamos o preço anterior para histórico no próprio registo
                 const { error: err } = await supabase
                     .from('market_prices')
-                    .update(formData)
+                    .update({
+                        ...formData,
+                        prev_price: initialData.price,
+                        updated_at: new Date().toISOString()
+                    })
                     .eq('id', initialData.id);
                 error = err;
             } else {
@@ -44,11 +57,25 @@ export function MarketProductForm({ onClose, onSuccess, initialData }: MarketPro
             }
 
             if (error) throw error;
+
+            // Trigger SMS notification for price updates/new products in this location
+            fetch('/api/sms/notify-new-product', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    product: formData.product,
+                    price: formData.price,
+                    location: formData.location,
+                    type: 'market',
+                    variation: initialData?.id ? variation : null
+                })
+            }).catch(err => console.error("Error triggering SMS:", err));
+
             toast.success(initialData?.id ? "Cotação actualizada!" : "Cotação adicionada!");
             onSuccess();
             onClose();
         } catch (error: any) {
-            toast.error("Erro ao salvar cotação de mercado: " + error.message);
+            toast.error("Erro ao salvar cotação: " + error.message);
         } finally {
             setLoading(false);
         }

@@ -178,9 +178,17 @@ export default function ProductDetailClient({
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
 
                             <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between z-10">
-                                <div className="bg-emerald-600/90 backdrop-blur-md text-white text-[9px] font-bold px-2.5 py-1.5 rounded-md shadow-lg border border-white/10 flex items-center gap-1.5">
-                                    <ShieldCheck className="w-3 h-3" />
-                                    Catálogo oficial
+                                <div className="flex flex-col gap-2">
+                                    <div className="bg-emerald-600/90 backdrop-blur-md text-white text-[9px] font-bold px-2.5 py-1.5 rounded-md shadow-lg border border-white/10 flex items-center gap-1.5">
+                                        <ShieldCheck className="w-3 h-3" />
+                                        Catálogo oficial
+                                    </div>
+                                    {company.is_verified && (
+                                        <div className="bg-blue-600/90 backdrop-blur-md text-white text-[9px] font-bold px-2.5 py-1.5 rounded-md shadow-lg border border-white/10 flex items-center gap-1.5 animate-in fade-in zoom-in duration-500">
+                                            <CheckCircle2 className="w-3 h-3" />
+                                            Vendedor Verificado
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>

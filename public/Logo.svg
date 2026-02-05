@@ -15,17 +15,13 @@
       }
 
       .cls-5 {
-        mix-blend-mode: overlay;
-        opacity: .5;
       }
 
       .cls-6 {
         fill: url(#Degradado_sin_nombre_7-3);
-        opacity: .15;
       }
 
       .cls-6, .cls-7, .cls-8 {
-        mix-blend-mode: multiply;
       }
 
       .cls-7 {
@@ -33,7 +29,6 @@
       }
 
       .cls-7, .cls-8 {
-        opacity: .3;
       }
 
       .cls-9 {

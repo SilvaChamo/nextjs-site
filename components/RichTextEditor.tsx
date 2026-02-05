@@ -39,7 +39,7 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
     };
 
     return (
-        <div className={cn("flex flex-col border border-slate-200 bg-white overflow-hidden transition-all", isFocused ? "ring-2 ring-emerald-600/20 border-emerald-600" : "", className)} style={{ borderRadius: '8px' }}>
+        <div className={cn("flex flex-col bg-white overflow-hidden transition-all", className)}>
             {/* Toolbar */}
             <div className="flex items-center gap-1 p-2 border-b border-slate-100 bg-slate-50 flex-wrap">
                 <ToolbarButton onClick={() => execCommand("bold")} icon={<span className="font-black text-lg leading-none font-serif">B</span>} title="Bold" />

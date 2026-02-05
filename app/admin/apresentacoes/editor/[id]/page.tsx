@@ -337,15 +337,6 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
                                             <div className="h-1 w-20 bg-emerald-500 rounded-full" />
                                         </div>
 
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Antetítulo (Texto curto antes do corpo)</label>
-                                            <Input
-                                                value={activeSlide?.antetitulo || ""}
-                                                onChange={(e) => updateSlide(activeSlide.id, { antetitulo: e.target.value })}
-                                                placeholder="Ex: Introdução ao Mercado..."
-                                                className="h-11 text-md font-bold bg-white border-slate-200 focus:ring-emerald-500 rounded-lg shadow-sm"
-                                            />
-                                        </div>
                                     </div>
 
                                     {/* Compact Image Selector Top-Right */}
@@ -366,6 +357,16 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
                                             />
                                         </div>
                                     </div>
+                                </div>
+
+                                <div className="space-y-3 shrink-0">
+                                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Antetítulo (Texto de impacto largura total)</label>
+                                    <Textarea
+                                        value={activeSlide?.antetitulo || ""}
+                                        onChange={(e) => updateSlide(activeSlide.id, { antetitulo: e.target.value })}
+                                        placeholder="Digite aqui o seu ante-título ou introdução curta..."
+                                        className="min-h-[120px] text-xl font-bold bg-white border-slate-200 focus:ring-emerald-500 rounded-xl shadow-sm resize-none"
+                                    />
                                 </div>
 
                                 {/* Content Section: FULL WIDTH & EXPANDED */}

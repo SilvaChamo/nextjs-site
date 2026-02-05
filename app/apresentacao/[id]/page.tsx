@@ -222,6 +222,25 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                 </div>
             </div>
 
+            {/* Bottom Right Navigation Controls */}
+            <div className="absolute bottom-8 right-8 z-[100] flex items-center gap-4">
+                <button
+                    onClick={() => emblaApi?.scrollPrev()}
+                    disabled={currentIndex === 0}
+                    className="p-2 text-white/50 hover:text-orange-500 disabled:opacity-0 transition-all hover:scale-110"
+                >
+                    <ChevronLeft className="w-8 h-8" />
+                </button>
+                <div className="w-px h-6 bg-white/10"></div>
+                <button
+                    onClick={() => emblaApi?.scrollNext()}
+                    disabled={currentIndex === slides.length - 1}
+                    className="p-2 text-white/50 hover:text-orange-500 disabled:opacity-0 transition-all hover:scale-110"
+                >
+                    <ChevronRight className="w-8 h-8" />
+                </button>
+            </div>
+
             {/* Progress Bar */}
             <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/5 z-50">
                 <div

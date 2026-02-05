@@ -55,7 +55,7 @@ export default function PresentationsGalleryPage() {
                             const firstSlideImage = item.slides?.[0]?.image_url;
 
                             return (
-                                <div key={item.id} className="group relative aspect-[4/5] md:aspect-[3/4] rounded-[32px] overflow-hidden bg-slate-900 border border-white/5 shadow-2xl hover:shadow-emerald-900/20 transition-all duration-700 flex flex-col">
+                                <div key={item.id} className="group relative aspect-video rounded-[32px] overflow-hidden bg-slate-900 border border-white/5 shadow-2xl hover:shadow-emerald-900/20 transition-all duration-700 flex flex-col">
                                     {/* Full Background Image */}
                                     <div className="absolute inset-0 z-0">
                                         {firstSlideImage ? (

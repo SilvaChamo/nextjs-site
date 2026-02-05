@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, use } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { Loader2, ChevronLeft, ChevronRight, Maximize2, X, Play, Clock, LayoutGrid } from "lucide-react";
+import { Loader2, ChevronLeft, ChevronRight, Maximize2, X, Clock } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
@@ -33,11 +33,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
         emblaApi.on("select", onSelect);
     }, [emblaApi, onSelect]);
 
-    useEffect(() => {
-        fetchPresentation();
-    }, [id]);
-
-    const fetchPresentation = async () => {
+    const fetchPresentation = useCallback(async () => {
         const { data, error } = await supabase
             .from('presentations')
             .select('*')
@@ -46,7 +42,23 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
 
         if (data) setPresentation(data);
         setLoading(false);
-    };
+    }, [id, supabase]);
+
+    useEffect(() => {
+        fetchPresentation();
+    }, [fetchPresentation]);
+
+    const toggleFullscreen = useCallback(() => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+            setIsFullscreen(true);
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+                setIsFullscreen(false);
+            }
+        }
+    }, []);
 
     // Keyboard navigation
     useEffect(() => {
@@ -57,19 +69,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
         };
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [emblaApi, isFullscreen]);
-
-    const toggleFullscreen = () => {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen();
-            setIsFullscreen(true);
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-                setIsFullscreen(false);
-            }
-        }
-    };
+    }, [emblaApi, isFullscreen, toggleFullscreen]);
 
     if (loading) {
         return (

@@ -304,16 +304,29 @@ export default function AdminProfessionalsPage() {
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredData.map((item) => (
-                            <div key={item.id} className="bg-white rounded-2xl border border-slate-100 hover:shadow-lg transition-all group relative overflow-hidden p-6 flex flex-col items-center text-center">
-                                <div className="absolute top-4 right-4 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div
+                                key={item.id}
+                                className="bg-white rounded-2xl border border-slate-100 hover:shadow-lg transition-all group relative overflow-hidden p-6 flex flex-col items-center text-center cursor-pointer"
+                                onClick={() => router.push(`/admin/profissionais/${item.id}`)}
+                            >
+                                {/* Delete icon - top right, no background */}
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); handleDelete(item); }}
+                                    className="absolute top-4 right-4 p-1.5 text-slate-300 hover:text-rose-500 transition-colors"
+                                    title={item.status === 'deleted' ? "Eliminar Permanentemente" : "Mover para Reciclagem"}
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                </button>
+
+                                {/* Restore button for deleted items */}
+                                {item.status === 'deleted' && (
                                     <button
-                                        onClick={() => router.push(`/admin/profissionais/${item.id}`)}
-                                        className="p-2 rounded-full bg-white shadow-sm border border-slate-100 text-slate-500 hover:text-emerald-600 transition-colors"
-                                        title="Editar"
+                                        onClick={(e) => { e.stopPropagation(); handleRestoreFromTrash(item); }}
+                                        className="absolute top-4 left-4 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-600 rounded-full hover:bg-emerald-100 transition-colors"
                                     >
-                                        <Plus className="w-3.5 h-3.5 rotate-45" />
+                                        Restaurar
                                     </button>
-                                </div>
+                                )}
 
                                 <div className="w-20 h-20 rounded-full bg-slate-50 border-4 border-white shadow-sm flex items-center justify-center mb-4 overflow-hidden shrink-0">
                                     {item.photo_url ? (
@@ -323,44 +336,15 @@ export default function AdminProfessionalsPage() {
                                     )}
                                 </div>
                                 <h3 className="font-bold text-slate-900 text-lg mb-1 leading-tight">{item.name}</h3>
-                                <p className="text-[10px] font-black uppercase text-emerald-600 tracking-wider mb-6 bg-emerald-50 px-3 py-1 rounded-full">{item.profession || item.role || "Profissional"}</p>
+                                <p className="text-[10px] font-black uppercase text-emerald-600 tracking-wider mb-2 bg-emerald-50 px-3 py-1 rounded-full">{item.profession || item.role || "Profissional"}</p>
 
-                                <div className="mt-auto flex items-center justify-center gap-2 w-full">
-                                    {item.status === 'deleted' ? (
-                                        <Button
-                                            onClick={() => handleRestoreFromTrash(item)}
-                                            variant="outline"
-                                            size="sm"
-                                            className="h-9 flex-1 rounded-xl text-emerald-600 border-emerald-100 hover:bg-emerald-50 gap-2 font-bold text-xs"
-                                            title="Restaurar"
-                                        >
-                                            <Plus className="w-4 h-4" />
-                                            Restaurar
-                                        </Button>
-                                    ) : (
-                                        <>
-                                            <Button
-                                                onClick={() => handleArchive(item)}
-                                                variant="outline"
-                                                size="icon"
-                                                className={`h-9 w-9 rounded-xl ${item.status === 'inactive' ? 'bg-amber-50 text-amber-600 border-amber-200 shadow-inner' : 'text-slate-500 hover:text-amber-600 hover:bg-amber-50'}`}
-                                                title={item.status === 'inactive' ? 'Restaurar para Activos' : 'Arquivar Profissional'}
-                                            >
-                                                <Archive className="w-4 h-4" />
-                                            </Button>
-                                            <Button
-                                                onClick={() => handleDelete(item)}
-                                                variant="outline"
-                                                size="sm"
-                                                className="h-9 rounded-xl border-rose-100 text-rose-600 hover:bg-rose-50 hover:border-rose-200 transition-all font-bold text-xs gap-2 px-4 flex-1"
-                                                title="Mover para Reciclagem"
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                                Eliminar
-                                            </Button>
-                                        </>
-                                    )}
-                                </div>
+                                {/* Contact info */}
+                                {item.phone && (
+                                    <p className="text-xs text-slate-400 font-medium mt-2">{item.phone}</p>
+                                )}
+                                {item.email && (
+                                    <p className="text-xs text-slate-400 font-medium truncate max-w-full">{item.email}</p>
+                                )}
                             </div>
                         ))}
                     </div>

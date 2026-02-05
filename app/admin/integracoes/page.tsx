@@ -22,11 +22,7 @@ export default function IntegracoesPage() {
         is_active: false
     });
 
-    useEffect(() => {
-        fetchIntegrations();
-    }, []);
-
-    const fetchIntegrations = async () => {
+    const fetchIntegrations = useCallback(async () => {
         setLoading(true);
         const { data, error } = await supabase
             .from('integrations')
@@ -52,7 +48,11 @@ export default function IntegracoesPage() {
             }
         }
         setLoading(false);
-    };
+    }, [supabase]);
+
+    useEffect(() => {
+        fetchIntegrations();
+    }, [fetchIntegrations]);
 
     const handleSave = async (provider: 'facebook' | 'linkedin', data: any) => {
         setSaving(provider);

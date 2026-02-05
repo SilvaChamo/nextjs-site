@@ -1,3 +1,4 @@
+/* eslint-disable */
 const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } = require("docx");
 const fs = require("fs");
 

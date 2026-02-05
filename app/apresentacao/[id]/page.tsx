@@ -157,10 +157,10 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                             {slide.title}
                                         </h1>
                                         <div className="flex items-center gap-[30px]">
-                                            <div className="w-24 h-1 bg-orange-500 rounded-full"></div>
-                                            <h4 className="text-orange-500 font-bold uppercase tracking-[0.2em] text-lg md:text-2xl">
+                                            {/* Bar removed as per request identifying it as 'hyphen' */}
+                                            <p className="text-orange-500 font-bold uppercase tracking-[0.2em] text-lg md:text-2xl">
                                                 {presentation.title} {index === 0 ? "Introdução" : `Slide ${index + 1}`}
-                                            </h4>
+                                            </p>
                                         </div>
                                     </div>
 

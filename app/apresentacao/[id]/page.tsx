@@ -158,33 +158,32 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                     <div className="w-full h-full flex flex-col items-start text-left animate-in fade-in duration-700 gap-[30px]">
 
                                         {/* Header: Title & Subtitle */}
-                                        <div className="space-y-4">
+                                        <div className="space-y-[30px]">
                                             <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase leading-none">
                                                 {slide.title}
                                             </h1>
-                                            <div className="flex items-center gap-[30px]">
-                                                {/* Bar removed as per request identifying it as 'hyphen' */}
-                                                <p className="text-orange-500 font-bold lowercase tracking-[0.2em] text-lg md:text-2xl">
-                                                    {presentation.title} {index === 0 ? "Introdução" : `Slide ${index + 1}`}
+                                            <div className="flex items-center gap-4 mt-2">
+                                                <p className="text-orange-500 font-bold tracking-[0.2em] text-lg md:text-xl">
+                                                    {presentation.title} {index === 0 ? "introdução" : `slide ${index + 1}`}
                                                 </p>
                                             </div>
                                         </div>
 
                                         {/* Body: Two Columns */}
-                                        <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-[30px] items-stretch flex-1">
+                                        <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-[30px] items-center flex-1">
 
-                                            {/* Column 1: Photo */}
-                                            <div className="relative group">
+                                            {/* Column 1: Photo - Fixed 450x450 area */}
+                                            <div className="relative group flex justify-start">
                                                 <div className="absolute -inset-4 bg-orange-500/10 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                                 {slide.image_url ? (
-                                                    <div className="relative aspect-[3/4] h-full rounded-3xl overflow-hidden border-[6px] border-white/10 shadow-2xl">
+                                                    <div className="relative w-[450px] h-[450px] max-w-full rounded-3xl overflow-hidden border-[6px] border-white/10 shadow-2xl">
                                                         <img src={slide.image_url} alt="" className="w-full h-full object-cover" />
                                                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-8">
-                                                            <span className="text-xs font-black uppercase tracking-widest text-white/50">Recurso Visual • {index + 1}</span>
+                                                            <span className="text-xs font-black uppercase tracking-widest text-white/50">recurso visual • {index + 1}</span>
                                                         </div>
                                                     </div>
                                                 ) : (
-                                                    <div className="aspect-[3/4] h-full rounded-3xl bg-white/5 border-2 border-dashed border-white/10 flex items-center justify-center">
+                                                    <div className="w-[450px] h-[450px] max-w-full rounded-3xl bg-white/5 border-2 border-dashed border-white/10 flex items-center justify-center">
                                                         <div className="text-center">
                                                             <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
                                                                 <Loader2 className="w-8 h-8 text-white/20 animate-spin" />

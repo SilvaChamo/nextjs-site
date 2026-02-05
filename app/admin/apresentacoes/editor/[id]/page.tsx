@@ -26,7 +26,7 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
         title: "",
         description: "",
         slides: [
-            { id: crypto.randomUUID(), title: "Título do Slide", content: "Conteúdo aqui...", image_url: "" }
+            { id: crypto.randomUUID(), title: "Título do Slide", antetitulo: "Antetítulo do Slide", content: "Conteúdo aqui...", image_url: "" }
         ]
     });
 
@@ -77,7 +77,7 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
     const handleAddSlide = () => {
         setPresentation(prev => ({
             ...prev,
-            slides: [...prev.slides, { id: crypto.randomUUID(), title: "Novo Slide", content: "", image_url: "" }]
+            slides: [...prev.slides, { id: crypto.randomUUID(), title: "Novo Slide", antetitulo: "", content: "", image_url: "" }]
         }));
     };
 
@@ -335,15 +335,27 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-10 flex-1">
-                                    <div className="md:col-span-2 flex flex-col gap-2">
-                                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Conteúdo & Storytelling</label>
-                                        <div className="flex-1 bg-slate-50/50 rounded-xl border border-slate-100 overflow-hidden shadow-inner min-h-[300px]">
-                                            <RichTextEditor
-                                                value={activeSlide?.content}
-                                                onChange={(val) => updateSlide(activeSlide.id, { content: val })}
-                                                placeholder="Descreva sua visão para este slide..."
-                                                className="bg-transparent"
+                                    <div className="md:col-span-2 flex flex-col gap-6">
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Antetítulo (Texto curto antes do corpo)</label>
+                                            <Input
+                                                value={activeSlide?.antetitulo || ""}
+                                                onChange={(e) => updateSlide(activeSlide.id, { antetitulo: e.target.value })}
+                                                placeholder="Ex: Introdução ao Mercado..."
+                                                className="h-10 text-sm font-bold bg-white border-slate-200 focus:ring-emerald-500"
                                             />
+                                        </div>
+
+                                        <div className="flex flex-col gap-2 flex-1">
+                                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Conteúdo & Storytelling</label>
+                                            <div className="flex-1 bg-slate-50/50 rounded-xl border border-slate-100 overflow-hidden shadow-inner min-h-[300px]">
+                                                <RichTextEditor
+                                                    value={activeSlide?.content}
+                                                    onChange={(val) => updateSlide(activeSlide.id, { content: val })}
+                                                    placeholder="Descreva sua visão para este slide..."
+                                                    className="bg-transparent"
+                                                />
+                                            </div>
                                         </div>
                                     </div>
 

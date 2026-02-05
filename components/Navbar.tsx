@@ -85,7 +85,6 @@ export function Navbar() {
 
     const menuItems = [
         { label: t("navbar.services"), link: "/servicos" },
-        { label: "Apresentações", link: "/apresentacoes" },
         { label: t("navbar.repository"), link: "/repositorio" },
         { label: t("navbar.market"), link: "/mercado" },
         { label: t("navbar.contacts"), link: "/contactos" },

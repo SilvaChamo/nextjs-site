@@ -106,6 +106,51 @@ export default function EmpresaPage() {
                     });
                 }, 100);
             } else {
+                // No company found by user_id, check for pending registration from simplified form
+                const pendingId = localStorage.getItem('pending_company_registration_id');
+                if (pendingId) {
+                    const { data: pendingCompany } = await supabase
+                        .from('companies')
+                        .select('*')
+                        .eq('id', pendingId)
+                        .is('user_id', null)
+                        .single();
+
+                    if (pendingCompany) {
+                        // Link the company to the logged in user
+                        const { error: linkError } = await supabase
+                            .from('companies')
+                            .update({ user_id: user.id })
+                            .eq('id', pendingId);
+
+                        if (!linkError) {
+                            localStorage.removeItem('pending_company_registration_id');
+                            setIsRegistered(true);
+                            setCompanyId(pendingCompany.id);
+                            setCompanyForm({
+                                name: pendingCompany.name || "",
+                                nuit: pendingCompany.nuit || "",
+                                contact: pendingCompany.contact || "",
+                                email: pendingCompany.email || "",
+                                province: pendingCompany.province || "",
+                                district: pendingCompany.district || "",
+                                category: pendingCompany.category || "",
+                                description: pendingCompany.description || "",
+                                address: pendingCompany.address || "",
+                                logo_url: pendingCompany.logo_url || "",
+                                banner_url: pendingCompany.banner_url || "",
+                                value_chain: pendingCompany.value_chain || "",
+                                slug: pendingCompany.slug || "",
+                                mission: pendingCompany.mission || "",
+                                vision: pendingCompany.vision || "",
+                                values: pendingCompany.values || "",
+                                services: Array.isArray(pendingCompany.services) ? pendingCompany.services : []
+                            });
+                            return;
+                        }
+                    }
+                    localStorage.removeItem('pending_company_registration_id');
+                }
                 setIsRegistered(false);
             }
         };

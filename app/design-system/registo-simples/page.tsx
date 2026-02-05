@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
-import { Upload, ShoppingBag, Plus, Trash2, CheckCircle2, X, Pencil, Lock, CreditCard } from "lucide-react";
+import { Upload, ShoppingBag, Plus, Trash2, CheckCircle2, X, Pencil, Lock, CreditCard, MapPin } from "lucide-react";
 import {
     Dialog,
     DialogContent,
@@ -46,6 +47,7 @@ const PlanBadge = ({ plan }: { plan: 'Basic' | 'Profissional' | 'Premium' | 'Par
 };
 
 export default function SimpleRegistrationPage() {
+    const router = useRouter();
 
 
     // New states for interactive features
@@ -74,6 +76,7 @@ export default function SimpleRegistrationPage() {
     // Payment State
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'mpesa' | 'visa' | null>(null);
     const [paymentPhoneNumber, setPaymentPhoneNumber] = useState("");
+    const [contact, setContact] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Fetch Categories (Removed in favor of static constant)
@@ -215,7 +218,7 @@ export default function SimpleRegistrationPage() {
         setServices(services.filter(s => s !== serviceToRemove));
     };
 
-    const handlePublish = () => {
+    const handleSave = async () => {
         const errors: string[] = [];
         if (!companyName.trim()) errors.push("Nome da empresa");
         if (!address.trim()) errors.push("Endereço físico");
@@ -228,8 +231,88 @@ export default function SimpleRegistrationPage() {
             return;
         }
 
-        // Proceed with submission (mock for now)
-        alert("Empresa publicada com sucesso!");
+        setIsSubmitting(true);
+        try {
+            // 1. Upload Images if any
+            let finalBannerUrl = null;
+            let finalLogoUrl = null;
+
+            const uploadToSupabase = async (imageSource: string, subfolder: string) => {
+                const response = await fetch(imageSource);
+                const blob = await response.blob();
+                const fileExt = blob.type.split('/')[1] || 'jpg';
+                const fileName = `${subfolder}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+
+                const { data, error } = await supabase.storage
+                    .from('public-assets')
+                    .upload(fileName, blob, {
+                        contentType: blob.type,
+                        cacheControl: '3600',
+                        upsert: false
+                    });
+
+                if (error) throw error;
+
+                const { data: { publicUrl } } = supabase.storage
+                    .from('public-assets')
+                    .getPublicUrl(data.path);
+
+                return publicUrl;
+            };
+
+            if (bannerImage) {
+                finalBannerUrl = await uploadToSupabase(bannerImage, 'banners');
+            }
+
+            if (logoImage) {
+                finalLogoUrl = await uploadToSupabase(logoImage, 'logos');
+            }
+
+            // 2. Map sector/category - ensure it matches constants
+            const category = sector || "Geral";
+
+            // 3. Insert into database
+            const slug = companyName
+                .toLowerCase()
+                .trim()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, "") // Remove accents
+                .replace(/[^a-z0-9]+/g, '-')     // Remove special characters
+                .replace(/^-+|-+$/g, '')         // Remove trailing dashes
+                + "-" + Math.random().toString(36).substring(2, 6);
+
+            const { data: insertedData, error } = await supabase.from('companies').insert({
+                name: companyName,
+                activity: activity,
+                category: category,
+                province: province,
+                address: address,
+                description: bio,
+                contact: contact || representative, // Fallback to representative name if contact is empty
+                logo_url: finalLogoUrl,
+                banner_url: finalBannerUrl,
+                slug: slug,
+                registration_type: 'Simples',
+                is_archived: false,
+                plan: 'Basic',
+                updated_at: new Date().toISOString()
+            }).select('id').single();
+
+            if (error) throw error;
+
+            if (insertedData) {
+                localStorage.setItem('pending_company_registration_id', insertedData.id);
+            }
+
+            alert("Registo inicial concluído! Agora, crie a sua conta de acesso para gerir a sua empresa.");
+            router.push("/login");
+
+        } catch (error: any) {
+            console.error("Erro ao guardar empresa:", error);
+            alert("Erro ao guardar empresa: " + (error.message || "Tente novamente."));
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
 
@@ -413,6 +496,8 @@ export default function SimpleRegistrationPage() {
                                 placeholder="Contacto"
                                 className="h-12 border-slate-200 px-4 text-sm font-semibold text-slate-600 placeholder:text-slate-400 bg-white"
                                 style={{ borderRadius: '8px' }}
+                                value={contact}
+                                onChange={(e) => setContact(e.target.value)}
                             />
                         </div>
 
@@ -440,11 +525,13 @@ export default function SimpleRegistrationPage() {
 
                     <div className="pt-6 flex justify-start">
                         <Button
-                            onClick={handlePublish}
-                            className="w-auto px-8 h-10 bg-emerald-600 hover:bg-[#f97316] text-white font-black uppercase tracking-[0.2em] shadow-xl shadow-emerald-500/20 transition-colors duration-300"
+                            onClick={handleSave}
+                            disabled={isSubmitting}
+                            className="w-auto px-8 h-10 bg-emerald-600 hover:bg-[#f97316] text-white font-black uppercase tracking-[0.2em] shadow-xl shadow-emerald-500/20 transition-colors duration-300 disabled:opacity-50"
                             style={{ borderRadius: '8px' }}
                         >
-                            Publicar Empresa
+                            {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                            {isSubmitting ? "Salvando..." : "Salvar"}
                         </Button>
                     </div>
                 </main>

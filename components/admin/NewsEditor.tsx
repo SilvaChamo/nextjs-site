@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Loader2, Save, X, Calendar, Link as LinkIcon, Type, Image as ImageIcon, FileText } from "lucide-react";
+import { ArrowLeft, Loader2, Save, X, Calendar, Link as LinkIcon, Type, Image as ImageIcon, FileText, Share2, Facebook, Linkedin } from "lucide-react";
 import { ImageUpload } from "./ImageUpload";
 import { RichTextEditor } from "../RichTextEditor";
 import { useRouter } from "next/navigation";
@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { syncManager } from "@/lib/syncManager";
+import { shareToFacebook, shareToLinkedin } from "@/app/admin/noticias/share-actions";
 
 interface NewsEditorProps {
     initialData?: any;
@@ -36,7 +37,9 @@ export function NewsEditor({ initialData, isNew = false }: NewsEditorProps) {
             const d = new Date(initialData.date);
             return isNaN(d.getTime()) ? new Date().toISOString().split('T')[0] : d.toISOString().split('T')[0];
         })(),
-        slug: initialData?.slug || ""
+        slug: initialData?.slug || "",
+        share_facebook: false,
+        share_linkedin: false
     });
 
     // Recover Draft
@@ -73,14 +76,17 @@ export function NewsEditor({ initialData, isNew = false }: NewsEditorProps) {
             setLoading(true);
             try {
                 const payload = { ...formData };
-                if (isNew && !payload.slug) {
-                    payload.slug = payload.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                // Remove internal state fields for DB
+                const { share_facebook, share_linkedin, ...dbPayload } = payload as any;
+
+                if (isNew && !dbPayload.slug) {
+                    dbPayload.slug = dbPayload.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
                 }
 
                 syncManager.addToQueue({
                     table: 'articles',
                     action: isNew ? 'insert' : 'update',
-                    payload: isNew ? payload : { ...payload, id: initialData.id }
+                    payload: isNew ? dbPayload : { ...dbPayload, id: initialData.id }
                 });
 
                 if (isNew) localStorage.removeItem("agro_article_draft");
@@ -96,22 +102,41 @@ export function NewsEditor({ initialData, isNew = false }: NewsEditorProps) {
         try {
             let error;
             const payload = { ...formData };
+            const { share_facebook, share_linkedin, ...dbPayload } = payload as any;
 
-            if (isNew && !payload.slug) {
-                payload.slug = payload.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            if (isNew && !dbPayload.slug) {
+                dbPayload.slug = dbPayload.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
             }
 
             if (!isNew && initialData?.id) {
                 const { error: err } = await supabase
                     .from('articles')
-                    .update(payload)
+                    .update(dbPayload)
                     .eq('id', initialData.id);
                 error = err;
             } else {
-                const { error: err } = await supabase
+                const { data, error: err } = await supabase
                     .from('articles')
-                    .insert([payload]);
+                    .insert([dbPayload])
+                    .select()
+                    .single();
                 error = err;
+
+                if (data && !err) {
+                    // Start social sharing if requested
+                    if (formData.share_facebook) {
+                        shareToFacebook(data.id).then(res => {
+                            if (!res.success) toast.error("Facebook: " + res.message);
+                            else toast.success("Partilhado no Facebook!");
+                        });
+                    }
+                    if (formData.share_linkedin) {
+                        shareToLinkedin(data.id).then(res => {
+                            if (!res.success) toast.error("LinkedIn: " + res.message);
+                            else toast.success("Partilhado no LinkedIn!");
+                        });
+                    }
+                }
             }
 
             if (error) throw error;
@@ -258,32 +283,56 @@ export function NewsEditor({ initialData, isNew = false }: NewsEditorProps) {
                             </div>
                         </div>
 
-                        {/* Source Box */}
-                        <div className="bg-slate-50 rounded-xl border border-slate-200 p-6 space-y-6 shadow-sm">
+                        {/* Social Share Box */}
+                        <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-6 shadow-sm overflow-hidden">
                             <h3 className="text-xs font-black uppercase text-slate-800 flex items-center gap-2 border-b border-slate-200 pb-3">
-                                <LinkIcon className="w-4 h-4 text-emerald-500" />
-                                Referências & Fontes
+                                <Share2 className="w-4 h-4 text-orange-500" />
+                                Partilhar nas Redes
                             </h3>
+
                             <div className="space-y-4">
-                                <div className="relative">
-                                    <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                    <Input
-                                        value={formData.source}
-                                        onChange={(e) => setFormData({ ...formData, source: e.target.value })}
-                                        placeholder="Nome da Fonte (Ex: CNN, Club of Moz)"
-                                        className="pl-10 bg-white border-slate-200 h-11 rounded-lg"
+                                <div className={`flex items-center justify-between p-3 rounded-lg border ${formData.share_facebook ? 'bg-blue-50 border-blue-200' : 'bg-slate-50 border-slate-200'} transition-all`}>
+                                    <div className="flex items-center gap-3">
+                                        <Facebook className={`w-5 h-5 ${formData.share_facebook ? 'text-blue-600' : 'text-slate-400'}`} />
+                                        <span className={`text-sm font-bold ${formData.share_facebook ? 'text-blue-900' : 'text-slate-500'}`}>Facebook</span>
+                                    </div>
+                                    <input
+                                        type="checkbox"
+                                        disabled={!!initialData?.shared_on_facebook_at}
+                                        checked={formData.share_facebook || !!initialData?.shared_on_facebook_at}
+                                        onChange={(e) => setFormData({ ...formData, share_facebook: e.target.checked })}
+                                        className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                                     />
                                 </div>
-                                <div className="relative">
-                                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                    <Input
-                                        value={formData.source_url}
-                                        onChange={(e) => setFormData({ ...formData, source_url: e.target.value })}
-                                        placeholder="Link Original (https://...)"
-                                        className="pl-10 bg-white border-slate-200 h-11 rounded-lg"
+                                {initialData?.shared_on_facebook_at && (
+                                    <p className="text-[10px] text-emerald-600 font-bold uppercase text-center">Já partilhado ✅</p>
+                                )}
+
+                                <div className={`flex items-center justify-between p-3 rounded-lg border ${formData.share_linkedin ? 'bg-sky-50 border-sky-200' : 'bg-slate-50 border-slate-200'} transition-all`}>
+                                    <div className="flex items-center gap-3">
+                                        <Linkedin className={`w-5 h-5 ${formData.share_linkedin ? 'text-sky-700' : 'text-slate-400'}`} />
+                                        <span className={`text-sm font-bold ${formData.share_linkedin ? 'text-sky-900' : 'text-slate-500'}`}>LinkedIn</span>
+                                    </div>
+                                    <input
+                                        type="checkbox"
+                                        disabled={!!initialData?.shared_on_linkedin_at}
+                                        checked={formData.share_linkedin || !!initialData?.shared_on_linkedin_at}
+                                        onChange={(e) => setFormData({ ...formData, share_linkedin: e.target.checked })}
+                                        className="w-5 h-5 rounded border-slate-300 text-sky-700 focus:ring-sky-600"
                                     />
                                 </div>
+                                {initialData?.shared_on_linkedin_at && (
+                                    <p className="text-[10px] text-emerald-600 font-bold uppercase text-center">Já partilhado ✅</p>
+                                )}
                             </div>
+
+                            {!initialData && (
+                                <div className="p-3 bg-amber-50 rounded-lg border border-amber-100">
+                                    <p className="text-[10px] text-amber-700 font-medium leading-tight">
+                                        A partilha será realizada imediatamente após clicar em "Publicar Artigo".
+                                    </p>
+                                </div>
+                            )}
                         </div>
 
                     </div>

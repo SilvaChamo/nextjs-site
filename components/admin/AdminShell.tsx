@@ -27,7 +27,9 @@ import {
     Mail,
     GraduationCap,
     LandPlot,
-    Database
+    Database,
+    Presentation,
+    Share2
 } from "lucide-react";
 
 interface AdminShellProps {
@@ -185,6 +187,7 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
                             <LinkItem href="/admin/artigos" icon={FileText} label="Artigos" />
                             <LinkItem href="/admin/formacao" icon={GraduationCap} label="Formação" />
                             <LinkItem href="/admin/documentos" icon={FileText} label="Documentos" />
+                            <LinkItem href="/admin/apresentacoes" icon={Presentation} label="Apresentações" />
                         </div>
 
                         <div className={`my-2 border-b border-slate-700 ${isCollapsed ? "mx-2" : "mx-4"}`}></div>
@@ -237,6 +240,7 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
                         <div className="flex flex-col gap-0 mt-auto">
                             <LinkItem href="/admin/indicadores" icon={Target} label="Indicadores" />
                             <LinkItem href="/admin/configuracoes" icon={Grid2X2} label="Configurações" />
+                            <LinkItem href="/admin/integracoes" icon={Share2} label="Integrações" />
 
                             <LinkItem href="/admin/utilizadores" icon={Users} label="Utilizadores" />
                         </div>

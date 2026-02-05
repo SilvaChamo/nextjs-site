@@ -52,7 +52,6 @@ export function CompanyCard({ company }: CompanyCardProps) {
 
                         {/* CATEGORY (WAS NAME) - WHITE TEXT */}
                         <div className="flex items-center gap-1.5 min-w-0">
-                            {company.isVerified && <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0 drop-shadow-md" />}
                             <div className="flex flex-col justify-center min-w-0">
                                 <span className="text-white text-[11px] font-black uppercase tracking-tight leading-tight truncate drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                                     {displayCategory}

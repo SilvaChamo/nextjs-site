@@ -55,6 +55,8 @@ export type Database = {
                     subtitle: string | null
                     title: string
                     type: string | null
+                    shared_on_facebook_at: string | null
+                    shared_on_linkedin_at: string | null
                 }
                 Insert: {
                     content?: string | null
@@ -68,6 +70,8 @@ export type Database = {
                     subtitle?: string | null
                     title: string
                     type?: string | null
+                    shared_on_facebook_at?: string | null
+                    shared_on_linkedin_at?: string | null
                 }
                 Update: {
                     content?: string | null
@@ -81,6 +85,8 @@ export type Database = {
                     subtitle?: string | null
                     title?: string
                     type?: string | null
+                    shared_on_facebook_at?: string | null
+                    shared_on_linkedin_at?: string | null
                 }
                 Relationships: []
             }
@@ -216,6 +222,60 @@ export type Database = {
                     title?: string
                     trend?: string | null
                     value?: string
+                }
+                Relationships: []
+            }
+            integrations: {
+                Row: {
+                    provider: string
+                    credentials: Json
+                    is_active: boolean
+                    updated_at: string | null
+                    created_at: string | null
+                }
+                Insert: {
+                    provider: string
+                    credentials?: Json
+                    is_active?: boolean
+                    updated_at?: string | null
+                    created_at?: string | null
+                }
+                Update: {
+                    provider?: string
+                    credentials?: Json
+                    is_active?: boolean
+                    updated_at?: string | null
+                    created_at?: string | null
+                }
+                Relationships: []
+            }
+            presentations: {
+                Row: {
+                    id: string
+                    title: string
+                    description: string | null
+                    slides: Json
+                    user_id: string | null
+                    created_at: string
+                    updated_at: string | null
+                }
+                Insert: {
+                    id?: string
+                    title: string
+                    description?: string | null
+                    slides?: Json
+                    user_id?: string | null
+                    created_at?: string
+                    updated_at?: string | null
+                }
+                Update: {
+                    id?: string
+                    title?: string
+                    description?: string | null
+                    slides?: Json
+                    user_id?: string | null
+                    created_at?: string
+                    updated_at?: string | null
                 }
                 Relationships: []
             }

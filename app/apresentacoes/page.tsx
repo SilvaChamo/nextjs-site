@@ -102,10 +102,10 @@ export default function PresentationsGalleryPage() {
                                             <div className="pt-4">
                                                 <Link
                                                     href={`/apresentacao/${item.id}`}
-                                                    className="inline-flex items-center gap-2 px-4 py-2 bg-white text-slate-950 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition-all duration-300"
+                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white text-slate-950 rounded-full text-[9px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition-all duration-300"
                                                 >
                                                     Abrir Projecto
-                                                    <ArrowRight className="w-3.5 h-3.5" />
+                                                    <ArrowRight className="w-3 h-3" />
                                                 </Link>
                                             </div>
                                         </div>

@@ -3,7 +3,6 @@
 import { useEffect, useState, useCallback, use } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { Loader2, ChevronLeft, ChevronRight, Maximize2, X, Clock } from "lucide-react";
-import useEmblaCarousel from "embla-carousel-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
@@ -16,30 +15,6 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
 
-    const [emblaRef, emblaApi] = useEmblaCarousel({
-        loop: false,
-        duration: 30,
-        dragFree: false
-    });
-
-    useEffect(() => {
-        if (!emblaApi) return;
-
-        const onSelect = () => {
-            setCurrentIndex(emblaApi.selectedScrollSnap());
-        };
-
-        emblaApi.on("select", onSelect);
-        emblaApi.on("reInit", onSelect);
-
-        // Initial set
-        onSelect();
-
-        return () => {
-            emblaApi.off("select", onSelect);
-            emblaApi.off("reInit", onSelect);
-        };
-    }, [emblaApi]);
 
     useEffect(() => {
         let isMounted = true;
@@ -76,16 +51,26 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
         }
     }, []);
 
+    // Navigation logic
+    const nextSlide = useCallback(() => {
+        if (!presentation?.slides) return;
+        setCurrentIndex((prev) => Math.min(prev + 1, presentation.slides.length - 1));
+    }, [presentation]);
+
+    const prevSlide = useCallback(() => {
+        setCurrentIndex((prev) => Math.max(prev - 1, 0));
+    }, []);
+
     // Keyboard navigation
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "ArrowRight" || e.key === " ") emblaApi?.scrollNext();
-            if (e.key === "ArrowLeft") emblaApi?.scrollPrev();
+            if (e.key === "ArrowRight" || e.key === " ") nextSlide();
+            if (e.key === "ArrowLeft") prevSlide();
             if (e.key === "Escape" && isFullscreen) toggleFullscreen();
         };
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [emblaApi, isFullscreen, toggleFullscreen]);
+    }, [isFullscreen, toggleFullscreen, nextSlide, prevSlide]);
 
     if (loading) {
         return (
@@ -146,7 +131,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
             )}
 
             {/* Slides Container - DISSOLVE EFFECT */}
-            <div className="h-full relative overflow-hidden" ref={emblaRef}>
+            <div className="h-full relative overflow-hidden">
                 <div className="h-full flex">
                     {slides.map((slide: any, index: number) => {
                         const isActive = index === currentIndex;
@@ -250,7 +235,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                     type="button"
                     onClick={(e) => {
                         e.stopPropagation();
-                        emblaApi?.scrollPrev();
+                        prevSlide();
                     }}
                     disabled={currentIndex === 0}
                     className="p-2 text-white/50 hover:text-orange-500 disabled:opacity-0 transition-all hover:scale-110 cursor-pointer"
@@ -262,7 +247,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                     type="button"
                     onClick={(e) => {
                         e.stopPropagation();
-                        emblaApi?.scrollNext();
+                        nextSlide();
                     }}
                     disabled={currentIndex === slides.length - 1}
                     className="p-2 text-white/50 hover:text-orange-500 disabled:opacity-0 transition-all hover:scale-110 cursor-pointer"

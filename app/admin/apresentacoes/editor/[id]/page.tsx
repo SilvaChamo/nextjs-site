@@ -322,15 +322,12 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
                                 </div>
                             </div>
 
-                            <div className="flex-1 py-10 px-0 flex flex-col gap-10 z-10 relative">
+                            <div className="flex-1 p-10 flex flex-col gap-10 z-10 relative">
                                 {/* Header Section: Title/Antetitulo (Left) & Image (Right) */}
-                                <div className="flex flex-col md:flex-row gap-10 items-start shrink-0 px-10">
+                                <div className="flex flex-col md:flex-row gap-10 items-start shrink-0">
                                     <div className="flex-1 space-y-8 w-full">
                                         <div className="space-y-2">
-                                            <div className="flex items-baseline gap-3">
-                                                <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Título do Slide</label>
-                                                <span className="text-[10px] font-bold text-slate-300 italic">(Editor de Apresentação)</span>
-                                            </div>
+                                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Título do Slide</label>
                                             <Input
                                                 value={activeSlide?.title}
                                                 onChange={(e) => updateSlide(activeSlide.id, { title: e.target.value })}
@@ -373,11 +370,11 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
 
                                 {/* Content Section: FULL WIDTH & EXPANDED */}
                                 <div className="flex flex-col gap-3 flex-1 min-h-[500px]">
-                                    <div className="flex items-center justify-between px-10">
+                                    <div className="flex items-center justify-between">
                                         <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Conteúdo & Storytelling (Área Expandida)</label>
                                         <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-bold">Auto-save activo</span>
                                     </div>
-                                    <div className="flex-1 bg-white border-y border-slate-200 overflow-hidden shadow-xl ring-1 ring-slate-950/5 min-h-[400px]">
+                                    <div className="flex-1 bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xl ring-1 ring-slate-950/5 min-h-[400px]">
                                         <RichTextEditor
                                             value={activeSlide?.content}
                                             onChange={(val) => updateSlide(activeSlide.id, { content: val })}

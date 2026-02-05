@@ -50,9 +50,20 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
     const [formData, setFormData] = useState({
         email: "",
         password: "",
+        confirmPassword: "",
         fullName: "",
         phoneNumber: "+258"
     });
+
+    const handleGeneratePassword = () => {
+        const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
+        let password = "";
+        for (let i = 0; i < 12; i++) {
+            password += charset.charAt(Math.floor(Math.random() * charset.length));
+        }
+        setFormData({ ...formData, password, confirmPassword: password });
+        setShowPassword(true); // Show it so they can see/copy
+    };
 
     const handleAuth = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -135,12 +146,17 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                     } else {
                         // Check for redirect param
                         const params = new URLSearchParams(window.location.search);
-                        const redirectTo = params.get('redirectTo');
+                        const redirectTo = params.get('next');
                         router.push(redirectTo || "/usuario/dashboard");
                     }
                     router.refresh();
                 }
             } else {
+                // REGISTRATION VALIDATION
+                if (formData.password !== formData.confirmPassword) {
+                    throw new Error("As senhas não coincidem.");
+                }
+
                 const cleanPhone = formData.phoneNumber.replace(/\s/g, '').replace(/-/g, '');
 
                 if (parseInt(userCaptchaAnswer) !== mathChallenge.answer) {
@@ -169,7 +185,7 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                     }).eq('id', data.user.id);
                     // Check for redirect param
                     const params = new URLSearchParams(window.location.search);
-                    const redirectTo = params.get('redirectTo');
+                    const redirectTo = params.get('next');
                     router.push(redirectTo || "/usuario/dashboard");
                     router.refresh();
                 } else {
@@ -194,10 +210,25 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
     };
 
     const handleSocialLogin = async (provider: 'google' | 'facebook' | 'github') => {
+        // Enforce name and phone for registration via social
+        if (!isLogin) {
+            if (!formData.fullName || formData.fullName.length < 3) {
+                setStatus({ type: 'error', message: 'Por favor, insira o seu nome completo antes de continuar.' });
+                return;
+            }
+            if (!formData.phoneNumber || formData.phoneNumber.length < 9) {
+                setStatus({ type: 'error', message: 'Por favor, insira um número de telefone válido antes de continuar.' });
+                return;
+            }
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const next = params.get('next') || '/usuario/dashboard';
+
         const { error } = await supabase.auth.signInWithOAuth({
             provider,
             options: {
-                redirectTo: `${window.location.origin}/usuario/dashboard`,
+                redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
             },
         });
         if (error) setStatus({ type: 'error', message: error.message });
@@ -211,14 +242,30 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
             {/* Bottom Orange Line */}
             <div className="fixed bottom-0 left-0 w-full h-[6px] bg-[#f97316] z-[50] shadow-[0_-2px_10px_rgba(249,115,22,0.3)]" />
 
-            {/* Background Image Overlay */}
-            <div
-                className="absolute inset-0 z-0 opacity-[0.2] pointer-events-none bg-center bg-cover bg-no-repeat"
-                style={{ backgroundImage: "url('/assets/cta-gradient-bg.webp')" }}
-            />
+            {/* Premium Soft Background */}
+            <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                {/* Primary Soft Gradient Base */}
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-emerald-50/30" />
+
+                {/* Animated Orbs for "Suave" effect */}
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-100/40 rounded-full blur-[120px] animate-pulse" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-orange-100/30 rounded-full blur-[120px] animate-pulse [animation-delay:2s]" />
+                <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-blue-50/40 rounded-full blur-[100px] animate-pulse [animation-delay:4s]" />
+
+                {/* Grainy Texture for depth */}
+                <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+
+                {/* Background Image Overlay (Original) */}
+                <div
+                    className="absolute inset-0 z-0 opacity-[0.15] bg-center bg-cover bg-no-repeat mix-blend-multiply"
+                    style={{ backgroundImage: "url('/assets/cta-gradient-bg.webp')" }}
+                />
+            </div>
 
             <div className="w-full max-w-[420px] px-4 relative z-10">
-                <div className="bg-white rounded-[20px] shadow-[0_20px_50px_rgba(0,0,0,0.1)] p-6 border border-slate-100 form-premium-card">
+                <div className="bg-white/90 backdrop-blur-2xl rounded-[35px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15),0_0_20px_rgba(249,115,22,0.05)] p-9 border border-white/60 form-premium-card ring-1 ring-black/[0.02] relative overflow-hidden">
+                    {/* Add a subtle internal gradient to the form background */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-white/50 to-transparent pointer-events-none" />
 
                     <div className="text-center mb-7">
                         <Link href="/" className="inline-block transition-transform hover:scale-105 duration-300">
@@ -275,7 +322,7 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                                                 type="text"
                                                 required={!isLogin}
                                                 placeholder="Seu Nome Completo"
-                                                className="pl-11 h-10 bg-slate-50 border-slate-200 focus:bg-white focus:border-emerald-500 shadow-sm text-[13px] text-slate-900 placeholder:text-slate-500 placeholder:opacity-100 rounded-md transition-all duration-300 relative z-10"
+                                                className="pl-11 h-10 bg-white/95 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-400 rounded-md transition-all duration-300 relative z-10"
                                                 value={formData.fullName}
                                                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                                             />
@@ -290,7 +337,7 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                                                 type="tel"
                                                 required={!isLogin}
                                                 placeholder="Seu Número de Telefone (+258...)"
-                                                className="pl-11 h-10 bg-slate-50 border-slate-200 focus:bg-white focus:border-emerald-500 shadow-sm text-[13px] text-slate-900 placeholder:text-slate-500 placeholder:opacity-100 rounded-md transition-all duration-300 relative z-10"
+                                                className="pl-11 h-10 bg-white/95 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-400 rounded-md transition-all duration-300 relative z-10"
                                                 value={formData.phoneNumber}
                                                 onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
                                             />
@@ -310,8 +357,8 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                                         <Input
                                             type="email"
                                             required
-                                            placeholder="Endereço de E-mail"
-                                            className="pl-11 h-10 bg-slate-50 border-slate-200 focus:bg-white focus:border-emerald-500 shadow-sm text-[13px] text-slate-900 placeholder:text-slate-500 placeholder:opacity-100 rounded-md transition-all duration-300 relative z-10"
+                                            placeholder="exemplo@servico.com"
+                                            className="pl-11 h-10 bg-white/95 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-400 rounded-md transition-all duration-300 relative z-10"
                                             value={formData.email}
                                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                         />
@@ -319,25 +366,55 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                                 </div>
 
                                 {!isResetPassword && (
-                                    <div className="relative">
-                                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-20" />
-                                        <div className="candy-border-wrapper rounded-md">
-                                            <Input
-                                                type={showPassword ? "text" : "password"}
-                                                required
-                                                placeholder="Sua Senha"
-                                                className="pl-11 pr-10 h-10 bg-slate-50 border-slate-200 focus:bg-white focus:border-emerald-500 shadow-sm text-[13px] text-slate-900 placeholder:text-slate-500 placeholder:opacity-100 rounded-md transition-all duration-300 relative z-10"
-                                                value={formData.password}
-                                                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                            />
+                                    <div className="space-y-4">
+                                        <div className="relative">
+                                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-20" />
+                                            <div className="candy-border-wrapper rounded-md">
+                                                <Input
+                                                    type={showPassword ? "text" : "password"}
+                                                    required
+                                                    placeholder="Digite sua senha"
+                                                    className="pl-11 pr-24 h-10 bg-white/95 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-400 rounded-md transition-all duration-300 relative z-10"
+                                                    value={formData.password}
+                                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                                />
+                                            </div>
+                                            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 z-20">
+                                                {!isLogin && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleGeneratePassword}
+                                                        className="p-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-md transition-colors"
+                                                        title="Gerar Senha"
+                                                    >
+                                                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" /></svg>
+                                                    </button>
+                                                )}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowPassword(!showPassword)}
+                                                    className="p-1.5 text-slate-400 hover:text-slate-600 transition-colors"
+                                                >
+                                                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                                </button>
+                                            </div>
                                         </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none transition-colors z-20"
-                                        >
-                                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                                        </button>
+
+                                        {!isLogin && (
+                                            <div className="relative animate-in fade-in slide-in-from-top-2 duration-300">
+                                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-20" />
+                                                <div className="candy-border-wrapper rounded-md">
+                                                    <Input
+                                                        type={showPassword ? "text" : "password"}
+                                                        required={!isLogin}
+                                                        placeholder="Sua senha novamente"
+                                                        className="pl-11 h-10 bg-white/95 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-400 rounded-md transition-all duration-300 relative z-10"
+                                                        value={formData.confirmPassword}
+                                                        onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                                                    />
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </>
@@ -353,8 +430,8 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                                             <Input
                                                 type="tel"
                                                 required
-                                                placeholder="Seu Número de Telefone (ex: +258...)"
-                                                className="pl-11 h-10 bg-slate-50 border-slate-200 focus:bg-white focus:border-emerald-500 shadow-sm text-[13px] text-slate-900 placeholder:text-slate-500 placeholder:opacity-100 rounded-md transition-all duration-300 relative z-10"
+                                                placeholder="9X XXX XXXX"
+                                                className="pl-11 h-10 bg-white/95 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-400 rounded-md transition-all duration-300 relative z-10"
                                                 value={formData.phoneNumber}
                                                 onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
                                             />
@@ -370,8 +447,8 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                                             <Input
                                                 type="text"
                                                 required
-                                                placeholder="Insira o Código SMS"
-                                                className="pl-11 h-10 bg-slate-50 border-slate-200 focus:bg-white focus:border-emerald-500 shadow-sm text-[13px] text-slate-900 placeholder:text-slate-500 placeholder:opacity-100 rounded-md transition-all duration-300 relative z-10"
+                                                placeholder="000 000"
+                                                className="pl-11 h-10 bg-white/95 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-400 rounded-md transition-all duration-300 relative z-10"
                                                 value={otpCode}
                                                 onChange={(e) => setOtpCode(e.target.value)}
                                             />
@@ -450,7 +527,7 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                                             type="number"
                                             required
                                             placeholder="Sua Resposta"
-                                            className="pl-24 h-10 bg-slate-50 border-slate-200 focus:bg-white focus:border-emerald-500 shadow-sm text-[13px] text-slate-900 placeholder:text-slate-500 placeholder:opacity-100 rounded-md transition-all duration-300 relative z-10"
+                                            className="pl-24 h-10 bg-white/90 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-900 placeholder:opacity-100 rounded-md transition-all duration-300 relative z-10"
                                             value={userCaptchaAnswer}
                                             onChange={(e) => setUserCaptchaAnswer(e.target.value)}
                                         />

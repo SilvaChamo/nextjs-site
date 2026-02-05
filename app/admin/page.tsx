@@ -54,14 +54,22 @@ export default function AdminDashboardPage() {
         { name: "Empresas Registadas", value: stats.companies, icon: Building2, color: "text-emerald-600", bg: "bg-emerald-50", href: "/admin/empresas" },
         { name: "Profissionais no Sistema", value: stats.professionals, icon: Users, color: "text-indigo-600", bg: "bg-indigo-50", href: "/admin/profissionais" },
         { name: "Produtos & Insumos", value: stats.products, icon: ShoppingCart, color: "text-orange-600", bg: "bg-orange-50", href: "/admin/produtos" },
-        { name: "Enviar Mensagem", value: "Novo", icon: Mail, color: "text-purple-600", bg: "bg-purple-50", href: "/admin/mensagens" },
     ];
 
     return (
         <div className="space-y-10">
-            <div>
-                <h1 className="text-3xl font-black text-slate-900 tracking-tight">Gestão de Conteúdos</h1>
-                <p className="text-slate-500 font-medium">Bem-vindo ao painel administrativo. Monitorize e actualize os dados do site em tempo real.</p>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Gestão de Conteúdos</h1>
+                    <p className="text-slate-500 font-medium">Bem-vindo ao painel administrativo. Monitorize e actualize os dados do site em tempo real.</p>
+                </div>
+                <Link
+                    href="/admin/mensagens"
+                    className="inline-flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-[#f97316] transition-all shadow-sm active:scale-95 shrink-0"
+                >
+                    <Mail className="w-3.5 h-3.5" />
+                    Nova Mensagem
+                </Link>
             </div>
 
             {/* Quick Stats Grid */}

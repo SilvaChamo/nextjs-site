@@ -31,6 +31,8 @@ export default function RegisterCompanyPage() {
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [user, setUser] = useState<any>(null);
+    const [tempLogoFile, setTempLogoFile] = useState<File | null>(null);
+    const [isRestored, setIsRestored] = useState(false);
 
     // Estado do Formulário (Unificado)
     const [formData, setFormData] = useState({
@@ -72,18 +74,43 @@ export default function RegisterCompanyPage() {
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Verificar Auth
+    // Verificar Auth e Restaurar Dados
     useEffect(() => {
         const checkUser = async () => {
             const { data: { user } } = await supabase.auth.getUser();
-            if (!user) {
-                router.push("/login");
-            } else {
-                setUser(user);
-            }
+            setUser(user);
         };
         checkUser();
-    }, [router, supabase]);
+
+        // Restore from localStorage
+        const savedData = localStorage.getItem('pending_company_form');
+        if (savedData) {
+            try {
+                const parsed = JSON.parse(savedData);
+                setFormData(prev => ({ ...prev, ...parsed }));
+            } catch (e) {
+                console.error("Error restoring data", e);
+            }
+        }
+        setIsRestored(true);
+    }, [supabase]);
+
+    // Auto-save to localStorage
+    useEffect(() => {
+        if (isRestored) {
+            const { logoUrl, ...rest } = formData; // Don't save URL to localStorage if it's transient
+            localStorage.setItem('pending_company_form', JSON.stringify(rest));
+        }
+    }, [formData, isRestored]);
+
+    // Auto-submit after login
+    useEffect(() => {
+        const pendingSubmission = localStorage.getItem('pending_company_submission');
+        if (user && pendingSubmission === 'true') {
+            localStorage.removeItem('pending_company_submission');
+            handleSubmit();
+        }
+    }, [user]);
 
     // Auto-resize textarea function
     const autoResize = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -101,20 +128,29 @@ export default function RegisterCompanyPage() {
     const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files || e.target.files.length === 0) return;
         const file = e.target.files[0];
-        setUploading(true);
 
+        if (!user) {
+            // Se não estiver logado, apenas guarda localmente o ficheiro e mostra uma preview temporária
+            setTempLogoFile(file);
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                setFormData(prev => ({ ...prev, logoUrl: event.target?.result as string }));
+            };
+            reader.readAsDataURL(file);
+            return;
+        }
+
+        setUploading(true);
         try {
             const compressedBlob = await compressImage(file);
             const filePath = `company-logos/${user?.id}-${Math.random()}.webp`;
 
-            // Upload
             const { error: uploadError } = await supabase.storage
                 .from('public-assets')
                 .upload(filePath, compressedBlob);
 
             if (uploadError) throw uploadError;
 
-            // Get Public URL
             const { data: { publicUrl } } = supabase.storage
                 .from('public-assets')
                 .getPublicUrl(filePath);
@@ -137,16 +173,48 @@ export default function RegisterCompanyPage() {
     };
 
     const handleSubmit = async () => {
-        if (!user) return;
+        if (!user) {
+            // Salvar estado e redirecionar para login/registo
+            localStorage.setItem('pending_company_form', JSON.stringify(formData));
+            localStorage.setItem('pending_company_submission', 'true');
+            // Nota: tempLogoFile não pode ser guardado no localStorage facilmente como objeto File.
+            // O utilizador terá de re-selecionar ou podemos converter para Base64 se for pequeno,
+            // mas por agora vamos focar no fluxo principal.
+            router.push(`/registar?next=/usuario/registo-empresa`);
+            return;
+        }
+
         setLoading(true);
         try {
+            let finalLogoUrl = formData.logoUrl;
+
+            // Se houver um logo pendente de upload (selecionado como guest)
+            if (tempLogoFile && !formData.logoUrl.startsWith('http')) {
+                setUploading(true);
+                const compressedBlob = await compressImage(tempLogoFile);
+                const filePath = `company-logos/${user.id}-${Math.random()}.webp`;
+
+                const { error: uploadError } = await supabase.storage
+                    .from('public-assets')
+                    .upload(filePath, compressedBlob);
+
+                if (uploadError) throw uploadError;
+
+                const { data: { publicUrl } } = supabase.storage
+                    .from('public-assets')
+                    .getPublicUrl(filePath);
+
+                finalLogoUrl = publicUrl;
+                setTempLogoFile(null);
+            }
+
             const { error } = await supabase.from('companies').upsert({
                 user_id: user.id,
                 name: formData.companyName,
                 activity: formData.activity,
                 email: formData.email,
                 contact: formData.contact,
-                logo_url: formData.logoUrl,
+                logo_url: finalLogoUrl,
                 province: formData.province,
                 district: formData.district,
                 address: formData.address,
@@ -157,7 +225,7 @@ export default function RegisterCompanyPage() {
                 representative: formData.representative,
                 nuit: formData.nuit,
                 billing_period: formData.billingPeriod,
-                products: formData.products, // Assumindo coluna JSONB
+                products: formData.products,
                 payment_method: formData.paymentMethod,
                 payment_phone: formData.paymentPhone,
                 geo_location: `${formData.province}, ${formData.district}`,
@@ -165,6 +233,9 @@ export default function RegisterCompanyPage() {
             }, { onConflict: 'user_id' });
 
             if (error) throw error;
+
+            localStorage.removeItem('pending_company_form');
+            localStorage.removeItem('pending_company_submission');
 
             alert("Empresa registada com sucesso!");
             router.push('/usuario/dashboard/empresa');
@@ -174,6 +245,7 @@ export default function RegisterCompanyPage() {
             alert(`Erro ao salvar dados: ${error.message}`);
         } finally {
             setLoading(false);
+            setUploading(false);
         }
     };
 

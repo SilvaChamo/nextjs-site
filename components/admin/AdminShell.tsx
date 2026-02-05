@@ -178,7 +178,6 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
                         {/* Section 2: Management & Content */}
                         <div className="flex flex-col gap-0">
                             <LinkItem href="/admin/empresas" icon={Building2} label="Empresas" />
-                            <LinkItem href="/admin/mensagens" icon={Mail} label="Mensagens" /> {/* Added Messages Link */}
                             <LinkItem href="/admin/propriedades" icon={LandPlot} label="Propriedades" />
                             <LinkItem href="/admin/profissionais" icon={Users} label="Profissionais" />
                             <LinkItem href="/admin/produtos" icon={ShoppingCart} label="Produtos" />
@@ -194,7 +193,7 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
                         <div className="flex flex-col gap-0">
                             <LinkItem href="/admin/estatisticas" icon={BarChart3} label="Estatísticas" />
 
-                            {/* Interactions Dropdown */}
+                            {/* Mensagem Dropdown (formerly Interacções) */}
                             <div className="flex flex-col gap-1">
                                 <button
                                     onClick={() => toggleSubmenu('interactions')}
@@ -202,12 +201,12 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
                                         ${pathname.startsWith('/admin/mensagens') ? "text-orange-500" : "text-slate-400 hover:text-orange-500"} 
                                         ${isCollapsed ? "justify-center px-2" : ""}
                                     `}
-                                    title="Interacções"
+                                    title="Mensagem"
                                 >
                                     <MessageSquare className={`w-5 h-5 min-w-[20px] transition-colors ${pathname.startsWith('/admin/mensagens') ? "text-orange-500" : "text-slate-500 group-hover:text-orange-500"}`} />
                                     {!isCollapsed && (
                                         <>
-                                            <span className="flex-1">Interacções</span>
+                                            <span className="flex-1">Mensagem</span>
                                             {openSubmenus.includes('interactions') ? (
                                                 <div className="w-1.5 h-1.5 rounded-full bg-orange-500"></div>
                                             ) : (
@@ -220,9 +219,6 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
                                 {openSubmenus.includes('interactions') && !isCollapsed && (
                                     <div className="flex flex-col gap-1 pl-12 pr-2 animate-in slide-in-from-left-2 fade-in duration-200">
                                         <Link href="/admin/mensagens" className={`text-xs py-1.5 hover:text-orange-500 transition-colors ${pathname === '/admin/mensagens' ? "text-orange-500 font-bold" : "text-slate-500"}`}>
-                                            Mensagem
-                                        </Link>
-                                        <Link href="/admin/mensagens?mode=email" className={`text-xs py-1.5 hover:text-orange-500 transition-colors ${pathname.includes('mode=email') ? "text-orange-500 font-bold" : "text-slate-500"}`}>
                                             Email
                                         </Link>
                                         <Link href="/admin/mensagens/newsletter" className={`text-xs py-1.5 hover:text-orange-500 transition-colors ${pathname === '/admin/mensagens/newsletter' ? "text-orange-500 font-bold" : "text-slate-500"}`}>

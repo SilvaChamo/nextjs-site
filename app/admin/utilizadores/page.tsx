@@ -24,20 +24,35 @@ export default function AdminUsersPage() {
     const [inviteRole, setInviteRole] = useState("admin");
     const [filterPlan, setFilterPlan] = useState<string>("all");
 
+    // Edit Modal State
+    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [editingUser, setEditingUser] = useState<any>(null);
+    const [editRole, setEditRole] = useState("");
+    const [editPlan, setEditPlan] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [isUpdating, setIsUpdating] = useState(false);
+
     // Plans for filtering
     const PLANS = ["Visitante", "Basic", "Profissional", "Premium", "Parceiro"];
 
     useEffect(() => {
         async function fetchUsers() {
             setLoading(true);
-            // Fetch profiles
             const { data, error } = await supabase
                 .from('profiles')
-                .select('*')
-                .order('created_at', { ascending: false });
+                .select('*');
 
-            if (error) console.error(error);
-            else setUsers(data || []);
+            if (error) {
+                console.error(error);
+            } else {
+                // Sort: admins first, then by creation date
+                const sorted = (data || []).sort((a, b) => {
+                    if (a.role === 'admin' && b.role !== 'admin') return -1;
+                    if (a.role !== 'admin' && b.role === 'admin') return 1;
+                    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+                });
+                setUsers(sorted);
+            }
             setLoading(false);
         }
 
@@ -46,13 +61,47 @@ export default function AdminUsersPage() {
 
     const handleInvite = async () => {
         if (!inviteEmail) return;
-
-        // This is a placeholder. In a real app, you'd use supabase.auth.admin.inviteUserByEmail 
-        // which requires service_role key, not available in client.
-        // For now, we'll just alert.
-        alert(`Simulação: Convite enviado para ${inviteEmail} com função ${inviteRole}. (Esta funcionalidade requer Backend Edge Functions)`);
+        alert(`Simulação: Convite enviado para ${inviteEmail} com função ${inviteRole}.`);
         setIsInviteOpen(false);
         setInviteEmail("");
+    };
+
+    const handleEdit = (user: any) => {
+        setEditingUser(user);
+        setEditRole(user.role || 'user');
+        setEditPlan(user.plan || 'Visitante');
+        setNewPassword(""); // Clear password field on each edit
+        setIsEditOpen(true);
+    };
+
+    const handleUpdateUser = async () => {
+        if (!editingUser) return;
+        setIsUpdating(true);
+        try {
+            const response = await fetch('/api/admin/update-user', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userId: editingUser.id,
+                    role: editRole,
+                    plan: editPlan,
+                    password: newPassword || undefined
+                })
+            });
+
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error || "Erro ao atualizar utilizador");
+
+            // Update local state
+            setUsers(prev => prev.map(u => u.id === editingUser.id ? { ...u, role: editRole, plan: editPlan } : u));
+            setIsEditOpen(false);
+            setNewPassword("");
+            alert("Utilizador atualizado com sucesso!");
+        } catch (error: any) {
+            alert(`Erro ao atualizar: ${error.message}`);
+        } finally {
+            setIsUpdating(false);
+        }
     };
 
     const columns = [
@@ -61,8 +110,21 @@ export default function AdminUsersPage() {
             key: "email",
             render: (val: string, row: any) => (
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 border border-slate-200">
-                        <User className="w-5 h-5" />
+                    <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 border border-slate-200 overflow-hidden relative">
+                        {row.avatar_url ? (
+                            <img
+                                src={row.avatar_url}
+                                alt={row.full_name || val}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                    // Fallback if image fails to load
+                                    (e.target as HTMLImageElement).src = "";
+                                    (e.target as HTMLImageElement).parentElement!.innerHTML = '<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
+                                }}
+                            />
+                        ) : (
+                            <User className="w-5 h-5" />
+                        )}
                     </div>
                     <div>
                         <p className="font-bold text-slate-800">{row.full_name || 'Sem nome'}</p>
@@ -175,11 +237,65 @@ export default function AdminUsersPage() {
                 </div>
             </div>
 
+            <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Editar Utilizador</DialogTitle>
+                        <DialogDescription>
+                            Atualize as permissões e o plano de <strong>{editingUser?.full_name || editingUser?.email}</strong>.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-slate-500 uppercase">Função</label>
+                            <select
+                                className="w-full h-10 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+                                value={editRole}
+                                onChange={(e) => setEditRole(e.target.value)}
+                            >
+                                <option value="admin">Administrador</option>
+                                <option value="editor">Editor</option>
+                                <option value="user">Utilizador</option>
+                            </select>
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-slate-500 uppercase">Plano</label>
+                            <select
+                                className="w-full h-10 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+                                value={editPlan}
+                                onChange={(e) => setEditPlan(e.target.value)}
+                            >
+                                {PLANS.map(p => <option key={p} value={p}>{p}</option>)}
+                            </select>
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-slate-500 uppercase">Nova Senha (opcional)</label>
+                            <Input
+                                type="password"
+                                placeholder="Deixe em branco para não alterar"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                            />
+                            <p className="text-[10px] text-slate-400 font-medium">
+                                Mínimo 6 caracteres se desejar alterar.
+                            </p>
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsEditOpen(false)}>Cancelar</Button>
+                        <Button onClick={handleUpdateUser} disabled={isUpdating} className="bg-[#f97316] hover:bg-orange-700">
+                            {isUpdating ? "A processar..." : "Salvar Alterações"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
             <AdminDataTable
                 title="Utilizadores do Sistema"
                 columns={columns}
                 data={filterPlan === 'all' ? users : users.filter(u => (u.plan || 'Visitante') === filterPlan)}
                 loading={loading}
+                onEdit={handleEdit}
                 onDelete={() => alert("Funcionalidade de eliminação de utilizadores sensível.")}
             />
         </div>

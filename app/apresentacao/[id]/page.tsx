@@ -155,14 +155,14 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
 
                                 <div className="relative z-10 max-w-full w-full h-full">
                                     {/* Universal Slide Layout: Title Top Left + Subtitle + 2 Columns (Photo | Text) */}
-                                    <div className="w-full h-full flex flex-col items-start text-left animate-in fade-in duration-700 gap-[45px]">
+                                    <div className="w-full h-full flex flex-col items-start text-left animate-in fade-in duration-700 gap-[30px]">
 
                                         {/* Header: Title & Subtitle */}
                                         <div className="space-y-2">
                                             <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase leading-none">
                                                 {slide.title}
                                             </h1>
-                                            <div className="flex items-center gap-[30px]">
+                                            <div className="flex items-center gap-[30px] pt-[10px]">
                                                 <div className="w-3 h-3 rounded-full bg-orange-500 shrink-0" />
                                                 <p className="text-orange-500 font-bold text-[25px]">
                                                     {presentation.title} {index === 0 ? "introdução" : `slide ${index + 1}`}

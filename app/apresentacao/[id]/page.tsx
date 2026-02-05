@@ -158,33 +158,33 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                     <div className="w-full h-full flex flex-col items-start text-left animate-in fade-in duration-700 gap-[30px]">
 
                                         {/* Header: Title & Subtitle */}
-                                        <div className="space-y-[30px]">
+                                        <div className="space-y-4">
                                             <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase leading-none">
                                                 {slide.title}
                                             </h1>
                                             <div className="flex items-center gap-[30px]">
                                                 {/* Bar removed as per request identifying it as 'hyphen' */}
-                                                <p className="text-orange-500 font-bold uppercase tracking-[0.2em] text-lg md:text-2xl">
+                                                <p className="text-orange-500 font-bold lowercase tracking-[0.2em] text-lg md:text-2xl">
                                                     {presentation.title} {index === 0 ? "Introdução" : `Slide ${index + 1}`}
                                                 </p>
                                             </div>
                                         </div>
 
-                                        {/* Body: Two Columns - Adjusted for balance */}
-                                        <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-[50px] items-center flex-1">
+                                        {/* Body: Two Columns */}
+                                        <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-[30px] items-stretch flex-1">
 
-                                            {/* Column 1: Photo - Larger aspect ratio */}
-                                            <div className="relative group self-center lg:self-end pb-[40px]">
+                                            {/* Column 1: Photo */}
+                                            <div className="relative group">
                                                 <div className="absolute -inset-4 bg-orange-500/10 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                                 {slide.image_url ? (
-                                                    <div className="relative aspect-video rounded-3xl overflow-hidden border-[6px] border-white/10 shadow-2xl">
+                                                    <div className="relative aspect-[3/4] h-full rounded-3xl overflow-hidden border-[6px] border-white/10 shadow-2xl">
                                                         <img src={slide.image_url} alt="" className="w-full h-full object-cover" />
                                                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-8">
                                                             <span className="text-xs font-black uppercase tracking-widest text-white/50">Recurso Visual • {index + 1}</span>
                                                         </div>
                                                     </div>
                                                 ) : (
-                                                    <div className="aspect-video rounded-3xl bg-white/5 border-2 border-dashed border-white/10 flex items-center justify-center">
+                                                    <div className="aspect-[3/4] h-full rounded-3xl bg-white/5 border-2 border-dashed border-white/10 flex items-center justify-center">
                                                         <div className="text-center">
                                                             <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
                                                                 <Loader2 className="w-8 h-8 text-white/20 animate-spin" />
@@ -195,8 +195,8 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                 )}
                                             </div>
 
-                                            {/* Column 2: Description - Lower alignment */}
-                                            <div className="space-y-[30px] self-center lg:self-end pb-[40px]">
+                                            {/* Column 2: Description */}
+                                            <div className="space-y-[30px]">
                                                 {slide.antetitulo && (
                                                     <div className="space-y-2">
                                                         <span className="text-orange-500 font-black uppercase tracking-[0.3em] text-xs">

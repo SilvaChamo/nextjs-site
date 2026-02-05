@@ -22,17 +22,24 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
         dragFree: false
     });
 
-    const onSelect = useCallback(() => {
-        if (!emblaApi) return;
-        setCurrentIndex(emblaApi.selectedScrollSnap());
-    }, [emblaApi]);
-
     useEffect(() => {
         if (!emblaApi) return;
-        // Don't call onSelect() directly here if it sets state
-        // emblaApi.on("select", onSelect) will handle updates
+
+        const onSelect = () => {
+            setCurrentIndex(emblaApi.selectedScrollSnap());
+        };
+
         emblaApi.on("select", onSelect);
-    }, [emblaApi, onSelect]);
+        emblaApi.on("reInit", onSelect);
+
+        // Initial set
+        onSelect();
+
+        return () => {
+            emblaApi.off("select", onSelect);
+            emblaApi.off("reInit", onSelect);
+        };
+    }, [emblaApi]);
 
     useEffect(() => {
         let isMounted = true;
@@ -100,11 +107,11 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
         <div className={`fixed inset-0 bg-slate-950 text-white overflow-hidden select-none`}>
 
             {/* Floating Controls (Canvas Style) */}
-            <div className="absolute top-10 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-2 p-1.5 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl opacity-0 hover:opacity-100 transition-all duration-300">
+            <div className="absolute top-10 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-2 p-1.5 bg-black/60 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl transition-all duration-300">
                 <button
                     onClick={() => emblaApi?.scrollPrev()}
                     disabled={currentIndex === 0}
-                    className="flex items-center gap-2 px-4 py-2 hover:bg-white/10 rounded-xl transition-all disabled:opacity-30 disabled:hover:bg-transparent"
+                    className="flex items-center gap-2 px-4 py-2 hover:bg-white/10 rounded-xl transition-all disabled:opacity-20 disabled:hover:bg-transparent"
                 >
                     <ChevronLeft className="w-4 h-4 text-orange-500" />
                     <span className="text-xs font-black uppercase tracking-widest">Anterior</span>
@@ -113,7 +120,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                 <button
                     onClick={() => emblaApi?.scrollNext()}
                     disabled={currentIndex === slides.length - 1}
-                    className="flex items-center gap-2 px-4 py-2 hover:bg-orange-600 rounded-xl transition-all disabled:opacity-30 disabled:hover:bg-transparent group"
+                    className="flex items-center gap-2 px-4 py-2 hover:bg-orange-600 rounded-xl transition-all disabled:opacity-20 disabled:hover:bg-transparent group"
                 >
                     <span className="text-xs font-black uppercase tracking-widest">Próximo</span>
                     <ChevronRight className="w-4 h-4 text-orange-500 group-hover:text-white" />
@@ -132,10 +139,10 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
             </div>
 
             {/* Slides Container */}
-            <div className="h-full embla" ref={emblaRef}>
-                <div className="h-full embla__container">
+            <div className="h-full overflow-hidden" ref={emblaRef}>
+                <div className="h-full flex">
                     {slides.map((slide: any, index: number) => (
-                        <div key={index} className="h-full embla__slide relative p-[70px] flex items-center justify-center overflow-hidden">
+                        <div key={index} className="h-full relative p-[70px] flex items-center justify-center overflow-hidden min-w-0 shrink-0 grow-0 basis-full">
 
                             {/* Background */}
                             {slide.image_url ? (

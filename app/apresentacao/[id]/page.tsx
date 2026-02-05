@@ -64,9 +64,17 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
     // Keyboard navigation
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "ArrowRight" || e.key === " ") nextSlide();
-            if (e.key === "ArrowLeft") prevSlide();
-            if (e.key === "Escape" && isFullscreen) toggleFullscreen();
+            if (e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === " ") {
+                e.preventDefault();
+                nextSlide();
+            }
+            if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+                e.preventDefault();
+                prevSlide();
+            }
+            if (e.key === "Escape" && isFullscreen) {
+                toggleFullscreen();
+            }
         };
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
@@ -113,9 +121,9 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                             if (document.fullscreenElement) document.exitFullscreen();
                             router.back();
                         }}
-                        className="flex items-center gap-2 text-red-400 font-black uppercase tracking-[0.2em] text-[10px] hover:text-red-300 transition-colors group"
+                        className="flex items-center gap-2 text-red-400 font-black uppercase tracking-[0.2em] text-[8px] hover:text-red-300 transition-colors group"
                     >
-                        <X className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
+                        <X className="w-3 h-3 group-hover:rotate-90 transition-transform duration-300" />
                         Sair
                     </button>
                 </div>
@@ -162,9 +170,9 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                             <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase leading-none">
                                                 {slide.title}
                                             </h1>
-                                            <div className="flex items-center gap-[30px] pt-[10px]">
-                                                <div className="w-[5px] h-[30px] bg-orange-500 shrink-0" />
-                                                <p className="text-orange-500 font-bold text-[25px]">
+                                            <div className="flex items-center gap-[15px] pt-[5px]">
+                                                <div className="w-[3px] h-[20px] bg-orange-500 shrink-0" />
+                                                <p className="text-orange-500 font-bold text-[18px]">
                                                     {presentation.title} {index === 0 ? "introdução" : `slide ${index + 1}`}
                                                 </p>
                                             </div>
@@ -240,9 +248,9 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                     disabled={currentIndex === 0}
                     className="p-2 text-white/50 hover:text-orange-500 disabled:opacity-0 transition-all hover:scale-110 cursor-pointer"
                 >
-                    <ChevronLeft className="w-8 h-8" />
+                    <ChevronLeft className="w-5 h-5" />
                 </button>
-                <div className="w-px h-6 bg-white/10"></div>
+                <div className="w-px h-4 bg-white/10"></div>
                 <button
                     type="button"
                     onClick={(e) => {
@@ -252,7 +260,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                     disabled={currentIndex === slides.length - 1}
                     className="p-2 text-white/50 hover:text-orange-500 disabled:opacity-0 transition-all hover:scale-110 cursor-pointer"
                 >
-                    <ChevronRight className="w-8 h-8" />
+                    <ChevronRight className="w-5 h-5" />
                 </button>
             </div>
 

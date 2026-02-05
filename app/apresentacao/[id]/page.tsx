@@ -158,8 +158,8 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                         </h1>
                                         <div className="flex items-center gap-[30px]">
                                             <div className="w-24 h-1 bg-orange-500 rounded-full"></div>
-                                            <p className="text-orange-500 font-bold uppercase tracking-[0.2em] text-lg md:text-4xl">
-                                                {presentation.title} {index === 0 ? "• Introdução" : `• Slide ${index + 1}`}
+                                            <p className="text-orange-500 font-bold uppercase tracking-[0.2em] text-md md:text-2xl">
+                                                {presentation.title} {index === 0 ? "Introdução" : `Slide ${index + 1}`}
                                             </p>
                                         </div>
                                     </div>

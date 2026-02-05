@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Calendar, ArrowRight, Pencil, Trash2, Link as LinkIcon, RotateCcw } from 'lucide-react';
+import { Calendar, ArrowRight, Pencil, Trash2, Link as LinkIcon, RotateCcw, Archive } from 'lucide-react';
 
 interface NewsCardProps {
     id?: string;
@@ -17,6 +17,8 @@ interface NewsCardProps {
     onEdit?: () => void;
     onDelete?: () => void;
     onRestore?: () => void;
+    onArchive?: () => void;
+    isArchived?: boolean;
 }
 
 export function NewsCard({
@@ -30,9 +32,11 @@ export function NewsCard({
     slug,
     isAdmin = false,
     isDeleted = false,
+    isArchived = false,
     onEdit,
     onDelete,
-    onRestore
+    onRestore,
+    onArchive
 }: NewsCardProps) {
     const formattedDate = new Date(date).toLocaleDateString('pt-PT', {
         day: '2-digit',
@@ -93,6 +97,14 @@ export function NewsCard({
                                         title="Editar"
                                     >
                                         <Pencil className="w-3.5 h-3.5" />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); onArchive?.(); }}
+                                        className={`w-8 h-8 flex items-center justify-center rounded-lg ${isArchived ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-50 text-slate-400 hover:bg-amber-50 hover:text-amber-600'} transition-all border border-slate-100`}
+                                        title={isArchived ? "Desarquivar" : "Arquivar"}
+                                    >
+                                        <Archive className="w-3.5 h-3.5" />
                                     </button>
                                     <button
                                         type="button"

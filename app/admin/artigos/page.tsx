@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { AdminDataTable } from "@/components/admin/AdminDataTable";
 import { Button } from "@/components/ui/button";
-import { Plus, LayoutGrid, List, Pencil, Trash2, Calendar, Link as LinkIcon, Search, GraduationCap, FileText, BookOpen, Layers } from "lucide-react";
+import { Plus, LayoutGrid, List, Pencil, Trash2, Calendar, Link as LinkIcon, Search, GraduationCap, FileText, BookOpen, Layers, Archive, RotateCcw, MoreVertical } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { NewsCard } from "@/components/NewsCard";
 import { toast } from "sonner";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
-
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useRouter } from "next/navigation";
 
 export default function AdminArtigosCientificosPage() {
@@ -24,7 +24,7 @@ export default function AdminArtigosCientificosPage() {
     const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false);
     const [articleToDelete, setArticleToDelete] = useState<any>(null);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
-    const [showBin, setShowBin] = useState(false);
+    const [statusFilter, setStatusFilter] = useState("active"); // active, archived, deleted
     const [showEmptyBinConfirm, setShowEmptyBinConfirm] = useState(false);
 
     const tabs = [
@@ -36,34 +36,63 @@ export default function AdminArtigosCientificosPage() {
 
     const fetchArticles = async () => {
         setLoading(true);
-        // Fetch items where type matches one of our tabs
-        let query = supabase
-            .from('articles')
-            .select('*')
-            .in('type', tabs.map(t => t.id))
-            .order('created_at', { ascending: false });
+        try {
+            let query = supabase
+                .from('articles')
+                .select('*')
+                .in('type', tabs.map(t => t.id));
 
-        if (showBin) {
-            query = query.not('deleted_at', 'is', null);
-        } else {
-            query = query.is('deleted_at', null);
+            if (statusFilter === 'active') {
+                query = query.is('deleted_at', null).or('status.eq.active,status.is.null');
+            } else if (statusFilter === 'archived') {
+                query = query.is('deleted_at', null).eq('status', 'inactive');
+            } else if (statusFilter === 'deleted') {
+                query = query.not('deleted_at', 'is', null);
+            }
+
+            query = query.order('created_at', { ascending: false });
+
+            const { data, error } = await query;
+
+            if (error) {
+                if (error.code === '42703') { // Column does not exist
+                    let fallbackQuery = supabase
+                        .from('articles')
+                        .select('*')
+                        .in('type', tabs.map(t => t.id))
+                        .order('created_at', { ascending: false });
+
+                    if (statusFilter === 'deleted') {
+                        fallbackQuery = fallbackQuery.not('deleted_at', 'is', null);
+                    } else {
+                        fallbackQuery = fallbackQuery.is('deleted_at', null);
+                    }
+                    const { data: fallbackData, error: fallbackError } = await fallbackQuery;
+                    if (fallbackError) throw fallbackError;
+                    setArticles(fallbackData || []);
+                } else {
+                    throw error;
+                }
+            } else {
+                setArticles(data || []);
+            }
+        } catch (error: any) {
+            console.error(error);
+            toast.error("Erro ao carregar artigos");
+        } finally {
+            setLoading(false);
         }
-
-        const { data, error } = await query;
-
-        if (data) setArticles(data);
-        setLoading(false);
     };
 
     useEffect(() => {
         fetchArticles();
-    }, [showBin]);
+    }, [statusFilter]);
 
     const confirmDelete = async () => {
         if (!articleToDelete) return;
 
         try {
-            if (showBin) {
+            if (statusFilter === 'deleted') {
                 // Hard Delete (Permanent) for items already in Bin
                 const { error, count } = await supabase
                     .from('articles')
@@ -78,7 +107,10 @@ export default function AdminArtigosCientificosPage() {
                 // Soft Delete (Move to Bin) for active items
                 const { error, count } = await supabase
                     .from('articles')
-                    .update({ deleted_at: new Date().toISOString() }, { count: 'exact' })
+                    .update({
+                        deleted_at: new Date().toISOString(),
+                        status: 'deleted'
+                    }, { count: 'exact' })
                     .eq('id', articleToDelete.id);
 
                 if (error) throw error;
@@ -100,16 +132,75 @@ export default function AdminArtigosCientificosPage() {
         try {
             const { error, count } = await supabase
                 .from('articles')
-                .update({ deleted_at: null }, { count: 'exact' })
+                .update({
+                    deleted_at: null,
+                    status: 'active'
+                }, { count: 'exact' })
                 .eq('id', article.id);
 
-            if (error) throw error;
-            if (count === 0) throw new Error("Permissão negada ou item não encontrado.");
+            if (error) {
+                if (error.code === '42703') {
+                    const { error: fallbackError, count: fallbackCount } = await supabase
+                        .from('articles')
+                        .update({ deleted_at: null }, { count: 'exact' })
+                        .eq('id', article.id);
+                    if (fallbackError) throw fallbackError;
+                } else {
+                    throw error;
+                }
+            }
 
             toast.success("Artigo restaurado com sucesso!");
             await fetchArticles();
         } catch (error: any) {
             toast.error(error.message || "Erro ao restaurar artigo");
+        }
+    };
+
+    const handleArchive = async (article: any) => {
+        const newStatus = statusFilter === 'archived' ? 'active' : 'inactive';
+        try {
+            const { error } = await supabase
+                .from('articles')
+                .update({ status: newStatus })
+                .eq('id', article.id);
+
+            if (error) {
+                if (error.code === '42703') {
+                    toast.error("Funcionalidade de Arquivo requer actualização da base de dados.");
+                } else {
+                    throw error;
+                }
+                return;
+            }
+
+            toast.success(newStatus === 'inactive' ? "Artigo arquivado" : "Artigo restaurado");
+            await fetchArticles();
+        } catch (error: any) {
+            toast.error("Erro ao actualizar estado");
+        }
+    };
+
+    const handleRestoreAll = async () => {
+        try {
+            const query = supabase.from('articles').update({
+                deleted_at: null,
+                status: 'active'
+            }).in('type', tabs.map(t => t.id));
+
+            if (statusFilter === 'deleted') {
+                query.not('deleted_at', 'is', null);
+            } else {
+                query.eq('status', 'inactive');
+            }
+
+            const { error } = await query;
+            if (error) throw error;
+
+            toast.success("Todos os itens foram restaurados");
+            await fetchArticles();
+        } catch (error: any) {
+            toast.error("Erro ao restaurar todos os itens");
         }
     };
 
@@ -145,6 +236,7 @@ export default function AdminArtigosCientificosPage() {
 
             toast.success(`${selectedIds.length} documentos eliminados!`);
             setSelectedIds([]);
+            await fetchArticles();
         } catch (error: any) {
             setArticles(previousArticles);
             toast.error("Erro na eliminação em massa: " + error.message);
@@ -208,23 +300,13 @@ export default function AdminArtigosCientificosPage() {
                 </div>
 
                 <div className="flex flex-col md:flex-row items-center gap-3">
-                    {/* Search */}
-                    <div className="relative w-full md:w-64">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                        <Input
-                            placeholder={`Pesquisar...`}
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            className="pl-10 h-10 bg-white border-slate-200"
-                        />
-                    </div>
-
                     {/* Category Selector */}
                     <select
                         value={activeTab}
                         onChange={(e) => {
                             setActiveTab(e.target.value);
-                            setShowBin(false);
+                            setStatusFilter('active');
+                            if (viewMode === 'list') setViewMode('list');
                         }}
                         className="bg-white border border-slate-200 text-slate-600 text-xs font-bold uppercase tracking-wide rounded-lg px-4 py-2 outline-none focus:border-emerald-500 h-10 w-full md:w-40"
                     >
@@ -233,30 +315,82 @@ export default function AdminArtigosCientificosPage() {
                         ))}
                     </select>
 
-                    {/* Bin Button */}
+                    {/* Search Input */}
+                    <div className="relative w-72">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                        <Input
+                            placeholder="Buscar documentos..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="pl-9 h-10 bg-white border-slate-200 text-sm"
+                        />
+                    </div>
+
+                    {/* Status Toggles */}
                     <div className="flex items-center bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
                         <button
-                            onClick={() => setShowBin(!showBin)}
-                            className={`p-2 rounded-md transition-all ${showBin ? 'bg-rose-50 text-rose-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                            onClick={() => setStatusFilter('active')}
+                            className={`p-2 rounded-md transition-all ${statusFilter === 'active' ? 'bg-slate-100 text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                            title="Activos"
+                        >
+                            <List className="w-4 h-4" />
+                        </button>
+                        <button
+                            onClick={() => setStatusFilter('archived')}
+                            className={`p-2 rounded-md transition-all ${statusFilter === 'archived' ? 'bg-amber-50 text-amber-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                            title="Arquivados"
+                        >
+                            <Archive className="w-4 h-4" />
+                        </button>
+                        <button
+                            onClick={() => setStatusFilter('deleted')}
+                            className={`p-2 rounded-md transition-all ${statusFilter === 'deleted' ? 'bg-rose-50 text-rose-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                             title="Lixeira"
                         >
                             <Trash2 className="w-4 h-4" />
                         </button>
                     </div>
 
-                    {/* View Mode */}
+                    {/* Maintenance Menu */}
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <button className="p-2 rounded-lg bg-white border border-slate-200 text-slate-400 hover:text-slate-600 hover:border-slate-300 transition-all shadow-sm">
+                                <MoreVertical className="w-4 h-4" />
+                            </button>
+                        </PopoverTrigger>
+                        <PopoverContent align="end" className="w-56 p-1 bg-white border border-slate-200 shadow-lg rounded-md z-50">
+                            <div className="flex flex-col">
+                                <button
+                                    onClick={handleRestoreAll}
+                                    className="flex items-center gap-2 px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 w-full text-left rounded-sm font-medium transition-colors"
+                                >
+                                    <RotateCcw className="w-4 h-4" />
+                                    Restaurar Tudo
+                                </button>
+                                {statusFilter === 'deleted' && (
+                                    <button
+                                        onClick={() => setShowEmptyBinConfirm(true)}
+                                        className="flex items-center gap-2 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 w-full text-left rounded-sm font-medium transition-colors"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                        Esvaziar Lixeira
+                                    </button>
+                                )}
+                            </div>
+                        </PopoverContent>
+                    </Popover>
+
+                    {/* View Toggles */}
                     <div className="flex items-center bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
                         <button
                             onClick={() => setViewMode('grid')}
                             className={`p-2 rounded-md transition-all ${viewMode === 'grid' ? 'bg-slate-100 text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                            title="Vista de Grelha"
                         >
                             <LayoutGrid className="w-4 h-4" />
                         </button>
                         <button
                             onClick={() => setViewMode('list')}
                             className={`p-2 rounded-md transition-all ${viewMode === 'list' ? 'bg-slate-100 text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                            title="Vista de Lista"
                         >
                             <List className="w-4 h-4" />
                         </button>
@@ -264,7 +398,7 @@ export default function AdminArtigosCientificosPage() {
 
                     <Button
                         onClick={() => router.push('/admin/artigos/novo')}
-                        className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-widest text-xs h-10 px-6 rounded-lg gap-2"
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-widest text-[10px] h-10 px-4 rounded-lg gap-2"
                     >
                         <Plus className="w-4 h-4" />
                         Novo Científico
@@ -272,25 +406,8 @@ export default function AdminArtigosCientificosPage() {
                 </div>
             </div>
 
-            {/* Bin Actions - Show when bin is active */}
-            {showBin && (
-                <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-3">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            <Trash2 className="w-4 h-4 text-rose-600" />
-                            <span className="text-sm font-semibold text-slate-700">Lixeira Activada</span>
-                            <span className="text-xs text-slate-500">({filteredArticles.length} itens)</span>
-                        </div>
-                        <button
-                            onClick={() => setShowEmptyBinConfirm(true)}
-                            className="px-3 py-1.5 text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 rounded-md border border-red-200 transition-all flex items-center gap-1.5"
-                        >
-                            <Trash2 className="w-3.5 h-3.5" />
-                            Esvaziar Lixeira
-                        </button>
-                    </div>
-                </div>
-            )}
+            {/* Bin Banner (Optional, keeping consistent with Noticias logic if we remove it, but good for feedback) */}
+            {/* Same decision as Noticias: Remove generic banner, use empty state or table header */}
 
             {/* Content */}
             {loading ? (
@@ -298,8 +415,18 @@ export default function AdminArtigosCientificosPage() {
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
                 </div>
             ) : filteredArticles.length === 0 ? (
-                <div className="text-center py-20 text-slate-400">
-                    Nenhum documento encontrado nesta categoria.
+                <div className="text-center py-20 bg-slate-50/50 rounded-2xl border-2 border-dashed border-slate-100">
+                    <div className="mb-4 flex justify-center">
+                        <div className="w-16 h-16 bg-white rounded-full shadow-sm flex items-center justify-center">
+                            <BookOpen className="w-8 h-8 text-slate-200" />
+                        </div>
+                    </div>
+                    <h3 className="font-bold text-slate-900 mb-1">
+                        {statusFilter === 'deleted' ? "Lixeira vazia" : statusFilter === 'archived' ? "Arquivo vazio" : "Nenhum documento encontrado"}
+                    </h3>
+                    <p className="text-sm text-slate-400 italic max-w-xs mx-auto">
+                        {statusFilter === 'deleted' ? "Não há itens na lixeira." : "Comece adicionando um novo documento ou altere os filtros."}
+                    </p>
                 </div>
             ) : viewMode === 'grid' ? (
                 // Grid View
@@ -314,12 +441,26 @@ export default function AdminArtigosCientificosPage() {
                             image={article.image_url}
                             slug={article.slug}
                             isAdmin={true}
-                            isDeleted={showBin}
+                            isDeleted={statusFilter === 'deleted'}
+                            isArchived={statusFilter === 'archived'}
+                            onArchive={() => handleArchive(article)}
                             onRestore={() => handleRestore(article)}
                             onEdit={() => handleEdit(article)}
                             onDelete={() => handleDelete(article)}
                         />
                     ))}
+                    {/* Add New Card (Only in Active Mode) */}
+                    {statusFilter === 'active' && (
+                        <button
+                            onClick={() => router.push('/admin/artigos/novo')}
+                            className="bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center p-6 hover:border-emerald-500 hover:bg-emerald-50/50 transition-all group min-h-[400px]"
+                        >
+                            <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                                <Plus className="w-6 h-6 text-emerald-500" />
+                            </div>
+                            <span className="font-bold text-slate-400 group-hover:text-emerald-600">Novo Científico</span>
+                        </button>
+                    )}
                 </div>
             ) : (
                 // List View
@@ -328,6 +469,7 @@ export default function AdminArtigosCientificosPage() {
                     columns={columns}
                     data={filteredArticles}
                     loading={loading}
+                    hideSearch={true}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
                     selectedIds={selectedIds}
@@ -343,16 +485,40 @@ export default function AdminArtigosCientificosPage() {
                         }
                     }}
                     bulkActions={
-                        <div className="flex items-center gap-2">
-                            <button
+                        selectedIds.length > 0 && (
+                            <Button
                                 onClick={() => setShowBulkDeleteConfirm(true)}
-                                className="p-2 hover:bg-white/10 rounded-full transition-colors text-white"
-                                title="Eliminar seleccionados"
+                                variant="outline"
+                                className="bg-white/10 text-white hover:bg-white/20 border-white/20 h-8 text-xs font-bold uppercase tracking-wider gap-2"
                             >
-                                <Trash2 className="w-5 h-5" />
-                            </button>
-                        </div>
+                                <Trash2 className="w-3.5 h-3.5" />
+                                {statusFilter === 'deleted' ? 'Eliminar Definitivamente' : 'Mover para Lixeira'} ({selectedIds.length})
+                            </Button>
+                        )
                     }
+                    headerMenu={null} // Handled by Popover in header now
+                    customActions={(row) => {
+                        if (statusFilter === 'deleted') {
+                            return (
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); handleRestore(row); }}
+                                    className="size-7 rounded text-slate-400 flex items-center justify-center hover:bg-emerald-50 hover:text-emerald-600 transition-all font-bold"
+                                    title="Restaurar"
+                                >
+                                    <RotateCcw className="w-3.5 h-3.5" />
+                                </button>
+                            );
+                        }
+                        return (
+                            <button
+                                onClick={(e) => { e.stopPropagation(); handleArchive(row); }}
+                                className={`size-7 rounded text-slate-400 flex items-center justify-center hover:bg-amber-50 hover:text-amber-600 transition-all font-bold`}
+                                title={statusFilter === 'archived' ? 'Desarquivar' : 'Arquivar'}
+                            >
+                                <Archive className="w-3.5 h-3.5" />
+                            </button>
+                        );
+                    }}
                     hideHeader={true}
                     pageSize={50}
                 />
@@ -360,17 +526,17 @@ export default function AdminArtigosCientificosPage() {
 
 
             <ConfirmationModal
-                key={showBin ? 'perm' : 'soft'}
+                key={statusFilter}
                 isOpen={showDeleteConfirm}
                 onClose={() => setShowDeleteConfirm(false)}
                 onConfirm={confirmDelete}
-                title={showBin ? "Eliminar Permanentemente" : "Mover para Lixeira"}
+                title={statusFilter === 'deleted' ? "Eliminar Permanentemente" : "Mover para Lixeira"}
                 description={
-                    showBin
+                    statusFilter === 'deleted'
                         ? `Tem a certeza que deseja eliminar PERMANENTEMENTE o artigo "${articleToDelete?.title}"? Esta acção NÃO pode ser desfeita.`
                         : `O artigo "${articleToDelete?.title}" será movido para a lixeira. Poderá restaurá-lo mais tarde.`
                 }
-                confirmLabel={showBin ? "Eliminar de vez" : "Mover para Lixeira"}
+                confirmLabel={statusFilter === 'deleted' ? "Eliminar de vez" : "Mover para Lixeira"}
                 variant="destructive"
             />
 

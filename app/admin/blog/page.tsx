@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { AdminDataTable } from "@/components/admin/AdminDataTable";
-import { BadgeCheck, BadgeAlert, LayoutGrid, List, Trash2, RotateCcw, FileText, Trash } from "lucide-react";
+import { BadgeCheck, BadgeAlert, LayoutGrid, List, Trash2, RotateCcw, FileText, Trash, Archive, MoreVertical } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { UndoRedoPanel } from "@/components/admin/UndoRedoPanel";
 import { toast } from "sonner";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
@@ -22,8 +23,7 @@ export default function AdminArticlesPage() {
     const [editingItem, setEditingItem] = useState<any>(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<any>(null);
-    const [showBin, setShowBin] = useState(false);
-    const [showBinDropdown, setShowBinDropdown] = useState(false);
+    const [statusFilter, setStatusFilter] = useState("active"); // active, archived, deleted
     const [showEmptyBinConfirm, setShowEmptyBinConfirm] = useState(false);
     const [activeAdminTab, setActiveAdminTab] = useState("noticias");
     const { addAction, undo, redo, canUndo, canRedo } = useUndoRedo();
@@ -31,7 +31,7 @@ export default function AdminArticlesPage() {
     async function fetchArticles() {
         setLoading(true);
         console.log("=== FETCH ARTICLES DEBUG ===");
-        console.log("Show bin:", showBin);
+        console.log("Status Filter:", statusFilter);
         console.log("Active Admin Tab:", activeAdminTab);
 
         let query = supabase
@@ -39,26 +39,45 @@ export default function AdminArticlesPage() {
             .select('*')
             .order('created_at', { ascending: false });
 
-        if (showBin) {
-            console.log("Fetching articles from BIN (deleted_at NOT NULL)");
+        if (statusFilter === 'active') {
+            query = query.is('deleted_at', null).or('status.eq.active,status.is.null');
+        } else if (statusFilter === 'archived') {
+            query = query.is('deleted_at', null).eq('status', 'inactive');
+        } else if (statusFilter === 'deleted') {
             query = query.not('deleted_at', 'is', null);
-        } else {
-            console.log("Fetching ACTIVE articles (deleted_at IS NULL)");
-            query = query.is('deleted_at', null);
         }
 
-        // Filter based on active admin tab
-        if (activeAdminTab === "noticias") {
-            console.log("Filtering NOTÍCIAS - excluding documents");
-            // Show only news articles (exclude documents)
-            query = query.not('type', 'in', ['Artigo Técnico', 'Estudo', 'Pesquisa', 'Relatório', 'PDF', 'Documento', 'document', 'Artigo Científico']);
-        } else {
-            console.log("Filtering ARTIGOS - showing only documents");
-            // Show only documents and articles
-            query = query.in('type', ['Artigo Técnico', 'Estudo', 'Pesquisa', 'Relatório', 'PDF', 'Documento', 'document', 'Artigo Científico']);
-        }
-
+        // ... query modifiers ...
         const { data, error } = await query;
+
+        if (error) {
+            if (error.code === '42703') { // Column does not exist
+                let fallbackQuery = supabase
+                    .from('articles')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                // Filter based on active admin tab
+                if (activeAdminTab === "noticias") {
+                    fallbackQuery = fallbackQuery.not('type', 'in', ['Artigo Técnico', 'Estudo', 'Pesquisa', 'Relatório', 'PDF', 'Documento', 'document', 'Artigo Científico']);
+                } else {
+                    fallbackQuery = fallbackQuery.in('type', ['Artigo Técnico', 'Estudo', 'Pesquisa', 'Relatório', 'PDF', 'Documento', 'document', 'Artigo Científico']);
+                }
+
+                if (statusFilter === 'deleted') {
+                    fallbackQuery = fallbackQuery.not('deleted_at', 'is', null);
+                } else {
+                    fallbackQuery = fallbackQuery.is('deleted_at', null);
+                }
+                const { data: fallbackData, error: fallbackError } = await fallbackQuery;
+                if (fallbackError) throw fallbackError;
+                setArticles(fallbackData || []);
+            } else {
+                throw error;
+            }
+        } else {
+            setArticles(data || []);
+        }
 
         console.log("Fetch result:", { error, count: data?.length || 0 });
         if (data) {
@@ -76,29 +95,29 @@ export default function AdminArticlesPage() {
 
     useEffect(() => {
         fetchArticles();
-    }, [showBin, activeAdminTab]);
+    }, [statusFilter, activeAdminTab]);
 
     const confirmDelete = async () => {
         if (!itemToDelete) return;
 
         console.log("=== DELETE DEBUG ===");
         console.log("Item to delete:", itemToDelete);
-        console.log("Show bin:", showBin);
+        console.log("Status Filter:", statusFilter);
         console.log("Item ID:", itemToDelete.id);
         console.log("Item current deleted_at:", itemToDelete.deleted_at);
 
         try {
-            if (showBin) {
+            if (statusFilter === 'deleted') {
                 // Hard Delete (Permanent) for items already in Bin
                 console.log("Performing HARD DELETE...");
-                const { error, count } = await supabase
+                const { error: hardDeleteError, count: hardDeleteCount } = await supabase
                     .from('articles')
                     .delete({ count: 'exact' })
                     .eq('id', itemToDelete.id);
 
-                console.log("Hard delete result:", { error, count });
-                if (error) throw error;
-                if (count === 0) throw new Error("Permissão negada ou item não encontrado.");
+                console.log("Hard delete result:", { error: hardDeleteError, count: hardDeleteCount });
+                if (hardDeleteError) throw hardDeleteError;
+                if (hardDeleteCount === 0) throw new Error("Permissão negada ou item não encontrado.");
 
                 // Add to undo history
                 addAction({
@@ -113,21 +132,25 @@ export default function AdminArticlesPage() {
                 // Soft Delete (Move to Bin) for active items
                 console.log("Performing SOFT DELETE...");
                 const deleteTime = new Date().toISOString();
-                console.log("Setting deleted_at to:", deleteTime);
 
-                const { error, count } = await supabase
+                const { error: softDeleteError, count: softDeleteCount } = await supabase
                     .from('articles')
-                    .update({ deleted_at: deleteTime }, { count: 'exact' })
+                    .update({
+                        deleted_at: deleteTime,
+                        status: 'deleted'
+                    }, { count: 'exact' })
                     .eq('id', itemToDelete.id);
 
-                console.log("Soft delete result:", { error, count });
-                if (error) {
-                    console.error("Soft delete error:", error);
-                    throw error;
-                }
-                if (count === 0) {
-                    console.error("No rows affected - count is 0");
-                    throw new Error("Permissão negada ou item não encontrado.");
+                if (softDeleteError) {
+                    if (softDeleteError.code === '42703') {
+                        const { error: fallbackError, count: fallbackCount } = await supabase
+                            .from('articles')
+                            .update({ deleted_at: deleteTime }, { count: 'exact' })
+                            .eq('id', itemToDelete.id);
+                        if (fallbackError) throw fallbackError;
+                    } else {
+                        throw softDeleteError;
+                    }
                 }
 
                 // Add to undo history
@@ -157,11 +180,23 @@ export default function AdminArticlesPage() {
         try {
             const { error, count } = await supabase
                 .from('articles')
-                .update({ deleted_at: null }, { count: 'exact' })
+                .update({
+                    deleted_at: null,
+                    status: 'active'
+                }, { count: 'exact' })
                 .eq('id', article.id);
 
-            if (error) throw error;
-            if (count === 0) throw new Error("Permissão negada ou item não encontrado.");
+            if (error) {
+                if (error.code === '42703') {
+                    const { error: fallbackError, count: fallbackCount } = await supabase
+                        .from('articles')
+                        .update({ deleted_at: null }, { count: 'exact' })
+                        .eq('id', article.id);
+                    if (fallbackError) throw fallbackError;
+                } else {
+                    throw error;
+                }
+            }
 
             // Add to undo history
             addAction({
@@ -176,6 +211,53 @@ export default function AdminArticlesPage() {
         } catch (error: any) {
             toast.error(error.message || "Erro ao restaurar artigo");
             console.error("Restore failed:", error);
+        }
+    };
+
+    const handleArchive = async (article: any) => {
+        const newStatus = statusFilter === 'archived' ? 'active' : 'inactive';
+        try {
+            const { error } = await supabase
+                .from('articles')
+                .update({ status: newStatus })
+                .eq('id', article.id);
+
+            if (error) {
+                if (error.code === '42703') {
+                    toast.error("Funcionalidade de Arquivo requer actualização da base de dados.");
+                } else {
+                    throw error;
+                }
+                return;
+            }
+
+            toast.success(newStatus === 'inactive' ? "Artigo arquivado" : "Artigo restaurado");
+            await fetchArticles();
+        } catch (error: any) {
+            toast.error("Erro ao actualizar estado");
+        }
+    };
+
+    const handleRestoreAll = async () => {
+        try {
+            const query = supabase.from('articles').update({
+                deleted_at: null,
+                status: 'active'
+            });
+
+            if (statusFilter === 'deleted') {
+                query.not('deleted_at', 'is', null);
+            } else {
+                query.eq('status', 'inactive');
+            }
+
+            const { error } = await query;
+            if (error) throw error;
+
+            toast.success("Todos os itens foram restaurados");
+            await fetchArticles();
+        } catch (error: any) {
+            toast.error("Erro ao restaurar todos os itens");
         }
     };
 
@@ -314,8 +396,8 @@ export default function AdminArticlesPage() {
                 <button
                     onClick={() => setActiveAdminTab("noticias")}
                     className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all ${activeAdminTab === "noticias"
-                            ? "bg-emerald-600 text-white shadow-lg"
-                            : "text-slate-500 hover:bg-slate-50"
+                        ? "bg-emerald-600 text-white shadow-lg"
+                        : "text-slate-500 hover:bg-slate-50"
                         }`}
                 >
                     <List className="w-4 h-4" />
@@ -324,8 +406,8 @@ export default function AdminArticlesPage() {
                 <button
                     onClick={() => setActiveAdminTab("artigos")}
                     className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all ${activeAdminTab === "artigos"
-                            ? "bg-emerald-600 text-white shadow-lg"
-                            : "text-slate-500 hover:bg-slate-50"
+                        ? "bg-emerald-600 text-white shadow-lg"
+                        : "text-slate-500 hover:bg-slate-50"
                         }`}
                 >
                     <FileText className="w-4 h-4" />
@@ -335,42 +417,57 @@ export default function AdminArticlesPage() {
 
             <div className="flex items-center justify-between gap-4 bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
                 <div className="flex gap-2">
-                    <button
-                        onClick={() => setShowBin(false)}
-                        className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${!showBin ? 'bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200' : 'text-slate-500 hover:bg-slate-50'}`}
-                    >
-                        <List className="w-4 h-4" />
-                        Publicados
-                    </button>
-                    <div className="relative">
+                    <div className="flex items-center bg-white p-1 rounded-lg border border-slate-200">
                         <button
-                            onClick={() => setShowBin(true)}
-                            onMouseEnter={() => setShowBinDropdown(true)}
-                            onMouseLeave={() => setShowBinDropdown(false)}
-                            className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${showBin ? 'bg-rose-50 text-rose-600 ring-1 ring-rose-200' : 'text-slate-500 hover:bg-slate-50'}`}
+                            onClick={() => setStatusFilter('active')}
+                            className={`p-2 rounded-md transition-all ${statusFilter === 'active' ? 'bg-slate-100 text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                            title="Activos"
+                        >
+                            <List className="w-4 h-4" />
+                        </button>
+                        <button
+                            onClick={() => setStatusFilter('archived')}
+                            className={`p-2 rounded-md transition-all ${statusFilter === 'archived' ? 'bg-amber-50 text-amber-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                            title="Arquivados"
+                        >
+                            <Archive className="w-4 h-4" />
+                        </button>
+                        <button
+                            onClick={() => setStatusFilter('deleted')}
+                            className={`p-2 rounded-md transition-all ${statusFilter === 'deleted' ? 'bg-rose-50 text-rose-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                            title="Lixeira"
                         >
                             <Trash2 className="w-4 h-4" />
-                            Lixeira
                         </button>
-                        {showBinDropdown && (
-                            <div
-                                className="absolute top-full left-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg py-1 z-10 min-w-[160px]"
-                                onMouseEnter={() => setShowBinDropdown(true)}
-                                onMouseLeave={() => setShowBinDropdown(false)}
-                            >
-                                <button
-                                    onClick={() => {
-                                        setShowEmptyBinConfirm(true);
-                                        setShowBinDropdown(false);
-                                    }}
-                                    className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
-                                >
-                                    <Trash className="w-4 h-4" />
-                                    Esvaziar Lixeira
-                                </button>
-                            </div>
-                        )}
                     </div>
+
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <button className="p-2 rounded-lg bg-white border border-slate-200 text-slate-400 hover:text-slate-600 hover:border-slate-300 transition-all shadow-sm">
+                                <MoreVertical className="w-4 h-4" />
+                            </button>
+                        </PopoverTrigger>
+                        <PopoverContent align="end" className="w-56 p-1 bg-white border border-slate-200 shadow-lg rounded-md z-50">
+                            <div className="flex flex-col">
+                                <button
+                                    onClick={handleRestoreAll}
+                                    className="flex items-center gap-2 px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 w-full text-left rounded-sm font-medium transition-colors"
+                                >
+                                    <RotateCcw className="w-4 h-4" />
+                                    Restaurar Tudo
+                                </button>
+                                {statusFilter === 'deleted' && (
+                                    <button
+                                        onClick={() => setShowEmptyBinConfirm(true)}
+                                        className="flex items-center gap-2 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 w-full text-left rounded-sm font-medium transition-colors"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                        Esvaziar Lixeira
+                                    </button>
+                                )}
+                            </div>
+                        </PopoverContent>
+                    </Popover>
                 </div>
 
                 <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg">
@@ -401,7 +498,9 @@ export default function AdminArticlesPage() {
                             image={article.image_url}
                             slug={article.slug}
                             isAdmin={true}
-                            isDeleted={showBin}
+                            isDeleted={statusFilter === 'deleted'}
+                            isArchived={statusFilter === 'archived'}
+                            onArchive={() => handleArchive(article)}
                             onEdit={() => {
                                 const route = activeAdminTab === 'noticias' ? '/admin/noticias' : '/admin/artigos';
                                 router.push(`${route}/${article.id}`);
@@ -418,45 +517,57 @@ export default function AdminArticlesPage() {
                 </div>
             ) : (
                 <AdminDataTable
-                    title={showBin ? "Lixeira" : "Lista de Artigos"}
+                    title={statusFilter === 'deleted' ? "Lixeira" : statusFilter === 'archived' ? "Arquivo" : "Artigos Activos"}
                     columns={columns}
                     data={articles}
                     loading={loading}
-                    onAdd={showBin ? undefined : () => {
+                    onAdd={statusFilter === 'active' ? () => {
                         const route = activeAdminTab === 'noticias' ? '/admin/noticias' : '/admin/artigos';
                         router.push(`${route}/novo`);
-                    }}
-                    onEdit={showBin ? undefined : (row: any) => {
+                    } : undefined}
+                    onEdit={statusFilter === 'active' ? (row: any) => {
                         const route = activeAdminTab === 'noticias' ? '/admin/noticias' : '/admin/artigos';
                         router.push(`${route}/${row.id}`);
-                    }}
+                    } : undefined}
                     onDelete={handleDelete}
-                    customActions={showBin ? (row: any) => (
-                        <Button
-                            size="sm"
-                            variant="outline"
-                            className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 border-emerald-200"
-                            onClick={() => handleRestore(row)}
-                        >
-                            <RotateCcw className="w-4 h-4 mr-1" />
-                            Restaurar
-                        </Button>
-                    ) : undefined}
+                    customActions={(row: any) => {
+                        if (statusFilter === 'deleted') {
+                            return (
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); handleRestore(row); }}
+                                    className="size-7 rounded text-slate-400 flex items-center justify-center hover:bg-emerald-50 hover:text-emerald-600 transition-all font-bold"
+                                    title="Restaurar"
+                                >
+                                    <RotateCcw className="w-3.5 h-3.5" />
+                                </button>
+                            );
+                        }
+                        return (
+                            <button
+                                title={statusFilter === 'archived' ? "Desarquivar" : "Arquivar"}
+                                onClick={(e) => { e.stopPropagation(); handleArchive(row); }}
+                                className="size-7 rounded text-slate-400 flex items-center justify-center hover:bg-amber-50 hover:text-amber-600 transition-all font-bold"
+                            >
+                                <Archive className="w-3.5 h-3.5" />
+                            </button>
+                        );
+                    }}
                 />
             )}
 
 
             <ConfirmationModal
+                key={statusFilter}
                 isOpen={showDeleteConfirm}
                 onClose={() => setShowDeleteConfirm(false)}
                 onConfirm={confirmDelete}
-                title={showBin ? "Eliminar Permanentemente" : "Mover para Lixeira"}
+                title={statusFilter === 'deleted' ? "Eliminar Permanentemente" : "Mover para Lixeira"}
                 description={
-                    showBin
+                    statusFilter === 'deleted'
                         ? `Tem a certeza que deseja eliminar PERMANENTEMENTE o artigo "${itemToDelete?.title}"? Esta acção NÃO pode ser desfeita.`
                         : `O artigo "${itemToDelete?.title}" será movido para a lixeira. Poderá restaurá-lo mais tarde.`
                 }
-                confirmLabel={showBin ? "Eliminar de vez" : "Mover para Lixeira"}
+                confirmLabel={statusFilter === 'deleted' ? "Eliminar de vez" : "Mover para Lixeira"}
                 variant="destructive"
             />
 

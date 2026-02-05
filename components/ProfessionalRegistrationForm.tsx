@@ -113,15 +113,18 @@ export function ProfessionalRegistrationForm({ initialData, isAdmin }: Professio
 
             let error;
 
-            if (initialData?.id) {
-                // Update
+            // Check if it's a mock ID (which shouldn't be updated in DB)
+            const isMock = initialData?.id && typeof initialData.id === 'string' && initialData.id.startsWith('mock-');
+
+            if (initialData?.id && !isMock) {
+                // Update existing real record
                 const { error: err } = await supabase
                     .from("professionals")
                     .update(payload)
                     .eq("id", initialData.id);
                 error = err;
             } else {
-                // Create
+                // Create new record (or convert mock to real)
                 const { error: err } = await supabase
                     .from("professionals")
                     .insert({
@@ -148,7 +151,7 @@ export function ProfessionalRegistrationForm({ initialData, isAdmin }: Professio
             }
 
         } catch (error: any) {
-            console.error("Erro ao guardar:", error);
+            console.error("Erro ao guardar:", JSON.stringify(error, null, 2));
             toast.error("Erro ao submeter", {
                 description: error.message || "Tente novamente mais tarde."
             });

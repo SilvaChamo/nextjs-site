@@ -22,6 +22,11 @@ import { Button } from "@/components/ui/button";
 import { syncManager } from "@/lib/syncManager";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { useEffect } from "react";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface AdminDataTableProps {
     title: string;
@@ -42,6 +47,8 @@ interface AdminDataTableProps {
     onSelectAll?: (all: boolean) => void;
     onSelectRow?: (id: string, selected: boolean) => void;
     bulkActions?: React.ReactNode;
+    headerMenu?: React.ReactNode;
+    hideSearch?: boolean;
 }
 
 export function AdminDataTable({
@@ -61,7 +68,9 @@ export function AdminDataTable({
     selectedIds = [],
     onSelectAll,
     onSelectRow,
-    bulkActions
+    bulkActions,
+    headerMenu,
+    hideSearch = false
 }: AdminDataTableProps) {
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
@@ -115,16 +124,18 @@ export function AdminDataTable({
                     </div>
 
                     <div className="flex items-center gap-1 text-slate-500">
-                        <div className="relative mr-4">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                            <input
-                                type="text"
-                                placeholder="Pesquisar..."
-                                value={searchTerm}
-                                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                                className="pl-10 pr-4 py-2 bg-slate-50 border-none rounded-md text-xs font-medium focus:ring-2 focus:ring-slate-200 transition-all outline-none w-48 md:w-64"
-                            />
-                        </div>
+                        {!hideSearch && (
+                            <div className="relative mr-4">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                <input
+                                    type="text"
+                                    placeholder="Pesquisar..."
+                                    value={searchTerm}
+                                    onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                                    className="pl-10 pr-4 py-2 bg-slate-50 border-none rounded-md text-xs font-medium focus:ring-2 focus:ring-slate-200 transition-all outline-none w-48 md:w-64"
+                                />
+                            </div>
+                        )}
 
                         {onPrint && (
                             <button onClick={onPrint} className="p-2 hover:bg-slate-100 rounded-full transition-colors" title="Imprimir">
@@ -141,9 +152,19 @@ export function AdminDataTable({
                                 <Upload className="w-5 h-5" />
                             </button>
                         )}
-                        <button className="p-2 hover:bg-slate-100 rounded-full transition-colors">
-                            <MoreVertical className="w-5 h-5" />
-                        </button>
+
+                        {headerMenu && (
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <button className="p-2 hover:bg-slate-100 rounded-full transition-colors">
+                                        <MoreVertical className="w-5 h-5" />
+                                    </button>
+                                </PopoverTrigger>
+                                <PopoverContent align="end" className="w-48 p-1">
+                                    {headerMenu}
+                                </PopoverContent>
+                            </Popover>
+                        )}
 
                         {onAdd && (
                             <Button

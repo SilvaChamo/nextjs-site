@@ -5,11 +5,13 @@ import { supabase } from "@/lib/supabaseClient";
 import { AdminDataTable } from "@/components/admin/AdminDataTable";
 import { Button } from "@/components/ui/button";
 import { MarketProductForm } from "@/components/admin/MarketProductForm";
-import { ShoppingCart, LayoutGrid, List, Pencil, Trash2, Plus, Tag, Building2, Package, FileText, RotateCcw, Archive, ExternalLink } from "lucide-react";
+import { ShoppingCart, LayoutGrid, List, Pencil, Trash2, Plus, Tag, Building2, Package, FileText, RotateCcw, Archive, ExternalLink, Search, MoreVertical } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
+import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 export default function AdminProductsPage() {
     const router = useRouter();
@@ -17,146 +19,267 @@ export default function AdminProductsPage() {
     const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<'empresas' | 'mercado' | 'servicos' | 'outros'>('empresas');
-    const [showBin, setShowBin] = useState(false);
-    const [showBinDropdown, setShowBinDropdown] = useState(false);
-    const [showEmptyBinConfirm, setShowEmptyBinConfirm] = useState(false);
+    const [statusFilter, setStatusFilter] = useState("active"); // active, archived, deleted
+    const [search, setSearch] = useState("");
 
     const [showMarketForm, setShowMarketForm] = useState(false);
     const [editingItem, setEditingItem] = useState<any>(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false);
+    const [showEmptyBinConfirm, setShowEmptyBinConfirm] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<any>(null);
-    const [deleteAction, setDeleteAction] = useState<'soft' | 'hard'>('soft');
+
+    // Selection state
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
     async function fetchData() {
         setLoading(true);
 
-        // Determine which table to fetch from
-        let query;
+        const table = activeTab === "mercado" ? 'market_prices' : 'products';
+        const selectQuery = activeTab === "mercado" ? '*' : '*, companies(id, name)';
 
-        if (activeTab === "mercado") {
-            query = supabase.from('market_prices').select('*');
-        } else {
-            // Default: Empresas (Products table)
-            query = supabase.from('products').select('*, companies(id, name)');
+        try {
+            // Attempt query with status filter
+            let query = supabase.from(table).select(selectQuery);
+
+            if (statusFilter === 'active') query = query.eq('status', 'active');
+            else if (statusFilter === 'archived') query = query.eq('status', 'inactive');
+            else if (statusFilter === 'deleted') query = query.eq('status', 'deleted');
+
+            if (activeTab === "mercado") {
+                query = query.order('product', { ascending: true });
+            } else {
+                query = query.order('created_at', { ascending: false });
+            }
+
+            const { data, error } = await query;
+
+            if (error) {
+                // If it's a "column does not exist" error, fallback to unfiltered
+                if (error.code === '42703') {
+                    console.warn(`Column "status" not found in table "${table}". Falling back to unfiltered data.`);
+                    let fallbackQuery = supabase.from(table).select(selectQuery);
+                    if (activeTab === "mercado") {
+                        fallbackQuery = fallbackQuery.order('product', { ascending: true });
+                    } else {
+                        fallbackQuery = fallbackQuery.order('created_at', { ascending: false });
+                    }
+                    const { data: fallbackData, error: fallbackError } = await fallbackQuery;
+                    if (fallbackError) throw fallbackError;
+                    processData(fallbackData || []);
+                } else {
+                    throw error;
+                }
+            } else {
+                processData(data || []);
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Erro ao carregar dados. Verifique a base de dados.");
+            setData([]);
+        } finally {
+            setLoading(false);
         }
+    }
 
-        // Apply deleted_at filter to BOTH tables
-        if (showBin) {
-            query = query.not('deleted_at', 'is', null);
-        } else {
-            query = query.is('deleted_at', null);
+    function processData(rawData: any[]) {
+        let filtered = rawData;
+        if (search) {
+            const lowerSearch = search.toLowerCase();
+            filtered = filtered.filter(item =>
+                (item.name && item.name.toLowerCase().includes(lowerSearch)) ||
+                (item.product && item.product.toLowerCase().includes(lowerSearch)) ||
+                (item.category && item.category.toLowerCase().includes(lowerSearch))
+            );
         }
-
-        // Apply sorting
-        if (activeTab === "mercado") {
-            query = query.order('product', { ascending: true });
-        } else {
-            query = query.order('created_at', { ascending: false });
-        }
-
-        const { data, error } = await query;
-
-        if (error) console.error(error);
-        else setData(data || []);
-        setLoading(false);
+        setData(filtered);
     }
 
     useEffect(() => {
         fetchData();
-    }, [activeTab, showBin]);
+    }, [activeTab, statusFilter, search]);
 
-    const confirmDelete = async () => {
-        if (!itemToDelete) return;
-        try {
-            const table = activeTab === 'mercado' ? 'market_prices' : 'products';
-
-            if (deleteAction === 'hard' || showBin || activeTab === 'mercado') {
-                // Hard Delete
-                const { error } = await supabase
-                    .from(table)
-                    .delete()
-                    .eq('id', itemToDelete.id);
-                if (error) throw error;
-                toast.success("Eliminado permanentemente!");
-            } else {
-                // Soft Delete (Archive)
-                const { error } = await supabase
-                    .from(table)
-                    .update({ deleted_at: new Date().toISOString() })
-                    .eq('id', itemToDelete.id);
-                if (error) throw error;
-                toast.success("Item arquivado com sucesso!");
-            }
-            await fetchData();
-        } catch (error: any) {
-            toast.error("Erro ao eliminar: " + error.message);
-        } finally {
-            setShowDeleteConfirm(false);
-            setItemToDelete(null);
+    // Handlers
+    const handleSelectAll = (checked: boolean) => {
+        if (checked) {
+            setSelectedIds(data.map(item => item.id));
+        } else {
+            setSelectedIds([]);
         }
     };
 
-    const handleRestore = async (item: any) => {
-        try {
-            const { error } = await supabase
-                .from('products')
-                .update({ deleted_at: null })
-                .eq('id', item.id);
-
-            if (error) throw error;
-            toast.success("Produto restaurado com sucesso!");
-            await fetchData();
-        } catch (error: any) {
-            toast.error("Erro ao restaurar: " + error.message);
+    const handleSelectRow = (id: string, checked: boolean) => {
+        if (checked) {
+            setSelectedIds(prev => [...prev, id]);
+        } else {
+            setSelectedIds(prev => prev.filter(item => item !== id));
         }
     };
 
-    const handleEmptyBin = async () => {
+    const handleArchive = async (row: any) => {
+        const table = activeTab === 'mercado' ? 'market_prices' : 'products';
+        const newStatus = statusFilter === 'active' ? 'inactive' : 'active';
+
         try {
-            const { error } = await supabase
-                .from('products')
-                .delete()
-                .not('deleted_at', 'is', null);
-
-            if (error) throw error;
-            toast.success("Lixeira esvaziada!");
-            await fetchData();
-        } catch (error: any) {
-            toast.error("Erro ao esvaziar lixeira");
-        } finally {
-            setShowEmptyBinConfirm(false);
-        }
-    };
-
-    const confirmBulkDelete = async () => {
-        const previousData = [...data];
-        try {
-            // Optimistic update
-            setData(prev => prev.filter(item => !selectedIds.includes(item.id)));
-
-            const table = activeTab === 'mercado' ? 'market_prices' : 'products';
             const { error } = await supabase
                 .from(table)
-                .delete()
-                .in('id', selectedIds);
+                .update({ status: newStatus })
+                .eq('id', row.id);
 
-            if (error) throw error;
+            if (error) {
+                if (error.code === '42703') {
+                    toast.error("Funcionalidade de Arquivo requer actualização da base de dados (coluna 'status' em falta).");
+                } else {
+                    throw error;
+                }
+                return;
+            }
 
-            toast.success(`${selectedIds.length} ${activeTab === 'mercado' ? 'cotações' : 'produtos'} eliminados!`);
-            setSelectedIds([]);
-        } catch (error: any) {
-            setData(previousData);
-            toast.error("Erro na eliminação em massa: " + error.message);
-        } finally {
-            setShowBulkDeleteConfirm(false);
+            toast.success(newStatus === 'inactive' ? "Item arquivado" : "Item restaurado");
+            setData(prev => prev.filter(p => p.id !== row.id));
+        } catch (error) {
+            console.error(error);
+            toast.error("Erro ao actualizar estado");
         }
     };
 
     const handleDelete = (row: any) => {
         setItemToDelete(row);
         setShowDeleteConfirm(true);
+    };
+
+    const confirmDelete = async () => {
+        if (!itemToDelete) return;
+        const table = activeTab === 'mercado' ? 'market_prices' : 'products';
+
+        try {
+            if (statusFilter === 'deleted') {
+                // Hard Delete
+                const { error } = await supabase.from(table).delete().eq('id', itemToDelete.id);
+                if (error) throw error;
+                toast.success("Eliminado para sempre");
+                setData(prev => prev.filter(p => p.id !== itemToDelete.id));
+            } else {
+                // Move to Recycle Bin (status: deleted)
+                const { error } = await supabase.from(table).update({ status: 'deleted' }).eq('id', itemToDelete.id);
+                if (error) {
+                    if (error.code === '42703') {
+                        toast.error("Reciclagem requer actualização da base de dados (coluna 'status' em falta).");
+                    } else {
+                        throw error;
+                    }
+                } else {
+                    toast.success("Movido para reciclagem");
+                    setData(prev => prev.filter(p => p.id !== itemToDelete.id));
+                }
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Erro ao eliminar");
+        } finally {
+            setShowDeleteConfirm(false);
+            setItemToDelete(null);
+        }
+    };
+
+    const handleRestoreFromTrash = async (row: any) => {
+        const table = activeTab === 'mercado' ? 'market_prices' : 'products';
+        try {
+            const { error } = await supabase
+                .from(table)
+                .update({ status: 'active' })
+                .eq('id', row.id);
+
+            if (error) {
+                if (error.code === '42703') {
+                    toast.error("Restauro requer actualização da base de dados.");
+                } else {
+                    throw error;
+                }
+                return;
+            }
+
+            toast.success("Restaurado da reciclagem");
+            setData(prev => prev.filter(p => p.id !== row.id));
+        } catch (error) {
+            console.error(error);
+            toast.error("Erro ao restaurar");
+        }
+    };
+
+    const handleEmptyBin = async () => {
+        const table = activeTab === 'mercado' ? 'market_prices' : 'products';
+        try {
+            const { error } = await supabase.from(table).delete().eq('status', 'deleted');
+            if (error) {
+                if (error.code === '42703') {
+                    toast.error("Limpeza da reciclagem requer actualização da base de dados.");
+                } else {
+                    throw error;
+                }
+                return;
+            }
+            toast.success("Reciclagem esvaziada");
+            setData([]);
+        } catch (error) {
+            console.error(error);
+            toast.error("Erro ao esvaziar reciclagem");
+        }
+        setShowEmptyBinConfirm(false);
+    };
+
+    const handleBulkRestore = async () => {
+        if (selectedIds.length === 0) return;
+        const table = activeTab === 'mercado' ? 'market_prices' : 'products';
+
+        try {
+            const { error } = await supabase
+                .from(table)
+                .update({ status: 'active' })
+                .in('id', selectedIds);
+
+            if (error) {
+                if (error.code === '42703') {
+                    toast.error("Restauro em massa requer actualização da base de dados.");
+                } else {
+                    throw error;
+                }
+                return;
+            }
+
+            toast.success(`${selectedIds.length} itens restaurados`);
+            setData(prev => prev.filter(p => !selectedIds.includes(p.id)));
+            setSelectedIds([]);
+        } catch (error) {
+            console.error(error);
+            toast.error("Erro no restauro em massa");
+        }
+    };
+
+    const confirmBulkDelete = async () => {
+        const table = activeTab === 'mercado' ? 'market_prices' : 'products';
+        if (selectedIds.length === 0) return;
+
+        try {
+            if (statusFilter === 'deleted') {
+                // Hard Delete
+                const { error } = await supabase.from(table).delete().in('id', selectedIds);
+                if (error) throw error;
+                toast.success(`${selectedIds.length} itens eliminados permanentemente`);
+            } else {
+                // Soft Delete (move to recycling)
+                const { error } = await supabase.from(table).update({ status: 'deleted' }).in('id', selectedIds);
+                if (error) throw error;
+                toast.success(`${selectedIds.length} itens movidos para reciclagem`);
+            }
+            // Refresh
+            setData(prev => prev.filter(p => !selectedIds.includes(p.id)));
+            setSelectedIds([]);
+        } catch (error) {
+            console.error(error);
+            toast.error("Erro na eliminação em massa");
+        }
+        setShowBulkDeleteConfirm(false);
     };
 
     const handleEdit = (row: any) => {
@@ -215,17 +338,14 @@ export default function AdminProductsPage() {
                 </div>
 
                 <div className="flex flex-col md:flex-row items-center gap-3">
-                    {/* Filter (Active Tab) */}
+                    {/* Context Filter (Active Tab) */}
                     <select
                         value={activeTab}
                         onChange={(e) => {
                             const val = e.target.value as any;
                             setActiveTab(val);
                             if (val === 'mercado') {
-                                setShowBin(false);
                                 setViewMode('list');
-                            } else {
-                                setViewMode('grid');
                             }
                         }}
                         className="bg-white border border-slate-200 text-slate-600 text-xs font-bold uppercase tracking-wide rounded-lg px-4 py-2 outline-none focus:border-emerald-500 h-10 w-full md:w-32"
@@ -234,28 +354,91 @@ export default function AdminProductsPage() {
                         <option value="mercado">Cotações</option>
                     </select>
 
-                    {/* Status Filter (Archive) */}
+                    {/* Search Input */}
+                    <div className="relative w-72">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                        <Input
+                            placeholder="Buscar..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="pl-9 h-10 bg-white border-slate-200 text-sm"
+                        />
+                    </div>
+
+                    {/* Status Toggles */}
                     <div className="flex items-center bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
                         <button
-                            onClick={() => setShowBin(false)}
-                            className={`p-2 rounded-md transition-all ${!showBin ? 'bg-slate-100 text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                            onClick={() => setStatusFilter('active')}
+                            className={`p-2 rounded-md transition-all ${statusFilter === 'active' ? 'bg-slate-100 text-emerald-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                             title="Activos"
                         >
                             <List className="w-4 h-4" />
                         </button>
                         <button
-                            onClick={() => setShowBin(true)}
-                            className={`p-2 rounded-md transition-all ${showBin ? 'bg-amber-50 text-amber-600 shadow-sm' : 'text-slate-400 hover:text-amber-600'}`}
+                            onClick={() => setStatusFilter('archived')}
+                            className={`p-2 rounded-md transition-all ${statusFilter === 'archived' ? 'bg-amber-50 text-amber-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                             title="Arquivados"
                         >
                             <Archive className="w-4 h-4" />
+                        </button>
+                        <button
+                            onClick={() => setStatusFilter('deleted')}
+                            className={`p-2 rounded-md transition-all ${statusFilter === 'deleted' ? 'bg-rose-50 text-rose-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                            title="Lixeira"
+                        >
+                            <Trash2 className="w-4 h-4" />
+                        </button>
+                    </div>
+
+                    {/* Maintenance Menu */}
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <button className="p-2 rounded-lg bg-white border border-slate-200 text-slate-400 hover:text-slate-600 hover:border-slate-300 transition-all shadow-sm">
+                                <MoreVertical className="w-4 h-4" />
+                            </button>
+                        </PopoverTrigger>
+                        <PopoverContent align="end" className="w-56 p-1 bg-white border border-slate-200 shadow-lg rounded-md z-50">
+                            <div className="flex flex-col">
+                                <button
+                                    onClick={handleBulkRestore} // Assuming this restores all for simplicity or reuse handleRestoreAll
+                                    className="flex items-center gap-2 px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 w-full text-left rounded-sm font-medium transition-colors"
+                                >
+                                    <RotateCcw className="w-4 h-4" />
+                                    Restaurar Tudo
+                                </button>
+                                {statusFilter === 'deleted' && (
+                                    <button
+                                        onClick={() => setShowEmptyBinConfirm(true)}
+                                        className="flex items-center gap-2 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 w-full text-left rounded-sm font-medium transition-colors"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                        Esvaziar Lixeira
+                                    </button>
+                                )}
+                            </div>
+                        </PopoverContent>
+                    </Popover>
+
+                    {/* View Toggles */}
+                    <div className="flex items-center bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
+                        <button
+                            onClick={() => setViewMode('grid')}
+                            className={`p-2 rounded-md transition-all ${viewMode === 'grid' ? 'bg-slate-100 text-emerald-600' : 'text-slate-400 hover:text-slate-600'}`}
+                        >
+                            <LayoutGrid className="w-4 h-4" />
+                        </button>
+                        <button
+                            onClick={() => setViewMode('list')}
+                            className={`p-2 rounded-md transition-all ${viewMode === 'list' ? 'bg-slate-100 text-emerald-600' : 'text-slate-400 hover:text-slate-600'}`}
+                        >
+                            <List className="w-4 h-4" />
                         </button>
                     </div>
 
 
                     <Button
                         onClick={handleAdd}
-                        className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-widest text-xs h-10 px-6 rounded-lg gap-2"
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-widest text-[10px] h-10 px-4 rounded-lg gap-2"
                     >
                         <Plus className="w-4 h-4" />
                         {activeTab === "mercado" ? "Nova Cotação" : "Novo Item"}
@@ -263,58 +446,77 @@ export default function AdminProductsPage() {
                 </div>
             </div>
 
-            {/* Bin Actions */}
-            {showBin && (
-                <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-3">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            <Trash2 className="w-4 h-4 text-rose-600" />
-                            <span className="text-sm font-semibold text-slate-700">Lixeira Activada</span>
-                            <span className="text-xs text-slate-500">({data.length} itens)</span>
-                        </div>
-                        <button
-                            onClick={() => setShowEmptyBinConfirm(true)}
-                            className="px-3 py-1.5 text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 rounded-md border border-red-200 transition-all flex items-center gap-1.5"
-                        >
-                            <Trash2 className="w-3.5 h-3.5" />
-                            Esvaziar Lixeira
-                        </button>
-                    </div>
-                </div>
-            )}
-
             {viewMode === 'list' ? (
                 <AdminDataTable
                     title={activeTab === "mercado" ? "Cotações" : "Empresas"}
                     columns={activeTab === "mercado" ? marketColumns : productColumns}
                     data={data}
                     loading={loading}
-                    onAdd={handleAdd}
+                    hideSearch={true}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
+                    // Selection Props
                     selectedIds={selectedIds}
-                    onSelectRow={(id, selected) => {
-                        if (selected) setSelectedIds(prev => [...prev, id]);
-                        else setSelectedIds(prev => prev.filter(i => i !== id));
-                    }}
-                    onSelectAll={(all) => {
-                        if (all) {
-                            setSelectedIds(data.map(r => r.id));
-                        } else {
-                            setSelectedIds([]);
-                        }
-                    }}
+                    onSelectAll={handleSelectAll}
+                    onSelectRow={handleSelectRow}
+                    // Bulk Actions
                     bulkActions={
-                        <div className="flex items-center gap-2">
-                            <button
-                                onClick={() => setShowBulkDeleteConfirm(true)}
-                                className="p-2 hover:bg-white/10 rounded-full transition-colors text-white"
-                                title="Eliminar seleccionados"
+                        selectedIds.length > 0 && (statusFilter === 'archived' || statusFilter === 'deleted') ? (
+                            <Button
+                                onClick={handleBulkRestore}
+                                variant="outline"
+                                className="bg-white/10 text-white hover:bg-white/20 border-white/20 h-8 text-xs font-bold uppercase tracking-wider gap-2"
                             >
-                                <Trash2 className="w-5 h-5" />
-                            </button>
-                        </div>
+                                <Archive className="w-3.5 h-3.5" />
+                                Restaurar ({selectedIds.length})
+                            </Button>
+                        ) : null
                     }
+                    headerMenu={
+                        statusFilter === 'deleted' && data.length > 0 ? (
+                            <div className="flex flex-col">
+                                <button
+                                    onClick={() => setShowEmptyBinConfirm(true)}
+                                    className="flex items-center gap-2 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 w-full text-left rounded-sm font-medium transition-colors"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                    Esvaziar Reciclagem
+                                </button>
+                            </div>
+                        ) : statusFilter === 'archived' && data.length > 0 ? (
+                            <div className="flex flex-col">
+                                <button
+                                    onClick={() => setData(prev => prev.map(p => ({ ...p, status: 'active' })))} // Optimistic for now, should call a handler
+                                    className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 w-full text-left rounded-sm font-medium transition-colors"
+                                >
+                                    <Archive className="w-4 h-4" />
+                                    Repor Tudo
+                                </button>
+                            </div>
+                        ) : null
+                    }
+                    customActions={(row) => {
+                        if (statusFilter === 'deleted') {
+                            return (
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); handleRestoreFromTrash(row); }}
+                                    className="size-7 rounded text-slate-400 flex items-center justify-center hover:bg-emerald-50 hover:text-emerald-600 transition-all font-bold"
+                                    title="Restaurar"
+                                >
+                                    <RotateCcw className="w-3.5 h-3.5" />
+                                </button>
+                            );
+                        }
+                        return (
+                            <button
+                                onClick={(e) => { e.stopPropagation(); handleArchive(row); }}
+                                className={`size-7 rounded text-slate-400 flex items-center justify-center hover:bg-amber-50 hover:text-amber-600 transition-all font-bold`}
+                                title={statusFilter === 'archived' ? 'Desarquivar' : 'Arquivar'}
+                            >
+                                <Archive className="w-3.5 h-3.5" />
+                            </button>
+                        );
+                    }}
                 />
             ) : (
                 /* GRID VIEW */
@@ -366,16 +568,14 @@ export default function AdminProductsPage() {
 
                                     {/* Edit/Delete Overlay */}
                                     <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 p-1 rounded-lg shadow-sm">
-                                        {showBin ? (
-                                            <button onClick={() => handleRestore(item)} className="p-1.5 hover:bg-emerald-50 text-emerald-600 rounded" title="Restaurar de Arquivados">
-                                                <RotateCcw className="w-4 h-4" />
-                                            </button>
-                                        ) : (
-                                            <button onClick={() => { setDeleteAction('soft'); handleDelete(item); }} className="p-1.5 hover:bg-amber-50 text-amber-600 rounded" title="Arquivar">
-                                                <Archive className="w-4 h-4" />
-                                            </button>
-                                        )}
-                                        <button onClick={() => { setDeleteAction('hard'); handleDelete(item); }} className="p-1.5 hover:bg-rose-50 text-rose-600 rounded" title="Eliminar Permanentemente">
+                                        <button
+                                            onClick={() => statusFilter === 'deleted' ? handleRestoreFromTrash(item) : handleArchive(item)}
+                                            className={`p-1.5 rounded ${statusFilter === 'deleted' ? 'hover:bg-emerald-50 text-emerald-600' : 'hover:bg-amber-50 text-amber-600'}`}
+                                            title={statusFilter === 'deleted' ? "Restaurar" : statusFilter === 'archived' ? "Desarquivar" : "Arquivar"}
+                                        >
+                                            {statusFilter === 'deleted' ? <RotateCcw className="w-4 h-4" /> : <Archive className="w-4 h-4" />}
+                                        </button>
+                                        <button onClick={() => handleDelete(item)} className="p-1.5 hover:bg-rose-50 text-rose-600 rounded" title={statusFilter === 'deleted' ? "Eliminar Permanentemente" : "Mover para Lixeira"}>
                                             <Trash2 className="w-4 h-4" />
                                         </button>
                                     </div>
@@ -400,7 +600,7 @@ export default function AdminProductsPage() {
                                                     </span>
                                                     {item.unit && <span className="text-slate-400 font-medium text-[10px] uppercase">/ {item.unit}</span>}
                                                 </div>
-                                                {!showBin && activeTab !== 'mercado' && (
+                                                {statusFilter === 'active' && activeTab !== 'mercado' && (
                                                     <button onClick={() => handleEdit(item)} className="p-1.5 hover:bg-slate-100 text-slate-400 hover:text-emerald-600 rounded-full transition-colors" title="Editar">
                                                         <Pencil className="w-4 h-4" />
                                                     </button>
@@ -425,32 +625,9 @@ export default function AdminProductsPage() {
                                             </div>
                                         )}
                                     </div>
-
-                                    {/* Footer */}
-                                    {showBin && (
-                                        <div className="mt-auto pt-4 flex items-center justify-between border-t border-slate-50/50 mt-4">
-                                            <Button
-                                                onClick={() => handleRestore(item)}
-                                                variant="ghost"
-                                                className="text-[10px] font-bold uppercase text-emerald-600 hover:bg-emerald-50 ml-auto"
-                                            >
-                                                Restaurar Item
-                                            </Button>
-                                        </div>
-                                    )}
                                 </div>
                             </div>
                         ))}
-                        {/* Add New Card */}
-                        <button
-                            onClick={handleAdd}
-                            className="bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center p-6 hover:border-emerald-500 hover:bg-emerald-50/50 transition-all group min-h-[200px]"
-                        >
-                            <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                                <Plus className="w-6 h-6 text-emerald-500" />
-                            </div>
-                            <span className="font-bold text-slate-400 group-hover:text-emerald-600">Adicionar Novo</span>
-                        </button>
                     </div>
                 )
             )}
@@ -467,17 +644,17 @@ export default function AdminProductsPage() {
             )}
 
             <ConfirmationModal
-                key={showBin ? 'perm' : 'soft'}
+                key={statusFilter}
                 isOpen={showDeleteConfirm}
                 onClose={() => setShowDeleteConfirm(false)}
                 onConfirm={confirmDelete}
-                title={showBin || deleteAction === 'hard' ? "Eliminar Permanentemente" : "Arquivar Item"}
+                title={statusFilter === 'deleted' ? "Eliminar Permanentemente" : "Mover para Reciclagem"}
                 description={
-                    showBin || deleteAction === 'hard'
-                        ? `Tem a certeza que deseja eliminar PERMANENTEMENTE "${itemToDelete?.name || itemToDelete?.product || itemToDelete?.nome}"? Esta acção NÃO pode ser desfeita.`
-                        : `O item "${itemToDelete?.name || itemToDelete?.product || itemToDelete?.nome}" será movido para a lista de arquivados. Poderá restaurá-lo mais tarde.`
+                    statusFilter === 'deleted'
+                        ? `Tem a certeza que deseja eliminar PERMANENTEMENTE este item? Esta acção NÃO pode ser desfeita.`
+                        : `O item será movido para a reciclagem. Poderá restaurá-lo mais tarde.`
                 }
-                confirmLabel={showBin || deleteAction === 'hard' ? "Eliminar de vez" : "Arquivar Item"}
+                confirmLabel={statusFilter === 'deleted' ? "Eliminar de vez" : "Mover para Lixeira"}
                 variant="destructive"
             />
 

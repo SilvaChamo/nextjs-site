@@ -38,6 +38,62 @@ export default function AdminProfessionalsPage() {
     const [statusFilter, setStatusFilter] = useState("active"); // active, archived, deleted
     const [itemToDelete, setItemToDelete] = useState<any>(null);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+    const handleSelectAll = (checked: boolean) => {
+        if (checked) {
+            setSelectedIds(filteredData.map(item => item.id));
+        } else {
+            setSelectedIds([]);
+        }
+    };
+
+    const handleSelectRow = (id: string, checked: boolean) => {
+        if (checked) {
+            setSelectedIds(prev => [...prev, id]);
+        } else {
+            setSelectedIds(prev => prev.filter(item => item !== id));
+        }
+    };
+
+    const handleBulkRestore = async () => {
+        if (selectedIds.length === 0) return;
+
+        // Separate logical/db updates
+        // For simple MVP we iterate or use 'in' query
+        const realIds = selectedIds.filter(id => !id.startsWith('mock-'));
+
+        if (realIds.length > 0) {
+            const { error } = await supabase
+                .from('professionals')
+                .update({ status: 'active' })
+                .in('id', realIds);
+
+            if (error) {
+                toast.error("Erro ao restaurar itens seleccionados");
+                return;
+            }
+        }
+
+        setData(prev => prev.map(p => selectedIds.includes(p.id) ? { ...p, status: 'active' } : p));
+        toast.success(`${selectedIds.length} itens restaurados`);
+        setSelectedIds([]);
+    };
+
+    const handleRestoreAllArchived = async () => {
+        const { error } = await supabase
+            .from('professionals')
+            .update({ status: 'active' })
+            .eq('status', 'inactive'); // archived
+
+        if (error) {
+            toast.error("Erro ao restaurar tudo");
+            return;
+        }
+
+        setData(prev => prev.map(p => p.status === 'inactive' ? { ...p, status: 'active' } : p));
+        toast.success("Todos os itens restaurados");
+    };
 
     useEffect(() => {
         async function fetchData() {
@@ -58,8 +114,11 @@ export default function AdminProfessionalsPage() {
                     status: item.status || 'active' // Default to active if null/undefined
                 }));
 
-                // MOCK_DATA always comes first, then DB data
-                const combinedData = [...MOCK_DATA, ...normalizedDbData];
+                // Combine and sort alphabetically
+                const combinedData = [...MOCK_DATA, ...normalizedDbData].sort((a, b) =>
+                    a.name.localeCompare(b.name)
+                );
+
                 console.log('Profissionais carregados:', combinedData.length, 'total');
                 setData(combinedData);
             }
@@ -128,6 +187,25 @@ export default function AdminProfessionalsPage() {
 
         toast.success("Profissional restaurado da reciclagem");
         setData(prev => prev.map(p => p.id === row.id ? { ...p, status: 'active' } : p));
+    };
+
+    const handleEmptyTrash = async () => {
+        // 1. Identify items to delete (excluding mocks if you want to keep them or handle them differently)
+        // Actually, we can just delete all non-mock items with status 'deleted' from DB
+
+        const { error } = await supabase
+            .from('professionals')
+            .delete()
+            .eq('status', 'deleted');
+
+        if (error) {
+            toast.error("Erro ao esvaziar a reciclagem");
+            return;
+        }
+
+        // 2. Clear local state (remove all 'deleted' items)
+        setData(prev => prev.filter(p => p.status !== 'deleted'));
+        toast.success("Reciclagem esvaziada com sucesso");
     };
 
     const handleDelete = (row: any) => {
@@ -225,7 +303,7 @@ export default function AdminProfessionalsPage() {
                     </Select>
 
                     {/* Search Input */}
-                    <div className="relative w-48">
+                    <div className="relative w-72">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
                         <Input
                             placeholder="Buscar..."
@@ -247,10 +325,10 @@ export default function AdminProfessionalsPage() {
 
                         <button
                             onClick={() => setStatusFilter(statusFilter === 'deleted' ? 'active' : 'deleted')}
-                            className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-all text-xs font-bold uppercase tracking-widest ${statusFilter === 'deleted' ? 'bg-rose-100 text-rose-700' : 'text-slate-400 hover:text-slate-600'}`}
+                            className={`p-2 rounded-md transition-all ${statusFilter === 'deleted' ? 'bg-rose-100 text-rose-700' : 'text-slate-400 hover:text-slate-600'}`}
+                            title="Reciclagem"
                         >
                             <Trash2 className="w-4 h-4" />
-                            Reciclagem
                         </button>
                     </div>
 
@@ -287,9 +365,85 @@ export default function AdminProfessionalsPage() {
                     columns={columns}
                     data={filteredData}
                     loading={loading}
-                    onAdd={() => router.push('/admin/profissionais/novo')}
+                    hideSearch={true}
                     onEdit={(row) => router.push(`/admin/profissionais/${row.id}`)}
                     onDelete={handleDelete}
+                    // Selection Props
+                    selectedIds={selectedIds}
+                    onSelectAll={handleSelectAll}
+                    onSelectRow={handleSelectRow}
+                    // Bulk Actions
+                    bulkActions={
+                        selectedIds.length > 0 && (statusFilter === 'archived' || statusFilter === 'deleted') ? (
+                            <Button
+                                onClick={handleBulkRestore}
+                                variant="outline"
+                                className="bg-white/10 text-white hover:bg-white/20 border-white/20 h-8 text-xs font-bold uppercase tracking-wider gap-2"
+                            >
+                                <Archive className="w-3.5 h-3.5" />
+                                Restaurar ({selectedIds.length})
+                            </Button>
+                        ) : null
+                    }
+                    headerMenu={
+                        statusFilter === 'deleted' && filteredData.length > 0 ? (
+                            <div className="flex flex-col">
+                                <button
+                                    onClick={handleEmptyTrash}
+                                    className="flex items-center gap-2 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 w-full text-left rounded-sm font-medium transition-colors"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                    Esvaziar Reciclagem
+                                </button>
+                            </div>
+                        ) : statusFilter === 'archived' && filteredData.length > 0 ? (
+                            <div className="flex flex-col">
+                                <button
+                                    onClick={handleRestoreAllArchived}
+                                    className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 w-full text-left rounded-sm font-medium transition-colors"
+                                >
+                                    <Archive className="w-4 h-4" />
+                                    Repor Tudo
+                                </button>
+                            </div>
+                        ) : null
+                    }
+                    customActions={(row) => {
+                        if (statusFilter === 'deleted') {
+                            return (
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); handleRestoreFromTrash(row); }}
+                                    className="size-7 rounded text-slate-400 flex items-center justify-center hover:bg-emerald-50 hover:text-emerald-600 transition-all font-bold"
+                                    title="Restaurar"
+                                >
+                                    <Archive className="w-3.5 h-3.5" />
+                                </button>
+                            );
+                        }
+                        if (statusFilter === 'archived') {
+                            return (
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); handleArchive(row); }} // handleArchive toggles back to active
+                                    className="size-7 rounded text-slate-400 flex items-center justify-center hover:bg-emerald-50 hover:text-emerald-600 transition-all font-bold"
+                                    title="Restaurar"
+                                >
+                                    <Archive className="w-3.5 h-3.5" />
+                                </button>
+                            );
+                        }
+                        if (statusFilter === 'active') {
+                            return (
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); handleArchive(row); }}
+                                    className="size-7 rounded text-slate-400 flex items-center justify-center hover:bg-amber-50 hover:text-amber-600 transition-all font-bold"
+                                    title="Arquivar"
+                                >
+                                    <Archive className="w-3.5 h-3.5" />
+                                </button>
+                            );
+                        }
+                        return null;
+                    }}
                 />
             ) : (
                 /* GRID VIEW */
@@ -309,7 +463,18 @@ export default function AdminProfessionalsPage() {
                                 className="bg-white rounded-2xl border border-slate-100 hover:shadow-lg transition-all group relative overflow-hidden p-6 flex flex-col items-center text-center cursor-pointer"
                                 onClick={() => router.push(`/admin/profissionais/${item.id}`)}
                             >
-                                {/* Delete icon - top right, no background */}
+                                {/* Archive icon - top right (left of delete) */}
+                                {item.status !== 'deleted' && (
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); handleArchive(item); }}
+                                        className={`absolute top-4 right-12 p-1.5 transition-colors ${item.status === 'inactive' ? 'text-amber-500 bg-amber-50 rounded-full' : 'text-slate-300 hover:text-amber-500'}`}
+                                        title={item.status === 'inactive' ? "Restaurar" : "Arquivar"}
+                                    >
+                                        <Archive className="w-4 h-4" />
+                                    </button>
+                                )}
+
+                                {/* Delete icon - top right */}
                                 <button
                                     onClick={(e) => { e.stopPropagation(); handleDelete(item); }}
                                     className="absolute top-4 right-4 p-1.5 text-slate-300 hover:text-rose-500 transition-colors"

@@ -1,5 +1,5 @@
 
-import { FileText, Calendar, Link as LinkIcon, Download, ExternalLink, Trash2, RotateCcw, Pencil, AlertCircle } from "lucide-react";
+import { FileText, Calendar, Link as LinkIcon, Download, ExternalLink, Trash2, RotateCcw, Pencil, AlertCircle, Archive } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface DocumentCardProps {
@@ -14,6 +14,7 @@ interface DocumentCardProps {
     onRestore?: () => void;
     onEdit?: () => void;
     onDelete?: () => void;
+    onArchive?: () => void;
 }
 
 export function DocumentCard({
@@ -26,7 +27,8 @@ export function DocumentCard({
     isDeleted,
     onRestore,
     onEdit,
-    onDelete
+    onDelete,
+    onArchive
 }: DocumentCardProps) {
     return (
         <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-6 flex flex-col md:flex-row items-start md:items-center gap-6 hover:shadow-md transition-all group">
@@ -115,11 +117,20 @@ export function DocumentCard({
                             <Pencil className="w-5 h-5" />
                         </Button>
                         <Button
+                            onClick={onArchive}
+                            variant="ghost"
+                            size="icon"
+                            className="text-slate-400 hover:text-amber-600 hover:bg-amber-50"
+                            title="Arquivar"
+                        >
+                            <Archive className="w-5 h-5" />
+                        </Button>
+                        <Button
                             onClick={onDelete}
                             variant="ghost"
                             size="icon"
                             className="text-slate-400 hover:text-rose-600 hover:bg-rose-50"
-                            title="Arquivar"
+                            title="Eliminar"
                         >
                             <Trash2 className="w-5 h-5" />
                         </Button>

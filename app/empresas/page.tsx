@@ -58,7 +58,7 @@ export default function EmpresasPage() {
             filtered = filtered.filter(c => c.province === selectedProvince);
         }
         if (showFeaturedOnly) {
-            filtered = filtered.filter(c => c.is_featured);
+            filtered = filtered.filter(c => c.is_featured || c.plan === 'Parceiro' || c.plan === 'Partner');
         }
 
         setFilteredCompanies(filtered);
@@ -199,7 +199,7 @@ export default function EmpresasPage() {
                                     logoUrl: company.logo_url || "",
                                     type: company.type || "Empresa",
                                     image: company.banner_url || "",
-                                    isVerified: company.is_verified,
+                                    isVerified: company.is_verified || company.is_featured || company.plan === 'Parceiro' || company.plan === 'Partner',
                                     province: company.province,
                                     valueChain: company.value_chain
                                 }}

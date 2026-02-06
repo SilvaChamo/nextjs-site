@@ -1,22 +1,82 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { UserSidebar } from "@/components/UserSidebar";
-import { LogOut, Menu, ArrowLeftFromLine, ArrowRightFromLine } from "lucide-react";
+import { LogOut, Menu, ArrowLeftFromLine, ArrowRightFromLine, Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/utils/supabase/client";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { hasDashboardAccess, normalizePlanName } from "@/lib/plan-fields";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const router = useRouter();
+    const pathname = usePathname();
     const [isSidebarOpen, setSidebarOpen] = useState(true);
+    const [checkingAccess, setCheckingAccess] = useState(true);
+    const [hasAccess, setHasAccess] = useState(false);
+    const supabaseClient = createClient();
+
+    // Check plan access
+    useEffect(() => {
+        const checkAccess = async () => {
+            try {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+
+                if (!user) {
+                    router.push("/login");
+                    return;
+                }
+
+                // Check company plan
+                const { data: company } = await supabaseClient
+                    .from('companies')
+                    .select('plan')
+                    .eq('user_id', user.id)
+                    .single();
+
+                const plan = normalizePlanName(company?.plan);
+
+                if (hasDashboardAccess(plan)) {
+                    setHasAccess(true);
+                } else {
+                    // Redirect to plans page with message
+                    router.push("/planos?upgrade=required");
+                }
+            } catch (error) {
+                console.error("Error checking access:", error);
+                setHasAccess(true); // Allow access on error to prevent lockout
+            } finally {
+                setCheckingAccess(false);
+            }
+        };
+
+        checkAccess();
+    }, [pathname, router]);
 
     const handleLogout = async () => {
         await supabase.auth.signOut();
         router.push("/login");
     };
+
+    // Show loading while checking access
+    if (checkingAccess) {
+        return (
+            <div className="flex h-screen bg-slate-50 items-center justify-center">
+                <div className="text-center">
+                    <Loader2 className="w-10 h-10 animate-spin text-orange-500 mx-auto mb-4" />
+                    <p className="text-sm font-medium text-slate-500">A verificar acesso...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Don't render if no access (redirect happening)
+    if (!hasAccess) {
+        return null;
+    }
 
     return (
         <div className="flex h-screen bg-slate-50 font-sans overflow-hidden">

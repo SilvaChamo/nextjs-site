@@ -15,10 +15,14 @@ import {
     ChevronRight,
     Building2,
     GraduationCap,
-    Mail
+    Mail,
+    Presentation,
+    Lock
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "./ui/button";
+import { usePlanPermissions } from "@/hooks/usePlanPermissions";
+import { UpgradeModal } from "./UpgradeModal";
 
 // Exact items requested by user
 const navigation = [
@@ -28,6 +32,7 @@ const navigation = [
     { name: "Meu Conteúdo", href: "/usuario/dashboard/produtos", icon: Package },
     { name: "Contactos", href: "/usuario/dashboard/contactos", icon: MessageSquare },
     { name: "Análise", href: "/usuario/dashboard/analises", icon: BarChart3 },
+    { name: "Apresentações", href: "/usuario/dashboard/apresentacoes", icon: Presentation, feature: "presentations" },
     { name: "Cursos", href: "/usuario/dashboard/formacao", icon: GraduationCap },
 ];
 
@@ -39,8 +44,17 @@ interface UserSidebarProps {
 export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
     const pathname = usePathname();
     const router = useRouter();
-    const [plan] = useState<"basic" | "ouro" | "premium">("basic");
     const [user, setUser] = useState<any>(null);
+    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+    const [requestedFeature, setRequestedFeature] = useState("");
+
+    // Plan permissions
+    const {
+        planDisplayName,
+        canPresentations,
+        loading: planLoading
+    } = usePlanPermissions();
+
 
     // Create Supabase client
     const supabase = createClient();
@@ -64,6 +78,14 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
 
     return (
         <aside className="w-full h-full bg-emerald-950 flex flex-col text-slate-300 shrink-0 transition-all duration-300">
+            {/* Upgrade Modal */}
+            <UpgradeModal
+                isOpen={showUpgradeModal}
+                onClose={() => setShowUpgradeModal(false)}
+                fieldLabel={requestedFeature}
+                requiredPlan="Business Vendedor"
+            />
+
             {/* 1. Header Area with Dashboard Title */}
             <div className={`h-16 flex items-center ${isCollapsed ? 'justify-center px-2' : 'px-6'} border-b border-emerald-900 transition-all`}>
                 <Link href="/usuario/dashboard" className={`flex items-center ${isCollapsed ? 'justify-center w-10 h-10 p-0' : 'w-full gap-3 px-4 py-3'} bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white transition-all group rounded-md shadow-lg shadow-orange-500/20`}>
@@ -87,9 +109,17 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
                             <p className="text-sm font-bold text-white truncate leading-tight">
                                 {user?.user_metadata?.full_name || "Usuário"}
                             </p>
-                            <p className="text-[10px] text-emerald-400 truncate leading-tight mt-0.5 font-medium">
-                                {user?.email}
-                            </p>
+                            <div className="flex items-center gap-1.5 mt-0.5">
+                                <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-sm uppercase tracking-wider ${planDisplayName === 'Gratuito' ? 'bg-slate-700 text-slate-400' :
+                                        planDisplayName === 'Parceiro' ? 'bg-emerald-500 text-emerald-950' :
+                                            'bg-orange-500 text-white'
+                                    }`}>
+                                    {planDisplayName}
+                                </span>
+                                <p className="text-[10px] text-emerald-400 truncate leading-tight font-medium">
+                                    {user?.email}
+                                </p>
+                            </div>
                         </div>
                     )}
                 </div>
@@ -120,6 +150,35 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
                 {!isCollapsed && <p className="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Menu Principal</p>}
                 {navigation.map((item) => {
                     const isActive = pathname === item.href;
+                    const isLocked = item.feature === "presentations" && !canPresentations && !planLoading;
+
+                    if (isLocked) {
+                        return (
+                            <button
+                                key={item.href}
+                                onClick={() => {
+                                    setRequestedFeature(item.name);
+                                    setShowUpgradeModal(true);
+                                }}
+                                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group w-full text-left text-slate-500 hover:bg-white/5 ${isCollapsed ? 'justify-center' : ''}`}
+                                title={isCollapsed ? `${item.name} (Bloqueado)` : undefined}
+                            >
+                                <item.icon className="w-5 h-5 text-slate-600" />
+                                {!isCollapsed && (
+                                    <div className="flex items-center justify-between flex-1">
+                                        <span>{item.name}</span>
+                                        <Lock className="w-3.5 h-3.5 text-orange-500" />
+                                    </div>
+                                )}
+                                {isCollapsed && (
+                                    <div className="absolute -top-1 -right-1 bg-orange-500 rounded-full p-0.5">
+                                        <Lock className="w-2 h-2 text-white" />
+                                    </div>
+                                )}
+                            </button>
+                        );
+                    }
+
                     return (
                         <Link
                             key={item.href}

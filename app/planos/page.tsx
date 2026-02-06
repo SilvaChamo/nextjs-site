@@ -7,7 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 export default function PricingPage() {
-    const [isAnnual, setIsAnnual] = useState(true);
+    const [isAnnual, setIsAnnual] = useState(false);
 
     const plans = [
         {
@@ -204,7 +204,7 @@ export default function PricingPage() {
                                     {/* Minimalist Bottom Button */}
                                     <div className="mt-auto flex justify-start">
                                         <Link
-                                            href={`/checkout?plan=${plan.name}&price=${plan.price}&period=${plan.period || ''}`}
+                                            href={`/checkout/registro?plan=${encodeURIComponent(plan.name)}&price=${encodeURIComponent(plan.price)}&period=${encodeURIComponent(plan.period || '')}`}
                                             className="w-fit cursor-pointer"
                                         >
                                             <Button
@@ -215,7 +215,7 @@ export default function PricingPage() {
                                                         : 'bg-slate-800 text-white'
                                                     }`}`}
                                             >
-                                                {plan.cta}
+                                                {plan.name === "Gratuito" ? "Activar Grátis" : plan.cta}
                                             </Button>
                                         </Link>
                                     </div>

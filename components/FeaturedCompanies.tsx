@@ -23,7 +23,7 @@ export function FeaturedCompanies() {
                 const { data, error } = await supabase
                     .from('companies')
                     .select('*')
-                    .eq('is_featured', true)
+                    .or('is_featured.eq.true,plan.eq.Parceiro,plan.eq.Partner')
                     .order('created_at', { ascending: false });
 
                 if (error) throw error;

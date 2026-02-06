@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
+import { canUseSMSNotifications, normalizePlanName } from "@/lib/plan-fields";
 
 // We use the service role key to bypass RLS and fetch all subcribed users
 export async function POST(request: Request) {
@@ -15,10 +16,27 @@ export async function POST(request: Request) {
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
     try {
-        const { product, price, location, type = 'market', variation = null } = await request.json();
+        const { product, price, location, type = 'market', variation = null, companyId = null } = await request.json();
 
         if (!product || !price) {
             return NextResponse.json({ error: "Dados incompletos" }, { status: 400 });
+        }
+
+        // Check if company has SMS feature (Premium+ required for company products)
+        if (type === 'company' && companyId) {
+            const { data: company } = await supabaseAdmin
+                .from('companies')
+                .select('plan')
+                .eq('id', companyId)
+                .single();
+
+            const plan = normalizePlanName(company?.plan);
+            if (!canUseSMSNotifications(plan)) {
+                return NextResponse.json({
+                    error: "Recurso SMS requer plano Premium ou superior",
+                    upgrade_required: true
+                }, { status: 403 });
+            }
         }
 
         // 1. Fetch subscribers who have SMS enabled

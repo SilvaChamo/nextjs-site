@@ -1,16 +1,29 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Package, MapPin, Users } from "lucide-react";
+import { Package, MapPin, Users, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/client";
 import { User } from "@supabase/supabase-js";
+import { usePlanPermissions } from "@/hooks/usePlanPermissions";
+import { UpgradeModal } from "@/components/UpgradeModal";
 
 export default function MeuConteudoPage() {
     const supabase = createClient();
     const [activeTab, setActiveTab] = useState<"produtos" | "propriedades" | "conexoes">("produtos");
     const [user, setUser] = useState<User | null>(null);
     const [companyId, setCompanyId] = useState<string | null>(null);
+    const [productsThisMonth, setProductsThisMonth] = useState(0);
+    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
+    // Plan permissions
+    const {
+        productLimit,
+        canCreateNewProduct,
+        remainingProducts,
+        planDisplayName,
+        loading: planLoading
+    } = usePlanPermissions();
 
     useEffect(() => {
         const getUser = async () => {
@@ -40,6 +53,8 @@ export default function MeuConteudoPage() {
 
     const fetchProducts = async () => {
         if (!user) return;
+
+        // Fetch all products
         const { data, error } = await supabase
             .from('products')
             .select('*')
@@ -47,6 +62,19 @@ export default function MeuConteudoPage() {
             .order('created_at', { ascending: false });
 
         if (data) setProducts(data);
+
+        // Count products created this month
+        const startOfMonth = new Date();
+        startOfMonth.setDate(1);
+        startOfMonth.setHours(0, 0, 0, 0);
+
+        const { count } = await supabase
+            .from('products')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', user.id)
+            .gte('created_at', startOfMonth.toISOString());
+
+        setProductsThisMonth(count || 0);
 
         // Also fetch company_id
         const { data: companyData } = await supabase
@@ -56,6 +84,14 @@ export default function MeuConteudoPage() {
             .single();
 
         if (companyData) setCompanyId(companyData.id);
+    };
+
+    const handleAddProductClick = () => {
+        if (!canCreateNewProduct(productsThisMonth)) {
+            setShowUpgradeModal(true);
+            return;
+        }
+        setIsAddingProduct(true);
     };
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -136,18 +172,44 @@ export default function MeuConteudoPage() {
 
     return (
         <div className="space-y-6">
+            {/* Upgrade Modal */}
+            <UpgradeModal
+                isOpen={showUpgradeModal}
+                onClose={() => setShowUpgradeModal(false)}
+                fieldLabel="Novos Produtos"
+                requiredPlan="Premium"
+            />
+
             <div className="flex items-center justify-between mb-8">
                 <div>
                     <h2 className="text-3xl font-[900] tracking-tight text-[#3a3f47]">Meu Conteúdo</h2>
                     <p className="text-slate-500">Gerencie seus produtos, propriedades e conexões.</p>
                 </div>
                 {activeTab === "produtos" && (
-                    <Button
-                        onClick={() => setIsAddingProduct(true)}
-                        className="px-6 py-2 rounded-md bg-emerald-600 hover:bg-orange-500 text-white font-bold shadow-md transition-all hover:scale-105"
-                    >
-                        + Novo Produto
-                    </Button>
+                    <div className="flex items-center gap-3">
+                        {/* Product limit badge */}
+                        <div className="text-right">
+                            <p className="text-xs font-bold text-slate-500">Limite mensal</p>
+                            <p className="text-sm font-black text-slate-700">
+                                {productsThisMonth}/{productLimit === Infinity ? '∞' : productLimit}
+                            </p>
+                        </div>
+                        <Button
+                            onClick={handleAddProductClick}
+                            disabled={!canCreateNewProduct(productsThisMonth)}
+                            className={`px-6 py-2 rounded-md font-bold shadow-md transition-all hover:scale-105 ${canCreateNewProduct(productsThisMonth)
+                                ? 'bg-emerald-600 hover:bg-orange-500 text-white'
+                                : 'bg-slate-200 text-slate-500 cursor-not-allowed hover:scale-100'
+                                }`}
+                        >
+                            {canCreateNewProduct(productsThisMonth) ? '+ Novo Produto' : (
+                                <span className="flex items-center gap-2">
+                                    <Lock className="w-4 h-4" />
+                                    Limite Atingido
+                                </span>
+                            )}
+                        </Button>
+                    </div>
                 )}
             </div>
 
@@ -242,10 +304,10 @@ export default function MeuConteudoPage() {
                                             <p className="text-sm max-w-xs mx-auto mt-1">Comece a adicionar seus produtos para que apareçam no mercado.</p>
                                         </div>
                                         <Button
-                                            onClick={() => setIsAddingProduct(true)}
+                                            onClick={handleAddProductClick}
                                             variant="outline" className="mt-4 border-slate-300 hover:bg-white hover:text-orange-600 hover:border-orange-200"
                                         >
-                                            Adicionar Primeiro Produto
+                                            {canCreateNewProduct(productsThisMonth) ? 'Adicionar Primeiro Produto' : 'Fazer Upgrade'}
                                         </Button>
                                     </div>
                                 ) : (

@@ -1,12 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Building2, ArrowRight } from "lucide-react";
+import { Building2, ArrowRight, Lock, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { MOZ_DATA, SECTORS, VALUE_CHAINS } from "@/lib/agro-data";
+import { usePlanPermissions } from "@/hooks/usePlanPermissions";
+import { UpgradeModal, LockedFieldOverlay, PlanFieldWrapper } from "@/components/UpgradeModal";
+import { getRequiredPlan, type PlanType } from "@/lib/plan-fields";
 
 export default function EmpresaPage() {
     const supabase = createClient();
@@ -20,6 +23,22 @@ export default function EmpresaPage() {
     const [bannerError, setBannerError] = useState<string | null>(null);
     const [companyId, setCompanyId] = useState<string | null>(null);
     const [products, setProducts] = useState<any[]>([]);
+
+    // Plan permissions
+    const { canEdit, getRequiredPlanForField, plan, planDisplayName, loading: planLoading } = usePlanPermissions();
+    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+    const [lockedFieldLabel, setLockedFieldLabel] = useState("");
+    const [lockedFieldPlan, setLockedFieldPlan] = useState<PlanType>("Premium");
+
+    // Handle click on locked field
+    const handleLockedFieldClick = (fieldName: string, label: string) => {
+        const required = getRequiredPlanForField(fieldName);
+        if (required) {
+            setLockedFieldLabel(label);
+            setLockedFieldPlan(required);
+            setShowUpgradeModal(true);
+        }
+    };
 
     const [companyForm, setCompanyForm] = useState({
         name: "",
@@ -425,32 +444,62 @@ export default function EmpresaPage() {
                                 {/* Bottom Section: Remaining Fields Grid */}
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
                                     <div className="space-y-3">
-                                        <input
-                                            className="w-full border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-600 font-sans text-sm font-semibold disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300"
-                                            value={companyForm.nuit}
-                                            onChange={e => setCompanyForm({ ...companyForm, nuit: e.target.value })}
-                                            disabled={!isEditingCompany}
-                                            placeholder="NUIT (Número Unificado de Imposto)"
-                                        />
-                                        <input
-                                            className="w-full border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-600 font-sans text-sm font-semibold disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300"
-                                            value={companyForm.email}
-                                            onChange={e => setCompanyForm({ ...companyForm, email: e.target.value })}
-                                            disabled={!isEditingCompany}
-                                            placeholder="Email Institucional / de Contacto"
-                                        />
+                                        {/* NUIT - Premium */}
+                                        <PlanFieldWrapper
+                                            fieldName="nuit"
+                                            fieldLabel="NUIT"
+                                            canEdit={canEdit('nuit')}
+                                            requiredPlan={getRequiredPlanForField('nuit')}
+                                            onLockedClick={handleLockedFieldClick}
+                                        >
+                                            <input
+                                                className="w-full border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-600 font-sans text-sm font-semibold disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300"
+                                                value={companyForm.nuit}
+                                                onChange={e => setCompanyForm({ ...companyForm, nuit: e.target.value })}
+                                                disabled={!isEditingCompany || !canEdit('nuit')}
+                                                placeholder="NUIT (Número Unificado de Imposto)"
+                                            />
+                                        </PlanFieldWrapper>
+
+                                        {/* Email - Premium */}
+                                        <PlanFieldWrapper
+                                            fieldName="email"
+                                            fieldLabel="Email Corporativo"
+                                            canEdit={canEdit('email')}
+                                            requiredPlan={getRequiredPlanForField('email')}
+                                            onLockedClick={handleLockedFieldClick}
+                                        >
+                                            <input
+                                                className="w-full border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-600 font-sans text-sm font-semibold disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300"
+                                                value={companyForm.email}
+                                                onChange={e => setCompanyForm({ ...companyForm, email: e.target.value })}
+                                                disabled={!isEditingCompany || !canEdit('email')}
+                                                placeholder="Email Institucional / de Contacto"
+                                            />
+                                        </PlanFieldWrapper>
                                     </div>
 
                                     <div className="space-y-3">
-                                        <select
-                                            className="w-full border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-600 font-sans text-sm font-semibold disabled:opacity-100 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300 disabled:appearance-none pr-8"
-                                            value={companyForm.value_chain}
-                                            onChange={e => setCompanyForm({ ...companyForm, value_chain: e.target.value })}
-                                            disabled={!isEditingCompany}
+                                        {/* Value Chain - Business Vendedor */}
+                                        <PlanFieldWrapper
+                                            fieldName="value_chain"
+                                            fieldLabel="Cadeia de Valor"
+                                            canEdit={canEdit('value_chain')}
+                                            requiredPlan={getRequiredPlanForField('value_chain')}
+                                            onLockedClick={handleLockedFieldClick}
                                         >
-                                            <option value="">Cadeia de valor</option>
-                                            {VALUE_CHAINS.map(vc => <option key={vc} value={vc}>{vc}</option>)}
-                                        </select>
+                                            <select
+                                                className="w-full border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-600 font-sans text-sm font-semibold disabled:opacity-100 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300 disabled:appearance-none pr-8"
+                                                value={companyForm.value_chain}
+                                                onChange={e => setCompanyForm({ ...companyForm, value_chain: e.target.value })}
+                                                disabled={!isEditingCompany || !canEdit('value_chain')}
+                                            >
+                                                <option value="">Cadeia de valor</option>
+                                                {VALUE_CHAINS.map(vc => <option key={vc} value={vc}>{vc}</option>)}
+                                            </select>
+                                        </PlanFieldWrapper>
+
+                                        {/* Sector - Basic (no wrapper needed) */}
                                         <div className="relative">
                                             <select
                                                 className="w-full border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-600 font-sans text-sm font-semibold disabled:opacity-100 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300 disabled:appearance-none pr-8"
@@ -477,6 +526,7 @@ export default function EmpresaPage() {
                                     </div>
 
                                     <div className="space-y-3">
+                                        {/* Province - Basic (no wrapper needed) */}
                                         <select
                                             className="w-full border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-600 font-sans text-sm font-semibold disabled:opacity-100 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300 disabled:appearance-none pr-8"
                                             value={companyForm.province}
@@ -486,21 +536,31 @@ export default function EmpresaPage() {
                                             <option value="">Província</option>
                                             {Object.keys(MOZ_DATA).map(p => <option key={p} value={p}>{p}</option>)}
                                         </select>
-                                        <select
-                                            className="w-full border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-600 font-sans text-sm font-semibold disabled:opacity-100 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300 disabled:appearance-none pr-8"
-                                            value={companyForm.district}
-                                            onChange={e => setCompanyForm({ ...companyForm, district: e.target.value })}
-                                            disabled={!companyForm.province || !isEditingCompany}
+
+                                        {/* District - Premium */}
+                                        <PlanFieldWrapper
+                                            fieldName="district"
+                                            fieldLabel="Distrito"
+                                            canEdit={canEdit('district')}
+                                            requiredPlan={getRequiredPlanForField('district')}
+                                            onLockedClick={handleLockedFieldClick}
                                         >
-                                            <option value="">Distrito</option>
-                                            {companyForm.province && MOZ_DATA[companyForm.province]?.map(d => <option key={d} value={d}>{d}</option>)}
-                                        </select>
+                                            <select
+                                                className="w-full border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-slate-600 font-sans text-sm font-semibold disabled:opacity-100 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300 disabled:appearance-none pr-8"
+                                                value={companyForm.district}
+                                                onChange={e => setCompanyForm({ ...companyForm, district: e.target.value })}
+                                                disabled={!companyForm.province || !isEditingCompany || !canEdit('district')}
+                                            >
+                                                <option value="">Distrito</option>
+                                                {companyForm.province && MOZ_DATA[companyForm.province]?.map(d => <option key={d} value={d}>{d}</option>)}
+                                            </select>
+                                        </PlanFieldWrapper>
                                     </div>
                                 </div>
 
                                 {/* Two-Column Bio and MVV Section */}
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-                                    {/* Left Column: Who We Are */}
+                                    {/* Left Column: Who We Are - Basic (no wrapper) */}
                                     <div className="h-full flex flex-col">
                                         <textarea
                                             className="w-full flex-1 min-h-[350px] border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-sm font-sans font-semibold leading-relaxed resize-none disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-300 text-slate-600 overflow-hidden"
@@ -512,89 +572,126 @@ export default function EmpresaPage() {
                                         />
                                     </div>
 
-                                    {/* Right Column: Mission, Vision, Values (Vertical) */}
+                                    {/* Right Column: Mission, Vision, Values (Premium) */}
                                     <div className="space-y-6 h-full flex flex-col">
-                                        <div className="flex-1 flex flex-col">
-                                            <textarea
-                                                className="w-full flex-1 min-h-[100px] border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-sm font-sans font-semibold leading-relaxed resize-none disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-200 text-slate-600 overflow-hidden"
-                                                value={companyForm.mission}
-                                                onInput={(e: any) => autoResize(e.target)}
-                                                onChange={e => setCompanyForm({ ...companyForm, mission: e.target.value })}
-                                                disabled={!isEditingCompany}
-                                                placeholder="MISSÃO: O propósito fundamental da sua existência..."
-                                            />
-                                        </div>
-                                        <div className="flex-1 flex flex-col">
-                                            <textarea
-                                                className="w-full flex-1 min-h-[100px] border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-sm font-sans font-semibold leading-relaxed resize-none disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-200 text-slate-600 overflow-hidden"
-                                                value={companyForm.vision}
-                                                onInput={(e: any) => autoResize(e.target)}
-                                                onChange={e => setCompanyForm({ ...companyForm, vision: e.target.value })}
-                                                disabled={!isEditingCompany}
-                                                placeholder="VISÃO: Onde a empresa pretende chegar nos próximos anos..."
-                                            />
-                                        </div>
-                                        <div className="flex-1 flex flex-col">
-                                            <textarea
-                                                className="w-full flex-1 min-h-[100px] border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-sm font-sans font-semibold leading-relaxed resize-none disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-200 text-slate-600 overflow-hidden"
-                                                value={companyForm.values}
-                                                onInput={(e: any) => autoResize(e.target)}
-                                                onChange={e => setCompanyForm({ ...companyForm, values: e.target.value })}
-                                                disabled={!isEditingCompany}
-                                                placeholder="VALORES: Princípios fundamentais (ex: Ética, Inovação, Qualidade)..."
-                                            />
-                                        </div>
+                                        {/* Mission - Premium */}
+                                        <PlanFieldWrapper
+                                            fieldName="mission"
+                                            fieldLabel="Missão"
+                                            canEdit={canEdit('mission')}
+                                            requiredPlan={getRequiredPlanForField('mission')}
+                                            onLockedClick={handleLockedFieldClick}
+                                        >
+                                            <div className="flex-1 flex flex-col">
+                                                <textarea
+                                                    className="w-full flex-1 min-h-[100px] border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-sm font-sans font-semibold leading-relaxed resize-none disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-200 text-slate-600 overflow-hidden"
+                                                    value={companyForm.mission}
+                                                    onInput={(e: any) => autoResize(e.target)}
+                                                    onChange={e => setCompanyForm({ ...companyForm, mission: e.target.value })}
+                                                    disabled={!isEditingCompany || !canEdit('mission')}
+                                                    placeholder="MISSÃO: O propósito fundamental da sua existência..."
+                                                />
+                                            </div>
+                                        </PlanFieldWrapper>
+
+                                        {/* Vision - Premium */}
+                                        <PlanFieldWrapper
+                                            fieldName="vision"
+                                            fieldLabel="Visão"
+                                            canEdit={canEdit('vision')}
+                                            requiredPlan={getRequiredPlanForField('vision')}
+                                            onLockedClick={handleLockedFieldClick}
+                                        >
+                                            <div className="flex-1 flex flex-col">
+                                                <textarea
+                                                    className="w-full flex-1 min-h-[100px] border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-sm font-sans font-semibold leading-relaxed resize-none disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-200 text-slate-600 overflow-hidden"
+                                                    value={companyForm.vision}
+                                                    onInput={(e: any) => autoResize(e.target)}
+                                                    onChange={e => setCompanyForm({ ...companyForm, vision: e.target.value })}
+                                                    disabled={!isEditingCompany || !canEdit('vision')}
+                                                    placeholder="VISÃO: Onde a empresa pretende chegar nos próximos anos..."
+                                                />
+                                            </div>
+                                        </PlanFieldWrapper>
+
+                                        {/* Values - Premium */}
+                                        <PlanFieldWrapper
+                                            fieldName="values"
+                                            fieldLabel="Valores"
+                                            canEdit={canEdit('values')}
+                                            requiredPlan={getRequiredPlanForField('values')}
+                                            onLockedClick={handleLockedFieldClick}
+                                        >
+                                            <div className="flex-1 flex flex-col">
+                                                <textarea
+                                                    className="w-full flex-1 min-h-[100px] border border-slate-200 bg-slate-50 p-[10px] rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-sm font-sans font-semibold leading-relaxed resize-none disabled:opacity-75 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-slate-200 text-slate-600 overflow-hidden"
+                                                    value={companyForm.values}
+                                                    onInput={(e: any) => autoResize(e.target)}
+                                                    onChange={e => setCompanyForm({ ...companyForm, values: e.target.value })}
+                                                    disabled={!isEditingCompany || !canEdit('values')}
+                                                    placeholder="VALORES: Princípios fundamentais (ex: Ética, Inovação, Qualidade)..."
+                                                />
+                                            </div>
+                                        </PlanFieldWrapper>
                                     </div>
                                 </div>
 
-                                {/* Services Management */}
-                                <div className="space-y-4 pt-4 border-t border-slate-100">
-                                    <div className="flex items-center justify-between">
-                                        <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Portfólio de Serviços</h4>
-                                        {isEditingCompany && (
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={() => setCompanyForm({ ...companyForm, services: [...companyForm.services, ""] })}
-                                                className="text-emerald-600 text-[10px] font-black uppercase tracking-widest hover:bg-emerald-50"
-                                            >
-                                                + Adicionar Serviço
-                                            </Button>
-                                        )}
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                                        {companyForm.services.length > 0 ? (
-                                            companyForm.services.map((service, index) => (
-                                                <div key={index} className="flex items-center gap-2 group">
-                                                    <input
-                                                        className="flex-1 border border-slate-200 bg-slate-50 p-2 rounded-lg text-xs font-bold text-slate-600 focus:ring-2 focus:ring-emerald-500 outline-none transition-all disabled:opacity-100 disabled:cursor-default disabled:bg-transparent disabled:border-transparent"
-                                                        value={service}
-                                                        onChange={e => {
-                                                            const newServices = [...companyForm.services];
-                                                            newServices[index] = e.target.value;
-                                                            setCompanyForm({ ...companyForm, services: newServices });
-                                                        }}
-                                                        disabled={!isEditingCompany}
-                                                        placeholder="Ex: Consultoria Técnica"
-                                                    />
-                                                    {isEditingCompany && (
-                                                        <button
-                                                            onClick={() => {
-                                                                const newServices = companyForm.services.filter((_, i) => i !== index);
+                                {/* Services Management - Premium */}
+                                <PlanFieldWrapper
+                                    fieldName="services"
+                                    fieldLabel="Serviços"
+                                    canEdit={canEdit('services')}
+                                    requiredPlan={getRequiredPlanForField('services')}
+                                    onLockedClick={handleLockedFieldClick}
+                                >
+                                    <div className="space-y-4 pt-4 border-t border-slate-100">
+                                        <div className="flex items-center justify-between">
+                                            <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Portfólio de Serviços</h4>
+                                            {isEditingCompany && canEdit('services') && (
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() => setCompanyForm({ ...companyForm, services: [...companyForm.services, ""] })}
+                                                    className="text-emerald-600 text-[10px] font-black uppercase tracking-widest hover:bg-emerald-50"
+                                                >
+                                                    + Adicionar Serviço
+                                                </Button>
+                                            )}
+                                        </div>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                                            {companyForm.services.length > 0 ? (
+                                                companyForm.services.map((service, index) => (
+                                                    <div key={index} className="flex items-center gap-2 group">
+                                                        <input
+                                                            className="flex-1 border border-slate-200 bg-slate-50 p-2 rounded-lg text-xs font-bold text-slate-600 focus:ring-2 focus:ring-emerald-500 outline-none transition-all disabled:opacity-100 disabled:cursor-default disabled:bg-transparent disabled:border-transparent"
+                                                            value={service}
+                                                            onChange={e => {
+                                                                const newServices = [...companyForm.services];
+                                                                newServices[index] = e.target.value;
                                                                 setCompanyForm({ ...companyForm, services: newServices });
                                                             }}
-                                                            className="p-1.5 text-slate-400 hover:text-red-500 bg-slate-100 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
-                                                        >
-                                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" /></svg>
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            ))
-                                        ) : (
-                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest col-span-full py-4 text-center border border-dashed border-slate-200 rounded-xl">Nenhum serviço cadastrado.</p>
-                                        )}
+                                                            disabled={!isEditingCompany || !canEdit('services')}
+                                                            placeholder="Ex: Consultoria Técnica"
+                                                        />
+                                                        {isEditingCompany && canEdit('services') && (
+                                                            <button
+                                                                onClick={() => {
+                                                                    const newServices = companyForm.services.filter((_, i) => i !== index);
+                                                                    setCompanyForm({ ...companyForm, services: newServices });
+                                                                }}
+                                                                className="p-1.5 text-slate-400 hover:text-red-500 bg-slate-100 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
+                                                            >
+                                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" /></svg>
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest col-span-full py-4 text-center border border-dashed border-slate-200 rounded-xl">Nenhum serviço cadastrado.</p>
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
+                                </PlanFieldWrapper>
 
                                 {/* Products Management */}
                                 <div className="space-y-4 pt-4 border-t border-slate-100">
@@ -670,6 +767,33 @@ export default function EmpresaPage() {
                     </div>
                 )}
             </div>
+
+            {/* Plan Banner */}
+            <div className="mt-6 bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl border border-orange-100 p-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                        <Crown className="w-5 h-5 text-orange-600" />
+                    </div>
+                    <div>
+                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Seu Plano</p>
+                        <p className="text-lg font-black text-slate-800">{planDisplayName}</p>
+                    </div>
+                </div>
+                <Link href="/planos">
+                    <Button variant="outline" className="border-orange-200 text-orange-600 hover:bg-orange-100 font-bold text-xs uppercase tracking-wider gap-2">
+                        <ArrowRight className="w-4 h-4" />
+                        Ver Planos
+                    </Button>
+                </Link>
+            </div>
+
+            {/* Upgrade Modal */}
+            <UpgradeModal
+                isOpen={showUpgradeModal}
+                onClose={() => setShowUpgradeModal(false)}
+                fieldLabel={lockedFieldLabel}
+                requiredPlan={lockedFieldPlan}
+            />
         </div>
     );
 }

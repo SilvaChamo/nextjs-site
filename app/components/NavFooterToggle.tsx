@@ -24,7 +24,7 @@ export default function NavFooterToggle({ children }: { children: React.ReactNod
                 {children}
             </div>
             {!hide && <Footer />}
-            {!isPresentation && (
+            {!isPresentation && !pathname?.includes("admin") && (
                 <>
                     <FloatingChatButton />
                     <GoogleTranslate />

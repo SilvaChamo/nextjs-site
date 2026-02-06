@@ -281,7 +281,7 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
 
             {/* Main Content */}
             <main className={`flex-1 bg-slate-100 min-h-screen transition-all duration-300 mt-16 lg:mt-0 ${isCollapsed ? "lg:ml-20" : "lg:ml-64"}`}>
-                <div className={`mx-auto ${pathname.startsWith('/admin/mensagens/newsletter') ? "p-0 max-w-full" : "p-8 max-w-7xl"}`}>
+                <div className={`mx-auto ${pathname.startsWith('/admin/mensagens/newsletter') || pathname.startsWith('/admin/apresentacoes/editor') ? "p-0 max-w-full" : "p-8 max-w-7xl"}`}>
                     {children}
                 </div>
             </main>

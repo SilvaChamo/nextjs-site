@@ -324,7 +324,7 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
                         </div>
 
                         {/* Current Slide Editor (THE CANVAS) */}
-                        <div className="bg-white rounded-xl shadow-2xl border border-slate-300 overflow-hidden flex flex-col min-h-[600px] relative translate-z-0">
+                        <div className="bg-white rounded-xl shadow-2xl border border-slate-300 overflow-hidden flex flex-col h-auto relative translate-z-0">
                             {/* Slide Canvas Grid Background */}
                             <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:32px_32px] opacity-40 pointer-events-none"></div>
 
@@ -358,7 +358,7 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
                                                 value={activeSlide?.antetitulo || ""}
                                                 onChange={(e) => updateSlide(activeSlide.id, { antetitulo: e.target.value })}
                                                 placeholder="Digite aqui o título..."
-                                                className="min-h-[130px] text-lg font-bold bg-white/50 border-slate-200 focus:ring-emerald-500 rounded-lg shadow-sm resize-none"
+                                                className="h-auto text-lg font-bold bg-white/50 border-slate-200 focus:ring-emerald-500 rounded-lg shadow-sm resize-none"
                                             />
                                         </div>
 
@@ -422,12 +422,12 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
 
 
                                 {/* Content Section: FULL WIDTH & EXPANDED */}
-                                <div className="flex flex-col gap-3 flex-1 min-h-[500px]">
+                                <div className="flex flex-col gap-3 flex-1">
                                     <div className="flex items-center justify-between">
                                         <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Conteúdo & Storytelling (Área Expandida)</label>
                                         <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-bold">Auto-save activo</span>
                                     </div>
-                                    <div className="flex-1 bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xl ring-1 ring-slate-950/5 min-h-[400px]">
+                                    <div className="flex-1 bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xl ring-1 ring-slate-950/5 h-auto max-h-[500px] overflow-y-auto custom-scrollbar">
                                         <RichTextEditor
                                             value={activeSlide?.content}
                                             onChange={(val) => updateSlide(activeSlide.id, { content: val })}

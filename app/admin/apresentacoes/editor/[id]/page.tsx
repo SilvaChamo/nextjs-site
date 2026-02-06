@@ -499,14 +499,7 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
                                 </div>
                             </div>
 
-                            {/* Canvas Toolbar / Status */}
-                            <div className="bg-slate-50 border-t border-slate-100 px-8 py-3 flex items-center justify-between text-[10px] font-bold text-slate-400 shrink-0">
-                                <div className="flex items-center gap-4">
-                                    <span className="flex items-center gap-1.5"><Maximize2 className="w-3 h-3" /> 1920x1080 Aspect</span>
-                                    <span className="flex items-center gap-1.5"><Menu className="w-3 h-3" /> Layer Principal</span>
-                                </div>
-                                <span>Edição em Tempo Real Activa</span>
-                            </div>
+
                         </div>
 
                         {/* Shortcut Tip */}

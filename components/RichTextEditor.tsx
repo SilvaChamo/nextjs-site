@@ -157,7 +157,7 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
                 const img = document.createElement('img');
                 img.src = imageUrl;
                 img.alt = 'Imagem';
-                img.style.cssText = 'max-width: 100%; height: auto; cursor: pointer; border-radius: 8px; margin: 8px 0; display: block;';
+                img.style.cssText = 'width: 48%; height: auto; aspect-ratio: 16/9; cursor: pointer; border-radius: 8px; margin: 1%; display: inline-block; object-cover: cover;';
                 img.className = 'content-image';
                 img.setAttribute('data-resizable', 'true');
 
@@ -244,14 +244,16 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
             // Remove centering
             selectedImage.style.marginLeft = '0';
             selectedImage.style.marginRight = '0';
-            selectedImage.style.display = 'block';
-            selectedImage.style.width = 'auto';
+            selectedImage.style.display = 'inline-block';
+            selectedImage.style.width = '48%';
+            selectedImage.style.margin = '1%';
         } else {
             // Center the image and make it full width
             selectedImage.style.marginLeft = 'auto';
             selectedImage.style.marginRight = 'auto';
             selectedImage.style.display = 'block';
             selectedImage.style.width = '100%';
+            selectedImage.style.margin = '16px auto';
         }
         handleInput();
     };

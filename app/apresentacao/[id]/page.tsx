@@ -231,9 +231,19 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                     <div className="relative group w-full">
                                                         <div className="absolute -inset-4 bg-orange-500/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                                         {slide.image_url ? (
-                                                            <div className="relative w-full h-[550px] rounded-[20px] overflow-hidden border border-white/10 shadow-2xl bg-slate-900">
-                                                                <img src={slide.image_url} alt="" className="w-full h-full object-cover" />
-                                                                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent flex items-end p-6">
+                                                            <div className={cn(
+                                                                "relative w-full rounded-[20px] overflow-hidden border border-white/10 shadow-2xl bg-slate-900/50",
+                                                                slide.image_side === 'center' ? "h-auto aspect-video" : "h-[550px]"
+                                                            )}>
+                                                                <img
+                                                                    src={slide.image_url}
+                                                                    alt=""
+                                                                    className={cn(
+                                                                        "w-full h-full",
+                                                                        slide.image_side === 'center' ? "object-contain" : "object-cover"
+                                                                    )}
+                                                                />
+                                                                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent flex items-end p-6 pointer-events-none">
                                                                     <span className="text-[10px] font-bold uppercase tracking-wider text-white/40">recurso visual • slide {index + 1}</span>
                                                                 </div>
                                                             </div>

@@ -95,19 +95,19 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                     if (error) throw error;
 
                     if (data.session) {
-                        // Check role for redirect
+                        // Check role and plan for redirect
                         const { data: profile } = await supabase
                             .from('profiles')
-                            .select('role')
+                            .select('role, plan')
                             .eq('id', data.session.user.id)
                             .single();
 
+                        setLoading(false);
                         if (profile?.role === 'admin') {
                             router.push("/admin");
                         } else {
                             router.push("/usuario/dashboard");
                         }
-                        router.refresh();
                     }
                 }
                 return;
@@ -137,19 +137,22 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                 if (data.user) {
                     const { data: profile } = await supabase
                         .from('profiles')
-                        .select('role')
+                        .select('role, plan')
                         .eq('id', data.user.id)
                         .single();
 
                     if (profile?.role === 'admin') {
+                        setLoading(false);
                         router.push("/admin");
                     } else {
                         // Check for redirect param
                         const params = new URLSearchParams(window.location.search);
                         const redirectTo = params.get('next');
+                        setLoading(false);
+
+                        // All users now go to dashboard or the requested 'next' page
                         router.push(redirectTo || "/usuario/dashboard");
                     }
-                    router.refresh();
                 }
             } else {
                 // REGISTRATION VALIDATION
@@ -186,8 +189,8 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                     // Check for redirect param
                     const params = new URLSearchParams(window.location.search);
                     const redirectTo = params.get('next');
-                    router.push(redirectTo || "/usuario/dashboard");
-                    router.refresh();
+                    setLoading(false);
+                    router.push(redirectTo || "/"); // Default for registration is home as it starts with Visitante strategy usually
                 } else {
                     const { error: signInError } = await supabase.auth.signInWithPassword({
                         email: formData.email,
@@ -195,8 +198,8 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                     });
 
                     if (!signInError) {
-                        router.push("/usuario/dashboard");
-                        router.refresh();
+                        setLoading(false);
+                        router.push("/");
                     } else {
                         setStatus({ type: 'success', message: 'Conta criada! Verifique sua caixa de entrada para confirmar o e-mail.' });
                     }

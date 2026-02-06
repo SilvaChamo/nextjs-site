@@ -99,10 +99,11 @@ export function getEditableFields(userPlan: string | null | undefined): string[]
 
 /**
  * Check if user has dashboard access
+ * Gratuito and Visitante plans do NOT have access to the dashboard
  */
 export function hasDashboardAccess(userPlan: string | null | undefined): boolean {
     const normalizedPlan = normalizePlanName(userPlan);
-    return !['Gratuito', 'Visitante'].includes(normalizedPlan);
+    return normalizedPlan !== 'Gratuito' && normalizedPlan !== 'Visitante';
 }
 
 /**

@@ -31,6 +31,7 @@ function RegistroContent() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [emailConfirmationPending, setEmailConfirmationPending] = useState(false);
 
     // Account registration fields
     const [fullName, setFullName] = useState("");
@@ -80,14 +81,89 @@ function RegistroContent() {
                 return;
             }
 
-            // Redirect to checkout with user info
-            router.push(`/checkout/pagamento?plan=${encodeURIComponent(planName)}&price=${encodeURIComponent(price)}&period=${encodeURIComponent(period)}&email=${encodeURIComponent(email)}`);
+            // Check if email confirmation is required
+            if (authData.user && !authData.session) {
+                // Email confirmation required - show success message
+                setEmailConfirmationPending(true);
+                setLoading(false);
+                return;
+            }
+
+            // Check if plan is free (Gratuito or 0 MT)
+            const isFree = planName.toLowerCase() === 'gratuito' ||
+                planName.toLowerCase() === 'visitante' ||
+                price.toLowerCase() === 'gratuito' ||
+                price === '0 MT' ||
+                price === '0' ||
+                parseInt(price.replace(/[^0-9]/g, '')) === 0;
+
+            // If we have a session, user is logged in
+            if (authData.session) {
+                if (isFree) {
+                    // Free plan - go to home page
+                    router.push('/');
+                } else {
+                    // Paid plan - go to payment
+                    router.push(`/checkout/pagamento?plan=${encodeURIComponent(planName)}&price=${encodeURIComponent(price)}&period=${encodeURIComponent(period)}&email=${encodeURIComponent(email)}`);
+                }
+            } else {
+                // Try to sign in immediately (in case email confirmation is disabled)
+                const { error: signInError } = await supabase.auth.signInWithPassword({
+                    email: email.trim(),
+                    password: password
+                });
+
+                if (signInError) {
+                    setError("Conta criada! Por favor, verifique o seu email para confirmar o registo.");
+                    setLoading(false);
+                    return;
+                }
+
+                if (isFree) {
+                    router.push('/');
+                } else {
+                    router.push(`/checkout/pagamento?plan=${encodeURIComponent(planName)}&price=${encodeURIComponent(price)}&period=${encodeURIComponent(period)}&email=${encodeURIComponent(email)}`);
+                }
+            }
 
         } catch (err) {
             setError("Ocorreu um erro. Por favor, tente novamente.");
             setLoading(false);
         }
     };
+
+    // Show email confirmation pending screen
+    if (emailConfirmationPending) {
+        return (
+            <div className="max-w-xl mx-auto px-4 py-16 text-center">
+                <div className="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Mail className="w-12 h-12" />
+                </div>
+                <h1 className="text-3xl font-black text-slate-900 mb-3">Verifique o Seu Email</h1>
+                <p className="text-slate-600 mb-6 text-lg">
+                    Enviámos um email de confirmação para <span className="font-bold text-emerald-600">{email}</span>.
+                </p>
+                <p className="text-slate-500 mb-8">
+                    Clique no link de confirmação no email e depois faça login para continuar com o pagamento.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <Button
+                        onClick={() => router.push(`/login?redirect=/checkout/pagamento?plan=${encodeURIComponent(planName)}&price=${encodeURIComponent(price)}&period=${encodeURIComponent(period)}`)}
+                        className="h-12 px-8 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl"
+                    >
+                        Ir para Login
+                    </Button>
+                    <Button
+                        variant="outline"
+                        onClick={() => setEmailConfirmationPending(false)}
+                        className="h-12 px-8 border-slate-300 text-slate-600 font-bold rounded-xl"
+                    >
+                        Usar Outro Email
+                    </Button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="max-w-5xl mx-auto px-4 py-8 md:py-12">
@@ -112,11 +188,6 @@ function RegistroContent() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Left Column: Registration Form */}
                 <div className="lg:col-span-7">
-                    <div className="mb-8">
-                        <h1 className="text-3xl font-black text-slate-900 tracking-tight mb-2">Criar a Sua Conta</h1>
-                        <p className="text-slate-500">Preencha os seus dados para continuar com a assinatura.</p>
-                    </div>
-
                     <form onSubmit={handleCreateAccount} className="space-y-5">
                         <div className="bg-white p-6 rounded-[15px] border border-slate-200 shadow-sm">
                             {error && (

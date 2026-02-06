@@ -150,13 +150,13 @@ function CheckoutContent() {
     // Auto-redirect after success
     React.useEffect(() => {
         if (success) {
-            const isFreePlan = planName === "Gratuito";
+            const isFree = planName.toLowerCase() === 'gratuito' || planName.toLowerCase() === 'visitante';
             const timer = setTimeout(() => {
-                router.push(isFreePlan ? "/" : "/usuario/dashboard");
+                router.push(isFree ? "/" : "/usuario/dashboard");
             }, 2500);
             return () => clearTimeout(timer);
         }
-    }, [success, planName, router]);
+    }, [success, router, planName]);
 
     if (success) {
         const isFreePlan = planName === "Gratuito";
@@ -170,7 +170,7 @@ function CheckoutContent() {
                 </h1>
                 <p className="text-slate-600 mb-8 max-w-md">
                     {isFreePlan
-                        ? "Bem-vindo à BaseAgroData! Explore os recursos disponíveis e aproveite a nossa plataforma."
+                        ? "Bem-vindo à BaseAgroData! Explore os recursos disponíveis no seu dashboard."
                         : <>Parabéns! Sua assinatura do plano <span className="font-bold text-orange-600">{planName}</span> foi processada com sucesso. Você já tem acesso total aos recursos.</>
                     }
                 </p>
@@ -180,7 +180,7 @@ function CheckoutContent() {
                         onClick={() => router.push(isFreePlan ? "/" : "/usuario/dashboard")}
                         className="bg-slate-900 hover:bg-slate-800 px-8 h-12 rounded-xl font-bold"
                     >
-                        {isFreePlan ? "Voltar à Homepage" : "Ir para o Dashboard"}
+                        {isFreePlan ? "Voltar ao Início" : "Ir para o Dashboard"}
                     </Button>
                 </div>
             </div>

@@ -60,15 +60,26 @@ export default function AdminApresentacoesPage() {
         return () => { isMounted = false; };
     }, [supabase]);
 
-    // Archive locally (visual only for now)
+    // Archive persistently
     const handleArchive = async (item: any) => {
         const isCurrentlyArchived = item.status === 'archived';
         const newStatus = isCurrentlyArchived ? 'active' : 'archived';
 
-        setPresentations(prev => prev.map(p =>
-            p.id === item.id ? { ...p, status: newStatus } : p
-        ));
-        toast.success(isCurrentlyArchived ? "Apresentação restaurada" : "Apresentação arquivada");
+        try {
+            const { error } = await supabase
+                .from('presentations')
+                .update({ status: newStatus })
+                .eq('id', item.id);
+
+            if (error) throw error;
+
+            setPresentations(prev => prev.map(p =>
+                p.id === item.id ? { ...p, status: newStatus } : p
+            ));
+            toast.success(isCurrentlyArchived ? "Apresentação restaurada" : "Apresentação arquivada");
+        } catch (err: any) {
+            toast.error("Erro ao arquivar/restaurar: " + err.message);
+        }
     };
 
     // Move to trash (recycle bin)

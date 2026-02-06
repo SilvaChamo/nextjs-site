@@ -68,11 +68,6 @@ function PagamentoContent() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Left Column: Payment Form */}
                 <div className="lg:col-span-7">
-                    <div className="mb-8">
-                        <h1 className="text-3xl font-black text-slate-900 tracking-tight mb-2">Finalizar Pagamento</h1>
-                        <p className="text-slate-500">Escolha o seu método de pagamento preferido.</p>
-                    </div>
-
                     {/* Payment Method Selector */}
                     <div className="grid grid-cols-2 gap-4 mb-5">
                         <button

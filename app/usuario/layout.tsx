@@ -30,20 +30,41 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     return;
                 }
 
-                // Check company plan
-                const { data: company } = await supabaseClient
-                    .from('companies')
-                    .select('plan')
-                    .eq('user_id', user.id)
+                // Check profile plan first (for users without a company)
+                const { data: profile } = await supabaseClient
+                    .from('profiles')
+                    .select('plan, role')
+                    .eq('id', user.id)
                     .single();
 
-                const plan = normalizePlanName(company?.plan);
+                // Admins always have access
+                if (profile?.role === 'admin') {
+                    setHasAccess(true);
+                    setCheckingAccess(false);
+                    return;
+                }
+
+                // Check profile plan
+                let plan = normalizePlanName(profile?.plan);
+
+                // If no profile plan, check company plan
+                if (!plan || plan === 'Gratuito' || plan === 'Visitante') {
+                    const { data: company } = await supabaseClient
+                        .from('companies')
+                        .select('plan')
+                        .eq('user_id', user.id)
+                        .single();
+
+                    if (company?.plan) {
+                        plan = normalizePlanName(company.plan);
+                    }
+                }
 
                 if (hasDashboardAccess(plan)) {
                     setHasAccess(true);
                 } else {
-                    // Redirect to plans page with message
-                    router.push("/planos?upgrade=required");
+                    // Redirect to home page
+                    router.push("/");
                 }
             } catch (error) {
                 console.error("Error checking access:", error);

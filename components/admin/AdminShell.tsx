@@ -170,7 +170,7 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
                     </div>
 
                     {/* Nav */}
-                    <nav className="flex-1 px-2 py-2 flex flex-col gap-0 overflow-hidden">
+                    <nav className="flex-1 px-2 py-2 flex flex-col gap-0 overflow-y-auto">
 
                         {/* Section 1: Dashboard */}
                         <LinkItem href="/admin" icon={LayoutDashboard} label="Dashboard" />

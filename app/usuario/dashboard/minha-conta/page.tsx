@@ -38,6 +38,26 @@ export default function MinhaContaPage() {
             if (user) {
                 setUser(user);
 
+                // Check for pending professional registration
+                const pendingProfId = localStorage.getItem('pending_professional_registration_id');
+                if (pendingProfId) {
+                    const { data: pendingProf } = await supabase
+                        .from('professionals')
+                        .select('id')
+                        .eq('id', pendingProfId)
+                        .is('user_id', null)
+                        .single();
+
+                    if (pendingProf) {
+                        // Link the professional profile to the logged in user
+                        await supabase
+                            .from('professionals')
+                            .update({ user_id: user.id })
+                            .eq('id', pendingProfId);
+                    }
+                    localStorage.removeItem('pending_professional_registration_id');
+                }
+
                 // Fetch profile data from database
                 const { data: profile } = await supabase
                     .from('profiles')

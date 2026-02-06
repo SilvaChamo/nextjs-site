@@ -79,7 +79,7 @@ export function WhyChooseUs() {
 
                         {/* New Button Positioned at Bottom */}
                         <Link
-                            href="/servicos/registo-talento"
+                            href="/servicos/registo-simples-talento"
                             className="inline-flex items-center gap-2 bg-emerald-700 hover:bg-[#f97316] text-white px-8 py-[10px] rounded-[7px] font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-orange-500/30 hover:-translate-y-1 group"
                         >
                             É profissional? Registe-se

@@ -17,6 +17,8 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
+
 export default function AdminUsersPage() {
     const router = useRouter();
     const [users, setUsers] = useState<any[]>([]);
@@ -26,42 +28,107 @@ export default function AdminUsersPage() {
     const [inviteRole, setInviteRole] = useState("admin");
     const [filterPlan, setFilterPlan] = useState<string>("all");
 
+    // Delete state
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [userToDelete, setUserToDelete] = useState<any>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+
     // Plans for filtering
     const PLANS = ["Visitante", "Basic", "Profissional", "Premium", "Parceiro"];
 
-    useEffect(() => {
-        async function fetchUsers() {
-            setLoading(true);
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('*');
+    async function fetchUsers() {
+        setLoading(true);
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('*');
 
-            if (error) {
-                console.error(error);
-            } else {
-                // Sort: admins first, then by creation date
-                const sorted = (data || []).sort((a, b) => {
-                    if (a.role === 'admin' && b.role !== 'admin') return -1;
-                    if (a.role !== 'admin' && b.role === 'admin') return 1;
-                    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-                });
-                setUsers(sorted);
-            }
-            setLoading(false);
+        if (error) {
+            console.error(error);
+        } else {
+            // Sort: admins first, then by creation date
+            const sorted = (data || []).sort((a, b) => {
+                if (a.role === 'admin' && b.role !== 'admin') return -1;
+                if (a.role !== 'admin' && b.role === 'admin') return 1;
+                return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+            });
+            setUsers(sorted);
         }
+        setLoading(false);
+    }
 
+    useEffect(() => {
         fetchUsers();
     }, []);
 
+    const [invitePassword, setInvitePassword] = useState("");
+    const [isInviting, setIsInviting] = useState(false);
+
     const handleInvite = async () => {
         if (!inviteEmail) return;
-        alert(`Simulação: Convite enviado para ${inviteEmail} com função ${inviteRole}.`);
-        setIsInviteOpen(false);
-        setInviteEmail("");
+
+        setIsInviting(true);
+        try {
+            const response = await fetch('/api/admin/create-user', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: inviteEmail,
+                    role: inviteRole,
+                    password: invitePassword || undefined,
+                    plan: 'Visitante'
+                })
+            });
+
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error || "Erro ao criar utilizador");
+
+            alert("Utilizador criado com sucesso!");
+            setIsInviteOpen(false);
+            setInviteEmail("");
+            setInvitePassword("");
+            fetchUsers();
+        } catch (error: any) {
+            alert(`Erro: ${error.message}`);
+        } finally {
+            setIsInviting(false);
+        }
     };
 
     const handleEdit = (user: any) => {
         router.push(`/admin/utilizadores/${user.id}`);
+    };
+
+    const handleDeleteClick = (user: any) => {
+        setUserToDelete(user);
+        setIsDeleteModalOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!userToDelete) return;
+
+        setIsDeleting(true);
+        try {
+            const response = await fetch('/api/admin/delete-user', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: userToDelete.id })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || "Erro ao eliminar utilizador");
+            }
+
+            alert("Utilizador eliminado com sucesso!");
+            fetchUsers();
+        } catch (error: any) {
+            alert(`Erro: ${error.message}`);
+        } finally {
+            setIsDeleting(false);
+            setUserToDelete(null);
+            setIsDeleteModalOpen(false);
+        }
     };
 
 
@@ -188,10 +255,22 @@ export default function AdminUsersPage() {
                                         <option value="user">Utilizador</option>
                                     </select>
                                 </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-slate-500 uppercase">Senha</label>
+                                    <Input
+                                        type="password"
+                                        placeholder="Senha temporária"
+                                        value={invitePassword}
+                                        onChange={(e) => setInvitePassword(e.target.value)}
+                                    />
+                                    <p className="text-[10px] text-slate-400">Se deixar em branco, uma senha aleatória será gerada.</p>
+                                </div>
                             </div>
                             <DialogFooter>
                                 <Button variant="outline" onClick={() => setIsInviteOpen(false)}>Cancelar</Button>
-                                <Button onClick={handleInvite} className="bg-emerald-600 hover:bg-emerald-700">Enviar Convite</Button>
+                                <Button onClick={handleInvite} disabled={isInviting} className="bg-emerald-600 hover:bg-emerald-700">
+                                    {isInviting ? "A criar..." : "Criar Utilizador"}
+                                </Button>
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
@@ -200,12 +279,23 @@ export default function AdminUsersPage() {
 
 
             <AdminDataTable
-                title="Utilizadores do Sistema"
+                title="Utilizadores do Systema"
                 columns={columns}
                 data={filterPlan === 'all' ? users : users.filter(u => (u.plan || 'Visitante') === filterPlan)}
                 loading={loading}
                 onEdit={handleEdit}
-                onDelete={() => alert("Funcionalidade de eliminação de utilizadores sensível.")}
+                onDelete={handleDeleteClick}
+            />
+
+            <ConfirmationModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={handleConfirmDelete}
+                title="Eliminar Utilizador"
+                description={`Tem a certeza que deseja eliminar o utilizador ${userToDelete?.email}? Esta acção é irreversível e removerá todos os dados associados.`}
+                confirmLabel={isDeleting ? "A eliminar..." : "Eliminar Permanentemente"}
+                cancelLabel="Cancelar"
+                variant="destructive"
             />
         </div>
     );

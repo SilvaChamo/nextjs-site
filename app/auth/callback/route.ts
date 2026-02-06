@@ -12,10 +12,10 @@ export async function GET(request: Request) {
         const { error, data } = await supabase.auth.exchangeCodeForSession(code)
 
         if (!error && data.user) {
-            // Check for admin role
+            // Check for admin role and plan
             const { data: profile } = await supabase
                 .from('profiles')
-                .select('role')
+                .select('role, plan')
                 .eq('id', data.user.id)
                 .single()
 
@@ -23,15 +23,20 @@ export async function GET(request: Request) {
                 return NextResponse.redirect(`${origin}/admin`)
             }
 
+            // If it's a free plan and they are heading to the dashboard, redirect home instead
+            const isFree = profile?.plan === 'Gratuito' || profile?.plan === 'Visitante' || !profile?.plan
+            const targetNext = (isFree && next.startsWith('/usuario/dashboard')) ? '/' : next
+
+
             const forwardedHost = request.headers.get('x-forwarded-host') // i.e. local.com:3000
             const isLocalEnv = process.env.NODE_ENV === 'development'
             if (isLocalEnv) {
                 // we can be sure that origin is http://localhost:3000
-                return NextResponse.redirect(`${origin}${next}`)
+                return NextResponse.redirect(`${origin}${targetNext}`)
             } else if (forwardedHost) {
-                return NextResponse.redirect(`https://${forwardedHost}${next}`)
+                return NextResponse.redirect(`https://${forwardedHost}${targetNext}`)
             } else {
-                return NextResponse.redirect(`${origin}${next}`)
+                return NextResponse.redirect(`${origin}${targetNext}`)
             }
         }
     }

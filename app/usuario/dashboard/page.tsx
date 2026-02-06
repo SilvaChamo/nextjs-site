@@ -48,19 +48,20 @@ export default function DashboardPage() {
             } else {
                 setUser(user);
 
-                // Check for admin role
+                // Check for profile data (role, plan, etc.)
                 const { data: profile } = await supabase
                     .from('profiles')
-                    .select('role, sms_notifications')
+                    .select('role, plan, sms_notifications')
                     .eq('id', user.id)
                     .single();
 
-                if (profile && profile.role === 'admin') {
-                    setIsAdmin(true);
-                }
-
                 if (profile) {
                     setSmsNotifications(profile.sms_notifications || false);
+
+                    // Admins always have access
+                    if (profile.role === 'admin') {
+                        setIsAdmin(true);
+                    }
                 }
             }
             setLoading(false);
@@ -111,9 +112,6 @@ export default function DashboardPage() {
 
                     {/* LEFT COLUMN (Charts & Tables) */}
                     <div className="lg:col-span-2 space-y-5">
-                        {/* Active Plan */}
-                        <ActivePlanCard />
-
                         {/* Visibility Chart */}
                         <VisibilityChart />
 
@@ -121,8 +119,11 @@ export default function DashboardPage() {
                         <DashboardKeywordsTable />
                     </div>
 
-                    {/* RIGHT COLUMN (Categories & Actions) */}
+                    {/* RIGHT COLUMN (Plan, Categories & Actions) */}
                     <div className="space-y-5">
+                        {/* Active Plan - Now on the right side */}
+                        <ActivePlanCard />
+
                         {/* Search Categories */}
                         <SearchCategories />
 

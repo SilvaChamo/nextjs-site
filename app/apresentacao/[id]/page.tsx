@@ -140,7 +140,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                         return (
                             <div
                                 key={index}
-                                className={`h-full absolute inset-0 py-[70px] px-0 flex items-center justify-center transition-all duration-[1000ms] ease-in-out ${isActive ? 'opacity-100 z-10 scale-100' : 'opacity-0 z-0 scale-[1.02] pointer-events-none'}`}
+                                className={`h-full absolute inset-0 py-[40px] px-0 flex items-center justify-center transition-all duration-[1000ms] ease-in-out ${isActive ? 'opacity-100 z-10 scale-100' : 'opacity-0 z-0 scale-[1.02] pointer-events-none'}`}
                                 style={{ minWidth: '100%' }}
                             >
 
@@ -156,10 +156,10 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
 
                                 <div className="relative z-10 max-w-full w-full h-full">
                                     {/* Universal Slide Layout: Title Top Left + Subtitle + 2 Columns (Photo | Text) */}
-                                    <div className="w-full flex flex-col items-center text-center animate-in fade-in duration-700 gap-[25px] mx-auto">
+                                    <div className="w-full flex flex-col items-center text-center animate-in fade-in duration-700 gap-[15px] mx-auto">
 
                                         {/* Header: Title & Subtitle */}
-                                        <div className="space-y-4 w-full text-center px-[70px] pb-[30px] mb-[30px] border-b border-white/20">
+                                        <div className="space-y-4 w-full text-center px-[70px] pb-[15px] mb-[15px] border-b border-white/20">
                                             <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase leading-none">
                                                 {presentation.title}
                                             </h1>

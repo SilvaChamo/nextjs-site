@@ -184,7 +184,7 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
     }
 
     return (
-        <div className="flex flex-col h-[calc(100vh-64px)] -m-8 overflow-hidden bg-slate-50">
+        <div className="flex flex-col h-screen overflow-hidden bg-slate-50">
             {/* Header Toolbar */}
             <div className="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between shrink-0 z-30 shadow-sm">
                 <div className="flex items-center gap-4">

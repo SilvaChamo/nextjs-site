@@ -77,7 +77,7 @@ export default function RootLayout({
               </main>
             </NavFooterToggle>
           </LanguageProvider>
-          <Toaster position="top-right" richColors closeButton />
+          <Toaster position="bottom-right" richColors closeButton />
         </ThemeProvider>
       </body>
     </html>

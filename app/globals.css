@@ -353,3 +353,133 @@ font {
   box-shadow: none !important;
   display: inline !important;
 }
+
+/* ================================
+   PRESENTATION ENTRANCE ANIMATIONS
+   ================================ */
+
+/* Fade In */
+@keyframes presentation-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Slide from Left */
+@keyframes presentation-slide-left {
+  from {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Slide from Right */
+@keyframes presentation-slide-right {
+  from {
+    opacity: 0;
+    transform: translateX(60px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Slide from Bottom (Up) */
+@keyframes presentation-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(60px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide from Top (Down) */
+@keyframes presentation-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-60px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Zoom In */
+@keyframes presentation-zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Bounce */
+@keyframes presentation-bounce {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+
+  70% {
+    transform: scale(0.95);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Animation Classes */
+.animate-presentation-fade-in {
+  animation: presentation-fade-in 0.8s ease-out forwards;
+}
+
+.animate-presentation-slide-left {
+  animation: presentation-slide-left 0.7s ease-out forwards;
+}
+
+.animate-presentation-slide-right {
+  animation: presentation-slide-right 0.7s ease-out forwards;
+}
+
+.animate-presentation-slide-up {
+  animation: presentation-slide-up 0.7s ease-out forwards;
+}
+
+.animate-presentation-slide-down {
+  animation: presentation-slide-down 0.7s ease-out forwards;
+}
+
+.animate-presentation-zoom-in {
+  animation: presentation-zoom-in 0.6s ease-out forwards;
+}
+
+.animate-presentation-bounce {
+  animation: presentation-bounce 0.8s ease-out forwards;
+}

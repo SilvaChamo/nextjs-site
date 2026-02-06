@@ -102,6 +102,12 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
 
     const slides = presentation.slides;
 
+    // Helper to get animation class
+    const getAnimationClass = (animation: string | undefined): string => {
+        if (!animation || animation === 'none') return '';
+        return `animate-presentation-${animation}`;
+    };
+
     return (
         <div
             id="presentation-root"
@@ -173,7 +179,12 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                         {/* Conditional Layout: Image disabled = centered text only */}
                                         {slide.image_disabled ? (
                                             /* Centered Layout - No Image */
-                                            <div className="w-full max-w-4xl px-[70px] text-center space-y-[30px]">
+                                            <div
+                                                key={`text-centered-${index}-${currentIndex}`}
+                                                className={cn(
+                                                    "w-full max-w-4xl px-[70px] text-center space-y-[30px]",
+                                                    isActive && getAnimationClass(slide.animation_text)
+                                                )}>
                                                 {slide.title && (
                                                     <div className="flex items-center justify-center gap-4 mb-2">
                                                         <div className="w-[45px] h-[2px] bg-orange-500/50"></div>
@@ -231,10 +242,13 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                     <div className="relative group w-full">
                                                         <div className="absolute -inset-4 bg-orange-500/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                                         {slide.image_url ? (
-                                                            <div className={cn(
-                                                                "relative w-full rounded-[20px] overflow-hidden border border-white/10 shadow-2xl bg-slate-900/50",
-                                                                slide.image_side === 'center' ? "h-auto aspect-video" : "h-[550px]"
-                                                            )}>
+                                                            <div
+                                                                key={`img-${index}-${currentIndex}`}
+                                                                className={cn(
+                                                                    "relative w-full rounded-[20px] overflow-hidden border border-white/10 shadow-2xl bg-slate-900/50",
+                                                                    slide.image_side === 'center' ? "h-auto aspect-video" : "h-[550px]",
+                                                                    isActive && getAnimationClass(slide.animation_image)
+                                                                )}>
                                                                 <img
                                                                     src={slide.image_url}
                                                                     alt=""
@@ -268,10 +282,13 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                 </div>
 
                                                 {/* Column 2: Description */}
-                                                <div className={cn(
-                                                    "space-y-[30px]",
-                                                    slide.image_side === 'center' ? "text-center" : "lg:text-left"
-                                                )}>
+                                                <div
+                                                    key={`text-${index}-${currentIndex}`}
+                                                    className={cn(
+                                                        "space-y-[30px]",
+                                                        slide.image_side === 'center' ? "text-center" : "lg:text-left",
+                                                        isActive && getAnimationClass(slide.animation_text)
+                                                    )}>
                                                     {slide.title && (
                                                         <div className={cn("flex items-center gap-4 mb-2", slide.image_side === 'center' && "justify-center")}>
                                                             <div className="w-[45px] h-[2px] bg-orange-500/50"></div>

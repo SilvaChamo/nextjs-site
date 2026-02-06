@@ -26,7 +26,7 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
         title: "",
         description: "",
         slides: [
-            { id: crypto.randomUUID(), title: "Título do Slide", antetitulo: "Antetítulo do Slide", content: "Conteúdo aqui...", image_url: "", image_side: "left", image_disabled: false, cta_text: "", cta_link: "" }
+            { id: crypto.randomUUID(), title: "Título do Slide", antetitulo: "Antetítulo do Slide", content: "Conteúdo aqui...", image_url: "", image_side: "left", image_disabled: false, cta_text: "", cta_link: "", animation_text: "fade-in", animation_image: "fade-in" }
         ]
     });
 
@@ -87,7 +87,7 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
     const handleAddSlide = () => {
         setPresentation(prev => ({
             ...prev,
-            slides: [...prev.slides, { id: crypto.randomUUID(), title: "Novo Slide", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, cta_text: "", cta_link: "" }]
+            slides: [...prev.slides, { id: crypto.randomUUID(), title: "Novo Slide", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, cta_text: "", cta_link: "", animation_text: "fade-in", animation_image: "fade-in" }]
         }));
     };
 
@@ -453,6 +453,47 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
                                                 >
                                                     Desactivar
                                                 </button>
+                                            </div>
+                                        </div>
+
+                                        {/* Animation Options */}
+                                        <div className="flex flex-col gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                                            <span className="text-[10px] font-black uppercase text-slate-400">Animações de Entrada</span>
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <div className="flex flex-col gap-1">
+                                                    <label className="text-[9px] font-bold text-slate-500">Texto</label>
+                                                    <select
+                                                        value={activeSlide?.animation_text || 'fade-in'}
+                                                        onChange={(e) => updateSlide(activeSlide.id, { animation_text: e.target.value })}
+                                                        className="text-[10px] px-2 py-1.5 rounded-md border border-slate-200 bg-white font-semibold text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                                                    >
+                                                        <option value="none">Sem animação</option>
+                                                        <option value="fade-in">Fade In</option>
+                                                        <option value="slide-left">Deslizar da Esquerda</option>
+                                                        <option value="slide-right">Deslizar da Direita</option>
+                                                        <option value="slide-up">Deslizar de Baixo</option>
+                                                        <option value="slide-down">Deslizar de Cima</option>
+                                                        <option value="zoom-in">Zoom In</option>
+                                                        <option value="bounce">Bounce</option>
+                                                    </select>
+                                                </div>
+                                                <div className="flex flex-col gap-1">
+                                                    <label className="text-[9px] font-bold text-slate-500">Imagem</label>
+                                                    <select
+                                                        value={activeSlide?.animation_image || 'fade-in'}
+                                                        onChange={(e) => updateSlide(activeSlide.id, { animation_image: e.target.value })}
+                                                        className="text-[10px] px-2 py-1.5 rounded-md border border-slate-200 bg-white font-semibold text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                                                    >
+                                                        <option value="none">Sem animação</option>
+                                                        <option value="fade-in">Fade In</option>
+                                                        <option value="slide-left">Deslizar da Esquerda</option>
+                                                        <option value="slide-right">Deslizar da Direita</option>
+                                                        <option value="slide-up">Deslizar de Baixo</option>
+                                                        <option value="slide-down">Deslizar de Cima</option>
+                                                        <option value="zoom-in">Zoom In</option>
+                                                        <option value="bounce">Bounce</option>
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

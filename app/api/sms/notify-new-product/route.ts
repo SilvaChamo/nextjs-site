@@ -2,12 +2,18 @@ import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
 // We use the service role key to bypass RLS and fetch all subcribed users
-const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
 export async function POST(request: Request) {
+    // We initialize the client inside the handler to avoid build-time evaluation issues
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+        console.error("Supabase environment variables are missing");
+        return NextResponse.json({ error: "Configuração do servidor incompleta" }, { status: 500 });
+    }
+
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+
     try {
         const { product, price, location, type = 'market', variation = null } = await request.json();
 

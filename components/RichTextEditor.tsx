@@ -334,11 +334,17 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
                                 icon={<ZoomIn className="w-4 h-4" />}
                                 title="Aumentar Imagem"
                             />
-                            <ToolbarButton
-                                onClick={centerImage}
-                                icon={<AlignCenter className="w-4 h-4" />}
+                            <button
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    centerImage();
+                                }}
+                                className="flex items-center gap-1.5 px-2 py-1 text-[11px] font-bold bg-white border border-emerald-200 text-emerald-700 hover:bg-emerald-50 rounded-md transition-colors"
                                 title="Centralizar Imagem"
-                            />
+                            >
+                                <AlignCenter className="w-3.5 h-3.5" />
+                                Centralizar
+                            </button>
                             <ToolbarButton
                                 onClick={deleteImage}
                                 icon={<Trash2 className="w-4 h-4 text-rose-500" />}

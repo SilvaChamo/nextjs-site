@@ -366,7 +366,7 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
                                 </div>
                             </div>
 
-                            <div className="flex-1 p-10 flex flex-col gap-10 z-10 relative">
+                            <div className="p-10 flex flex-col gap-10 z-10 relative">
                                 {/* Header Section: Title/Antetitulo (Left) & Image (Right) */}
                                 <div className="flex flex-col md:flex-row gap-10 items-start shrink-0">
                                     <div className="flex-1 space-y-8 w-full">
@@ -460,12 +460,12 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
 
 
                                 {/* Content Section: FULL WIDTH & EXPANDED */}
-                                <div className="flex flex-col gap-3 flex-1 h-auto mb-10">
+                                <div className="flex flex-col gap-3 h-auto mb-10">
                                     <div className="flex items-center justify-between">
                                         <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Conteúdo & Storytelling (Área Expandida)</label>
                                         <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-bold">Auto-save activo</span>
                                     </div>
-                                    <div className="flex-1 bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xl ring-1 ring-slate-950/5 h-auto">
+                                    <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xl ring-1 ring-slate-950/5 h-auto">
                                         <RichTextEditor
                                             key={activeSlide.id}
                                             value={activeSlide?.content}

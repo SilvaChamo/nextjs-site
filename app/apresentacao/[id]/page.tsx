@@ -219,14 +219,15 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                         ) : (
                                             /* Two Column Layout - With Image */
                                             <div className={cn(
-                                                "w-full max-w-7xl mx-auto px-[70px] grid grid-cols-1 gap-[40px] items-center",
-                                                slide.image_side === 'right' ? "lg:grid-cols-[1fr_500px]" : "lg:grid-cols-[500px_1fr]"
+                                                "w-full mx-auto px-[70px] grid grid-cols-1 gap-[40px] items-center",
+                                                slide.image_side === 'center' ? "max-w-4xl" : "max-w-7xl",
+                                                slide.image_side === 'center' ? "lg:grid-cols-1" : (slide.image_side === 'right' ? "lg:grid-cols-[1fr_500px]" : "lg:grid-cols-[500px_1fr]")
                                             )}>
 
                                                 {/* Column 1: Photo + Footer */}
                                                 <div className={cn(
                                                     "flex flex-col items-center w-full",
-                                                    slide.image_side === 'right' ? "lg:items-end lg:order-last" : "lg:items-start lg:order-first"
+                                                    slide.image_side === 'center' ? "lg:items-center" : (slide.image_side === 'right' ? "lg:items-end lg:order-last" : "lg:items-start lg:order-first")
                                                 )}>
                                                     <div className="relative group w-full">
                                                         <div className="absolute -inset-4 bg-orange-500/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -258,13 +259,17 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                 </div>
 
                                                 {/* Column 2: Description */}
-                                                <div className="space-y-[30px] lg:text-left">
+                                                <div className={cn(
+                                                    "space-y-[30px]",
+                                                    slide.image_side === 'center' ? "text-center" : "lg:text-left"
+                                                )}>
                                                     {slide.title && (
-                                                        <div className="flex items-center gap-4 mb-2">
+                                                        <div className={cn("flex items-center gap-4 mb-2", slide.image_side === 'center' && "justify-center")}>
                                                             <div className="w-[45px] h-[2px] bg-orange-500/50"></div>
                                                             <span className="text-orange-500 font-bold uppercase tracking-widest text-[20px]">
                                                                 {slide.title}
                                                             </span>
+                                                            {slide.image_side === 'center' && <div className="w-[45px] h-[2px] bg-orange-500/50"></div>}
                                                         </div>
                                                     )}
                                                     {slide.antetitulo && (

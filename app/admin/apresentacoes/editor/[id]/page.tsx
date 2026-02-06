@@ -324,7 +324,7 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
                         </div>
 
                         {/* Current Slide Editor (THE CANVAS) */}
-                        <div className="bg-white rounded-xl shadow-2xl border border-slate-300 overflow-hidden flex flex-col min-h-[850px] relative translate-z-0">
+                        <div className="bg-white rounded-xl shadow-2xl border border-slate-300 overflow-hidden flex flex-col h-auto relative translate-z-0">
                             {/* Slide Canvas Grid Background */}
                             <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:32px_32px] opacity-40 pointer-events-none"></div>
 
@@ -407,6 +407,16 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
                                                 </button>
                                                 <button
                                                     type="button"
+                                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); updateSlide(activeSlide.id, { image_side: 'center', image_disabled: false }); }}
+                                                    className={cn(
+                                                        "px-3 py-1 text-[9px] font-black uppercase rounded transition-all",
+                                                        activeSlide?.image_side === 'center' && !activeSlide?.image_disabled ? "bg-emerald-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-600"
+                                                    )}
+                                                >
+                                                    Centro
+                                                </button>
+                                                <button
+                                                    type="button"
                                                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); updateSlide(activeSlide.id, { image_disabled: true }); }}
                                                     className={cn(
                                                         "px-3 py-1 text-[9px] font-black uppercase rounded transition-all",
@@ -422,13 +432,14 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
 
 
                                 {/* Content Section: FULL WIDTH & EXPANDED */}
-                                <div className="flex flex-col gap-3 flex-1 min-h-[650px]">
+                                <div className="flex flex-col gap-3 flex-1 h-auto mb-10">
                                     <div className="flex items-center justify-between">
                                         <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Conteúdo & Storytelling (Área Expandida)</label>
                                         <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-bold">Auto-save activo</span>
                                     </div>
-                                    <div className="flex-1 bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xl ring-1 ring-slate-950/5 min-h-[550px]">
+                                    <div className="flex-1 bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xl ring-1 ring-slate-950/5 h-auto">
                                         <RichTextEditor
+                                            key={activeSlide.id}
                                             value={activeSlide?.content}
                                             onChange={(val) => updateSlide(activeSlide.id, { content: val })}
                                             placeholder="Descreva sua visão para este slide de forma detalhada..."

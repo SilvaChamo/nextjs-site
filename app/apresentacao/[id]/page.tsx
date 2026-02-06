@@ -340,7 +340,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
             </div>
 
             {/* Progress Bar */}
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-emerald-500/20 z-50">
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-emerald-500/50 z-50">
                 <div
                     className="h-full bg-orange-600 transition-all duration-300 shadow-[0_0_10px_#ea580c]"
                     style={{ width: `${((currentIndex + 1) / slides.length) * 100}%` }}

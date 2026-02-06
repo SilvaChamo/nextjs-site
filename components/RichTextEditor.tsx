@@ -236,21 +236,27 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
     // Center selected image
     const centerImage = () => {
         if (!selectedImage) return;
+        selectedImage.style.display = 'block';
+        selectedImage.style.marginLeft = 'auto';
+        selectedImage.style.marginRight = 'auto';
+        handleInput();
+    };
 
-        // Toggle centering
-        const isCentered = selectedImage.style.marginLeft === 'auto' && selectedImage.style.marginRight === 'auto';
+    // Align left selected image
+    const alignLeft = () => {
+        if (!selectedImage) return;
+        selectedImage.style.display = 'block';
+        selectedImage.style.marginLeft = '0';
+        selectedImage.style.marginRight = 'auto';
+        handleInput();
+    };
 
-        if (isCentered) {
-            // Remove centering
-            selectedImage.style.marginLeft = '0';
-            selectedImage.style.marginRight = '0';
-            selectedImage.style.display = 'block';
-        } else {
-            // Center the image
-            selectedImage.style.marginLeft = 'auto';
-            selectedImage.style.marginRight = 'auto';
-            selectedImage.style.display = 'block';
-        }
+    // Align right selected image
+    const alignRight = () => {
+        if (!selectedImage) return;
+        selectedImage.style.display = 'block';
+        selectedImage.style.marginLeft = 'auto';
+        selectedImage.style.marginRight = '0';
         handleInput();
     };
 
@@ -323,31 +329,57 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
                     <>
                         <div className="w-px h-4 bg-slate-300 mx-1" />
                         <div className="flex items-center gap-1 bg-emerald-50 rounded-md px-2 py-1">
-                            <span className="text-[10px] font-bold text-emerald-600 uppercase">Imagem:</span>
                             <ToolbarButton
                                 onClick={() => resizeImage(0.8)}
                                 icon={<ZoomOut className="w-4 h-4" />}
-                                title="Reduzir Imagem"
+                                title="Reduzir"
                             />
                             <ToolbarButton
                                 onClick={() => resizeImage(1.25)}
                                 icon={<ZoomIn className="w-4 h-4" />}
-                                title="Aumentar Imagem"
+                                title="Aumentar"
+                            />
+                            <div className="w-px h-3 bg-emerald-200 mx-1" />
+                            <ToolbarButton
+                                onClick={alignLeft}
+                                icon={
+                                    <div className="flex items-center gap-1 px-1">
+                                        <AlignLeft className="w-4 h-4" />
+                                        <span className="text-[9px] font-black uppercase">Esquerda</span>
+                                    </div>
+                                }
+                                title="Alinhar à Esquerda"
                             />
                             <ToolbarButton
                                 onClick={centerImage}
                                 icon={
-                                    <div className="flex items-center gap-1.5 px-1">
+                                    <div className="flex items-center gap-1 px-1">
                                         <AlignCenter className="w-4 h-4" />
-                                        <span className="text-[10px] font-black uppercase">Centralizar</span>
+                                        <span className="text-[9px] font-black uppercase">Centralizar</span>
                                     </div>
                                 }
-                                title="Centralizar Imagem"
+                                title="Centralizar"
                             />
                             <ToolbarButton
+                                onClick={alignRight}
+                                icon={
+                                    <div className="flex items-center gap-1 px-1">
+                                        <AlignRight className="w-4 h-4" />
+                                        <span className="text-[9px] font-black uppercase">Direita</span>
+                                    </div>
+                                }
+                                title="Alinhar à Direita"
+                            />
+                            <div className="w-px h-3 bg-emerald-200 mx-1" />
+                            <ToolbarButton
                                 onClick={deleteImage}
-                                icon={<Trash2 className="w-4 h-4 text-rose-500" />}
-                                title="Remover Imagem"
+                                icon={
+                                    <div className="flex items-center gap-1 px-1">
+                                        <Trash2 className="w-4 h-4 text-rose-500" />
+                                        <span className="text-[9px] font-black uppercase text-rose-500">Desactivar</span>
+                                    </div>
+                                }
+                                title="Desactivar"
                             />
                         </div>
                     </>

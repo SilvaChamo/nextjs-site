@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { TrendingUp, MapPin, Users, Target, Eye, Globe, Building2, Tractor, Briefcase, ShoppingBag, ArrowRight } from "lucide-react";
+import { TrendingUp, Users, Eye, Building2, Tractor, ShoppingBag, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -77,9 +77,9 @@ export function WhyChooseUs() {
                             </div>
                         </div>
 
-                        {/* New Button Positioned at Bottom */}
+                        {/* Button Positioned at Bottom */}
                         <Link
-                            href="/servicos/registo-simples-talento"
+                            href="/servicos/registo-talento"
                             className="inline-flex items-center gap-2 bg-emerald-700 hover:bg-[#f97316] text-white px-8 py-[10px] rounded-[7px] font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-orange-500/30 hover:-translate-y-1 group"
                         >
                             É profissional? Registe-se
@@ -191,6 +191,6 @@ export function WhyChooseUs() {
                     </div>
                 </div>
             </div>
-        </section >
+        </section>
     );
 }

@@ -27,7 +27,6 @@ import { UpgradeModal } from "./UpgradeModal";
 // Exact items requested by user
 const navigation = [
     { name: "Minha Conta", href: "/usuario/dashboard/minha-conta", icon: User },
-    { name: "Meu Perfil", href: "/usuario/dashboard/profissional", icon: Briefcase },
     { name: "Minha Empresa", href: "/usuario/dashboard/empresa", icon: Building2 },
     { name: "Minhas Mensagens", href: "/usuario/dashboard/mensagens", icon: Mail },
     { name: "Meu Conteúdo", href: "/usuario/dashboard/produtos", icon: Package },

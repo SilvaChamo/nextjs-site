@@ -499,7 +499,6 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
                                 </div>
                             </div>
 
-
                         </div>
 
                         {/* Shortcut Tip */}

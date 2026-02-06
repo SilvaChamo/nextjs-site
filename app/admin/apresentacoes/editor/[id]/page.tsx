@@ -48,7 +48,8 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
                     slides: (data.slides || []).map((s: any, idx: number) => ({
                         ...s,
                         id: s.id || `slide-${idx}-${Date.now()}`,
-                        image_side: s.image_side || 'left'
+                        image_side: s.image_side || 'left',
+                        image_disabled: s.image_disabled || false
                     }))
                 });
                 setLoading(false);
@@ -75,7 +76,8 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
                 slides: (data.slides || []).map((s: any, idx: number) => ({
                     ...s,
                     id: s.id || `slide-${idx}-${Date.now()}`,
-                    image_side: s.image_side || 'left'
+                    image_side: s.image_side || 'left',
+                    image_disabled: s.image_disabled || false
                 }))
             });
         }

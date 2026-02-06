@@ -245,11 +245,13 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
             selectedImage.style.marginLeft = '0';
             selectedImage.style.marginRight = '0';
             selectedImage.style.display = 'block';
+            selectedImage.style.width = 'auto';
         } else {
-            // Center the image
+            // Center the image and make it full width
             selectedImage.style.marginLeft = 'auto';
             selectedImage.style.marginRight = 'auto';
             selectedImage.style.display = 'block';
+            selectedImage.style.width = '100%';
         }
         handleInput();
     };

@@ -219,8 +219,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                         ) : (
                                             /* Two Column Layout - With Image */
                                             <div className={cn(
-                                                "w-full mx-auto px-[70px] grid grid-cols-1 gap-[40px] items-center",
-                                                slide.image_side === 'center' ? "max-w-4xl" : "max-w-7xl",
+                                                "w-full max-w-7xl mx-auto px-[70px] grid grid-cols-1 gap-[40px] items-center",
                                                 slide.image_side === 'center' ? "lg:grid-cols-1" : (slide.image_side === 'right' ? "lg:grid-cols-[1fr_500px]" : "lg:grid-cols-[500px_1fr]")
                                             )}>
 

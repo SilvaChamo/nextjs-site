@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { Bold, Italic, List, ListOrdered, Indent, Outdent, Image as ImageIcon, Loader2, Trash2, ZoomIn, ZoomOut } from "lucide-react";
+import { Bold, Italic, List, ListOrdered, Indent, Outdent, Image as ImageIcon, Loader2, Trash2, ZoomIn, ZoomOut, AlignCenter } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
@@ -152,12 +152,35 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
 
             const imageUrl = urlData.publicUrl;
 
-            // Insert image at cursor position with resizable wrapper
-            const imgHtml = `<img src="${imageUrl}" alt="Imagem" style="max-width: 100%; height: auto; cursor: pointer; border-radius: 8px; margin: 8px 0;" class="content-image" data-resizable="true" />`;
+            // Create image element and insert it
+            if (editorRef.current) {
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.alt = 'Imagem';
+                img.style.cssText = 'max-width: 100%; height: auto; cursor: pointer; border-radius: 8px; margin: 8px 0; display: block;';
+                img.className = 'content-image';
+                img.setAttribute('data-resizable', 'true');
 
-            document.execCommand('insertHTML', false, imgHtml);
-            handleInput();
-            toast.success('Imagem inserida com sucesso!');
+                // Insert at cursor or append to end
+                const selection = window.getSelection();
+                if (selection && selection.rangeCount > 0 && editorRef.current.contains(selection.anchorNode)) {
+                    const range = selection.getRangeAt(0);
+                    range.insertNode(img);
+                    range.setStartAfter(img);
+                    range.collapse(true);
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                } else {
+                    editorRef.current.appendChild(img);
+                }
+
+                // Add line break after image
+                const br = document.createElement('br');
+                img.after(br);
+
+                handleInput();
+                toast.success('Imagem inserida com sucesso!');
+            }
 
         } catch (error: any) {
             console.error('Upload error:', error);
@@ -208,6 +231,27 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
         setSelectedImage(null);
         handleInput();
         toast.success('Imagem removida');
+    };
+
+    // Center selected image
+    const centerImage = () => {
+        if (!selectedImage) return;
+
+        // Toggle centering
+        const isCentered = selectedImage.style.marginLeft === 'auto' && selectedImage.style.marginRight === 'auto';
+
+        if (isCentered) {
+            // Remove centering
+            selectedImage.style.marginLeft = '0';
+            selectedImage.style.marginRight = '0';
+            selectedImage.style.display = 'block';
+        } else {
+            // Center the image
+            selectedImage.style.marginLeft = 'auto';
+            selectedImage.style.marginRight = 'auto';
+            selectedImage.style.display = 'block';
+        }
+        handleInput();
     };
 
     return (
@@ -282,6 +326,11 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
                                 onClick={() => resizeImage(1.25)}
                                 icon={<ZoomIn className="w-4 h-4" />}
                                 title="Aumentar Imagem"
+                            />
+                            <ToolbarButton
+                                onClick={centerImage}
+                                icon={<AlignCenter className="w-4 h-4" />}
+                                title="Centralizar Imagem"
                             />
                             <ToolbarButton
                                 onClick={deleteImage}

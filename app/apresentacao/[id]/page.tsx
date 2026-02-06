@@ -296,8 +296,8 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                         prose-ol:list-decimal prose-ol:pl-10 prose-ol:space-y-4
                                                         prose-li:text-slate-300 prose-li:marker:text-orange-500
                                                         prose-blockquote:border-l-4 prose-blockquote:border-orange-500 prose-blockquote:pl-6 prose-blockquote:italic
-                                                        [&_img.content-image]:inline-block [&_img.content-image]:w-full lg:[&_img.content-image]:w-[48%] [&_img.content-image]:aspect-video [&_img.content-image]:object-cover [&_img.content-image]:m-[15px] [&_img.content-image]:rounded-xl [&_img.content-image]:shadow-lg [&_img.content-image]:vertical-middle
-                                                        [&_img[style*='width: 100%']]:w-full [&_img[style*='width: 100%']]:block [&_img[style*='width: 100%']]:m-[30px_0]"
+                                                        [&_img.content-image]:inline-block [&_img.content-image]:w-full lg:[&_img.content-image]:w-[48%] [&_img.content-image]:aspect-video [&_img.content-image]:object-cover [&_img.content-image]:m-[1%] [&_img.content-image]:rounded-xl [&_img.content-image]:shadow-lg
+                                                        [&_img[style*='width: 100%']]:w-full [&_img[style*='width: 100%']]:block [&_img[style*='width: 100%']]:m-[20px_0]"
                                                         dangerouslySetInnerHTML={{ __html: slide.content }}>
                                                     </div>
 

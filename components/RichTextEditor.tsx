@@ -157,7 +157,7 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
                 const img = document.createElement('img');
                 img.src = imageUrl;
                 img.alt = 'Imagem';
-                img.style.cssText = 'width: 48%; height: auto; aspect-ratio: 16/9; cursor: pointer; border-radius: 8px; margin: 15px; display: inline-block; object-cover: cover; vertical-align: middle;';
+                img.style.cssText = 'width: 48%; height: auto; aspect-ratio: 16/9; cursor: pointer; border-radius: 8px; margin: 1%; display: inline-block; object-cover: cover;';
                 img.className = 'content-image';
                 img.setAttribute('data-resizable', 'true');
 
@@ -179,6 +179,11 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
                 img.after(br);
 
                 handleInput();
+
+                // Auto-select the newly uploaded image
+                img.classList.add('rich-text-image-selected');
+                setSelectedImage(img);
+
                 toast.success('Imagem inserida com sucesso!');
             }
 
@@ -217,11 +222,46 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
         if (!selectedImage) return;
 
         const currentWidth = selectedImage.offsetWidth;
-        const newWidth = Math.max(100, Math.min(800, currentWidth * factor));
+        const newWidth = Math.max(100, Math.min(1200, currentWidth * factor));
 
         selectedImage.style.width = `${newWidth}px`;
         selectedImage.style.height = 'auto';
         handleInput();
+        // Force update resizer position
+        setSelectedImage({ ...selectedImage } as HTMLImageElement);
+    };
+
+    // Handle manual resize drag
+    const [isResizing, setIsResizing] = useState(false);
+    const resizeStart = useRef({ x: 0, width: 0 });
+
+    const handleResizeStart = (e: React.MouseEvent) => {
+        if (!selectedImage) return;
+        e.preventDefault();
+        e.stopPropagation();
+        setIsResizing(true);
+        resizeStart.current = {
+            x: e.clientX,
+            width: selectedImage.offsetWidth
+        };
+
+        const handleMouseMove = (moveEvent: MouseEvent) => {
+            if (!selectedImage) return;
+            const deltaX = moveEvent.clientX - resizeStart.current.x;
+            const newWidth = Math.max(100, resizeStart.current.width + deltaX);
+            selectedImage.style.width = `${newWidth}px`;
+            selectedImage.style.height = 'auto';
+            handleInput();
+        };
+
+        const handleMouseUp = () => {
+            setIsResizing(false);
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
+        };
+
+        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mouseup', handleMouseUp);
     };
 
     // Delete selected image
@@ -246,14 +286,14 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
             selectedImage.style.marginRight = '0';
             selectedImage.style.display = 'inline-block';
             selectedImage.style.width = '48%';
-            selectedImage.style.margin = '15px';
+            selectedImage.style.margin = '1%';
         } else {
             // Center the image and make it full width
             selectedImage.style.marginLeft = 'auto';
             selectedImage.style.marginRight = 'auto';
             selectedImage.style.display = 'block';
             selectedImage.style.width = '100%';
-            selectedImage.style.margin = '30px auto';
+            selectedImage.style.margin = '16px auto';
         }
         handleInput();
     };
@@ -377,12 +417,34 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
                 </div>
             )}
 
-            {/* Upload Progress Overlay */}
+            {/* Image Upload Progress Overlay */}
             {isUploading && (
                 <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-20">
                     <div className="flex items-center gap-3 bg-emerald-50 px-6 py-3 rounded-lg border border-emerald-200 shadow-lg">
                         <Loader2 className="w-5 h-5 animate-spin text-emerald-600" />
                         <span className="text-sm font-bold text-emerald-700">A carregar imagem...</span>
+                    </div>
+                </div>
+            )}
+
+            {/* Selection Visual Feedback / Simple Drag Handle Logic */}
+            {selectedImage && (
+                <div
+                    className="absolute pointer-events-none z-10 border-2 border-emerald-500 rounded-lg transition-all ring-2 ring-emerald-500/20"
+                    style={{
+                        top: selectedImage.offsetTop + (editorRef.current?.offsetTop || 0),
+                        left: selectedImage.offsetLeft + (editorRef.current?.offsetLeft || 0),
+                        width: selectedImage.offsetWidth,
+                        height: selectedImage.offsetHeight,
+                    }}
+                >
+                    <div
+                        className="absolute -right-2 -bottom-2 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full pointer-events-auto cursor-nwse-resize shadow-md hover:scale-125 transition-transform"
+                        onMouseDown={handleResizeStart}
+                        title="Arraste para redimensionar"
+                    />
+                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-emerald-500 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm opacity-100 uppercase tracking-tighter">
+                        {selectedImage.offsetWidth}px × {selectedImage.offsetHeight}px
                     </div>
                 </div>
             )}

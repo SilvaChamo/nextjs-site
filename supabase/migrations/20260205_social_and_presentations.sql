@@ -24,10 +24,17 @@ CREATE TABLE IF NOT EXISTS public.presentations (
     title text NOT NULL,
     description text,
     slides jsonb NOT NULL DEFAULT '[]'::jsonb,
+    status text DEFAULT 'active',
     user_id uuid REFERENCES auth.users(id),
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now()
 );
+
+-- Add status column if table already exists (for existing databases)
+ALTER TABLE public.presentations ADD COLUMN IF NOT EXISTS status text DEFAULT 'active';
+
+-- Create index for status filtering
+CREATE INDEX IF NOT EXISTS idx_presentations_status ON public.presentations(status);
 
 -- Enable RLS
 ALTER TABLE public.presentations ENABLE ROW LEVEL SECURITY;

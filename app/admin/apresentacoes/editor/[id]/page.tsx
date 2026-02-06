@@ -26,7 +26,7 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
         title: "",
         description: "",
         slides: [
-            { id: crypto.randomUUID(), title: "Título do Slide", antetitulo: "Antetítulo do Slide", content: "Conteúdo aqui...", image_url: "", image_side: "left", cta_text: "", cta_link: "" }
+            { id: crypto.randomUUID(), title: "Título do Slide", antetitulo: "Antetítulo do Slide", content: "Conteúdo aqui...", image_url: "", image_side: "left", image_disabled: false, cta_text: "", cta_link: "" }
         ]
     });
 
@@ -85,7 +85,7 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
     const handleAddSlide = () => {
         setPresentation(prev => ({
             ...prev,
-            slides: [...prev.slides, { id: crypto.randomUUID(), title: "Novo Slide", antetitulo: "", content: "", image_url: "", image_side: "left", cta_text: "", cta_link: "" }]
+            slides: [...prev.slides, { id: crypto.randomUUID(), title: "Novo Slide", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, cta_text: "", cta_link: "" }]
         }));
     };
 
@@ -381,27 +381,37 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
                                         </div>
                                         {/* Image Positioning Toggle */}
                                         <div className="flex items-center justify-between gap-2 p-2 bg-slate-50 rounded-lg border border-slate-200">
-                                            <span className="text-[10px] font-black uppercase text-slate-400">Lado da Imagem</span>
+                                            <span className="text-[10px] font-black uppercase text-slate-400">Imagem</span>
                                             <div className="flex bg-white rounded-md border border-slate-200 p-0.5">
                                                 <button
                                                     type="button"
-                                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); updateSlide(activeSlide.id, { image_side: 'left' }); }}
+                                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); updateSlide(activeSlide.id, { image_side: 'left', image_disabled: false }); }}
                                                     className={cn(
                                                         "px-3 py-1 text-[9px] font-black uppercase rounded transition-all",
-                                                        (activeSlide?.image_side || 'left') === 'left' ? "bg-emerald-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-600"
+                                                        (activeSlide?.image_side || 'left') === 'left' && !activeSlide?.image_disabled ? "bg-emerald-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-600"
                                                     )}
                                                 >
                                                     Esquerda
                                                 </button>
                                                 <button
                                                     type="button"
-                                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); updateSlide(activeSlide.id, { image_side: 'right' }); }}
+                                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); updateSlide(activeSlide.id, { image_side: 'right', image_disabled: false }); }}
                                                     className={cn(
                                                         "px-3 py-1 text-[9px] font-black uppercase rounded transition-all",
-                                                        activeSlide?.image_side === 'right' ? "bg-emerald-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-600"
+                                                        activeSlide?.image_side === 'right' && !activeSlide?.image_disabled ? "bg-emerald-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-600"
                                                     )}
                                                 >
                                                     Direita
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); updateSlide(activeSlide.id, { image_disabled: true }); }}
+                                                    className={cn(
+                                                        "px-3 py-1 text-[9px] font-black uppercase rounded transition-all",
+                                                        activeSlide?.image_disabled ? "bg-rose-500 text-white shadow-sm" : "text-slate-400 hover:text-rose-500"
+                                                    )}
+                                                >
+                                                    Desactivar
                                                 </button>
                                             </div>
                                         </div>

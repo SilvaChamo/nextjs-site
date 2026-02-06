@@ -170,53 +170,17 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                             </div>
                                         </div>
 
-                                        <div className={cn(
-                                            "w-full grid grid-cols-1 gap-[30px] items-center",
-                                            slide.image_side === 'right' ? "lg:grid-cols-[1fr_550px]" : "lg:grid-cols-[550px_1fr]"
-                                        )}>
-
-                                            {/* Column 1: Photo + Footer */}
-                                            <div className={cn(
-                                                "flex flex-col items-center w-full",
-                                                slide.image_side === 'right' ? "lg:items-end lg:order-last" : "lg:items-start lg:order-first"
-                                            )}>
-                                                <div className="relative group w-full max-w-[550px]">
-                                                    <div className="absolute -inset-4 bg-orange-500/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                                    {slide.image_url ? (
-                                                        <div className="relative w-[500px] h-[550px] max-w-full rounded-[20px] overflow-hidden border border-white/10 shadow-2xl bg-slate-900 mx-auto lg:ml-0">
-                                                            <img src={slide.image_url} alt="" className="w-full h-full object-cover" />
-                                                            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent flex items-end p-6">
-                                                                <span className="text-[10px] font-bold uppercase tracking-wider text-white/40">recurso visual • slide {index + 1}</span>
-                                                            </div>
-                                                        </div>
-                                                    ) : (
-                                                        <div className="relative w-[500px] h-[550px] max-w-full rounded-[20px] bg-white/5 border border-dashed border-white/10 flex items-center justify-center mx-auto lg:ml-0">
-                                                            <div className="text-center">
-                                                                <Loader2 className="w-8 h-8 text-white/10 animate-spin mx-auto mb-3" />
-                                                                <p className="text-[10px] font-bold text-white/10 uppercase tracking-widest">Sem recurso visual</p>
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </div>
-
-                                                {/* Footer line for the slide */}
-                                                <div className="pt-4 flex items-center justify-center gap-4 w-full max-w-[500px] text-slate-300/60 lowercase font-medium text-[10px] tracking-tight">
-                                                    <span>baseagrodata</span>
-                                                    <span className="opacity-20">•</span>
-                                                    <span>estratégia digital</span>
-                                                    <span className="opacity-20">•</span>
-                                                    <span className="font-bold border border-white/5 px-2 py-0.5 rounded">acesso reservado</span>
-                                                </div>
-                                            </div>
-
-                                            {/* Column 2: Description */}
-                                            <div className="space-y-[30px] lg:text-left">
+                                        {/* Conditional Layout: Image disabled = centered text only */}
+                                        {slide.image_disabled ? (
+                                            /* Centered Layout - No Image */
+                                            <div className="w-full max-w-4xl text-center space-y-[30px]">
                                                 {slide.title && (
-                                                    <div className="flex items-center gap-4 mb-2">
+                                                    <div className="flex items-center justify-center gap-4 mb-2">
                                                         <div className="w-[45px] h-[2px] bg-orange-500/50"></div>
                                                         <span className="text-orange-500 font-bold uppercase tracking-widest text-[20px]">
                                                             {slide.title}
                                                         </span>
+                                                        <div className="w-[45px] h-[2px] bg-orange-500/50"></div>
                                                     </div>
                                                 )}
                                                 {slide.antetitulo && (
@@ -226,18 +190,18 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                         </span>
                                                     </div>
                                                 )}
-                                                <div className="prose prose-invert max-w-none 
+                                                <div className="prose prose-invert max-w-none text-center mx-auto
                                                     prose-p:text-[22px] prose-p:leading-relaxed prose-p:text-slate-200 prose-p:font-medium
                                                     prose-h5:text-[28px] prose-h5:font-normal prose-h5:text-white prose-h5:leading-[1.4]
                                                     prose-strong:text-orange-500 prose-strong:font-black
-                                                    prose-ul:list-disc prose-ul:pl-10 prose-ul:space-y-4
-                                                    prose-ol:list-decimal prose-ol:pl-10 prose-ol:space-y-4
+                                                    prose-ul:list-disc prose-ul:pl-10 prose-ul:space-y-4 prose-ul:text-left prose-ul:inline-block
+                                                    prose-ol:list-decimal prose-ol:pl-10 prose-ol:space-y-4 prose-ol:text-left prose-ol:inline-block
                                                     prose-li:text-slate-300 prose-li:marker:text-orange-500
                                                     prose-blockquote:border-l-4 prose-blockquote:border-orange-500 prose-blockquote:pl-6 prose-blockquote:italic"
                                                     dangerouslySetInnerHTML={{ __html: slide.content }}>
                                                 </div>
 
-                                                {/* CTA Button */}
+                                                {/* CTA Button - Centered */}
                                                 {slide.cta_text && slide.cta_link && (
                                                     <div className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
                                                         <a
@@ -251,10 +215,95 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                         </a>
                                                     </div>
                                                 )}
+                                            </div>
+                                        ) : (
+                                            /* Two Column Layout - With Image */
+                                            <div className={cn(
+                                                "w-full grid grid-cols-1 gap-[30px] items-center",
+                                                slide.image_side === 'right' ? "lg:grid-cols-[1fr_550px]" : "lg:grid-cols-[550px_1fr]"
+                                            )}>
+
+                                                {/* Column 1: Photo + Footer */}
+                                                <div className={cn(
+                                                    "flex flex-col items-center w-full",
+                                                    slide.image_side === 'right' ? "lg:items-end lg:order-last" : "lg:items-start lg:order-first"
+                                                )}>
+                                                    <div className="relative group w-full max-w-[550px]">
+                                                        <div className="absolute -inset-4 bg-orange-500/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                                        {slide.image_url ? (
+                                                            <div className="relative w-[500px] h-[550px] max-w-full rounded-[20px] overflow-hidden border border-white/10 shadow-2xl bg-slate-900 mx-auto lg:ml-0">
+                                                                <img src={slide.image_url} alt="" className="w-full h-full object-cover" />
+                                                                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent flex items-end p-6">
+                                                                    <span className="text-[10px] font-bold uppercase tracking-wider text-white/40">recurso visual • slide {index + 1}</span>
+                                                                </div>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="relative w-[500px] h-[550px] max-w-full rounded-[20px] bg-white/5 border border-dashed border-white/10 flex items-center justify-center mx-auto lg:ml-0">
+                                                                <div className="text-center">
+                                                                    <Loader2 className="w-8 h-8 text-white/10 animate-spin mx-auto mb-3" />
+                                                                    <p className="text-[10px] font-bold text-white/10 uppercase tracking-widest">Sem recurso visual</p>
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                    {/* Footer line for the slide */}
+                                                    <div className="pt-4 flex items-center justify-center gap-4 w-full max-w-[500px] text-slate-300/60 lowercase font-medium text-[10px] tracking-tight">
+                                                        <span>baseagrodata</span>
+                                                        <span className="opacity-20">•</span>
+                                                        <span>estratégia digital</span>
+                                                        <span className="opacity-20">•</span>
+                                                        <span className="font-bold border border-white/5 px-2 py-0.5 rounded">acesso reservado</span>
+                                                    </div>
+                                                </div>
+
+                                                {/* Column 2: Description */}
+                                                <div className="space-y-[30px] lg:text-left">
+                                                    {slide.title && (
+                                                        <div className="flex items-center gap-4 mb-2">
+                                                            <div className="w-[45px] h-[2px] bg-orange-500/50"></div>
+                                                            <span className="text-orange-500 font-bold uppercase tracking-widest text-[20px]">
+                                                                {slide.title}
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                    {slide.antetitulo && (
+                                                        <div className="mb-4">
+                                                            <span className="text-white font-bold first-letter:uppercase lowercase tracking-tight text-[50px] leading-tight block">
+                                                                {slide.antetitulo}
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                    <div className="prose prose-invert max-w-none 
+                                                        prose-p:text-[22px] prose-p:leading-relaxed prose-p:text-slate-200 prose-p:font-medium
+                                                        prose-h5:text-[28px] prose-h5:font-normal prose-h5:text-white prose-h5:leading-[1.4]
+                                                        prose-strong:text-orange-500 prose-strong:font-black
+                                                        prose-ul:list-disc prose-ul:pl-10 prose-ul:space-y-4
+                                                        prose-ol:list-decimal prose-ol:pl-10 prose-ol:space-y-4
+                                                        prose-li:text-slate-300 prose-li:marker:text-orange-500
+                                                        prose-blockquote:border-l-4 prose-blockquote:border-orange-500 prose-blockquote:pl-6 prose-blockquote:italic"
+                                                        dangerouslySetInnerHTML={{ __html: slide.content }}>
+                                                    </div>
+
+                                                    {/* CTA Button */}
+                                                    {slide.cta_text && slide.cta_link && (
+                                                        <div className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+                                                            <a
+                                                                href={slide.cta_link}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="inline-flex items-center gap-2 px-8 py-[9px] bg-emerald-500 hover:bg-orange-500 text-white font-bold rounded-full transition-all hover:scale-105 hover:shadow-lg hover:shadow-orange-500/20 text-sm uppercase tracking-wider group/btn"
+                                                            >
+                                                                {slide.cta_text}
+                                                                <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                                                            </a>
+                                                        </div>
+                                                    )}
+
+                                                </div>
 
                                             </div>
-
-                                        </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>

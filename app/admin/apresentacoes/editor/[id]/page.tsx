@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { ArrowLeft, Plus, Trash2, Save, Loader2, Play, Image as ImageIcon, FileText, ChevronUp, ChevronDown, Layout, Sidebar as SidebarIcon, Menu, Maximize2, Monitor } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Save, Loader2, Play, Image as ImageIcon, FileText, ChevronUp, ChevronDown, Layout, Sidebar as SidebarIcon, Menu, Maximize2, Monitor, Copy } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { RichTextEditor } from "@/components/RichTextEditor";
@@ -89,6 +89,26 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
             ...prev,
             slides: [...prev.slides, { id: crypto.randomUUID(), title: "Novo Slide", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, cta_text: "", cta_link: "" }]
         }));
+    };
+
+    const handleDuplicateSlide = (index: number) => {
+        const slideToDuplicate = presentation.slides[index];
+        const duplicatedSlide = {
+            ...slideToDuplicate,
+            id: crypto.randomUUID(),
+            title: `${slideToDuplicate.title} (Cópia)`
+        };
+
+        const newSlides = [...presentation.slides];
+        newSlides.splice(index + 1, 0, duplicatedSlide);
+
+        setPresentation(prev => ({
+            ...prev,
+            slides: newSlides
+        }));
+
+        setActiveIndex(index + 1);
+        toast.success("Slide duplicado!");
     };
 
     const handleRemoveSlide = (slideId: string) => {
@@ -274,8 +294,16 @@ export default function PresentationEditorPage({ params }: { params: Promise<{ i
                                             <ChevronDown className="w-3 h-3" />
                                         </button>
                                         <button
+                                            onClick={(e) => { e.stopPropagation(); handleDuplicateSlide(index); }}
+                                            className="p-1 bg-white hover:bg-emerald-50 text-emerald-600 rounded border shadow-sm"
+                                            title="Duplicar Slide"
+                                        >
+                                            <Copy className="w-3 h-3" />
+                                        </button>
+                                        <button
                                             onClick={(e) => { e.stopPropagation(); handleRemoveSlide(slide.id); }}
                                             className="p-1 bg-white hover:bg-rose-50 text-rose-500 rounded border shadow-sm mt-1"
+                                            title="Remover Slide"
                                         >
                                             <Trash2 className="w-3 h-3" />
                                         </button>

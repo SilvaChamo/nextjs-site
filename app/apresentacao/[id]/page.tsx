@@ -140,7 +140,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                         return (
                             <div
                                 key={index}
-                                className={`h-full absolute inset-0 p-[70px] flex items-center justify-center transition-all duration-[1000ms] ease-in-out ${isActive ? 'opacity-100 z-10 scale-100' : 'opacity-0 z-0 scale-[1.02] pointer-events-none'}`}
+                                className={`h-full absolute inset-0 py-[70px] px-0 flex items-center justify-center transition-all duration-[1000ms] ease-in-out ${isActive ? 'opacity-100 z-10 scale-100' : 'opacity-0 z-0 scale-[1.02] pointer-events-none'}`}
                                 style={{ minWidth: '100%' }}
                             >
 
@@ -156,10 +156,10 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
 
                                 <div className="relative z-10 max-w-full w-full h-full">
                                     {/* Universal Slide Layout: Title Top Left + Subtitle + 2 Columns (Photo | Text) */}
-                                    <div className="w-full max-w-7xl flex flex-col items-center text-center animate-in fade-in duration-700 gap-[25px] mx-auto">
+                                    <div className="w-full flex flex-col items-center text-center animate-in fade-in duration-700 gap-[25px] mx-auto">
 
                                         {/* Header: Title & Subtitle */}
-                                        <div className="space-y-4 w-full text-center px-[10px] pb-[30px] border-b border-white/30">
+                                        <div className="space-y-4 w-full text-center px-[70px] pb-[30px] mb-[30px] border-b border-white/20">
                                             <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase leading-none">
                                                 {presentation.title}
                                             </h1>
@@ -173,7 +173,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                         {/* Conditional Layout: Image disabled = centered text only */}
                                         {slide.image_disabled ? (
                                             /* Centered Layout - No Image */
-                                            <div className="w-full max-w-4xl text-center space-y-[30px]">
+                                            <div className="w-full max-w-4xl px-[70px] text-center space-y-[30px]">
                                                 {slide.title && (
                                                     <div className="flex items-center justify-center gap-4 mb-2">
                                                         <div className="w-[45px] h-[2px] bg-orange-500/50"></div>
@@ -219,7 +219,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                         ) : (
                                             /* Two Column Layout - With Image */
                                             <div className={cn(
-                                                "w-full grid grid-cols-1 gap-[40px] items-center",
+                                                "w-full max-w-7xl mx-auto px-[70px] grid grid-cols-1 gap-[40px] items-center",
                                                 slide.image_side === 'right' ? "lg:grid-cols-[1fr_550px]" : "lg:grid-cols-[550px_1fr]"
                                             )}>
 

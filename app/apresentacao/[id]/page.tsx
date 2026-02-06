@@ -156,10 +156,10 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
 
                                 <div className="relative z-10 max-w-full w-full h-full">
                                     {/* Universal Slide Layout: Title Top Left + Subtitle + 2 Columns (Photo | Text) */}
-                                    <div className="w-full max-w-7xl flex flex-col items-center text-center animate-in fade-in duration-700 gap-[30px] mx-auto">
+                                    <div className="w-full max-w-7xl flex flex-col items-center text-center animate-in fade-in duration-700 gap-[25px] mx-auto">
 
                                         {/* Header: Title & Subtitle */}
-                                        <div className="space-y-4 w-full text-center px-[10px] pb-8 mb-8 border-b border-white/30">
+                                        <div className="space-y-4 w-full text-center px-[10px] pb-[30px] border-b border-white/30">
                                             <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase leading-none">
                                                 {presentation.title}
                                             </h1>

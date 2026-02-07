@@ -170,40 +170,21 @@ export default function DashboardPage() {
                             </div>
                         )}
 
-                        {/* Profile Sharing Toggle - Relocated under Keywords */}
-                        <div className="bg-white rounded-[15px] p-6 border border-slate-100 shadow-sm">
-                            <div className="flex items-center justify-between mb-4">
+                        {/* Profile Sharing Status - Linked to Settings */}
+                        <div className="bg-white rounded-[15px] p-6 border border-slate-100 shadow-sm cursor-pointer hover:border-emerald-200 transition-all group" onClick={() => router.push('/usuario/dashboard/minha-conta')}>
+                            <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600">
+                                    <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
                                         <Share2 className="w-5 h-5" />
                                     </div>
                                     <div>
-                                        <h4 className="font-bold text-slate-800 text-sm italic">Partilhar Perfil de Empresa</h4>
-                                        <p className="text-[10px] text-slate-500 italic">Torne a sua empresa visível no diretório público para atrair novos parceiros</p>
+                                        <h4 className="font-bold text-slate-800 text-sm italic">Marketing & Visibilidade</h4>
+                                        <p className="text-[10px] text-slate-500 italic">Gerencie a visibilidade pública a partir das Definições</p>
                                     </div>
                                 </div>
-                                <div className="flex flex-col items-end gap-2">
-                                    <button
-                                        disabled={!canManageSharing}
-                                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${canManageSharing ? 'bg-emerald-500 cursor-pointer' : 'bg-slate-200 cursor-not-allowed'}`}
-                                    >
-                                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${canManageSharing ? 'translate-x-6' : 'translate-x-1'}`} />
-                                    </button>
-                                    {!canManageSharing && (
-                                        <Link href="/planos" className="flex items-center gap-1 text-[9px] font-black text-orange-500 uppercase tracking-tight hover:underline">
-                                            <ShieldCheck className="w-3 h-3" />
-                                            Upgrade para Ativar
-                                        </Link>
-                                    )}
+                                <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                                    <ShieldCheck className="w-4 h-4" />
                                 </div>
-                            </div>
-                            <div className="pt-4 border-t border-slate-50 flex items-center justify-between">
-                                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Estado: <span className={canManageSharing ? "text-emerald-500" : "text-amber-500"}>{canManageSharing ? "ATIVO" : "INATIVO (PREMIUM)"}</span></span>
-                                {canManageSharing && (
-                                    <Link href="#" className="text-[10px] text-emerald-600 font-bold flex items-center gap-1 hover:underline">
-                                        Ver Perfil Público <ExternalLink className="w-3 h-3" />
-                                    </Link>
-                                )}
                             </div>
                         </div>
 

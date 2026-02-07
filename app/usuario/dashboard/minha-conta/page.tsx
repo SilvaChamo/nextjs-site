@@ -39,7 +39,7 @@ export default function MinhaContaPage() {
         plan: "Gratuito" as PlanType
     });
 
-    const [activeTab, setActiveTab] = useState("perfil"); // Tab state
+    const [activeTab, setActiveTab] = useState<"perfil" | "notificações" | "segurança">("perfil"); // Tab state
 
     useEffect(() => {
         const getUser = async () => {
@@ -156,6 +156,19 @@ export default function MinhaContaPage() {
 
             if (error) throw error;
 
+            // Update Company Settings (is_public)
+            const { error: companyError } = await supabase
+                .from('companies')
+                .update({
+                    is_public: formData.isProfilePublic
+                })
+                .eq('user_id', user.id);
+
+            if (companyError) {
+                console.error("Error updating company settings:", companyError);
+                // Non-blocking error, but good to log
+            }
+
             setSuccessModal({
                 isOpen: true,
                 title: "Perfil Atualizado",
@@ -208,7 +221,6 @@ export default function MinhaContaPage() {
         return <div className="p-8 text-center text-slate-500">Carregando dados...</div>;
     }
 
-    const [activeTab, setActiveTab] = useState<"perfil" | "notificações" | "segurança">("perfil");
 
     return (
         <div className="space-y-4">
@@ -315,7 +327,7 @@ export default function MinhaContaPage() {
                         <h3 className="text-2xl font-black text-slate-800 tracking-tight uppercase">
                             {activeTab === "perfil" && "Dados Pessoais"}
                             {activeTab === "notificações" && "Preferências de Alerta"}
-                            {activeTab === "segurança" && "Gestão de Palavras-Chave"}
+                            {activeTab === "segurança" && "Segurança e Visibilidade"}
                         </h3>
                         <div className="flex items-center gap-2">
                             {isEditing ? (
@@ -551,6 +563,24 @@ export default function MinhaContaPage() {
                                                 Gerir Palavras
                                             </Button>
                                         </div>
+
+                                        <div className="flex items-center justify-between border-b border-slate-50 pb-4">
+                                            <div>
+                                                <h5 className="font-bold text-slate-800 text-sm">Visibilidade do Perfil</h5>
+                                                <p className="text-[11px] text-slate-500 italic">Permitir que a sua empresa seja vista publicamente.</p>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                disabled={!isEditing}
+                                                onClick={() => setFormData(prev => ({ ...prev, isProfilePublic: !prev.isProfilePublic }))}
+                                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 ${formData.isProfilePublic ? 'bg-emerald-500' : 'bg-slate-200'} ${!isEditing ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                                            >
+                                                <span
+                                                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${formData.isProfilePublic ? 'translate-x-6' : 'translate-x-1'}`}
+                                                />
+                                            </button>
+                                        </div>
+
                                         <div className="flex items-center justify-between border-b border-slate-50 pb-4">
                                             <div>
                                                 <h5 className="font-bold text-slate-800 text-sm">Segurança da Conta</h5>
@@ -560,6 +590,7 @@ export default function MinhaContaPage() {
                                                 Alterar Senha
                                             </Button>
                                         </div>
+
                                         <div className="flex items-center justify-between text-red-600">
                                             <div>
                                                 <h5 className="font-bold text-sm">Zona de Risco</h5>
@@ -593,10 +624,10 @@ export default function MinhaContaPage() {
                         )}
                     </div>
                 </div>
-            </div>
+            </div >
 
             {/* NOVA SECÇÃO: Privilégios e Comparativo de Planos */}
-            <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
+            < div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden" >
                 <div className="px-8 py-6 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
                     <div>
                         <h3 className="text-2xl font-black text-slate-800 tracking-tight">Privilégios da Conta</h3>
@@ -659,13 +690,13 @@ export default function MinhaContaPage() {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
             <SuccessModal
                 isOpen={successModal.isOpen}
                 onClose={() => setSuccessModal(prev => ({ ...prev, isOpen: false }))}
                 title={successModal.title}
                 description={successModal.description}
             />
-        </div>
+        </div >
     );
 }

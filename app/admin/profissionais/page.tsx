@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/utils/supabase/client";
 import { AdminDataTable } from "@/components/admin/AdminDataTable";
 import { Button } from "@/components/ui/button";
-import { Archive, Trash2, User, Plus, Search, LayoutGrid, List } from "lucide-react";
+import { Archive, Trash2, User, Plus, Search, LayoutGrid, List, RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -20,9 +20,10 @@ import {
 const MOCK_DATA: any[] = [];
 
 export default function AdminProfessionalsPage() {
+    const supabase = createClient();
     const router = useRouter();
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
-    const [data, setData] = useState<any[]>(MOCK_DATA);
+    const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [professionFilter, setProfessionFilter] = useState("all");
@@ -86,31 +87,41 @@ export default function AdminProfessionalsPage() {
         toast.success("Todos os itens restaurados");
     };
 
-    useEffect(() => {
-        async function fetchData() {
-            setLoading(true);
-            const { data: dbData, error } = await supabase
-                .from('professionals')
-                .select('*')
-                .order('name', { ascending: true });
-
-            if (error) {
-                console.error('Erro ao carregar dados:', error);
-                toast.error("Erro ao carregar profissionais da BD");
-                // Keep MOCK_DATA on error
-            } else {
-                // Normalize status for DB records
-                const normalizedDbData = (dbData || []).map(item => ({
-                    ...item,
-                    status: item.status || 'active' // Default to active if null/undefined
-                }));
-
-                console.log('Profissionais carregados:', normalizedDbData.length, 'total');
-                setData(normalizedDbData);
-            }
-            setLoading(false);
+    const handleRefresh = async () => {
+        setLoading(true);
+        // Clear local storage for this view to prevent stale data
+        if (typeof window !== 'undefined') {
+            localStorage.removeItem('agro_data_snapshot_Lista de Talentos & Especialistas');
+            localStorage.removeItem('agro_data_snapshot_Profissionais Arquivados');
+            localStorage.removeItem('agro_data_snapshot_Reciclagem de Profissionais');
         }
+        await fetchData();
+        toast.success("Dados actualizados da base de dados");
+    };
 
+    const fetchData = async () => {
+        setLoading(true);
+        const { data: dbData, error } = await supabase
+            .from('professionals')
+            .select('*')
+            .order('name', { ascending: true });
+
+        if (error) {
+            console.error('Erro ao carregar dados:', error);
+            toast.error("Erro ao carregar profissionais da BD");
+        } else {
+            const normalizedDbData = (dbData || []).map(item => ({
+                ...item,
+                status: item.status || 'active'
+            }));
+
+            console.log('Profissionais carregados:', normalizedDbData.length, 'total');
+            setData(normalizedDbData);
+        }
+        setLoading(false);
+    };
+
+    useEffect(() => {
         fetchData();
     }, []);
 
@@ -335,6 +346,16 @@ export default function AdminProfessionalsPage() {
                             <List className="w-4 h-4" />
                         </button>
                     </div>
+
+                    {/* Refresh Button */}
+                    <Button
+                        variant="outline"
+                        onClick={handleRefresh}
+                        className="bg-white hover:bg-slate-50 text-slate-600 font-bold uppercase tracking-widest text-[10px] h-10 px-4 rounded-lg gap-2 border-slate-200"
+                    >
+                        <RefreshCw className="w-4 h-4" />
+                        Actualizar
+                    </Button>
 
                     {/* New Button */}
                     <Button

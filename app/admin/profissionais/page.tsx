@@ -284,7 +284,7 @@ export default function AdminProfessionalsPage() {
         <div className="space-y-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">Gestão de Profissionais</h1>
+                    <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">Gestão</h1>
                 </div>
 
                 <div className="flex items-center flex-wrap gap-2">

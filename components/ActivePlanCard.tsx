@@ -1,73 +1,84 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, Crown, Zap, XCircle, AlertCircle } from "lucide-react";
+import { Check, Crown, Zap, XCircle, AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
+import { usePlanPermissions } from "@/hooks/usePlanPermissions";
+import { PLAN_PRIVILEGES } from "@/lib/plan-fields";
 
 export function ActivePlanCard() {
-    const [loading, setLoading] = useState(true);
-    const [planData, setPlanData] = useState<any>(null);
+    const { plan, planDisplayName, loading: permissionsLoading } = usePlanPermissions();
+    const [companyId, setCompanyId] = useState<string | null>(null);
     const [renewalDate, setRenewalDate] = useState<string>("");
+    const [isCancelling, setIsCancelling] = useState(false);
     const supabase = createClient();
     const router = useRouter();
 
     useEffect(() => {
-        const fetchPlanData = async () => {
+        const fetchCompanyData = async () => {
             const { data: { user } } = await supabase.auth.getUser();
             if (user) {
-                // Fetch company linked to user
-                const { data: company, error } = await supabase
+                // Fetch company linked to user to get ID and dates
+                const { data: company } = await supabase
                     .from('companies')
-                    .select('id, plan, updated_at')
+                    .select('id, updated_at')
                     .eq('user_id', user.id)
                     .single();
 
                 if (company) {
-                    setPlanData(company);
+                    setCompanyId(company.id);
                     // Simulate renewal date (updated_at + 30 days)
                     const lastUpdate = new Date(company.updated_at || Date.now());
                     const renewal = new Date(lastUpdate.setDate(lastUpdate.getDate() + 30));
                     setRenewalDate(renewal.toLocaleDateString('pt-PT', { day: 'numeric', month: 'short', year: 'numeric' }));
-                } else if (error) {
-                    console.error("Error fetching plan:", error);
                 }
             }
-            setLoading(false);
         };
 
-        fetchPlanData();
-    }, []);
+        fetchCompanyData();
+    }, [supabase]);
 
     const handleCancel = async () => {
-        if (!planData) return;
+        if (!companyId) return;
 
         if (confirm("Tem certeza que deseja cancelar sua subscrição? Você perderá acesso aos recursos premium no final do ciclo atual.")) {
+            setIsCancelling(true);
             try {
                 // Update plan to 'Gratuito' in Database
                 const { error } = await supabase
                     .from('companies')
                     .update({ plan: 'Gratuito', updated_at: new Date().toISOString() })
-                    .eq('id', planData.id);
+                    .eq('id', companyId);
 
                 if (error) throw error;
 
+                // Also update profile plan
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                    await supabase
+                        .from('profiles')
+                        .update({ plan: 'Gratuito' })
+                        .eq('id', user.id);
+                }
+
                 alert("Subscrição cancelada com sucesso. Seu plano agora é Gratuito.");
                 router.push("/");
-                router.refresh(); // Refresh to update UI
+                router.refresh();
             } catch (error) {
                 console.error("Error canceling subscription:", error);
                 alert("Erro ao cancelar subscrição. Tente novamente.");
+            } finally {
+                setIsCancelling(false);
             }
         }
     };
 
-    if (loading) return <div className="animate-pulse h-64 bg-slate-100 rounded-[15px]"></div>;
+    if (permissionsLoading) return <div className="animate-pulse h-64 bg-slate-100 rounded-[15px]"></div>;
 
-    const currentPlan = planData?.plan || "Gratuito";
-    const formattedPlan = currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1);
-    const isFree = currentPlan === "Gratuito";
+    const isFree = plan === "Gratuito" || plan === "Visitante";
+    const privileges = PLAN_PRIVILEGES[plan] || [];
 
     return (
         <div className={`rounded-[15px] p-6 shadow-sm border text-white transition-colors ${isFree ? "bg-slate-800 border-slate-700" : "bg-emerald-950 border-emerald-900"}`}>
@@ -83,7 +94,7 @@ export function ActivePlanCard() {
                             {isFree ? "Estado da Conta" : "Plano Atual"}
                         </span>
                     </div>
-                    <h3 className="text-2xl font-black mb-1 text-white">{formattedPlan}</h3>
+                    <h3 className="text-2xl font-black mb-1 text-white">{planDisplayName}</h3>
                     {!isFree ? (
                         <p className="text-emerald-400 text-sm font-medium">Renova em: {renewalDate}</p>
                     ) : (
@@ -98,37 +109,12 @@ export function ActivePlanCard() {
                         {isFree ? "Capacidades Limitadas" : "Suas Capacidades"}
                     </h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
-                        {isFree ? (
-                            <>
-                                <li className="flex items-center gap-2 text-sm text-slate-400">
-                                    <Check className="w-4 h-4 text-slate-500" />
-                                    <span>Acesso Básico</span>
-                                </li>
-                                <li className="flex items-center gap-2 text-sm text-slate-400">
-                                    <Check className="w-4 h-4 text-slate-500" />
-                                    <span>Newsletter Semanal</span>
-                                </li>
-                            </>
-                        ) : (
-                            <>
-                                <li className="flex items-center gap-2 text-sm text-emerald-100">
-                                    <Check className="w-4 h-4 text-emerald-400" />
-                                    <span>Até 50 Produtos</span>
-                                </li>
-                                <li className="flex items-center gap-2 text-sm text-emerald-100">
-                                    <Check className="w-4 h-4 text-emerald-400" />
-                                    <span>Análise de Mercado</span>
-                                </li>
-                                <li className="flex items-center gap-2 text-sm text-emerald-100">
-                                    <Check className="w-4 h-4 text-emerald-400" />
-                                    <span>Suporte Prioritário</span>
-                                </li>
-                                <li className="flex items-center gap-2 text-sm text-emerald-100">
-                                    <Check className="w-4 h-4 text-emerald-400" />
-                                    <span>Selos de Verificação</span>
-                                </li>
-                            </>
-                        )}
+                        {privileges.slice(0, 4).map((priv, idx) => (
+                            <li key={idx} className={`flex items-center gap-2 text-sm ${isFree ? "text-slate-400" : "text-emerald-100"}`}>
+                                <Check className={`w-4 h-4 shrink-0 ${isFree ? "text-slate-500" : "text-emerald-400"}`} />
+                                <span className="truncate">{priv}</span>
+                            </li>
+                        ))}
                     </div>
                 </div>
 
@@ -140,13 +126,14 @@ export function ActivePlanCard() {
                     >
                         {isFree ? "Fazer Upgrade Agora" : "Fazer Upgrade"}
                     </Button>
-                    {!isFree && (
+                    {!isFree && companyId && (
                         <button
                             onClick={handleCancel}
-                            className="w-full flex items-center justify-center gap-2 text-[10px] font-bold text-red-400 hover:text-red-300 uppercase tracking-widest transition-colors py-2"
+                            disabled={isCancelling}
+                            className="w-full flex items-center justify-center gap-2 text-[10px] font-bold text-red-400 hover:text-red-300 uppercase tracking-widest transition-colors py-2 disabled:opacity-50"
                         >
-                            <XCircle className="w-3 h-3" />
-                            Cancelar Subscrição
+                            {isCancelling ? <Loader2 className="w-3 h-3 animate-spin" /> : <XCircle className="w-3 h-3" />}
+                            {isCancelling ? "Cancelando..." : "Cancelar Subscrição"}
                         </button>
                     )}
                 </div>

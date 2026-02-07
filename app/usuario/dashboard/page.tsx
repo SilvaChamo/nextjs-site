@@ -7,12 +7,15 @@ import { PageHeader } from "../../../components/PageHeader";
 import { DashboardStats } from "../../../components/DashboardStats";
 import { DashboardKeywordsTable } from "../../../components/DashboardKeywordsTable";
 import { GrowthTipCard } from "../../../components/GrowthTipCard";
+import { GrowthNotificationBanner } from "@/components/GrowthNotificationBanner";
 import { SearchCategories } from "../../../components/SearchCategories";
 import { VisibilityChart } from "../../../components/VisibilityChart";
 import { ActivePlanCard } from "../../../components/ActivePlanCard";
 import { Building2, ShoppingCart, Briefcase, GraduationCap, ArrowRight, LayoutDashboard, XCircle, User as UserIcon, Bell, Mail, Share2, ExternalLink, ShieldCheck, Package, MessageSquare, BarChart3, Presentation, Lock, Settings } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../../../components/ui/button";
+import { UpgradeModal } from "@/components/UpgradeModal";
+import { type PlanType } from "@/lib/plan-fields";
 
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { usePlanPermissions } from "@/hooks/usePlanPermissions";
@@ -41,10 +44,18 @@ export default function DashboardPage() {
 
     const supabase = createClient();
     const { settings, loading: settingsLoading } = useSiteSettings();
-    const { canAnalytics, canManageSharing, canPresentations, loading: permissionsLoading } = usePlanPermissions();
+    const { plan, canAnalytics, canManageSharing, canPresentations, loading: permissionsLoading } = usePlanPermissions();
 
-    const [supportMessage, setSupportMessage] = useState("");
-    const [sendingSupport, setSendingSupport] = useState(false);
+    const [upgradeModal, setUpgradeModal] = useState<{
+        isOpen: boolean;
+        fieldLabel: string;
+        requiredPlan: PlanType;
+    }>({
+        isOpen: false,
+        fieldLabel: "",
+        requiredPlan: "Basic"
+    });
+
 
     useEffect(() => {
         const checkUser = async () => {
@@ -111,19 +122,21 @@ export default function DashboardPage() {
         }
     };
 
-    const handleSendSupport = async () => {
-        if (!supportMessage.trim()) return;
-        setSendingSupport(true);
-        // Simulate sending email
-        setTimeout(() => {
-            alert("Sua mensagem foi enviada para a nossa equipa de suporte. Responderemos em breve para " + user?.email);
-            setSupportMessage("");
-            setSendingSupport(false);
-        }, 1500);
+    const handleCardClick = (e: React.MouseEvent, href: string, isLocked: boolean, label: string, requiredPlan: PlanType = "Basic") => {
+        if (isLocked) {
+            e.preventDefault();
+            setUpgradeModal({
+                isOpen: true,
+                fieldLabel: label,
+                requiredPlan: requiredPlan
+            });
+        }
     };
+
 
     return (
         <div>
+            <GrowthNotificationBanner />
             <div className="w-full mx-auto relative z-20">
 
                 {/* Statistics Header & KPIs - Only if allowed */}
@@ -142,109 +155,22 @@ export default function DashboardPage() {
 
                     {/* LEFT COLUMN (Main Focus) */}
                     <div className="lg:col-span-2 space-y-6">
-                        {/* Acesso Rápido Grid - Primary Navigation Hub */}
-                        <div className="space-y-4">
-                            <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider flex items-center gap-2 italic">
-                                <LayoutDashboard className="w-4 h-4 text-orange-500" />
-                                Painel de Acesso Rápido
-                            </h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {/* Minha Empresa */}
-                                <Link href="/usuario/dashboard/empresa" className="group p-5 bg-white rounded-[15px] border border-slate-100 shadow-sm hover:border-emerald-500 hover:shadow-md transition-all flex flex-col items-center text-center">
-                                    <div className="w-12 h-12 bg-emerald-50 rounded-[15px] flex items-center justify-center text-emerald-600 mb-4 group-hover:scale-110 transition-transform">
-                                        <Building2 className="w-6 h-6" />
-                                    </div>
-                                    <h5 className="font-bold text-slate-800 text-xs italic">Minha Empresa</h5>
-                                    <p className="text-[9px] text-slate-500 mt-1 italic">Gerir perfil e dados corporativos.</p>
-                                </Link>
+                        {/* Active Plan - ALWAYS SHOWN AT TOP OF LEFT COLUMN NOW */}
+                        <ActivePlanCard />
 
-                                {/* Meus Produtos */}
-                                <Link href="/usuario/dashboard/produtos" className="group p-5 bg-white rounded-[15px] border border-slate-100 shadow-sm hover:border-emerald-500 hover:shadow-md transition-all flex flex-col items-center text-center">
-                                    <div className="w-12 h-12 bg-blue-50 rounded-[15px] flex items-center justify-center text-blue-600 mb-4 group-hover:scale-110 transition-transform">
-                                        <Package className="w-6 h-6" />
-                                    </div>
-                                    <h5 className="font-bold text-slate-800 text-xs italic">Meu Conteúdo</h5>
-                                    <p className="text-[9px] text-slate-500 mt-1 italic">Catálogo de produtos e serviços.</p>
-                                </Link>
 
-                                {/* Mensagens */}
-                                <Link href="/usuario/dashboard/mensagens" className="group p-5 bg-white rounded-[15px] border border-slate-100 shadow-sm hover:border-emerald-500 hover:shadow-md transition-all flex flex-col items-center text-center">
-                                    <div className="w-12 h-12 bg-purple-50 rounded-[15px] flex items-center justify-center text-purple-600 mb-4 group-hover:scale-110 transition-transform">
-                                        <Mail className="w-6 h-6" />
-                                    </div>
-                                    <h5 className="font-bold text-slate-800 text-xs italic">Minhas Mensagens</h5>
-                                    <p className="text-[9px] text-slate-500 mt-1 italic">Comunicação direta com clientes.</p>
-                                </Link>
-
-                                {/* Contactos */}
-                                <Link href="/usuario/dashboard/contactos" className="group p-5 bg-white rounded-[15px] border border-slate-100 shadow-sm hover:border-emerald-500 hover:shadow-md transition-all flex flex-col items-center text-center">
-                                    <div className="w-12 h-12 bg-amber-50 rounded-[15px] flex items-center justify-center text-amber-600 mb-4 group-hover:scale-110 transition-transform">
-                                        <MessageSquare className="w-6 h-6" />
-                                    </div>
-                                    <h5 className="font-bold text-slate-800 text-xs italic">Contactos</h5>
-                                    <p className="text-[9px] text-slate-500 mt-1 italic">Gestão de leads e parceiros.</p>
-                                </Link>
-
-                                {/* Apresentações - Locked if not allowed */}
-                                <Link href="/usuario/dashboard/apresentacoes" className={`group p-5 bg-white rounded-[15px] border border-slate-100 shadow-sm transition-all flex flex-col items-center text-center relative ${canPresentations ? 'hover:border-emerald-500 hover:shadow-md' : 'opacity-80'}`}>
-                                    {!canPresentations && (
-                                        <div className="absolute top-2 right-2">
-                                            <Lock className="w-3 h-3 text-orange-500" />
-                                        </div>
-                                    )}
-                                    <div className="w-12 h-12 bg-orange-50 rounded-[15px] flex items-center justify-center text-orange-600 mb-4 group-hover:scale-110 transition-transform">
-                                        <Presentation className="w-6 h-6" />
-                                    </div>
-                                    <h5 className="font-bold text-slate-800 text-xs italic">Aumentar Visibilidade</h5>
-                                    <p className="text-[9px] text-slate-500 mt-1 italic">Apresentações visuais de impacto.</p>
-                                </Link>
-
-                                {/* Análise - Locked if not allowed */}
-                                <Link href="/usuario/dashboard/analises" className={`group p-5 bg-white rounded-[15px] border border-slate-100 shadow-sm transition-all flex flex-col items-center text-center relative ${canAnalytics ? 'hover:border-emerald-500 hover:shadow-md' : 'opacity-80'}`}>
-                                    {!canAnalytics && (
-                                        <div className="absolute top-2 right-2">
-                                            <Lock className="w-3 h-3 text-orange-500" />
-                                        </div>
-                                    )}
-                                    <div className="w-12 h-12 bg-cyan-50 rounded-[15px] flex items-center justify-center text-cyan-600 mb-4 group-hover:scale-110 transition-transform">
-                                        <BarChart3 className="w-6 h-6" />
-                                    </div>
-                                    <h5 className="font-bold text-slate-800 text-xs italic">Análise de Dados</h5>
-                                    <p className="text-[9px] text-slate-500 mt-1 italic">Métricas e performance do negócio.</p>
-                                </Link>
-
-                                {/* Resources Grid items moved from their own section to unify the experience */}
-                                <Link href="/usuario/dashboard/mercado" className="group p-5 bg-white rounded-[15px] border border-slate-100 shadow-sm hover:border-emerald-500 hover:shadow-md transition-all flex flex-col items-center text-center">
-                                    <div className="w-12 h-12 bg-indigo-50 rounded-[15px] flex items-center justify-center text-indigo-600 mb-4 group-hover:scale-110 transition-transform">
-                                        <ShoppingCart className="w-6 h-6" />
-                                    </div>
-                                    <h5 className="font-bold text-slate-800 text-xs italic">Preços de Mercado</h5>
-                                    <p className="text-[9px] text-slate-500 mt-1 italic">Consulte cotações diárias.</p>
-                                </Link>
-
-                                <Link href="/usuario/dashboard/formacao" className="group p-5 bg-white rounded-[15px] border border-slate-100 shadow-sm hover:border-emerald-500 hover:shadow-md transition-all flex flex-col items-center text-center">
-                                    <div className="w-12 h-12 bg-emerald-50 rounded-[15px] flex items-center justify-center text-emerald-600 mb-4 group-hover:scale-110 transition-transform">
-                                        <GraduationCap className="w-6 h-6" />
-                                    </div>
-                                    <h5 className="font-bold text-slate-800 text-xs italic">Formação Agrária</h5>
-                                    <p className="text-[9px] text-slate-500 mt-1 italic">Aceda a guias e manuais.</p>
-                                </Link>
-
-                                <Link href="/usuario/dashboard/emprego" className="group p-5 bg-white rounded-[15px] border border-slate-100 shadow-sm hover:border-emerald-500 hover:shadow-md transition-all flex flex-col items-center text-center">
-                                    <div className="w-12 h-12 bg-rose-50 rounded-[15px] flex items-center justify-center text-rose-600 mb-4 group-hover:scale-110 transition-transform">
-                                        <Briefcase className="w-6 h-6" />
-                                    </div>
-                                    <h5 className="font-bold text-slate-800 text-xs italic">Oportunidades</h5>
-                                    <p className="text-[9px] text-slate-500 mt-1 italic">Emprego e estágios no sector.</p>
-                                </Link>
+                        {/* Keywords Table - Relocated for better visibility */}
+                        {canAnalytics && (
+                            <div className="space-y-4">
+                                <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider flex items-center gap-2 italic">
+                                    <BarChart3 className="w-4 h-4 text-emerald-500" />
+                                    Performance de Palavras-chave
+                                </h3>
+                                <DashboardKeywordsTable />
                             </div>
-                        </div>
+                        )}
 
-                        {/* Visibility Chart - Only if allowed */}
-                        {canAnalytics && <VisibilityChart />}
-
-
-                        {/* Profile Sharing Toggle */}
+                        {/* Profile Sharing Toggle - Relocated under Keywords */}
                         <div className="bg-white rounded-[15px] p-6 border border-slate-100 shadow-sm">
                             <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center gap-3">
@@ -253,7 +179,7 @@ export default function DashboardPage() {
                                     </div>
                                     <div>
                                         <h4 className="font-bold text-slate-800 text-sm italic">Partilhar Perfil de Empresa</h4>
-                                        <p className="text-[10px] text-slate-500 italic">Torne a sua empresa visível no diretório público</p>
+                                        <p className="text-[10px] text-slate-500 italic">Torne a sua empresa visível no diretório público para atrair novos parceiros</p>
                                     </div>
                                 </div>
                                 <div className="flex flex-col items-end gap-2">
@@ -280,12 +206,21 @@ export default function DashboardPage() {
                                 )}
                             </div>
                         </div>
+
+                        {/* Visibility Chart - PREMIUM Main Area */}
+                        {canAnalytics && (
+                            <div className="space-y-4 pt-4 border-t border-slate-50 mt-6">
+                                <h4 className="font-extrabold text-slate-800 text-xs uppercase tracking-tight flex items-center gap-2 italic px-1">
+                                    <BarChart3 className="w-3 h-3 text-emerald-500" />
+                                    Tendência de Visibilidade (Performance)
+                                </h4>
+                                <VisibilityChart />
+                            </div>
+                        )}
                     </div>
 
                     {/* RIGHT COLUMN (Information & Support) */}
                     <div className="space-y-6">
-                        {/* Active Plan - ALWAYS SHOWN AT TOP */}
-                        <ActivePlanCard />
 
                         {/* Information & Notifications Card - New Section */}
                         <div className="bg-white rounded-[15px] p-6 border border-slate-100 shadow-sm relative overflow-hidden">
@@ -326,63 +261,26 @@ export default function DashboardPage() {
                             </div>
                         </div>
 
-                        {/* Support Card - New Section */}
-                        <div className="bg-slate-900 rounded-[15px] p-6 shadow-lg relative overflow-hidden group">
-                            <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
-                            <h4 className="font-extrabold text-white text-sm mb-3 uppercase tracking-tight flex items-center gap-2">
-                                <Mail className="w-4 h-4 text-emerald-400" />
-                                Suporte Técnico
-                            </h4>
-                            <textarea
-                                value={supportMessage}
-                                onChange={(e) => setSupportMessage(e.target.value)}
-                                placeholder="Como podemos ajudar hoje?"
-                                className="w-full bg-white/10 border border-white/20 rounded-lg p-3 text-xs text-white placeholder:text-white/40 focus:ring-1 focus:ring-emerald-500 outline-none min-h-[80px] mb-3"
-                            />
-                            <Button
-                                onClick={handleSendSupport}
-                                disabled={sendingSupport || !supportMessage.trim()}
-                                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-10 text-xs gap-2"
-                            >
-                                {sendingSupport ? "Enviando..." : "Enviar para o Suporte"}
-                                <ArrowRight className="w-3 h-3" />
-                            </Button>
-                        </div>
 
-                        {/* Keywords Table - Only if allowed */}
-                        {canAnalytics && <DashboardKeywordsTable />}
 
-                        {/* Search Categories */}
-                        <SearchCategories />
+
+                        {/* Search Categories - Hidden for Free */}
+                        {canAnalytics && <SearchCategories />}
 
                         {/* Growth Tip */}
                         <GrowthTipCard />
 
 
-                        {/* SMS Alerts Area (Existing KPI/Action) */}
-                        <div className="block bg-orange-50/50 rounded-[15px] p-6 shadow-sm border border-orange-100 transition-all group mt-6">
-                            <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center text-[#f97316] group-hover:scale-110 transition-transform">
-                                    <ArrowRight className={`w-5 h-5 transition-transform ${smsNotifications ? 'rotate-0' : 'rotate-180 opacity-30'}`} />
-                                </div>
-                                <div className="flex-1">
-                                    <h4 className="font-bold text-slate-800 text-[11px] italic">Notificações por SMS</h4>
-                                    <p className="text-[9px] text-slate-500 italic">Alertas de novos produtos</p>
-                                </div>
-                                <button
-                                    onClick={toggleSms}
-                                    disabled={updatingSms}
-                                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${smsNotifications ? 'bg-[#f97316]' : 'bg-slate-300'} ${updatingSms ? 'opacity-50' : 'cursor-pointer'}`}
-                                >
-                                    <span
-                                        className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${smsNotifications ? 'translate-x-5' : 'translate-x-1'}`}
-                                    />
-                                </button>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <UpgradeModal
+                isOpen={upgradeModal.isOpen}
+                onClose={() => setUpgradeModal(prev => ({ ...prev, isOpen: false }))}
+                fieldLabel={upgradeModal.fieldLabel}
+                requiredPlan={upgradeModal.requiredPlan}
+            />
+        </div >
     );
 }

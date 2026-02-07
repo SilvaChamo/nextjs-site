@@ -56,6 +56,17 @@ export async function POST(request: Request) {
 
         if (profileError) throw profileError;
 
+        // 5. Update Company Data (Plan) if it exists
+        if (plan) {
+            await supabaseAdmin
+                .from('companies')
+                .update({
+                    plan: plan,
+                    updated_at: new Date().toISOString()
+                })
+                .eq('user_id', userId);
+        }
+
         return NextResponse.json({ success: true, message: "Utilizador atualizado com sucesso" });
 
     } catch (error: any) {

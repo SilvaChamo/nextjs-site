@@ -3,7 +3,7 @@
  * Defines which fields are editable for each subscription plan
  */
 
-export type PlanType = 'Gratuito' | 'Visitante' | 'Basic' | 'Básico' | 'Premium' | 'Business Vendedor' | 'Parceiro';
+export type PlanType = 'Gratuito' | 'Visitante' | 'Basic' | 'Básico' | 'Profissional' | 'Premium' | 'Business Vendedor' | 'Parceiro';
 
 export interface FieldPermission {
     field: string;
@@ -48,6 +48,7 @@ export const PLAN_HIERARCHY: PlanType[] = [
     'Visitante',
     'Basic',
     'Básico', // Portuguese alias for Basic
+    'Profissional',
     'Premium',
     'Business Vendedor',
     'Parceiro'
@@ -112,16 +113,40 @@ export function hasDashboardAccess(userPlan: string | null | undefined): boolean
 export function normalizePlanName(plan: string | null | undefined): PlanType {
     if (!plan) return 'Gratuito';
 
-    const normalized = plan.trim();
+    const trimmed = plan.trim();
+    const normalized = trimmed.toLowerCase();
 
-    // Handle common variations
-    if (normalized.toLowerCase() === 'básico' || normalized === 'Basic') {
+    // Specific mapping for common aliases
+    if (normalized === 'básico' || normalized === 'basico' || normalized === 'basic') {
         return 'Basic';
     }
-
-    if (PLAN_HIERARCHY.includes(normalized as PlanType)) {
-        return normalized as PlanType;
+    if (normalized === 'profissional' || normalized === 'professional') {
+        return 'Profissional';
     }
+    if (normalized === 'premium') {
+        return 'Premium';
+    }
+    if (normalized === 'business vendedor' || normalized === 'business' || normalized === 'vendedor') {
+        return 'Business Vendedor';
+    }
+    if (normalized === 'parceiro' || normalized === 'partner') {
+        return 'Parceiro';
+    }
+    if (normalized === 'visitante' || normalized === 'visitor') {
+        return 'Visitante';
+    }
+    if (normalized === 'gratuito' || normalized === 'free') {
+        return 'Gratuito';
+    }
+
+    // Attempt to match exactly from hierarchy (case-sensitive)
+    if (PLAN_HIERARCHY.includes(trimmed as PlanType)) {
+        return trimmed as PlanType;
+    }
+
+    // Last resort: find case-insensitive match in hierarchy
+    const found = PLAN_HIERARCHY.find(p => p.toLowerCase() === normalized);
+    if (found) return found;
 
     return 'Gratuito';
 }
@@ -135,6 +160,7 @@ export function getPlanDisplayName(plan: PlanType): string {
         'Visitante': 'Visitante',
         'Basic': 'Básico',
         'Básico': 'Básico',
+        'Profissional': 'Profissional',
         'Premium': 'Premium',
         'Business Vendedor': 'Business Vendedor',
         'Parceiro': 'Parceiro'
@@ -154,7 +180,8 @@ export const PLAN_LIMITS: Record<PlanType, { products_per_month: number }> = {
     'Visitante': { products_per_month: 0 },
     'Basic': { products_per_month: 1 },
     'Básico': { products_per_month: 1 },
-    'Premium': { products_per_month: 5 },
+    'Profissional': { products_per_month: 3 },
+    'Premium': { products_per_month: 7 },
     'Business Vendedor': { products_per_month: 10 },
     'Parceiro': { products_per_month: Infinity }
 };
@@ -222,9 +249,21 @@ export const PLAN_FEATURES: Record<PlanType, {
         simple_company_edit: true,
         profile_sharing_management: true
     },
-    'Premium': {
+    'Profissional': {
         sms_notifications: true,
         presentations: false,
+        featured_company: false,
+        business_analytics: true,
+        newsletter: true,
+        event_notifications: true,
+        funding_alerts: true,
+        email_support: true,
+        simple_company_edit: true,
+        profile_sharing_management: true
+    },
+    'Premium': {
+        sms_notifications: true,
+        presentations: true,
         featured_company: false,
         business_analytics: true,
         newsletter: true,
@@ -258,6 +297,68 @@ export const PLAN_FEATURES: Record<PlanType, {
         simple_company_edit: true,
         profile_sharing_management: true
     }
+};
+
+/**
+ * Detailed privileges for display in UI
+ */
+export const PLAN_PRIVILEGES: Record<PlanType, string[]> = {
+    'Gratuito': [
+        'Acesso limitado ao dashboard',
+        'Receber alertas de financiamento',
+        'Receber newsletter semanal',
+        'Visualizar notícias do sector',
+        'Perfil público básico'
+    ],
+    'Visitante': [
+        'Acesso limitado ao dashboard',
+        'Receber alertas de financiamento',
+        'Receber newsletter semanal',
+        'Visualizar notícias do sector',
+        'Perfil público básico'
+    ],
+    'Basic': [
+        'Tudo do plano Gratuito',
+        'Publicar 1 produto/serviço no catálogo',
+        'Acesso a métricas de visualização',
+        'Gestão de contactos e leads',
+        'Gestão de visibilidade do perfil'
+    ],
+    'Básico': [
+        'Tudo do plano Gratuito',
+        'Publicar 1 produto/serviço no catálogo',
+        'Acesso a métricas de visualização',
+        'Gestão de contactos e leads',
+        'Gestão de visibilidade do perfil'
+    ],
+    'Profissional': [
+        'Tudo do plano Básico',
+        'Publicar até 3 produtos/serviços',
+        'Notificações SMS em tempo real',
+        'Destaque moderado nas procuras',
+        'Suporte prioritário por email'
+    ],
+    'Premium': [
+        'Tudo do plano Profissional',
+        'Publicar até 7 produtos/serviços',
+        'Criação de apresentações visuais ilimitadas',
+        'Acesso a relatórios de mercado detalhados',
+        'Selo de empresa verificada'
+    ],
+    'Business Vendedor': [
+        'Tudo do plano Premium',
+        'Publicar até 10 produtos/serviços',
+        'Acesso antecipado a oportunidades de negócio',
+        'Personalização avançada do perfil (slug)',
+        'Integração com cadeias de valor'
+    ],
+    'Parceiro': [
+        'Acesso TOTAL e ILIMITADO',
+        'Destaque máximo em toda a plataforma',
+        'Gestão de múltiplas sub-contas',
+        'Consultoria estratégica dedicada',
+        'Funcionalidades customizadas sob demanda'
+    ]
 };
 
 /**

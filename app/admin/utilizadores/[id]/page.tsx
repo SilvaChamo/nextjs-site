@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { SuccessModal } from "@/components/ui/SuccessModal";
 import {
     ChevronLeft,
     Save,
@@ -27,6 +28,7 @@ export default function EditUserPage() {
     const [loading, setLoading] = useState(true);
     const [isUpdating, setIsUpdating] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
     const [formData, setFormData] = useState({
         fullName: "",
@@ -38,7 +40,7 @@ export default function EditUserPage() {
         password: ""
     });
 
-    const PLANS = ["Visitante", "Basic", "Profissional", "Premium", "Parceiro"];
+    const PLANS = ["Gratuito", "Visitante", "Basic", "Profissional", "Premium", "Business Vendedor", "Parceiro"];
 
     useEffect(() => {
         async function fetchUser() {
@@ -103,7 +105,7 @@ export default function EditUserPage() {
             const result = await response.json();
             if (!response.ok) throw new Error(result.error || "Erro ao atualizar");
 
-            alert("Utilizador atualizado com sucesso!");
+            setIsSuccessModalOpen(true);
             router.refresh();
         } catch (error: any) {
             alert(`Erro: ${error.message}`);
@@ -283,6 +285,12 @@ export default function EditUserPage() {
                     </Button>
                 </div>
             </form>
+
+            <SuccessModal
+                isOpen={isSuccessModalOpen}
+                onClose={() => setIsSuccessModalOpen(false)}
+                description="Os dados do utilizador foram atualizados com sucesso no sistema e as alterações já estão ativas."
+            />
         </div>
     );
 }

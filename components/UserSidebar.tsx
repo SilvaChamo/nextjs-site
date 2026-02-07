@@ -14,9 +14,32 @@ import {
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { usePlanPermissions } from "@/hooks/usePlanPermissions";
+import { Button } from "./ui/button";
+
+import {
+    Building2,
+    Package,
+    Mail,
+    Users,
+    Presentation,
+    BarChart3,
+    ShoppingCart,
+    GraduationCap,
+    Briefcase,
+    Lock
+} from "lucide-react";
 
 const navigation = [
-    { name: "Minha Conta", href: "/usuario/dashboard/minha-conta", icon: User },
+    { name: "Minha Conta", href: "/usuario/dashboard/minha-conta", icon: User, requiredPlan: "Visitante" },
+    { name: "Minha Empresa", href: "/usuario/dashboard/empresa", icon: Building2, requiredPlan: "Visitante" },
+    { name: "Meus Produtos", href: "/usuario/dashboard/produtos", icon: Package, requiredPlan: "Basic" },
+    { name: "Mensagens", href: "/usuario/dashboard/mensagens", icon: Mail, requiredPlan: "Visitante" },
+    { name: "Contactos & Leads", href: "/usuario/dashboard/contactos", icon: Users, requiredPlan: "Basic" },
+    { name: "Apresentações", href: "/usuario/dashboard/apresentacoes", icon: Presentation, requiredPlan: "Basic" },
+    { name: "Análise de Dados", href: "/usuario/dashboard/analises", icon: BarChart3, requiredPlan: "Basic" },
+    { name: "Preços de Mercado", href: "/usuario/dashboard/mercado", icon: ShoppingCart, requiredPlan: "Basic" },
+    { name: "Formação Agrária", href: "/usuario/dashboard/formacao", icon: GraduationCap, requiredPlan: "Basic" },
+    { name: "Oportunidades", href: "/usuario/dashboard/emprego", icon: Briefcase, requiredPlan: "Basic" },
 ];
 
 interface UserSidebarProps {
@@ -32,8 +55,17 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
     // Plan permissions
     const {
         plan,
-        planDisplayName
+        planDisplayName,
+        canAnalytics,
+        canPresentations
     } = usePlanPermissions();
+
+    // Helper to check if a menu item should be locked
+    const isLocked = (requiredPlan: string) => {
+        if (requiredPlan === "Visitante") return false;
+        if (requiredPlan === "Basic" && !canAnalytics) return true;
+        return false;
+    };
 
     // Create Supabase client
     const supabase = createClient();
@@ -120,20 +152,34 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
                 {!isCollapsed && <p className="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Menu Principal</p>}
                 {filteredNavigation.map((item) => {
                     const isActive = pathname === item.href;
+                    const locked = isLocked(item.requiredPlan);
 
                     return (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group ${isActive
-                                ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
-                                : "text-slate-400 hover:text-[#f97316]"
-                                } ${isCollapsed ? 'justify-center' : ''}`}
-                            title={isCollapsed ? item.name : undefined}
-                        >
-                            <item.icon className={`w-5 h-5 ${isActive ? "text-white" : "text-slate-500 group-hover:text-[#f97316]"}`} />
-                            {!isCollapsed && item.name}
-                        </Link>
+                        <div key={item.href} className="relative group/item">
+                            <Link
+                                href={locked ? "#" : item.href}
+                                onClick={(e) => {
+                                    if (locked) {
+                                        e.preventDefault();
+                                    }
+                                }}
+                                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group ${isActive
+                                    ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
+                                    : locked
+                                        ? "text-slate-600 cursor-not-allowed"
+                                        : "text-slate-400 hover:text-[#f97316] hover:bg-white/5"
+                                    } ${isCollapsed ? 'justify-center' : ''}`}
+                                title={isCollapsed ? item.name : undefined}
+                            >
+                                <item.icon className={`w-5 h-5 ${isActive ? "text-white" : locked ? "text-slate-700" : "text-slate-500 group-hover:text-[#f97316]"}`} />
+                                {!isCollapsed && (
+                                    <span className="flex-1 flex items-center justify-between">
+                                        {item.name}
+                                        {locked && <Lock className="w-3 h-3 text-orange-500/50" />}
+                                    </span>
+                                )}
+                            </Link>
+                        </div>
                     );
                 })}
 

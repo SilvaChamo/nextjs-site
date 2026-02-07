@@ -55,24 +55,24 @@ export function usePlanPermissions(): UsePlanPermissionsResult {
                     return;
                 }
 
-                // Fetch company linked to this user
-                const { data: company } = await supabase
-                    .from('companies')
-                    .select('plan')
-                    .eq('user_id', user.id)
-                    .single();
+                // Fetch both company and profile plans
+                const [companyResult, profileResult] = await Promise.all([
+                    supabase.from('companies').select('plan').eq('user_id', user.id).maybeSingle(),
+                    supabase.from('profiles').select('plan').eq('id', user.id).maybeSingle()
+                ]);
 
-                if (company?.plan) {
-                    setPlan(normalizePlanName(company.plan));
+                const companyPlan = normalizePlanName(companyResult.data?.plan);
+                const profilePlan = normalizePlanName(profileResult.data?.plan);
+
+                // Use PLAN_HIERARCHY to find the highest plan
+                const { PLAN_HIERARCHY } = await import("@/lib/plan-fields");
+                const companyIndex = PLAN_HIERARCHY.indexOf(companyPlan);
+                const profileIndex = PLAN_HIERARCHY.indexOf(profilePlan);
+
+                if (profileIndex >= companyIndex) {
+                    setPlan(profilePlan);
                 } else {
-                    // Check profile for plan
-                    const { data: profile } = await supabase
-                        .from('profiles')
-                        .select('plan')
-                        .eq('id', user.id)
-                        .single();
-
-                    setPlan(normalizePlanName(profile?.plan));
+                    setPlan(companyPlan);
                 }
             } catch (error) {
                 console.error("Error fetching plan:", error);

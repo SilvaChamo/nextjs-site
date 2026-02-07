@@ -2,13 +2,16 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { User, Mail, Phone, MapPin, Camera, Save, X, Loader2, BadgeCheck, GraduationCap, Briefcase, Map, ShoppingBag, Building2, Facebook, Instagram, Linkedin, Globe, Eye, TrendingUp, Trash2, MessageSquare } from "lucide-react";
+import { User, Mail, Phone, MapPin, Camera, Save, X, Loader2, BadgeCheck, GraduationCap, Briefcase, Map, ShoppingBag, Building2, Facebook, Instagram, Linkedin, Globe, Eye, TrendingUp, Trash2, MessageSquare, Bell, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DashboardPageHeader } from "@/components/DashboardPageHeader";
 import { createClient } from "@/utils/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
+import { normalizePlanName, getPlanDisplayName, PLAN_HIERARCHY, PLAN_PRIVILEGES, PlanType } from "@/lib/plan-fields";
+import { ChevronRight, Check } from "lucide-react";
+import { SuccessModal } from "@/components/ui/SuccessModal";
 
 export default function MinhaContaPage() {
     const supabase = createClient();
@@ -20,6 +23,8 @@ export default function MinhaContaPage() {
     const [isCancelling, setIsCancelling] = useState(false); // New state for cancellation
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    const [successModal, setSuccessModal] = useState({ isOpen: false, title: "", description: "" });
+
     // Form State
     const [formData, setFormData] = useState({
         fullName: "",
@@ -29,8 +34,12 @@ export default function MinhaContaPage() {
         profession: "",
         academicLevel: "",
         avatarUrl: "",
-        smsNotifications: false
+        smsNotifications: false,
+        isProfilePublic: true, // New field for company sharing
+        plan: "Gratuito" as PlanType
     });
+
+    const [activeTab, setActiveTab] = useState("perfil"); // Tab state
 
     useEffect(() => {
         const getUser = async () => {
@@ -45,6 +54,13 @@ export default function MinhaContaPage() {
                     .eq('id', user.id)
                     .single();
 
+                // Fetch company data for sharing state
+                const { data: company } = await supabase
+                    .from('companies')
+                    .select('is_public')
+                    .eq('user_id', user.id)
+                    .maybeSingle();
+
                 setFormData({
                     fullName: profile?.full_name || user.user_metadata?.full_name || user.user_metadata?.name || "",
                     phone: profile?.phone || user.user_metadata?.phone || user.phone || "",
@@ -53,7 +69,9 @@ export default function MinhaContaPage() {
                     profession: user.user_metadata?.profession || "",
                     academicLevel: user.user_metadata?.academic_level || "",
                     avatarUrl: profile?.avatar_url || user.user_metadata?.avatar_url || user.user_metadata?.picture || "",
-                    smsNotifications: profile?.sms_notifications || false
+                    smsNotifications: profile?.sms_notifications || false,
+                    isProfilePublic: company?.is_public ?? true,
+                    plan: normalizePlanName(profile?.plan || user.user_metadata?.plan)
                 });
             }
             setLoading(false);
@@ -138,6 +156,12 @@ export default function MinhaContaPage() {
 
             if (error) throw error;
 
+            setSuccessModal({
+                isOpen: true,
+                title: "Perfil Atualizado",
+                description: "As suas informações pessoais e preferências foram guardadas com sucesso."
+            });
+
             setIsEditing(false);
             router.refresh();
         } catch (error) {
@@ -183,6 +207,8 @@ export default function MinhaContaPage() {
     if (loading && !user) {
         return <div className="p-8 text-center text-slate-500">Carregando dados...</div>;
     }
+
+    const [activeTab, setActiveTab] = useState<"perfil" | "notificações" | "segurança">("perfil");
 
     return (
         <div className="space-y-4">
@@ -246,7 +272,7 @@ export default function MinhaContaPage() {
 
                         <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-100">
                             <BadgeCheck className="w-4 h-4" />
-                            <span className="text-sm font-bold uppercase tracking-wide">Plano Gratuito</span>
+                            <span className="text-sm font-bold uppercase tracking-wide">Plano {getPlanDisplayName(formData.plan)}</span>
                         </div>
 
                         {!isEditing && (
@@ -255,307 +281,391 @@ export default function MinhaContaPage() {
                             </p>
                         )}
                     </div>
+
+                    <div className="w-full pt-4 border-t border-slate-100 space-y-2">
+                        <Button
+                            variant={activeTab === "perfil" ? "default" : "ghost"}
+                            className={`w-full justify-start font-bold text-xs uppercase tracking-wider ${activeTab === "perfil" ? "bg-slate-800 text-white" : "text-slate-500"}`}
+                            onClick={() => setActiveTab("perfil")}
+                        >
+                            <User className="w-4 h-4 mr-2" /> Meu Perfil
+                        </Button>
+                        <Button
+                            variant={activeTab === "notificações" ? "default" : "ghost"}
+                            className={`w-full justify-start font-bold text-xs uppercase tracking-wider ${activeTab === "notificações" ? "bg-slate-800 text-white" : "text-slate-500"}`}
+                            onClick={() => setActiveTab("notificações")}
+                        >
+                            <Bell className="w-4 h-4 mr-2" /> Notificações
+                        </Button>
+                        <Button
+                            variant={activeTab === "segurança" ? "default" : "ghost"}
+                            className={`w-full justify-start font-bold text-xs uppercase tracking-wider ${activeTab === "segurança" ? "bg-slate-800 text-white" : "text-slate-500"}`}
+                            onClick={() => setActiveTab("segurança")}
+                        >
+                            <ShieldCheck className="w-4 h-4 mr-2" /> Segurança & Dados
+                        </Button>
+                    </div>
                 </div>
 
                 {/* CARD DIREITA: Dados do Usuário */}
-                <div className="bg-white rounded-xl border border-slate-100 shadow-sm relative overflow-hidden flex flex-col">
+                <div className="bg-white rounded-xl border border-slate-100 shadow-sm relative overflow-hidden flex flex-col min-h-[500px]">
 
                     {/* Cabeçalho do Card */}
-                    <div className="px-8 py-6 border-b border-slate-100">
-                        <h3 className="text-3xl font-black text-slate-800 tracking-tight">Meus Dados</h3>
+                    <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
+                        <h3 className="text-2xl font-black text-slate-800 tracking-tight uppercase">
+                            {activeTab === "perfil" && "Dados Pessoais"}
+                            {activeTab === "notificações" && "Preferências de Alerta"}
+                            {activeTab === "segurança" && "Gestão de Palavras-Chave"}
+                        </h3>
+                        <div className="flex items-center gap-2">
+                            {isEditing ? (
+                                <>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => setIsEditing(false)}
+                                        className="text-slate-500 font-bold text-[10px] uppercase tracking-widest"
+                                    >
+                                        Cancelar
+                                    </Button>
+                                    <Button
+                                        size="sm"
+                                        onClick={handleSave}
+                                        disabled={loading || uploading}
+                                        className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm font-bold text-[10px] uppercase tracking-widest"
+                                    >
+                                        {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3 mr-1.5" />}
+                                        Salvar
+                                    </Button>
+                                </>
+                            ) : (
+                                <Button
+                                    size="sm"
+                                    onClick={() => setIsEditing(true)}
+                                    className="bg-slate-800 text-white font-bold text-[10px] uppercase tracking-widest"
+                                >
+                                    Editar Definições
+                                </Button>
+                            )}
+                        </div>
                     </div>
 
-                    <div className="pl-8 py-8 pr-[50px] flex-1">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-                            {/* COLUNA 1 (50%): Formulário de Dados */}
-                            <div className="">
-                                <div className="space-y-5 w-full">
+                    <div className="p-8 flex-1">
+                        {activeTab === "perfil" && (
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                                <div className="space-y-6">
                                     {/* Email */}
-                                    <div className="flex items-center gap-4 text-slate-700">
-                                        <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
+                                    <div className="flex items-center gap-4 p-4 rounded-xl bg-slate-50/50 border border-slate-100">
+                                        <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0 shadow-sm">
                                             <Mail className="w-5 h-5 text-emerald-600" />
                                         </div>
                                         <div className="flex-1">
-                                            <p className="text-sm text-slate-500 font-medium">Email</p>
-                                            <p className="text-base font-semibold text-slate-800">{user?.email}</p>
+                                            <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Email Principal</p>
+                                            <p className="text-sm font-bold text-slate-800">{user?.email}</p>
                                         </div>
                                     </div>
 
                                     {/* Telefone */}
-                                    {isEditing ? (
-                                        <div className="space-y-2">
-                                            <label className="text-xs font-bold uppercase text-slate-500 tracking-wider">Telefone de Contato</label>
+                                    <div className={`p-4 rounded-xl border transition-all ${isEditing ? 'bg-white border-emerald-200 ring-2 ring-emerald-50' : 'bg-slate-50/50 border-slate-100'}`}>
+                                        <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-2">Telefone de Contacto</p>
+                                        {isEditing ? (
                                             <div className="relative">
-                                                <Phone className="absolute left-3 top-2.5 w-5 h-5 text-slate-400" />
+                                                <Phone className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
                                                 <Input
                                                     name="phone"
                                                     value={formData.phone}
                                                     onChange={handleInputChange}
                                                     placeholder="+258..."
-                                                    className="pl-10 font-medium text-slate-800"
+                                                    className="pl-10 font-bold text-slate-800 h-10 border-slate-200"
                                                 />
                                             </div>
-                                        </div>
-                                    ) : (
-                                        <div className="flex items-center gap-4 text-slate-700">
-                                            <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
-                                                <Phone className="w-5 h-5 text-emerald-600" />
+                                        ) : (
+                                            <div className="flex items-center gap-3">
+                                                <Phone className="w-4 h-4 text-emerald-600" />
+                                                <p className="text-sm font-bold text-slate-800">{formData.phone || "Não informado"}</p>
                                             </div>
-                                            <div className="flex-1">
-                                                <p className="text-sm text-slate-500 font-medium">Telefone</p>
-                                                <p className="text-base font-semibold text-slate-800">{formData.phone || "Não informado"}</p>
-                                            </div>
-                                        </div>
-                                    )}
+                                        )}
+                                    </div>
 
-                                    {/* Província */}
-                                    {isEditing ? (
-                                        <div className="space-y-2">
-                                            <label className="text-xs font-bold uppercase text-slate-500 tracking-wider">Província</label>
-                                            <div className="relative">
-                                                <Map className="absolute left-3 top-2.5 w-5 h-5 text-slate-400" />
+                                    {/* Localização */}
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className={`p-4 rounded-xl border transition-all ${isEditing ? 'bg-white border-emerald-200 ring-2 ring-emerald-50' : 'bg-slate-50/50 border-slate-100'}`}>
+                                            <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-2">Província</p>
+                                            {isEditing ? (
                                                 <Input
                                                     name="province"
                                                     value={formData.province}
                                                     onChange={handleInputChange}
-                                                    placeholder="Ex: Maputo"
-                                                    className="pl-10 font-medium text-slate-800"
+                                                    className="font-bold text-slate-800 h-10 border-slate-200"
                                                 />
-                                            </div>
+                                            ) : (
+                                                <p className="text-sm font-bold text-slate-800">{formData.province || "---"}</p>
+                                            )}
                                         </div>
-                                    ) : (
-                                        <div className="flex items-center gap-4 text-slate-700">
-                                            <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
-                                                <Map className="w-5 h-5 text-emerald-600" />
-                                            </div>
-                                            <div className="flex-1">
-                                                <p className="text-sm text-slate-500 font-medium">Província</p>
-                                                <p className="text-base font-semibold text-slate-800">{formData.province || "Não informado"}</p>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* Endereço */}
-                                    {isEditing ? (
-                                        <div className="space-y-2">
-                                            <label className="text-xs font-bold uppercase text-slate-500 tracking-wider">Endereço Residencial</label>
-                                            <div className="relative">
-                                                <MapPin className="absolute left-3 top-2.5 w-5 h-5 text-slate-400" />
+                                        <div className={`p-4 rounded-xl border transition-all ${isEditing ? 'bg-white border-emerald-200 ring-2 ring-emerald-50' : 'bg-slate-50/50 border-slate-100'}`}>
+                                            <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-2">Cidade/Endereço</p>
+                                            {isEditing ? (
                                                 <Input
                                                     name="address"
                                                     value={formData.address}
                                                     onChange={handleInputChange}
-                                                    className="pl-10 font-medium text-slate-800"
+                                                    className="font-bold text-slate-800 h-10 border-slate-200"
                                                 />
-                                            </div>
+                                            ) : (
+                                                <p className="text-sm font-bold text-slate-800 truncate">{formData.address || "---"}</p>
+                                            )}
                                         </div>
-                                    ) : (
-                                        <div className="flex items-center gap-4 text-slate-700">
-                                            <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
-                                                <MapPin className="w-5 h-5 text-emerald-600" />
-                                            </div>
-                                            <div className="flex-1">
-                                                <p className="text-sm text-slate-500 font-medium">Endereço</p>
-                                                <p className="text-base font-semibold text-slate-800">{formData.address}</p>
-                                            </div>
-                                        </div>
-                                    )}
+                                    </div>
+                                </div>
 
+                                <div className="space-y-6">
                                     {/* Profissão */}
-                                    {isEditing ? (
-                                        <div className="space-y-2">
-                                            <label className="text-xs font-bold uppercase text-slate-500 tracking-wider">Profissão</label>
-                                            <div className="relative">
-                                                <Briefcase className="absolute left-3 top-2.5 w-5 h-5 text-slate-400" />
-                                                <Input
-                                                    name="profession"
-                                                    value={formData.profession}
-                                                    onChange={handleInputChange}
-                                                    placeholder="Ex: Engenheiro Agrônomo"
-                                                    className="pl-10 font-medium text-slate-800"
-                                                />
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="flex items-center gap-4 text-slate-700">
-                                            <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
-                                                <Briefcase className="w-5 h-5 text-emerald-600" />
-                                            </div>
-                                            <div className="flex-1">
-                                                <p className="text-sm text-slate-500 font-medium">Profissão</p>
-                                                <p className="text-base font-semibold text-slate-800">{formData.profession || "Não informado"}</p>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* Nível Acadêmico */}
-                                    {isEditing ? (
-                                        <div className="space-y-2">
-                                            <label className="text-xs font-bold uppercase text-slate-500 tracking-wider">Nível Acadêmico</label>
-                                            <div className="relative">
-                                                <GraduationCap className="absolute left-3 top-2.5 w-5 h-5 text-slate-400" />
-                                                <Input
-                                                    name="academicLevel"
-                                                    value={formData.academicLevel}
-                                                    onChange={handleInputChange}
-                                                    placeholder="Ex: Licenciatura"
-                                                    className="pl-10 font-medium text-slate-800"
-                                                />
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="flex items-center gap-4 text-slate-700">
-                                            <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
-                                                <GraduationCap className="w-5 h-5 text-emerald-600" />
-                                            </div>
-                                            <div className="flex-1">
-                                                <p className="text-sm text-slate-500 font-medium">Nível Acadêmico</p>
-                                                <p className="text-base font-semibold text-slate-800">{formData.academicLevel || "Não informado"}</p>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* SMS Notifications Toggle */}
-                                    <div className="pt-4 border-t border-slate-100">
-                                        <div className="flex items-center justify-between p-4 bg-orange-50/50 rounded-xl border border-orange-100 group transition-all hover:bg-orange-50">
+                                    <div className={`p-4 rounded-xl border transition-all ${isEditing ? 'bg-white border-emerald-200 ring-2 ring-emerald-50' : 'bg-slate-50/50 border-slate-100'}`}>
+                                        <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-2">Profissão / Cargo</p>
+                                        {isEditing ? (
+                                            <Input
+                                                name="profession"
+                                                value={formData.profession}
+                                                onChange={handleInputChange}
+                                                className="font-bold text-slate-800 h-10 border-slate-200"
+                                            />
+                                        ) : (
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center shrink-0">
-                                                    <MessageSquare className="w-5 h-5 text-[#f97316]" />
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm font-bold text-slate-800">Notificações SMS</p>
-                                                    <p className="text-[11px] text-slate-500">Receber alertas de novos produtos no mercado</p>
-                                                </div>
+                                                <Briefcase className="w-4 h-4 text-emerald-600" />
+                                                <p className="text-sm font-bold text-slate-800">{formData.profession || "Não especificada"}</p>
                                             </div>
-                                            <button
-                                                type="button"
-                                                disabled={!isEditing}
-                                                onClick={() => setFormData(prev => ({ ...prev, smsNotifications: !prev.smsNotifications }))}
-                                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#f97316] focus:ring-offset-2 ${formData.smsNotifications ? 'bg-[#f97316]' : 'bg-slate-200'} ${!isEditing ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                                            >
-                                                <span
-                                                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${formData.smsNotifications ? 'translate-x-6' : 'translate-x-1'}`}
-                                                />
+                                        )}
+                                    </div>
+
+                                    {/* Nível Académico */}
+                                    <div className={`p-4 rounded-xl border transition-all ${isEditing ? 'bg-white border-emerald-200 ring-2 ring-emerald-50' : 'bg-slate-50/50 border-slate-100'}`}>
+                                        <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-2">Grau Académico</p>
+                                        {isEditing ? (
+                                            <Input
+                                                name="academicLevel"
+                                                value={formData.academicLevel}
+                                                onChange={handleInputChange}
+                                                className="font-bold text-slate-800 h-10 border-slate-200"
+                                            />
+                                        ) : (
+                                            <div className="flex items-center gap-3">
+                                                <GraduationCap className="w-4 h-4 text-emerald-600" />
+                                                <p className="text-sm font-bold text-slate-800">{formData.academicLevel || "Não especificado"}</p>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Redes Sociais */}
+                                    <div className="p-4 rounded-xl bg-slate-50/50 border border-slate-100">
+                                        <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-4">Presença Online</p>
+                                        <div className="flex gap-3">
+                                            <button className="w-10 h-10 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-blue-600 hover:scale-110 transition-transform shadow-sm">
+                                                <Facebook className="w-5 h-5" />
+                                            </button>
+                                            <button className="w-10 h-10 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-pink-600 hover:scale-110 transition-transform shadow-sm">
+                                                <Instagram className="w-5 h-5" />
+                                            </button>
+                                            <button className="w-10 h-10 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-sky-600 hover:scale-110 transition-transform shadow-sm">
+                                                <Linkedin className="w-5 h-5" />
+                                            </button>
+                                            <button className="w-10 h-10 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-slate-600 hover:scale-110 transition-transform shadow-sm">
+                                                <Globe className="w-5 h-5" />
                                             </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        )}
 
-                            {/* COLUNA 2 (50%): Cards de Acesso Rápido */}
-                            <div className="border-l border-slate-200 pl-[50px] flex flex-col gap-6 justify-center">
-                                {/* Card Redes Sociais (Topo) */}
-                                <div className="bg-slate-50 border border-slate-200 rounded-xl p-[10px] shadow-sm flex flex-col justify-center h-48 relative overflow-hidden group">
-                                    <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
-                                        <Globe className="w-16 h-16 text-slate-800" />
+                        {activeTab === "notificações" && (
+                            <div className="max-w-2xl mx-auto space-y-8 py-10">
+                                <div className="text-center space-y-2">
+                                    <div className="w-16 h-16 bg-orange-100 text-[#f97316] rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                        <MessageSquare className="w-8 h-8" />
                                     </div>
-                                    <div className="px-4 relative z-10">
-                                        <h4 className="text-sm font-black text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">Redes Sociais</h4>
-                                        <div className="space-y-3">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0 text-blue-600">
-                                                    <Facebook className="w-4 h-4" />
-                                                </div>
-                                                <p className="text-sm text-slate-600 font-medium hover:text-blue-600 cursor-pointer transition-colors truncate">facebook.com/usuario</p>
-                                            </div>
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center shrink-0 text-pink-600">
-                                                    <Instagram className="w-4 h-4" />
-                                                </div>
-                                                <p className="text-sm text-slate-600 font-medium hover:text-pink-600 cursor-pointer transition-colors truncate">@usuario.insta</p>
-                                            </div>
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 rounded-full bg-sky-100 flex items-center justify-center shrink-0 text-sky-600">
-                                                    <Linkedin className="w-4 h-4" />
-                                                </div>
-                                                <p className="text-sm text-slate-600 font-medium hover:text-sky-600 cursor-pointer transition-colors truncate">in/usuario-pro</p>
-                                            </div>
+                                    <h4 className="text-xl font-black text-slate-800 uppercase tracking-tight">Alertas de Mercado</h4>
+                                    <p className="text-sm text-slate-500">Active os alertas por SMS para ser o primeiro a saber de novas oportunidades de negócio, preços de mercado e eventos agrários.</p>
+                                </div>
+
+                                <div className="p-8 rounded-2xl bg-orange-50 border border-orange-100 flex items-center justify-between group">
+                                    <div className="space-y-1">
+                                        <h5 className="font-black text-orange-900 uppercase text-sm">Notificações por SMS</h5>
+                                        <p className="text-xs text-orange-700 italic">Enviado para: <span className="font-bold underline">{formData.phone || "Configure o seu telefone no perfil"}</span></p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            if (!isEditing) {
+                                                setIsEditing(true);
+                                                alert("Pode agora ativar as notificações.");
+                                            }
+                                            setFormData(prev => ({ ...prev, smsNotifications: !prev.smsNotifications }));
+                                        }}
+                                        className={`relative inline-flex h-8 w-14 items-center rounded-full transition-all focus:outline-none ring-offset-2 ring-[#f97316] focus:ring-2 ${formData.smsNotifications ? 'bg-[#f97316]' : 'bg-slate-300'} cursor-pointer`}
+                                    >
+                                        <span
+                                            className={`inline-block h-6 w-6 transform rounded-full bg-white shadow-md transition-transform ${formData.smsNotifications ? 'translate-x-7' : 'translate-x-1'}`}
+                                        />
+                                    </button>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="p-4 rounded-xl border border-slate-100 bg-white shadow-sm flex items-center gap-3">
+                                        <div className="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center">
+                                            <Mail className="w-4 h-4" />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-bold text-slate-800">Alertas por Email</p>
+                                            <p className="text-[10px] text-emerald-500 font-bold uppercase tracking-widest">Sempre Ativo</p>
+                                        </div>
+                                    </div>
+                                    <div className="p-4 rounded-xl border border-slate-100 bg-white shadow-sm flex items-center gap-3">
+                                        <div className="w-8 h-8 bg-purple-50 text-purple-600 rounded-lg flex items-center justify-center">
+                                            <Bell className="w-4 h-4" />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-bold text-slate-800">Notificações Web</p>
+                                            <p className="text-[10px] text-emerald-500 font-bold uppercase tracking-widest">Sempre Ativo</p>
                                         </div>
                                     </div>
                                 </div>
-
-                                {/* Card Estatísticas (Baixo) */}
-                                <div className="bg-slate-50 border border-slate-200 rounded-xl p-[10px] shadow-sm flex flex-col justify-center h-48 relative overflow-hidden group">
-                                    <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
-                                        <TrendingUp className="w-16 h-16 text-emerald-600" />
-                                    </div>
-                                    <div className="px-4 relative z-10">
-                                        <h4 className="text-sm font-black text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">Estatísticas</h4>
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="bg-white p-3 rounded-lg border border-slate-100 shadow-sm">
-                                                <div className="flex items-center gap-2 mb-1">
-                                                    <Eye className="w-4 h-4 text-slate-400" />
-                                                    <span className="text-xs font-bold text-slate-400 uppercase">Views</span>
-                                                </div>
-                                                <p className="text-2xl font-black text-slate-800">1,248</p>
-                                                <p className="text-[10px] text-emerald-600 font-bold flex items-center mt-1">
-                                                    <TrendingUp className="w-3 h-3 mr-1" /> +12%
-                                                </p>
-                                            </div>
-                                            <div className="bg-white p-3 rounded-lg border border-slate-100 shadow-sm">
-                                                <div className="flex items-center gap-2 mb-1">
-                                                    <Building2 className="w-4 h-4 text-slate-400" />
-                                                    <span className="text-xs font-bold text-slate-400 uppercase">Visitas</span>
-                                                </div>
-                                                <p className="text-2xl font-black text-slate-800">85</p>
-                                                <p className="text-[10px] text-emerald-600 font-bold flex items-center mt-1">
-                                                    <TrendingUp className="w-3 h-3 mr-1" /> +5%
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
                             </div>
+                        )}
 
-                        </div>
-                    </div>
+                        {activeTab === "segurança" && (
+                            <div className="space-y-8">
+                                <div className="bg-slate-50 rounded-xl p-8 border border-slate-100">
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <Eye className="w-6 h-6 text-emerald-600" />
+                                        <h4 className="text-lg font-black text-slate-800 uppercase tracking-tight">Gestão de Palavras-Chave</h4>
+                                    </div>
+                                    <p className="text-sm text-slate-600 mb-6">Esta secção permite gerir os termos de pesquisa pelos quais a sua empresa é encontrada no diretório e optimizar a sua segurança de dados.</p>
 
-                    {/* Botões de Ação (Rodapé Full Width) */}
-                    <div className="bg-slate-50 p-6 border-t border-slate-200 flex justify-end gap-2">
-                        {isEditing ? (
-                            <>
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => setIsEditing(false)}
-                                    className="text-slate-500 hover:text-slate-700"
-                                >
-                                    <X className="w-4 h-4 mr-1" /> Cancelar
-                                </Button>
-                                <Button
-                                    size="sm"
-                                    onClick={handleSave}
-                                    disabled={loading || uploading}
-                                    className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm"
-                                >
-                                    {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 mr-1" />}
-                                    Salvar Alterações
-                                </Button>
-                            </>
-                        ) : (
-                            // View Mode Actions -> Split Layout
-                            <div className="flex w-full justify-between items-center">
-                                {/* Left Side: Edit Profile */}
-                                <Button variant="outline" className="bg-white border-slate-200 shadow-sm" onClick={() => setIsEditing(true)}>
-                                    Editar Perfil
-                                </Button>
+                                    <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm space-y-4">
+                                        <div className="flex items-center justify-between border-b border-slate-50 pb-4">
+                                            <div>
+                                                <h5 className="font-bold text-slate-800 text-sm">Palavras-chave de Visibilidade</h5>
+                                                <p className="text-[11px] text-slate-500 italic">Termos que fazem o seu perfil aparecer em destaque.</p>
+                                            </div>
+                                            <Button size="sm" variant="outline" className="text-[10px] font-black uppercase tracking-widest border-slate-200">
+                                                Gerir Palavras
+                                            </Button>
+                                        </div>
+                                        <div className="flex items-center justify-between border-b border-slate-50 pb-4">
+                                            <div>
+                                                <h5 className="font-bold text-slate-800 text-sm">Segurança da Conta</h5>
+                                                <p className="text-[11px] text-slate-500 italic">Actualize a sua palavra-passe ou active MFA.</p>
+                                            </div>
+                                            <Button size="sm" variant="outline" className="text-[10px] font-black uppercase tracking-widest border-slate-200">
+                                                Alterar Senha
+                                            </Button>
+                                        </div>
+                                        <div className="flex items-center justify-between text-red-600">
+                                            <div>
+                                                <h5 className="font-bold text-sm">Zona de Risco</h5>
+                                                <p className="text-[11px] text-red-400 italic font-medium">Cancelar subscrição ou eliminar dados permanentemente.</p>
+                                            </div>
+                                            <button
+                                                onClick={handleDeleteAccount}
+                                                className="text-[10px] font-black uppercase tracking-widest hover:underline"
+                                            >
+                                                Eliminar Conta
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
 
-                                {/* Right Side: Cancel Subscription/Delete Account */}
-                                <button
-                                    onClick={handleDeleteAccount}
-                                    disabled={isCancelling}
-                                    className="flex items-center gap-1.5 text-[10px] font-bold text-red-400 hover:text-red-500 hover:bg-red-50 px-3 py-2 rounded-lg transition-colors uppercase tracking-widest disabled:opacity-50"
-                                >
-                                    {isCancelling ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
-                                    {isCancelling ? "A apagar..." : "Cancelar Subscrição"}
-                                </button>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="p-6 rounded-xl border border-slate-100 bg-white shadow-sm space-y-4">
+                                        <TrendingUp className="w-8 h-8 text-emerald-500" />
+                                        <h5 className="font-bold text-slate-800">Métricas de Acesso</h5>
+                                        <p className="text-xs text-slate-500 italic">Veja de onde vêm os seus acessos e garanta que a sua conta está segura.</p>
+                                        <Button className="w-full text-[10px] font-black uppercase bg-slate-800 hover:bg-slate-900">Ver Histórico de Login</Button>
+                                    </div>
+                                    <div className="p-6 rounded-xl border border-slate-100 bg-white shadow-sm space-y-4">
+                                        <BadgeCheck className="w-8 h-8 text-blue-500" />
+                                        <h5 className="font-bold text-slate-800">Verificação de Identidade</h5>
+                                        <p className="text-xs text-slate-500 italic">Aumente a sua credibilidade no mercado verificando a sua conta profissional.</p>
+                                        <Button className="w-full text-[10px] font-black uppercase bg-emerald-600 hover:bg-emerald-700">Validar Documentos</Button>
+                                    </div>
+                                </div>
                             </div>
                         )}
                     </div>
                 </div>
             </div>
+
+            {/* NOVA SECÇÃO: Privilégios e Comparativo de Planos */}
+            <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
+                <div className="px-8 py-6 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                    <div>
+                        <h3 className="text-2xl font-black text-slate-800 tracking-tight">Privilégios da Conta</h3>
+                        <p className="text-sm text-slate-500">Confira o que o seu plano oferece e as vantagens de fazer um upgrade.</p>
+                    </div>
+                    <Link href="/planos">
+                        <Button className="bg-orange-500 hover:bg-orange-600 text-white font-bold h-10 px-6 rounded-full shadow-lg shadow-orange-500/20 transition-all">
+                            Ver Todos os Planos <ChevronRight className="w-4 h-4 ml-1" />
+                        </Button>
+                    </Link>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-slate-100">
+                    {/* Plano Actual */}
+                    <div className="p-8 bg-emerald-50/30">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600">
+                                <BadgeCheck className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Plano Actual</span>
+                                <h4 className="text-xl font-black text-slate-800 uppercase">{getPlanDisplayName(formData.plan)}</h4>
+                            </div>
+                        </div>
+                        <ul className="space-y-3">
+                            {PLAN_PRIVILEGES[formData.plan]?.map((privilege, idx) => (
+                                <li key={idx} className="flex items-start gap-3 text-sm text-slate-700">
+                                    <div className="w-5 h-5 bg-emerald-200 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                                        <Check className="w-3 h-3 text-emerald-700" />
+                                    </div>
+                                    <span className="font-medium leading-tight">{privilege}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* Comparativo de Planos (Scroll) */}
+                    <div className="lg:col-span-2 p-8">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                            {PLAN_HIERARCHY
+                                .filter(p => p !== formData.plan && p !== 'Básico' && p !== 'Business Vendedor' && p !== 'Gratuito')
+                                .slice(0, 4) // Show up to 4 other plans
+                                .map((p, idx) => (
+                                    <div key={idx} className="space-y-4">
+                                        <div className="flex items-center justify-between">
+                                            <h5 className="font-black text-slate-800 uppercase text-sm tracking-wider">{getPlanDisplayName(p)}</h5>
+                                            <Link href="/planos" className="text-[10px] font-bold text-orange-500 hover:underline">VER DETALHES</Link>
+                                        </div>
+                                        <ul className="space-y-2">
+                                            {PLAN_PRIVILEGES[p]?.slice(0, 3).map((priv, pIdx) => (
+                                                <li key={pIdx} className="flex items-baseline gap-2 text-xs text-slate-500">
+                                                    <div className="w-1.5 h-1.5 bg-slate-200 rounded-full shrink-0" />
+                                                    <span>{priv}</span>
+                                                </li>
+                                            ))}
+                                            <li className="text-[10px] text-slate-400 italic mt-1 font-medium">+ e muito mais...</li>
+                                        </ul>
+                                    </div>
+                                ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <SuccessModal
+                isOpen={successModal.isOpen}
+                onClose={() => setSuccessModal(prev => ({ ...prev, isOpen: false }))}
+                title={successModal.title}
+                description={successModal.description}
+            />
         </div>
     );
 }

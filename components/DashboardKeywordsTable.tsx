@@ -57,45 +57,45 @@ export function DashboardKeywordsTable() {
                 <table className="w-full text-left border-collapse whitespace-nowrap">
                     <thead>
                         <tr className="bg-slate-50/50 border-b border-slate-100">
-                            <th className="px-3 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Termo de Pesquisa</th>
-                            <th className="px-3 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Província</th>
-                            <th className="px-3 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Impressões</th>
-                            <th className="px-3 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Cliques</th>
-                            <th className="px-3 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Conversão</th>
-                            <th className="px-3 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Ação</th>
+                            <th className="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Termo de Pesquisa</th>
+                            <th className="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Província</th>
+                            <th className="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest text-right">Impressões</th>
+                            <th className="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest text-right">Cliques</th>
+                            <th className="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest text-right">Conversão</th>
+                            <th className="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest text-right">Ação</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                         {keywords.map((item, index) => (
                             <tr key={index} className="hover:bg-slate-50 transition-colors group">
-                                <td className="px-3 py-2.5">
-                                    <span className="font-bold text-slate-700 text-sm group-hover:text-emerald-700 transition-colors block truncate max-w-[200px]" title={item.term}>
+                                <td className="px-6 py-4">
+                                    <span className="font-bold text-slate-800 text-sm group-hover:text-emerald-700 transition-colors block leading-tight" title={item.term}>
                                         {item.term}
                                     </span>
                                 </td>
-                                <td className="px-3 py-2.5">
-                                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                                <td className="px-6 py-4">
+                                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200">
                                         {item.province}
                                     </span>
                                 </td>
-                                <td className="px-3 py-2.5 text-right">
-                                    <span className="text-slate-600 font-medium text-sm">{item.impressions}</span>
+                                <td className="px-6 py-4 text-right">
+                                    <span className="text-slate-600 font-bold text-sm">{item.impressions}</span>
                                 </td>
-                                <td className="px-3 py-2.5 text-right">
-                                    <span className="text-slate-600 font-medium text-sm">{item.clicks}</span>
+                                <td className="px-6 py-4 text-right">
+                                    <span className="text-slate-600 font-bold text-sm">{item.clicks}</span>
                                 </td>
-                                <td className="px-3 py-2.5 text-right">
-                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold ${item.conversionStatus === 'good'
-                                        ? 'bg-emerald-50 text-emerald-600'
-                                        : 'bg-orange-50 text-orange-600'
+                                <td className="px-6 py-4 text-right">
+                                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black tracking-tight ${item.conversionStatus === 'good'
+                                        ? 'bg-emerald-50 text-emerald-600 border border-emerald-100'
+                                        : 'bg-orange-50 text-orange-600 border border-orange-100'
                                         }`}>
                                         {item.conversion}
                                     </span>
                                 </td>
-                                <td className="px-3 py-2.5 text-right">
-                                    <button className="text-xs font-bold text-emerald-600 hover:text-emerald-700 hover:underline uppercase tracking-wide inline-flex items-center gap-1">
+                                <td className="px-6 py-4 text-right">
+                                    <button className="text-[10px] font-black text-emerald-600 hover:text-emerald-700 hover:underline uppercase tracking-widest inline-flex items-center gap-1 group/btn">
                                         {item.action}
-                                        <ArrowRight className="w-3 h-3" />
+                                        <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-0.5 transition-transform" />
                                     </button>
                                 </td>
                             </tr>

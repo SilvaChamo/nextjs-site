@@ -99,19 +99,14 @@ export default function AdminProfessionalsPage() {
                 toast.error("Erro ao carregar profissionais da BD");
                 // Keep MOCK_DATA on error
             } else {
-                // Normalize status for DB records and combine with MOCK_DATA
+                // Normalize status for DB records
                 const normalizedDbData = (dbData || []).map(item => ({
                     ...item,
                     status: item.status || 'active' // Default to active if null/undefined
                 }));
 
-                // Combine and sort alphabetically
-                const combinedData = [...MOCK_DATA, ...normalizedDbData].sort((a, b) =>
-                    a.name.localeCompare(b.name)
-                );
-
-                console.log('Profissionais carregados:', combinedData.length, 'total');
-                setData(combinedData);
+                console.log('Profissionais carregados:', normalizedDbData.length, 'total');
+                setData(normalizedDbData);
             }
             setLoading(false);
         }

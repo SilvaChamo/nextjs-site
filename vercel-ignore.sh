@@ -9,4 +9,4 @@ echo "--------------------------------------"
 
 # Exit code 0 tells Vercel to SKIP the build.
 # Exit code 1 would tell Vercel to PROCEED with the build.
-exit 0
+exit 1

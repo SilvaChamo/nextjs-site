@@ -127,8 +127,8 @@ export default function ProfessionalProfileClient({ professional }: Professional
                                     <p className="text-emerald-300 text-[10px] font-black uppercase tracking-[0.3em] mb-2">Solicitar Serviço</p>
                                     <h4 className="text-2xl font-black text-white">Precisa de consultoria técnica?</h4>
                                 </div>
-                                <Link href="/servicos/talentos">
-                                    <Button className="bg-white hover:bg-slate-50 text-emerald-950 font-black uppercase tracking-widest text-[10px] py-6 px-10 rounded-[15px] transition-all shadow-xl shadow-emerald-950/20">
+                                <Link href="/repositorio/profissionais">
+                                    <Button className="bg-white hover:bg-orange-600 hover:text-white text-emerald-950 font-black uppercase tracking-widest text-[10px] py-6 px-10 rounded-lg transition-all shadow-xl shadow-emerald-950/20">
                                         Explorar Outros Talentos
                                     </Button>
                                 </Link>

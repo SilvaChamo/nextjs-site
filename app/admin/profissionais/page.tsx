@@ -17,16 +17,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 
-const MOCK_DATA = [
-    { id: 'mock-1', name: 'Dr. Afonso Henriques', profession: 'Agrónomo Especialista', email: 'afonso@example.com', phone: '+258 84 123 4567', location: 'Maputo', status: 'active', experience: '10 anos', specialty: 'Culturas de Regadiu', photo_url: null },
-    { id: 'mock-2', name: 'Eng. Beatriz Costa', profession: 'Veterinária', email: 'beatriz@example.com', phone: '+258 82 987 6543', location: 'Beira', status: 'active', experience: '6 anos', specialty: 'Pecuária', photo_url: null },
-    { id: 'mock-3', name: 'Carlos Manuel', profession: 'Técnico Agrícola', email: 'carlos@example.com', phone: '+258 85 555 4433', location: 'Nampula', status: 'active', experience: '3 anos', specialty: 'Mecanização', photo_url: null },
-    { id: 'mock-4', name: 'Dra. Elena Silva', profession: 'Gestora de Projectos', email: 'elena@agro.co.mz', phone: '+258 87 111 2233', location: 'Chimoio', status: 'active', experience: '8 anos', specialty: 'Agronegócio', photo_url: null },
-    { id: 'real-1', name: 'Dra. Anabela Velho', profession: 'Médica Veterinária', email: 'vetcare.mz@gmail.com', phone: '+258 84 318 8240', location: 'Maputo (Vetcare)', status: 'active', experience: '15 anos', specialty: 'Clínica de Pequenos Animais', photo_url: null },
-    { id: 'real-2', name: 'Eng. Narcisa Nhamitambo', profession: 'Especialista Agropecuária', email: 'narcisa.nh@vetcare.co.mz', phone: '+258 84 000 0000', location: 'Maputo', status: 'active', experience: '12 anos', specialty: 'Sanidade Animal', photo_url: null },
-    { id: 'real-3', name: 'Dr. Feliciano Mazuze', profession: 'Investigador Agrário', email: 'info@iiam.gov.mz', phone: '+258 21 460 219', location: 'Maputo (IIAM)', status: 'active', experience: '20 anos', specialty: 'Investigação e Solo', photo_url: null },
-    { id: 'real-4', name: 'Eng. Ricardo Santos', profession: 'Consultor de Agronegócio', email: 'geral@agricultura.gov.mz', phone: '+258 84 343 8999', location: 'Chimoio', status: 'active', experience: '9 anos', specialty: 'Gestão de Cadeias de Valor', photo_url: null },
-];
+const MOCK_DATA: any[] = [];
 
 export default function AdminProfessionalsPage() {
     const router = useRouter();

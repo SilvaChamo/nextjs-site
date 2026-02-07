@@ -39,7 +39,7 @@ export default function ProfessionalProfileClient({ professional }: Professional
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* LEFT COLUMN: Details & Specialties (previously on the right) */}
+                    {/* LEFT COLUMN: Details & Specialties */}
                     <div className="lg:col-span-2 space-y-6">
                         {/* Bio / About */}
                         <div className="bg-white rounded-[15px] border border-slate-100 shadow-sm p-8 md:p-10">
@@ -120,36 +120,38 @@ export default function ProfessionalProfileClient({ professional }: Professional
                         </div>
                     </div>
 
-                    {/* RIGHT COLUMN: Sidebar info (previously on the left) */}
+                    {/* RIGHT COLUMN: Sidebar info */}
                     <div className="lg:col-span-1 space-y-6">
-                        {/* Profile Card Refined */}
-                        <div className="bg-white rounded-[15px] border border-slate-100 shadow-sm overflow-hidden p-6">
-                            <div className="w-full aspect-square rounded-[10px] bg-slate-50 border border-slate-100 shadow-sm mb-6 overflow-hidden relative">
+                        {/* Compact Identity Card */}
+                        <div className="bg-white rounded-[15px] border border-slate-100 shadow-sm p-6 text-center">
+                            {/* Circular Photo - Reverted as requested */}
+                            <div className="w-24 h-24 rounded-full bg-slate-50 border-4 border-white shadow-sm mx-auto mb-4 overflow-hidden relative">
                                 {photo ? (
                                     <img src={photo} alt={name} className="w-full h-full object-cover" />
                                 ) : (
-                                    <User className="w-20 h-20 text-slate-200 absolute inset-0 m-auto" />
+                                    <User className="w-12 h-12 text-slate-200 absolute inset-0 m-auto" />
                                 )}
                             </div>
 
-                            <div className="flex items-start justify-between gap-4 mb-4">
-                                <div className="space-y-1">
-                                    <h1 className="text-xl font-black text-slate-900 leading-tight">{name}</h1>
+                            {/* Identity Info - Name/Stars left, Status right */}
+                            <div className="flex items-center justify-between gap-4 border-t pt-4 border-slate-50">
+                                <div className="text-left">
+                                    <h1 className="text-base font-black text-slate-900 leading-tight mb-1">{name}</h1>
                                     <div className="flex items-center gap-1 text-orange-500">
                                         {[...Array(5)].map((_, i) => (
-                                            <Star key={i} className={`w-3.5 h-3.5 ${i < (professional.rating || 5) ? "fill-current" : ""}`} />
+                                            <Star key={i} className={`w-3 h-3 ${i < (professional.rating || 5) ? "fill-current" : ""}`} />
                                         ))}
-                                        <span className="ml-1 text-[10px] font-bold text-slate-400">({professional.rating || "5.0"})</span>
+                                        <span className="ml-1 text-[9px] font-bold text-slate-400">({professional.rating || "5.0"})</span>
                                     </div>
                                 </div>
-                                <div className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                                    <span className="text-[10px] font-black uppercase">Disponível</span>
+                                <div className="shrink-0 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
+                                    <div className="w-1.2 h-1.2 rounded-full bg-emerald-500"></div>
+                                    <span className="text-[9px] font-black uppercase">Disponível</span>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Contacts Card Updated */}
+                        {/* Contacts Card */}
                         <div className="bg-white rounded-[15px] border border-slate-100 shadow-sm p-6">
                             <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-6 text-center border-b pb-4">Informação de Contacto</h3>
 

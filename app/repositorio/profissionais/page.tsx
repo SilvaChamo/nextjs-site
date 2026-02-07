@@ -177,7 +177,9 @@ export default function RepositorioProfissionaisPage() {
                                                             <User className="w-4 h-4 text-slate-400" />
                                                         )}
                                                     </div>
-                                                    <span className="font-bold text-slate-800 whitespace-nowrap">{item.name}</span>
+                                                    <Link href={`/repositorio/profissionais/${item.id}`} className="hover:text-emerald-600 transition-colors">
+                                                        <span className="font-bold text-slate-800 whitespace-nowrap">{item.name}</span>
+                                                    </Link>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
@@ -207,9 +209,10 @@ export default function RepositorioProfissionaisPage() {
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filteredData.map((item) => (
-                                <div
+                                <Link
                                     key={item.id}
-                                    className="bg-white rounded-2xl border border-slate-100 hover:shadow-lg transition-all group relative overflow-hidden p-6 flex flex-col items-center text-center"
+                                    href={`/repositorio/profissionais/${item.id}`}
+                                    className="bg-white rounded-2xl border border-slate-100 hover:shadow-xl hover:border-emerald-100 transition-all group relative overflow-hidden p-6 flex flex-col items-center text-center shadow-sm"
                                 >
                                     {/* Avatar */}
                                     <div className="w-20 h-20 rounded-full bg-slate-50 border-4 border-white shadow-sm flex items-center justify-center mb-4 overflow-hidden shrink-0">
@@ -235,7 +238,12 @@ export default function RepositorioProfissionaisPage() {
                                     {item.email && (
                                         <p className="text-xs text-slate-400 font-medium truncate max-w-full">{item.email}</p>
                                     )}
-                                </div>
+
+                                    {/* Action Arrow - visible on hover */}
+                                    <div className="mt-4 pt-4 border-t border-slate-50 w-full flex justify-center text-emerald-600 font-bold text-[10px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                                        Ver Perfil Completo
+                                    </div>
+                                </Link>
                             ))}
                         </div>
                     )

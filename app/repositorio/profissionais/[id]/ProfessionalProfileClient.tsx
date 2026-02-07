@@ -139,9 +139,9 @@ export default function ProfessionalProfileClient({ professional }: Professional
                     {/* RIGHT COLUMN: Compact Sidebar */}
                     <div className="lg:col-span-1 space-y-5">
                         {/* Compact Identity Card */}
-                        <div className="bg-white rounded-[15px] border border-slate-100 shadow-sm p-5 text-center space-y-5">
+                        <div className="bg-white rounded-[15px] border border-slate-100 shadow-sm p-5 text-center">
                             {/* Circular Photo */}
-                            <div className="w-24 h-24 rounded-full bg-slate-50 border-4 border-white shadow-sm mx-auto overflow-hidden relative">
+                            <div className="w-24 h-24 rounded-full bg-slate-50 border-4 border-white shadow-sm mx-auto mb-4 overflow-hidden relative">
                                 {photo ? (
                                     <img src={photo} alt={name} className="w-full h-full object-cover" />
                                 ) : (
@@ -149,20 +149,20 @@ export default function ProfessionalProfileClient({ professional }: Professional
                                 )}
                             </div>
 
-                            {/* Identity Header */}
-                            <div className="flex items-center justify-between gap-4 border-t pt-5 border-slate-50">
-                                <div className="text-left">
-                                    <h1 className="text-base font-black text-slate-900 leading-tight mb-1">{name}</h1>
-                                    <div className="flex items-center gap-1 text-orange-500">
-                                        {[...Array(5)].map((_, i) => (
-                                            <Star key={i} className={`w-3 h-3 ${i < (professional.rating || 5) ? "fill-current" : ""}`} />
-                                        ))}
-                                        <span className="ml-1 text-[9px] font-bold text-slate-400">({professional.rating || "5.0"})</span>
-                                    </div>
+                            {/* Name below photo - Larger as requested */}
+                            <h1 className="text-xl font-black text-slate-900 leading-tight mb-4">{name}</h1>
+
+                            {/* Identity Footer: Stars and Status */}
+                            <div className="flex items-center justify-between gap-4 border-t pt-4 border-slate-50">
+                                <div className="flex items-center gap-1 text-orange-500">
+                                    {[...Array(5)].map((_, i) => (
+                                        <Star key={i} className={`w-3.5 h-3.5 ${i < (professional.rating || 5) ? "fill-current" : ""}`} />
+                                    ))}
+                                    <span className="ml-1 text-[10px] font-bold text-slate-400">({professional.rating || "5.0"})</span>
                                 </div>
                                 <div className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
                                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
-                                    <span className="text-[9px] font-black uppercase">Disponível</span>
+                                    <span className="text-[10px] font-black uppercase">Disponível</span>
                                 </div>
                             </div>
                         </div>

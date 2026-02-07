@@ -78,23 +78,14 @@ export function AdminDataTable({
     const [localData, setLocalData] = useState<any[]>(data);
     const { isOnline } = useNetworkStatus();
 
-    // Sync local data with prop data and save snapshots
+    // Sync local data with prop data
     useEffect(() => {
         if (!loading) {
-            // If we have data (empty or not) and we are online, trust the server
-            // Or if we have data > 0 (even if offline, it might be prop-passed), trust it
-            if (isOnline || data.length > 0) {
-                // eslint-disable-next-line react-hooks/set-state-in-effect
-                setLocalData(data);
-                syncManager.saveSnapshot(title, data);
-            }
-            // Only fall back to snapshot if we are Offline AND have no data
-            else if (!isOnline && data.length === 0) {
-                const snapshot = syncManager.getSnapshot(title);
-                if (snapshot) setLocalData(snapshot);
-            }
+            setLocalData(data);
+            // Optionally still save for other uses, but we won't fall back here
+            syncManager.saveSnapshot(title, data);
         }
-    }, [data, loading, title, isOnline]);
+    }, [data, loading, title]);
 
     const filteredData = localData.filter(item =>
         Object.values(item).some(val =>

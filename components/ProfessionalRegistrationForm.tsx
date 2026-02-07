@@ -61,6 +61,11 @@ export function ProfessionalRegistrationForm({ initialData, isAdmin }: Professio
     const router = useRouter();
     const supabase = createClient();
 
+    // Anti-spam: honeypot field (should remain empty)
+    const [honeypot, setHoneypot] = useState("");
+    // Anti-spam: track form load time (minimum 5 seconds to submit)
+    const [formLoadTime] = useState(Date.now());
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -85,6 +90,28 @@ export function ProfessionalRegistrationForm({ initialData, isAdmin }: Professio
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
+        // Anti-spam checks (skip for admin)
+        if (!isAdmin) {
+            // Honeypot check - if filled, it's likely a bot
+            if (honeypot) {
+                console.warn("Spam detected: honeypot filled");
+                toast.error("Erro ao submeter", {
+                    description: "Tente novamente mais tarde."
+                });
+                return;
+            }
+
+            // Time check - form filled too quickly (less than 5 seconds)
+            const timeTaken = Date.now() - formLoadTime;
+            if (timeTaken < 5000) {
+                console.warn("Spam detected: form submitted too quickly", timeTaken);
+                toast.error("Por favor, preencha o formulário com mais cuidado.", {
+                    description: "O formulário foi submetido demasiado rápido."
+                });
+                return;
+            }
+        }
+
         setLoading(true);
         try {
             const payload = {
@@ -187,6 +214,20 @@ export function ProfessionalRegistrationForm({ initialData, isAdmin }: Professio
                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6 flex gap-3 text-slate-600 text-sm">
                     <AlertCircle className="w-5 h-5 text-emerald-600 shrink-0" />
                     <p>Preencha os dados abaixo para criar o seu perfil profissional. Os campos marcados com <span className="text-orange-500 font-bold text-lg leading-none">*</span> são obrigatórios.</p>
+                </div>
+
+                {/* Honeypot field - hidden from users, visible to bots */}
+                <div className="absolute -left-[9999px] opacity-0 pointer-events-none" aria-hidden="true">
+                    <label htmlFor="website_url">Website</label>
+                    <input
+                        type="text"
+                        id="website_url"
+                        name="website_url"
+                        tabIndex={-1}
+                        autoComplete="off"
+                        value={honeypot}
+                        onChange={(e) => setHoneypot(e.target.value)}
+                    />
                 </div>
 
                 {/* PERSONAL INFO SECTION - RESTRUCTURED */}

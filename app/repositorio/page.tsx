@@ -130,7 +130,7 @@ export default function RepositorioPage() {
             date: "2023-10-05",
             price: 500,
             relevance: 7,
-            href: "/servicos/talentos"
+            href: "/repositorio/profissionais"
         },
         {
             title: "Propriedades",

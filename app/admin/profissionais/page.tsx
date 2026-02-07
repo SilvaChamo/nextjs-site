@@ -347,14 +347,14 @@ export default function AdminProfessionalsPage() {
                         </button>
                     </div>
 
-                    {/* Refresh Button */}
+                    {/* Refresh Button - Icon Only */}
                     <Button
                         variant="outline"
                         onClick={handleRefresh}
-                        className="bg-white hover:bg-slate-50 text-slate-600 font-bold uppercase tracking-widest text-[10px] h-10 px-4 rounded-lg gap-2 border-slate-200"
+                        className="bg-white hover:bg-slate-50 text-slate-600 h-10 w-10 p-0 rounded-lg border-slate-200"
+                        title="Actualizar dados"
                     >
                         <RefreshCw className="w-4 h-4" />
-                        Actualizar
                     </Button>
 
                     {/* New Button */}

@@ -6,8 +6,25 @@ import { toast } from "sonner";
 
 export function ContactForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [honeypot, setHoneypot] = useState("");
+    const [formLoadTime] = useState(Date.now());
 
     const handleSubmit = (e: React.FormEvent) => {
+        // Anti-spam checks
+        if (honeypot) {
+            e.preventDefault();
+            console.warn("Spam detected: honeypot filled");
+            return;
+        }
+
+        const timeTaken = Date.now() - formLoadTime;
+        if (timeTaken < 5000) {
+            e.preventDefault();
+            console.warn("Spam detected: submitted too quickly", timeTaken);
+            toast.error("Por favor, preencha o formulário com calma.");
+            return;
+        }
+
         if (isSubmitting) {
             e.preventDefault();
             return;
@@ -42,6 +59,19 @@ export function ContactForm() {
                 encType="text/plain"
                 onSubmit={handleSubmit}
             >
+                {/* Honeypot field - hidden from users, visible to bots */}
+                <div className="absolute -left-[9999px] opacity-0 pointer-events-none" aria-hidden="true">
+                    <label htmlFor="website_url">Website</label>
+                    <input
+                        type="text"
+                        id="website_url"
+                        name="website_url"
+                        tabIndex={-1}
+                        autoComplete="off"
+                        value={honeypot}
+                        onChange={(e) => setHoneypot(e.target.value)}
+                    />
+                </div>
                 {/* Nome */}
                 <div className="w-full">
                     <label className="block text-[16px] font-semibold text-slate-700/80 py-[10px]">Nome completo</label>

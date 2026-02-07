@@ -9,6 +9,9 @@ export function StatsEntryForm() {
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 
+    const [honeypot, setHoneypot] = useState("");
+    const [formLoadTime] = useState(Date.now());
+
     const [formData, setFormData] = useState({
         category: "producao",
         province: "Todas",
@@ -29,6 +32,20 @@ export function StatsEntryForm() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Anti-spam checks
+        if (honeypot) {
+            console.warn("Spam detected: honeypot filled");
+            return;
+        }
+
+        const timeTaken = Date.now() - formLoadTime;
+        if (timeTaken < 5000) {
+            console.warn("Spam detected: submitted too quickly", timeTaken);
+            setStatus({ type: 'error', message: 'Por favor, aguarde o tempo necessário para processar os dados.' });
+            return;
+        }
+
         setLoading(true);
         setStatus(null);
 
@@ -66,6 +83,19 @@ export function StatsEntryForm() {
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Honeypot field - hidden from users, visible to bots */}
+                <div className="absolute -left-[9999px] opacity-0 pointer-events-none" aria-hidden="true">
+                    <label htmlFor="website_url">Website</label>
+                    <input
+                        type="text"
+                        id="website_url"
+                        name="website_url"
+                        tabIndex={-1}
+                        autoComplete="off"
+                        value={honeypot}
+                        onChange={(e) => setHoneypot(e.target.value)}
+                    />
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Categoria */}
                     <div className="flex flex-col gap-1.5">

@@ -18,7 +18,26 @@ export default function ParceriaPage() {
     const { t } = useLanguage();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    // Anti-spam states
+    const [honeypot, setHoneypot] = useState("");
+    const [formLoadTime] = useState(Date.now());
+
     const handleSubmit = (e: React.FormEvent) => {
+        // Anti-spam checks
+        if (honeypot) {
+            e.preventDefault();
+            console.warn("Spam detected: honeypot filled");
+            return;
+        }
+
+        const timeTaken = Date.now() - formLoadTime;
+        if (timeTaken < 5000) {
+            e.preventDefault();
+            console.warn("Spam detected: submitted too quickly", timeTaken);
+            alert("Por favor, preencha o formulário com calma.");
+            return;
+        }
+
         if (isSubmitting) {
             e.preventDefault();
             return;
@@ -198,6 +217,20 @@ export default function ParceriaPage() {
                                 </div>
 
                                 <form id="parceria-form" className="p-8 pt-4 space-y-4 flex flex-col items-start" action="mailto:geral@baseagrodata.com" method="POST" encType="text/plain" onSubmit={handleSubmit}>
+
+                                    {/* Honeypot field - hidden from users, visible to bots */}
+                                    <div className="absolute -left-[9999px] opacity-0 pointer-events-none" aria-hidden="true">
+                                        <label htmlFor="website_url">Website</label>
+                                        <input
+                                            type="text"
+                                            id="website_url"
+                                            name="website_url"
+                                            tabIndex={-1}
+                                            autoComplete="off"
+                                            value={honeypot}
+                                            onChange={(e) => setHoneypot(e.target.value)}
+                                        />
+                                    </div>
                                     <div className="relative w-full">
                                         <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                         <input

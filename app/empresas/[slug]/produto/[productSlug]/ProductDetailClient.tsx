@@ -82,10 +82,37 @@ export default function ProductDetailClient({
 
     const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
     const [submitting, setSubmitting] = useState(false);
+
+    // Anti-spam states
+    const [honeypot, setHoneypot] = useState("");
+    const [formLoadTime, setFormLoadTime] = useState(0);
+
+    // Update formLoadTime when modal opens
+    React.useEffect(() => {
+        if (isQuoteModalOpen) {
+            setFormLoadTime(Date.now());
+        }
+    }, [isQuoteModalOpen]);
+
     const supabase = createClient();
 
     const handleQuoteSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        // Anti-spam checks
+        if (honeypot) {
+            console.warn("Spam detected: honeypot filled");
+            toast.error("Erro ao enviar solicitação.");
+            return;
+        }
+
+        const timeTaken = Date.now() - formLoadTime;
+        if (timeTaken < 4000) { // 4 seconds for a small quote form
+            console.warn("Spam detected: submitted too quickly", timeTaken);
+            toast.error("Por favor, preencha o formulário com mais calma.");
+            return;
+        }
+
         setSubmitting(true);
         const formData = new FormData(e.currentTarget);
 
@@ -240,6 +267,20 @@ export default function ProductDetailClient({
                             <form onSubmit={handleQuoteSubmit} className="space-y-4">
                                 <input name="product_id" type="hidden" value={product.id || ""} />
                                 <input name="company_id" type="hidden" value={company.id || ""} />
+
+                                {/* Honeypot field - hidden from users, visible to bots */}
+                                <div className="absolute -left-[9999px] opacity-0 pointer-events-none" aria-hidden="true">
+                                    <label htmlFor="website_url">Website</label>
+                                    <input
+                                        type="text"
+                                        id="website_url"
+                                        name="website_url"
+                                        tabIndex={-1}
+                                        autoComplete="off"
+                                        value={honeypot}
+                                        onChange={(e) => setHoneypot(e.target.value)}
+                                    />
+                                </div>
 
                                 <div>
                                     <label className="block text-[11px] font-black uppercase tracking-wider text-slate-500 mb-1.5">Seu Nome</label>

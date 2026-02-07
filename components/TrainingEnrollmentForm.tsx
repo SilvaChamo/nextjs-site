@@ -25,8 +25,25 @@ export function TrainingEnrollmentForm({ trainingId, trainingTitle, onClose }: T
         notes: ""
     });
 
+    const [honeypot, setHoneypot] = useState("");
+    const [formLoadTime] = useState(Date.now());
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Anti-spam checks
+        if (honeypot) {
+            console.warn("Spam detected: honeypot filled");
+            return;
+        }
+
+        const timeTaken = Date.now() - formLoadTime;
+        if (timeTaken < 5000) {
+            console.warn("Spam detected: submitted too quickly", timeTaken);
+            toast.error("Por favor, preencha o formulário com mais atenção.");
+            return;
+        }
+
         setLoading(true);
 
         try {
@@ -103,6 +120,19 @@ export function TrainingEnrollmentForm({ trainingId, trainingTitle, onClose }: T
 
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="p-8 pt-4 space-y-5 overflow-y-auto">
+                    {/* Honeypot field - hidden from users, visible to bots */}
+                    <div className="absolute -left-[9999px] opacity-0 pointer-events-none" aria-hidden="true">
+                        <label htmlFor="website_url">Website</label>
+                        <input
+                            type="text"
+                            id="website_url"
+                            name="website_url"
+                            tabIndex={-1}
+                            autoComplete="off"
+                            value={honeypot}
+                            onChange={(e) => setHoneypot(e.target.value)}
+                        />
+                    </div>
                     <div className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-1.5">

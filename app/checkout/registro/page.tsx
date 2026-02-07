@@ -39,8 +39,27 @@ function RegistroContent() {
     const [password, setPassword] = useState("");
     const [phone, setPhone] = useState("");
 
+    // Anti-spam states
+    const [honeypot, setHoneypot] = useState("");
+    const [formLoadTime] = useState(Date.now());
+
     const handleCreateAccount = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Anti-spam checks
+        if (honeypot) {
+            console.warn("Spam detected: honeypot filled");
+            setError("Erro ao processar o registo. Tente novamente.");
+            return;
+        }
+
+        const timeTaken = Date.now() - formLoadTime;
+        if (timeTaken < 5000) {
+            console.warn("Spam detected: submitted too quickly", timeTaken);
+            setError("Por favor, preencha o formulário com mais cuidado.");
+            return;
+        }
+
         setLoading(true);
         setError("");
 
@@ -189,6 +208,19 @@ function RegistroContent() {
                 {/* Left Column: Registration Form */}
                 <div className="lg:col-span-7">
                     <form onSubmit={handleCreateAccount} className="space-y-5">
+                        {/* Honeypot field - hidden from users, visible to bots */}
+                        <div className="absolute -left-[9999px] opacity-0 pointer-events-none" aria-hidden="true">
+                            <label htmlFor="website_url">Website</label>
+                            <input
+                                type="text"
+                                id="website_url"
+                                name="website_url"
+                                tabIndex={-1}
+                                autoComplete="off"
+                                value={honeypot}
+                                onChange={(e) => setHoneypot(e.target.value)}
+                            />
+                        </div>
                         <div className="bg-white p-6 rounded-[15px] border border-slate-200 shadow-sm">
                             {error && (
                                 <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">

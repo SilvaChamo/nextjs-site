@@ -28,6 +28,10 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
     const [mathChallenge, setMathChallenge] = useState({ num1: 0, num2: 0, answer: 0 });
     const [userCaptchaAnswer, setUserCaptchaAnswer] = useState("");
 
+    // Anti-spam states
+    const [honeypot, setHoneypot] = useState("");
+    const [formLoadTime] = useState(Date.now());
+
     // Generate Captcha
     const generateCaptcha = () => {
         const num1 = Math.floor(Math.random() * 10) + 1;
@@ -67,6 +71,21 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
 
     const handleAuth = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Anti-spam checks
+        if (honeypot) {
+            console.warn("Spam detected: honeypot filled");
+            setStatus({ type: 'error', message: "Erro ao processar. Tente novamente." });
+            return;
+        }
+
+        const timeTaken = Date.now() - formLoadTime;
+        if (timeTaken < 3000) { // 3 seconds for login might be okay, but 5 is safer. Let's use 3 for login specifically to be less annoying.
+            console.warn("Spam detected: submitted too quickly", timeTaken);
+            setStatus({ type: 'error', message: "Por favor, aguarde um pouco antes de submeter." });
+            return;
+        }
+
         setLoading(true);
         setStatus(null);
 
@@ -312,6 +331,20 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                     )}
 
                     <form onSubmit={handleAuth} className="space-y-4">
+
+                        {/* Honeypot field - hidden from users, visible to bots */}
+                        <div className="absolute -left-[9999px] opacity-0 pointer-events-none" aria-hidden="true">
+                            <label htmlFor="website_url">Website</label>
+                            <input
+                                type="text"
+                                id="website_url"
+                                name="website_url"
+                                tabIndex={-1}
+                                autoComplete="off"
+                                value={honeypot}
+                                onChange={(e) => setHoneypot(e.target.value)}
+                            />
+                        </div>
 
                         {/* REGISTRATION FIELDS (Name & Phone) */}
                         {!isLogin && (

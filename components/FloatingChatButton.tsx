@@ -12,6 +12,17 @@ export function FloatingChatButton() {
     const [inputValue, setInputValue] = useState("");
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
+    // Anti-spam states
+    const [honeypot, setHoneypot] = useState("");
+    const [formLoadTime, setFormLoadTime] = useState(0);
+
+    // Track when chat window opens
+    useEffect(() => {
+        if (isChatWindowOpen) {
+            setFormLoadTime(Date.now());
+        }
+    }, [isChatWindowOpen]);
+
     const knowledgeBase: Record<string, string> = {
         "milho": "O milho é uma das culturas mais importantes em Moçambique, especialmente nas províncias de Tete, Manica e Niassa. Os preços variam entre 15 a 25 MT/kg dependendo da época e região.",
         "preço": "Pode consultar os preços actualizados de mais de 30 produtos na nossa secção 'Mercado'. Monitoramos cotações do SIMA em tempo real para todo o país.",
@@ -37,6 +48,21 @@ export function FloatingChatButton() {
 
     const handleSendMessage = (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Anti-spam checks
+        if (honeypot) {
+            console.warn("Spam detected: honeypot filled");
+            return;
+        }
+
+        const timeTaken = Date.now() - formLoadTime;
+        // Only enforce for the first message to not hinder conversation
+        if (messages.length === 1 && timeTaken < 3000) {
+            console.warn("Spam detected: submitted too quickly", timeTaken);
+            alert("Aguarde um momento antes de enviar a primeira mensagem.");
+            return;
+        }
+
         if (!inputValue.trim()) return;
 
         const userMessage = inputValue.trim().toLowerCase();
@@ -103,6 +129,19 @@ export function FloatingChatButton() {
 
                     {/* Input Area */}
                     <form onSubmit={handleSendMessage} className="p-4 bg-white border-t border-slate-100 flex gap-2">
+                        {/* Honeypot field - hidden from users, visible to bots */}
+                        <div className="absolute -left-[9999px] opacity-0 pointer-events-none" aria-hidden="true">
+                            <label htmlFor="hp_website">Website</label>
+                            <input
+                                type="text"
+                                id="hp_website"
+                                name="hp_website"
+                                tabIndex={-1}
+                                autoComplete="off"
+                                value={honeypot}
+                                onChange={(e) => setHoneypot(e.target.value)}
+                            />
+                        </div>
                         <input
                             type="text"
                             value={inputValue}

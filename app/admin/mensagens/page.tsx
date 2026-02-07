@@ -10,7 +10,15 @@ import { Loader2, Send, FileText, FileArchive, File as FileIcon, X } from "lucid
 import { MultiFileUpload } from "@/components/admin/MultiFileUpload";
 import { SenderEmailSelector } from "@/components/admin/SenderEmailSelector";
 
-const PLANS = ["Visitante", "Basic", "Profissional", "Premium", "Parceiro", "Vendedor", "Subscritores (Newsletter)"];
+const PLANS = [
+    "Gratuito",
+    "Básico",
+    "Premium",
+    "Business Vendedor",
+    "Parceiro",
+    "Profissionais",
+    "Subscritores (Newsletter)"
+];
 
 export default function AdminMessagesPage() {
     const [subject, setSubject] = useState("");
@@ -63,22 +71,59 @@ export default function AdminMessagesPage() {
 
             if (msgError) throw msgError;
 
-            // 2. Find Users and Newsletter Subscribers
+            // 2. Find Users, Companies and Professionals
             let allRecipients: { id?: string, email: string }[] = [];
 
-            // A. Fetch Registered Users
-            const userPlans = selectedPlans.filter(p => p !== "Subscritores (Newsletter)");
-            if (userPlans.length > 0) {
-                const { data: users, error: userError } = await supabase
+            // A. Fetch from Profiles and Companies based on Plans
+            // We include "Gratuito" as a special case for "Visitante" too
+            const selectedPlanNames = selectedPlans.filter(p => !["Subscritores (Newsletter)", "Profissionais"].includes(p));
+
+            if (selectedPlanNames.length > 0) {
+                // Prepare normalized plans for query (case sensitive handling if needed)
+                const queryPlanNames = [...selectedPlanNames];
+                if (queryPlanNames.includes("Gratuito")) {
+                    queryPlanNames.push("Visitante", "free");
+                }
+                if (queryPlanNames.includes("Básico")) {
+                    queryPlanNames.push("Basic");
+                }
+
+                // Search in Profiles
+                const { data: profileUsers, error: profError } = await supabase
                     .from('profiles')
                     .select('id, email')
-                    .in('plan', userPlans);
+                    .in('plan', queryPlanNames);
 
-                if (userError) throw userError;
-                if (users) allRecipients = [...allRecipients, ...users];
+                if (profError) throw profError;
+                if (profileUsers) allRecipients = [...allRecipients, ...profileUsers];
+
+                // Search in Companies
+                const { data: companyUsers, error: compError } = await supabase
+                    .from('companies')
+                    .select('user_id, email')
+                    .in('plan', queryPlanNames);
+
+                if (compError) throw compError;
+                if (companyUsers) {
+                    const mappedCompUsers = companyUsers.map(c => ({ id: c.user_id, email: c.email }));
+                    allRecipients = [...allRecipients, ...mappedCompUsers];
+                }
             }
 
-            // B. Fetch Newsletter Subscribers
+            // B. Fetch Professionals if selected
+            if (selectedPlans.includes("Profissionais")) {
+                const { data: professionals, error: extraError } = await supabase
+                    .from('professionals')
+                    .select('email, user_id');
+
+                if (extraError) throw extraError;
+                if (professionals) {
+                    const mappedProfs = professionals.map(p => ({ id: p.user_id, email: p.email }));
+                    allRecipients = [...allRecipients, ...mappedProfs];
+                }
+            }
+
+            // C. Fetch Newsletter Subscribers
             if (selectedPlans.includes("Subscritores (Newsletter)")) {
                 const { data: subscribers, error: subError } = await supabase
                     .from('newsletter_subscribers')

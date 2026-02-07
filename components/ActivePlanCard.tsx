@@ -63,14 +63,14 @@ export function ActivePlanCard() {
         }
     };
 
-    if (loading) return <div className="animate-pulse h-64 bg-slate-100 rounded-xl"></div>;
+    if (loading) return <div className="animate-pulse h-64 bg-slate-100 rounded-[15px]"></div>;
 
     const currentPlan = planData?.plan || "Gratuito";
     const formattedPlan = currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1);
     const isFree = currentPlan === "Gratuito";
 
     return (
-        <div className={`rounded-xl p-6 shadow-sm border text-white transition-colors ${isFree ? "bg-slate-800 border-slate-700" : "bg-emerald-950 border-emerald-900"}`}>
+        <div className={`rounded-[15px] p-6 shadow-sm border text-white transition-colors ${isFree ? "bg-slate-800 border-slate-700" : "bg-emerald-950 border-emerald-900"}`}>
             <div className="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
 
                 {/* Plan Info */}

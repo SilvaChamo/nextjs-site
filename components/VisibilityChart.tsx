@@ -18,7 +18,7 @@ export function VisibilityChart() {
     const [period, setPeriod] = useState<"semanal" | "mensal" | "anual">("semanal");
 
     return (
-        <div className="bg-white pt-5 px-5 pb-5 rounded-xl border border-slate-100 shadow-sm">
+        <div className="bg-white pt-5 px-5 pb-5 rounded-[15px] border border-slate-100 shadow-sm">
             <div className="flex flex-row items-center justify-between mb-0">
                 <div>
                     <h3 className="text-xl font-bold text-slate-800">Tendência de Visibilidade</h3>

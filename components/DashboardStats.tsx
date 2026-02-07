@@ -106,10 +106,10 @@ export function DashboardStats({
             {/* KPIs Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
                 {/* KPI 1 - Impressões */}
-                <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+                <div className="bg-white p-6 rounded-[15px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
                     <div className="flex justify-between items-start mb-2">
                         <p className="text-sm font-semibold text-slate-500" style={cardTitleStyle}>Total de Impressões</p>
-                        <div className="p-2 bg-emerald-50 rounded-lg text-emerald-600 group-hover:scale-110 transition-transform">
+                        <div className="p-2 bg-emerald-50 rounded-[10px] text-emerald-600 group-hover:scale-110 transition-transform">
                             <Eye className="w-4 h-4" />
                         </div>
                     </div>
@@ -122,10 +122,10 @@ export function DashboardStats({
                 </div>
 
                 {/* KPI 2 - Cliques */}
-                <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+                <div className="bg-white p-6 rounded-[15px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
                     <div className="flex justify-between items-start mb-2">
                         <p className="text-sm font-semibold text-slate-500" style={cardTitleStyle}>Cliques no Perfil</p>
-                        <div className="p-2 bg-blue-50 rounded-lg text-blue-600 group-hover:scale-110 transition-transform">
+                        <div className="p-2 bg-blue-50 rounded-[10px] text-blue-600 group-hover:scale-110 transition-transform">
                             <MousePointerClick className="w-4 h-4" />
                         </div>
                     </div>
@@ -138,10 +138,10 @@ export function DashboardStats({
                 </div>
 
                 {/* KPI 3 - Cotações */}
-                <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+                <div className="bg-white p-6 rounded-[15px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
                     <div className="flex justify-between items-start mb-2">
                         <p className="text-sm font-semibold text-slate-500" style={cardTitleStyle}>Solicitações de Cotação</p>
-                        <div className="p-2 bg-orange-50 rounded-lg text-orange-600 group-hover:scale-110 transition-transform">
+                        <div className="p-2 bg-orange-50 rounded-[10px] text-orange-600 group-hover:scale-110 transition-transform">
                             <MessageSquare className="w-4 h-4" />
                         </div>
                     </div>
@@ -154,10 +154,10 @@ export function DashboardStats({
                 </div>
 
                 {/* KPI 4 - CTR */}
-                <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+                <div className="bg-white p-6 rounded-[15px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
                     <div className="flex justify-between items-start mb-2">
                         <p className="text-sm font-semibold text-slate-500" style={cardTitleStyle}>CTR Médio</p>
-                        <div className="p-2 bg-purple-50 rounded-lg text-purple-600 group-hover:scale-110 transition-transform">
+                        <div className="p-2 bg-purple-50 rounded-[10px] text-purple-600 group-hover:scale-110 transition-transform">
                             <Percent className="w-4 h-4" />
                         </div>
                     </div>

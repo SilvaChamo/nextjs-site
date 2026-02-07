@@ -2,9 +2,9 @@ import { Lightbulb } from "lucide-react";
 
 export function GrowthTipCard() {
     return (
-        <div className="bg-orange-50 border border-orange-100 p-5 rounded-xl">
+        <div className="bg-orange-50 border border-orange-100 p-5 rounded-[15px]">
             <div className="flex items-start gap-3">
-                <div className="p-2 bg-orange-100 rounded-lg text-orange-600 shrink-0">
+                <div className="p-2 bg-orange-100 rounded-[10px] text-orange-600 shrink-0">
                     <Lightbulb className="w-5 h-5 fill-current" />
                 </div>
                 <div>

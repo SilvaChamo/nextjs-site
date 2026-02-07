@@ -63,8 +63,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 if (hasDashboardAccess(plan)) {
                     setHasAccess(true);
                 } else {
-                    // Redirect to home page
-                    router.push("/");
+                    // This case is now unreachable as hasDashboardAccess returns true
+                    setHasAccess(true);
                 }
             } catch (error) {
                 console.error("Error checking access:", error);

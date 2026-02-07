@@ -47,7 +47,7 @@ const keywords = [
 
 export function DashboardKeywordsTable() {
     return (
-        <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden mt-0">
+        <div className="bg-white rounded-[15px] border border-slate-100 shadow-sm overflow-hidden mt-0">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center">
                 <h3 className="text-xl font-bold text-slate-800">Palavras-chave</h3>
                 <span className="text-xs text-slate-400 font-medium">Últimos 30 dias</span>

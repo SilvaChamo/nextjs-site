@@ -13,16 +13,16 @@ export interface FieldPermission {
 
 // All company fields with their minimum required plan
 export const COMPANY_FIELDS: FieldPermission[] = [
-    // Basic Plan Fields
-    { field: 'name', label: 'Nome da Empresa', requiredPlan: 'Basic' },
-    { field: 'activity', label: 'Actividade Principal', requiredPlan: 'Basic' },
-    { field: 'category', label: 'Sector de Actuação', requiredPlan: 'Basic' },
-    { field: 'province', label: 'Província', requiredPlan: 'Basic' },
-    { field: 'address', label: 'Endereço Físico', requiredPlan: 'Basic' },
-    { field: 'description', label: 'Descrição Geral', requiredPlan: 'Basic' },
-    { field: 'logo_url', label: 'Logo', requiredPlan: 'Basic' },
-    { field: 'banner_url', label: 'Banner', requiredPlan: 'Basic' },
-    { field: 'contact', label: 'Contacto', requiredPlan: 'Basic' },
+    // Basic Plan Fields (Available for Gratuito too)
+    { field: 'name', label: 'Nome da Empresa', requiredPlan: 'Gratuito' },
+    { field: 'activity', label: 'Actividade Principal', requiredPlan: 'Gratuito' },
+    { field: 'category', label: 'Sector de Actuação', requiredPlan: 'Gratuito' },
+    { field: 'province', label: 'Província', requiredPlan: 'Gratuito' },
+    { field: 'address', label: 'Endereço Físico', requiredPlan: 'Gratuito' },
+    { field: 'description', label: 'Descrição Geral', requiredPlan: 'Gratuito' },
+    { field: 'logo_url', label: 'Logo', requiredPlan: 'Gratuito' },
+    { field: 'banner_url', label: 'Banner', requiredPlan: 'Gratuito' },
+    { field: 'contact', label: 'Contacto', requiredPlan: 'Gratuito' },
 
     // Premium Plan Fields
     { field: 'nuit', label: 'NUIT', requiredPlan: 'Premium' },
@@ -102,8 +102,8 @@ export function getEditableFields(userPlan: string | null | undefined): string[]
  * Gratuito and Visitante plans do NOT have access to the dashboard
  */
 export function hasDashboardAccess(userPlan: string | null | undefined): boolean {
-    const normalizedPlan = normalizePlanName(userPlan);
-    return normalizedPlan !== 'Gratuito' && normalizedPlan !== 'Visitante';
+    // All logged in users now have access to the dashboard (some with restricted menus)
+    return true;
 }
 
 /**
@@ -166,14 +166,98 @@ export const PLAN_FEATURES: Record<PlanType, {
     sms_notifications: boolean;
     presentations: boolean;
     featured_company: boolean;
+    business_analytics: boolean;
+    newsletter: boolean;
+    event_notifications: boolean;
+    funding_alerts: boolean;
+    email_support: boolean;
+    simple_company_edit: boolean;
+    profile_sharing_management: boolean;
 }> = {
-    'Gratuito': { sms_notifications: false, presentations: false, featured_company: false },
-    'Visitante': { sms_notifications: false, presentations: false, featured_company: false },
-    'Basic': { sms_notifications: false, presentations: false, featured_company: false },
-    'Básico': { sms_notifications: false, presentations: false, featured_company: false },
-    'Premium': { sms_notifications: true, presentations: false, featured_company: false },
-    'Business Vendedor': { sms_notifications: true, presentations: true, featured_company: false },
-    'Parceiro': { sms_notifications: true, presentations: true, featured_company: true }
+    'Gratuito': {
+        sms_notifications: false,
+        presentations: false,
+        featured_company: false,
+        business_analytics: false,
+        newsletter: true,
+        event_notifications: true,
+        funding_alerts: true,
+        email_support: true,
+        simple_company_edit: true,
+        profile_sharing_management: false
+    },
+    'Visitante': {
+        sms_notifications: false,
+        presentations: false,
+        featured_company: false,
+        business_analytics: false,
+        newsletter: true,
+        event_notifications: true,
+        funding_alerts: true,
+        email_support: true,
+        simple_company_edit: true,
+        profile_sharing_management: false
+    },
+    'Basic': {
+        sms_notifications: false,
+        presentations: false,
+        featured_company: false,
+        business_analytics: true,
+        newsletter: true,
+        event_notifications: true,
+        funding_alerts: true,
+        email_support: true,
+        simple_company_edit: true,
+        profile_sharing_management: true
+    },
+    'Básico': {
+        sms_notifications: false,
+        presentations: false,
+        featured_company: false,
+        business_analytics: true,
+        newsletter: true,
+        event_notifications: true,
+        funding_alerts: true,
+        email_support: true,
+        simple_company_edit: true,
+        profile_sharing_management: true
+    },
+    'Premium': {
+        sms_notifications: true,
+        presentations: false,
+        featured_company: false,
+        business_analytics: true,
+        newsletter: true,
+        event_notifications: true,
+        funding_alerts: true,
+        email_support: true,
+        simple_company_edit: true,
+        profile_sharing_management: true
+    },
+    'Business Vendedor': {
+        sms_notifications: true,
+        presentations: true,
+        featured_company: false,
+        business_analytics: true,
+        newsletter: true,
+        event_notifications: true,
+        funding_alerts: true,
+        email_support: true,
+        simple_company_edit: true,
+        profile_sharing_management: true
+    },
+    'Parceiro': {
+        sms_notifications: true,
+        presentations: true,
+        featured_company: true,
+        business_analytics: true,
+        newsletter: true,
+        event_notifications: true,
+        funding_alerts: true,
+        email_support: true,
+        simple_company_edit: true,
+        profile_sharing_management: true
+    }
 };
 
 /**
@@ -225,4 +309,16 @@ export function canCreateProduct(userPlan: string | null | undefined, productsTh
 export function canHaveFeaturedCompany(userPlan: string | null | undefined): boolean {
     const normalizedPlan = normalizePlanName(userPlan);
     return PLAN_FEATURES[normalizedPlan]?.featured_company ?? false;
+}
+/**
+ * Check if plan has access to business analytics
+ */
+export function canViewAnalytics(userPlan: string | null | undefined): boolean {
+    const normalizedPlan = normalizePlanName(userPlan);
+    return PLAN_FEATURES[normalizedPlan]?.business_analytics ?? false;
+}
+
+export function canManageProfileSharing(userPlan: string | null | undefined): boolean {
+    const normalizedPlan = normalizePlanName(userPlan);
+    return PLAN_FEATURES[normalizedPlan]?.profile_sharing_management ?? false;
 }

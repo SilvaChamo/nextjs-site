@@ -4,36 +4,19 @@ import { usePathname, useRouter } from "next/navigation";
 import {
     LayoutDashboard,
     User,
-    Package,
-    MessageSquare,
-    BarChart3,
     LogOut,
     Crown,
-    Settings,
-    HelpCircle,
     ChevronLeft,
     ChevronRight,
-    Building2,
-    GraduationCap,
-    Mail,
-    Presentation,
-    Lock
+    Settings,
+    HelpCircle,
+    ArrowRight
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
-import { Button } from "./ui/button";
 import { usePlanPermissions } from "@/hooks/usePlanPermissions";
-import { UpgradeModal } from "./UpgradeModal";
 
-// Exact items requested by user
 const navigation = [
     { name: "Minha Conta", href: "/usuario/dashboard/minha-conta", icon: User },
-    { name: "Minha Empresa", href: "/usuario/dashboard/empresa", icon: Building2 },
-    { name: "Minhas Mensagens", href: "/usuario/dashboard/mensagens", icon: Mail },
-    { name: "Meu Conteúdo", href: "/usuario/dashboard/produtos", icon: Package },
-    { name: "Contactos", href: "/usuario/dashboard/contactos", icon: MessageSquare },
-    { name: "Análise", href: "/usuario/dashboard/analises", icon: BarChart3 },
-    { name: "Apresentações", href: "/usuario/dashboard/apresentacoes", icon: Presentation, feature: "presentations" },
-    { name: "Cursos", href: "/usuario/dashboard/formacao", icon: GraduationCap },
 ];
 
 interface UserSidebarProps {
@@ -45,16 +28,12 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
     const pathname = usePathname();
     const router = useRouter();
     const [user, setUser] = useState<any>(null);
-    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-    const [requestedFeature, setRequestedFeature] = useState("");
 
     // Plan permissions
     const {
-        planDisplayName,
-        canPresentations,
-        loading: planLoading
+        plan,
+        planDisplayName
     } = usePlanPermissions();
-
 
     // Create Supabase client
     const supabase = createClient();
@@ -62,7 +41,7 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
     const handleLogout = async () => {
         try {
             await supabase.auth.signOut();
-            router.push('/'); // Redirecionar para página inicial
+            router.push('/');
         } catch (error) {
             console.error('Erro ao fazer logout:', error);
         }
@@ -74,17 +53,14 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
             setUser(user);
         };
         getUser();
-    }, []);
+    }, [supabase]);
+
+    // Filter navigation based on plan - Currently only show "Minha Conta"
+    // The rest was moved to the central dashboard grid
+    const filteredNavigation = navigation;
 
     return (
         <aside className="w-full h-full bg-emerald-950 flex flex-col text-slate-300 shrink-0 transition-all duration-300">
-            {/* Upgrade Modal */}
-            <UpgradeModal
-                isOpen={showUpgradeModal}
-                onClose={() => setShowUpgradeModal(false)}
-                fieldLabel={requestedFeature}
-                requiredPlan="Business Vendedor"
-            />
 
             {/* 1. Header Area with Dashboard Title */}
             <div className={`h-16 flex items-center ${isCollapsed ? 'justify-center px-2' : 'px-6'} border-b border-emerald-900 transition-all`}>
@@ -109,13 +85,7 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
                             <p className="text-sm font-bold text-white truncate leading-tight">
                                 {user?.user_metadata?.full_name || "Usuário"}
                             </p>
-                            <div className="flex items-center gap-1.5 mt-0.5">
-                                <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-sm uppercase tracking-wider ${planDisplayName === 'Gratuito' ? 'bg-slate-700 text-slate-400' :
-                                    planDisplayName === 'Parceiro' ? 'bg-emerald-500 text-emerald-950' :
-                                        'bg-orange-500 text-white'
-                                    }`}>
-                                    {planDisplayName}
-                                </span>
+                            <div className="mt-0.5">
                                 <p className="text-[10px] text-emerald-400 truncate leading-tight font-medium">
                                     {user?.email}
                                 </p>
@@ -124,7 +94,7 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
                     )}
                 </div>
 
-                {/* Collapse Button - Absolute positioned on the right */}
+                {/* Collapse Button */}
                 {!isCollapsed && (
                     <button
                         onClick={toggleSidebar}
@@ -148,36 +118,8 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
             {/* 2. Main Navigation */}
             <nav className={`flex-1 overflow-y-auto py-6 space-y-1 ${isCollapsed ? 'px-2' : 'px-3'}`}>
                 {!isCollapsed && <p className="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Menu Principal</p>}
-                {navigation.map((item) => {
+                {filteredNavigation.map((item) => {
                     const isActive = pathname === item.href;
-                    const isLocked = item.feature === "presentations" && !canPresentations && !planLoading;
-
-                    if (isLocked) {
-                        return (
-                            <button
-                                key={item.href}
-                                onClick={() => {
-                                    setRequestedFeature(item.name);
-                                    setShowUpgradeModal(true);
-                                }}
-                                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group w-full text-left text-slate-500 hover:bg-white/5 ${isCollapsed ? 'justify-center' : ''}`}
-                                title={isCollapsed ? `${item.name} (Bloqueado)` : undefined}
-                            >
-                                <item.icon className="w-5 h-5 text-slate-600" />
-                                {!isCollapsed && (
-                                    <div className="flex items-center justify-between flex-1">
-                                        <span>{item.name}</span>
-                                        <Lock className="w-3.5 h-3.5 text-orange-500" />
-                                    </div>
-                                )}
-                                {isCollapsed && (
-                                    <div className="absolute -top-1 -right-1 bg-orange-500 rounded-full p-0.5">
-                                        <Lock className="w-2 h-2 text-white" />
-                                    </div>
-                                )}
-                            </button>
-                        );
-                    }
 
                     return (
                         <Link
@@ -205,13 +147,39 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
                         <HelpCircle className="w-5 h-5 text-slate-500 group-hover:text-[#f97316]" />
                         {!isCollapsed && "Ajuda & Suporte"}
                     </Link>
+
+                    {/* Configurações de Conta Section */}
+                    {!isCollapsed && (
+                        <div className="mt-6 pt-6 border-t border-emerald-900/50">
+                            <p className="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Configurações de Conta</p>
+                            <div className="space-y-1">
+                                <Link href="/usuario/dashboard/minha-conta" className="flex items-center justify-between px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-white/5 hover:text-white transition-all group">
+                                    <span>Meus Dados</span>
+                                    <ArrowRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-orange-500 transition-colors" />
+                                </Link>
+                                <Link href="/usuario/dashboard/opcoes" className="flex items-center justify-between px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-white/5 hover:text-white transition-all group">
+                                    <span>Opções</span>
+                                    <ArrowRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-orange-500 transition-colors" />
+                                </Link>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Logout Button */}
+                    <button
+                        onClick={handleLogout}
+                        className={`mt-4 flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-bold text-orange-500 hover:bg-orange-500/10 hover:text-orange-400 transition-all group ${isCollapsed ? 'justify-center' : 'w-full text-left'}`}
+                        title={isCollapsed ? "Sair da Sessão" : undefined}
+                    >
+                        <LogOut className="w-5 h-5" />
+                        {!isCollapsed && "Sair da Sessão"}
+                    </button>
                 </div>
             </nav>
 
             {/* 3. Footer Area (Upgrade Notification) */}
             <div className="mt-auto border-t border-emerald-900 bg-emerald-950">
-                {/* Upgrade Notification - Full Width */}
-                {!isCollapsed && (
+                {!isCollapsed && (plan === 'Gratuito' || plan === 'Visitante') && (
                     <div className="w-full bg-white/5 backdrop-blur-md border-t border-white/5 p-4 relative overflow-hidden group hover:bg-white/10 transition-all cursor-pointer">
                         <div className="absolute top-0 right-0 p-2 opacity-5 group-hover:opacity-10 transition-opacity">
                             <Crown className="w-16 h-16 text-white" />

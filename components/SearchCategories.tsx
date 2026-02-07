@@ -2,7 +2,7 @@ import { ArrowRight } from "lucide-react";
 
 export function SearchCategories() {
     return (
-        <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm h-fit">
+        <div className="bg-white p-6 rounded-[15px] border border-slate-100 shadow-sm h-fit">
             <h3 className="text-lg font-bold text-slate-800 mb-6">Buscas por Categoria</h3>
             <div className="space-y-5">
                 <div className="space-y-2">

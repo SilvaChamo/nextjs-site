@@ -147,6 +147,7 @@ export default function AdminProfessionalsPage() {
                 .eq('id', row.id);
 
             if (error) {
+                console.error("Erro Supabase:", error);
                 toast.error(newStatus === 'inactive' ? "Erro ao arquivar" : "Erro ao restaurar");
                 return;
             }
@@ -228,6 +229,7 @@ export default function AdminProfessionalsPage() {
                     .eq('id', itemToDelete.id);
 
                 if (error) {
+                    console.error("Erro Supabase Delete:", error);
                     toast.error("Erro ao enviar para a reciclagem");
                     return;
                 }

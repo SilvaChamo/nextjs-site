@@ -208,26 +208,20 @@ export default function ProfessionalProfileClient({ professional }: Professional
                                     </div>
                                 )}
 
-                                {professional.province && (
-                                    <div className="flex items-start gap-4 group pt-2 border-t border-slate-50 mt-1">
-                                        <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-slate-100 group-hover:text-slate-600 transition-colors shrink-0">
+                                {/* Location Details */}
+                                {(professional.province || professional.district || professional.location) && (
+                                    <div className="flex items-start gap-4 group pt-2 border-t border-slate-50 mt-2">
+                                        <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-orange-50 group-hover:text-orange-600 transition-colors shrink-0">
                                             <MapPin className="w-4 h-4" />
                                         </div>
                                         <div>
-                                            <p className="text-[9px] font-black uppercase text-slate-400 leading-none mb-1.5">Província e Distrito</p>
-                                            <p className="text-sm font-bold text-slate-800">{professional.province}{professional.district ? ` · ${professional.district}` : ""}</p>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {professional.location && (
-                                    <div className="flex items-start gap-4 group pt-2 border-t border-slate-50 mt-1">
-                                        <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-orange-50 group-hover:text-orange-600 transition-colors shrink-0">
-                                            <Globe className="w-4 h-4" />
-                                        </div>
-                                        <div>
-                                            <p className="text-[9px] font-black uppercase text-slate-400 leading-none mb-1.5">Endereço</p>
-                                            <p className="text-sm font-bold text-slate-800 leading-snug">{professional.location}</p>
+                                            <p className="text-[9px] font-black uppercase text-slate-400 leading-none mb-1.5">Localização Técnica</p>
+                                            <div className="space-y-1">
+                                                <p className="text-sm font-bold text-slate-800">{professional.province || "Moçambique"}{professional.district ? ` · ${professional.district}` : ""}</p>
+                                                {professional.location && (
+                                                    <p className="text-xs text-slate-500 font-medium italic">{professional.location}</p>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 )}

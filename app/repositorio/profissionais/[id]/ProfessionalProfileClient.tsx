@@ -39,131 +39,10 @@ export default function ProfessionalProfileClient({ professional }: Professional
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* LEFT COLUMN: Sidebar info */}
-                    <div className="lg:col-span-1 space-y-6">
-                        {/* Profile Card */}
-                        <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden text-center p-8">
-                            <div className="w-32 h-32 rounded-full bg-slate-50 border-4 border-white shadow-md mx-auto mb-6 overflow-hidden relative">
-                                {photo ? (
-                                    <img src={photo} alt={name} className="w-full h-full object-cover" />
-                                ) : (
-                                    <User className="w-16 h-16 text-slate-300 absolute inset-0 m-auto" />
-                                )}
-                            </div>
-
-                            <h1 className="text-2xl font-black text-slate-900 leading-tight mb-2">{name}</h1>
-                            <div className="inline-block px-4 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-black uppercase tracking-widest mb-4">
-                                {role}
-                            </div>
-
-                            <div className="flex items-center justify-center gap-1 text-orange-500 mb-6">
-                                {[...Array(5)].map((_, i) => (
-                                    <Star key={i} className={`w-4 h-4 ${i < (professional.rating || 5) ? "fill-current" : ""}`} />
-                                ))}
-                                <span className="ml-1 text-sm font-bold text-slate-400">({professional.rating || "5.0"})</span>
-                            </div>
-
-                            <div className="grid grid-cols-3 gap-2 border-t pt-6 border-slate-50">
-                                <div className="text-center">
-                                    <p className="text-[10px] font-black uppercase text-slate-400">Província</p>
-                                    <p className="text-xs font-bold text-slate-800">{professional.province || "Moçambique"}</p>
-                                </div>
-                                <div className="text-center border-x border-slate-100">
-                                    <p className="text-[10px] font-black uppercase text-slate-400">Distrito</p>
-                                    <p className="text-xs font-bold text-slate-800">{professional.district || "---"}</p>
-                                </div>
-                                <div className="text-center">
-                                    <p className="text-[10px] font-black uppercase text-slate-400">Status</p>
-                                    <p className="text-xs font-bold text-emerald-600">Disponível</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Contacts Card */}
-                        <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-8">
-                            <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 mb-6 border-l-4 border-emerald-500 pl-4">Contactos Directos</h3>
-
-                            <div className="space-y-4">
-                                {professional.phone && (
-                                    <div className="flex items-center gap-4 group">
-                                        <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-colors">
-                                            <Phone className="w-5 h-5" />
-                                        </div>
-                                        <div>
-                                            <p className="text-[10px] font-black uppercase text-slate-400">Telefone</p>
-                                            <p className="text-sm font-bold text-slate-800">{professional.phone}</p>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {professional.whatsapp && (
-                                    <div className="flex items-center gap-4 group">
-                                        <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-green-50 group-hover:text-green-600 transition-colors">
-                                            <MessageSquare className="w-5 h-5" />
-                                        </div>
-                                        <div>
-                                            <p className="text-[10px] font-black uppercase text-slate-400">WhatsApp</p>
-                                            <p className="text-sm font-bold text-slate-800">{professional.whatsapp}</p>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {professional.email && (
-                                    <div className="flex items-center gap-4 group">
-                                        <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
-                                            <Mail className="w-5 h-5" />
-                                        </div>
-                                        <div className="overflow-hidden">
-                                            <p className="text-[10px] font-black uppercase text-slate-400">Email Profissional</p>
-                                            <p className="text-sm font-bold text-slate-800 truncate">{professional.email}</p>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {professional.location && (
-                                    <div className="flex items-center gap-4 group">
-                                        <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-orange-50 group-hover:text-orange-600 transition-colors">
-                                            <MapPin className="w-5 h-5" />
-                                        </div>
-                                        <div>
-                                            <p className="text-[10px] font-black uppercase text-slate-400">Localização</p>
-                                            <p className="text-sm font-bold text-slate-800">{professional.location}</p>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Social Media */}
-                            <div className="mt-8 pt-8 border-t border-slate-50">
-                                <p className="text-[10px] font-black uppercase text-slate-400 mb-4 text-center">Redes Profissionais</p>
-                                <div className="flex justify-center gap-4">
-                                    {professional.linkedin && (
-                                        <a href={professional.linkedin} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-blue-100 hover:text-blue-600 transition-all">
-                                            <Linkedin className="w-5 h-5" />
-                                        </a>
-                                    )}
-                                    {professional.facebook && (
-                                        <a href={professional.facebook} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-blue-100 hover:text-blue-700 transition-all">
-                                            <Facebook className="w-5 h-5" />
-                                        </a>
-                                    )}
-                                    {professional.instagram && (
-                                        <a href={professional.instagram.startsWith('http') ? professional.instagram : `https://instagram.com/${professional.instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-pink-100 hover:text-pink-600 transition-all">
-                                            <Instagram className="w-5 h-5" />
-                                        </a>
-                                    )}
-                                    {(!professional.linkedin && !professional.facebook && !professional.instagram) && (
-                                        <p className="text-xs italic text-slate-400">Sem links sociais registados.</p>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* RIGHT COLUMN: Details & Specialties */}
+                    {/* LEFT COLUMN: Details & Specialties (previously on the right) */}
                     <div className="lg:col-span-2 space-y-6">
                         {/* Bio / About */}
-                        <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-8 md:p-10">
+                        <div className="bg-white rounded-[15px] border border-slate-100 shadow-sm p-8 md:p-10">
                             <h2 className="text-xl font-black text-slate-900 mb-6 flex items-center gap-3">
                                 <div className="w-2 h-8 bg-emerald-500 rounded-full" />
                                 Perfil Profissional
@@ -182,7 +61,7 @@ export default function ProfessionalProfileClient({ professional }: Professional
                         {/* Specialties & academic */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Specialties */}
-                            <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-8">
+                            <div className="bg-white rounded-[15px] border border-slate-100 shadow-sm p-8">
                                 <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 mb-6 flex items-center gap-2">
                                     <Award className="w-5 h-5 text-emerald-500" />
                                     Especialidades
@@ -190,12 +69,12 @@ export default function ProfessionalProfileClient({ professional }: Professional
                                 <div className="flex flex-wrap gap-2">
                                     {professional.specialties ? (
                                         professional.specialties.split(',').map((spec: string, i: number) => (
-                                            <span key={i} className="bg-emerald-50 text-emerald-700 px-4 py-1.5 rounded-xl text-xs font-bold border border-emerald-100">
+                                            <span key={i} className="bg-emerald-50 text-emerald-700 px-4 py-1.5 rounded-lg text-xs font-bold border border-emerald-100">
                                                 {spec.trim()}
                                             </span>
                                         ))
                                     ) : professional.category ? (
-                                        <span className="bg-emerald-50 text-emerald-700 px-4 py-1.5 rounded-xl text-xs font-bold border border-emerald-100">
+                                        <span className="bg-emerald-50 text-emerald-700 px-4 py-1.5 rounded-lg text-xs font-bold border border-emerald-100">
                                             {professional.category}
                                         </span>
                                     ) : (
@@ -205,14 +84,14 @@ export default function ProfessionalProfileClient({ professional }: Professional
                             </div>
 
                             {/* Academic Level */}
-                            <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-8">
+                            <div className="bg-white rounded-[15px] border border-slate-100 shadow-sm p-8">
                                 <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 mb-6 flex items-center gap-2">
                                     <BookOpen className="w-5 h-5 text-emerald-500" />
                                     Formação Académica
                                 </h3>
                                 <div>
                                     {professional.academic_level ? (
-                                        <p className="text-slate-700 font-bold bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                        <p className="text-slate-700 font-bold bg-slate-50 p-4 rounded-xl border border-slate-100">
                                             {professional.academic_level}
                                         </p>
                                     ) : (
@@ -223,7 +102,7 @@ export default function ProfessionalProfileClient({ professional }: Professional
                         </div>
 
                         {/* Additional Info / Category Badge Area */}
-                        <div className="bg-emerald-800 rounded-3xl p-8 relative overflow-hidden group">
+                        <div className="bg-emerald-800 rounded-[15px] p-8 relative overflow-hidden group">
                             {/* Background Decoration */}
                             <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700"></div>
 
@@ -233,10 +112,116 @@ export default function ProfessionalProfileClient({ professional }: Professional
                                     <h4 className="text-2xl font-black text-white">{professional.category || "Consultoria Técnica"}</h4>
                                 </div>
                                 <Link href="/servicos/talentos">
-                                    <Button className="bg-white hover:bg-slate-50 text-emerald-950 font-black uppercase tracking-widest text-[10px] py-6 px-10 rounded-2xl transition-all shadow-xl shadow-emerald-950/20">
+                                    <Button className="bg-white hover:bg-slate-50 text-emerald-950 font-black uppercase tracking-widest text-[10px] py-6 px-10 rounded-xl transition-all shadow-xl shadow-emerald-950/20">
                                         Procurar outros talentos
                                     </Button>
                                 </Link>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* RIGHT COLUMN: Sidebar info (previously on the left) */}
+                    <div className="lg:col-span-1 space-y-6">
+                        {/* Profile Card Refined */}
+                        <div className="bg-white rounded-[15px] border border-slate-100 shadow-sm overflow-hidden p-6">
+                            <div className="w-full aspect-square rounded-[10px] bg-slate-50 border border-slate-100 shadow-sm mb-6 overflow-hidden relative">
+                                {photo ? (
+                                    <img src={photo} alt={name} className="w-full h-full object-cover" />
+                                ) : (
+                                    <User className="w-20 h-20 text-slate-200 absolute inset-0 m-auto" />
+                                )}
+                            </div>
+
+                            <div className="flex items-start justify-between gap-4 mb-4">
+                                <div className="space-y-1">
+                                    <h1 className="text-xl font-black text-slate-900 leading-tight">{name}</h1>
+                                    <div className="flex items-center gap-1 text-orange-500">
+                                        {[...Array(5)].map((_, i) => (
+                                            <Star key={i} className={`w-3.5 h-3.5 ${i < (professional.rating || 5) ? "fill-current" : ""}`} />
+                                        ))}
+                                        <span className="ml-1 text-[10px] font-bold text-slate-400">({professional.rating || "5.0"})</span>
+                                    </div>
+                                </div>
+                                <div className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                                    <span className="text-[10px] font-black uppercase">Disponível</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Contacts Card Updated */}
+                        <div className="bg-white rounded-[15px] border border-slate-100 shadow-sm p-6">
+                            <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-6 text-center border-b pb-4">Informação de Contacto</h3>
+
+                            <div className="space-y-4">
+                                {professional.phone && (
+                                    <div className="flex items-center gap-4 group">
+                                        <div className="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-colors">
+                                            <Phone className="w-4 h-4" />
+                                        </div>
+                                        <div>
+                                            <p className="text-[9px] font-black uppercase text-slate-400 leading-none mb-1">Telefone</p>
+                                            <p className="text-sm font-bold text-slate-800">{professional.phone}</p>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {professional.whatsapp && (
+                                    <div className="flex items-center gap-4 group">
+                                        <div className="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-green-50 group-hover:text-green-600 transition-colors">
+                                            <MessageSquare className="w-4 h-4" />
+                                        </div>
+                                        <div>
+                                            <p className="text-[9px] font-black uppercase text-slate-400 leading-none mb-1">WhatsApp</p>
+                                            <p className="text-sm font-bold text-slate-800">{professional.whatsapp}</p>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {professional.email && (
+                                    <div className="flex items-center gap-4 group">
+                                        <div className="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
+                                            <Mail className="w-4 h-4" />
+                                        </div>
+                                        <div className="overflow-hidden">
+                                            <p className="text-[9px] font-black uppercase text-slate-400 leading-none mb-1">Email</p>
+                                            <p className="text-sm font-bold text-slate-800 truncate">{professional.email}</p>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {professional.province && (
+                                    <div className="flex items-center gap-4 group">
+                                        <div className="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-orange-50 group-hover:text-orange-600 transition-colors">
+                                            <MapPin className="w-4 h-4" />
+                                        </div>
+                                        <div>
+                                            <p className="text-[9px] font-black uppercase text-slate-400 leading-none mb-1">Localização</p>
+                                            <p className="text-sm font-bold text-slate-800">{professional.province}{professional.district ? ` · ${professional.district}` : ''}</p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Social Media */}
+                            <div className="mt-8 pt-6 border-t border-slate-50">
+                                <div className="flex justify-center gap-4">
+                                    {professional.linkedin && (
+                                        <a href={professional.linkedin} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-blue-100 hover:text-blue-600 transition-all">
+                                            <Linkedin className="w-4 h-4" />
+                                        </a>
+                                    )}
+                                    {professional.facebook && (
+                                        <a href={professional.facebook} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-blue-100 hover:text-blue-700 transition-all">
+                                            <Facebook className="w-4 h-4" />
+                                        </a>
+                                    )}
+                                    {professional.instagram && (
+                                        <a href={professional.instagram.startsWith('http') ? professional.instagram : `https://instagram.com/${professional.instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-pink-100 hover:text-pink-600 transition-all">
+                                            <Instagram className="w-4 h-4" />
+                                        </a>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>

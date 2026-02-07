@@ -31,9 +31,12 @@ export default function ProfessionalProfileClient({ professional }: Professional
             />
 
             <main className="container-site py-12">
-                <div className="mb-10">
+                <div className="mb-6">
                     <Link href="/repositorio/profissionais">
-                        <Button variant="ghost" className="gap-2 text-slate-500 hover:text-emerald-600 font-bold text-xs uppercase tracking-widest h-auto py-1 px-3">
+                        <Button
+                            variant="ghost"
+                            className="bg-transparent hover:bg-transparent shadow-none gap-2 text-slate-500 hover:text-orange-500 font-bold text-xs uppercase tracking-widest h-auto p-0 transition-colors"
+                        >
                             <ArrowLeft className="w-4 h-4" />
                             Voltar à Lista
                         </Button>

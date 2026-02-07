@@ -10,7 +10,7 @@ import { GrowthTipCard } from "../../../components/GrowthTipCard";
 import { SearchCategories } from "../../../components/SearchCategories";
 import { VisibilityChart } from "../../../components/VisibilityChart";
 import { ActivePlanCard } from "../../../components/ActivePlanCard";
-import { Building2, ShoppingCart, Briefcase, GraduationCap, ArrowRight, LayoutDashboard, XCircle } from "lucide-react";
+import { Building2, ShoppingCart, Briefcase, GraduationCap, ArrowRight, LayoutDashboard, XCircle, User as UserIcon } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../../../components/ui/button";
 
@@ -33,6 +33,7 @@ export default function DashboardPage() {
     const router = useRouter();
     const [user, setUser] = useState<any>(null);
     const [isAdmin, setIsAdmin] = useState(false);
+    const [isProfessional, setIsProfessional] = useState(false);
     const [loading, setLoading] = useState(true);
     const [smsNotifications, setSmsNotifications] = useState(false);
     const [updatingSms, setUpdatingSms] = useState(false);
@@ -62,6 +63,17 @@ export default function DashboardPage() {
                     if (profile.role === 'admin') {
                         setIsAdmin(true);
                     }
+                }
+
+                // Check for professional profile
+                const { data: professional } = await supabase
+                    .from('professionals')
+                    .select('id, status')
+                    .eq('user_id', user.id)
+                    .maybeSingle();
+
+                if (professional) {
+                    setIsProfessional(true);
                 }
             }
             setLoading(false);
@@ -159,6 +171,22 @@ export default function DashboardPage() {
                                     <ArrowRight className="w-4 h-4 text-slate-300 ml-auto group-hover:text-purple-500 transition-colors" />
                                 </div>
                             </Link>
+
+                            {/* Professional Profile Card (Conditional) */}
+                            {isProfessional && (
+                                <Link href="/usuario/dashboard/meu-perfil" className="block bg-white rounded-lg p-5 shadow-sm border border-slate-100 hover:shadow-md transition-all group border-l-4 border-l-emerald-500">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform">
+                                            <UserIcon className="w-5 h-5" />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-bold text-slate-800 text-sm">Meu Perfil Profissional</h4>
+                                            <p className="text-[10px] text-slate-500">Gerir dados e visibilidade</p>
+                                        </div>
+                                        <ArrowRight className="w-4 h-4 text-slate-300 ml-auto group-hover:text-emerald-500 transition-colors" />
+                                    </div>
+                                </Link>
+                            )}
 
                             {/* Training Card */}
                             <Link href="/usuario/dashboard/formacao" className="block bg-white rounded-lg p-5 shadow-sm border border-slate-100 hover:shadow-md transition-all group">

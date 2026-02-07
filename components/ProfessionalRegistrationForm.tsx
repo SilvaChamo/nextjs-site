@@ -29,6 +29,7 @@ import { ImageUpload } from "@/components/admin/ImageUpload";
 import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const formSchema = z.object({
     name: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
@@ -58,6 +59,7 @@ interface ProfessionalFormProps {
 export function ProfessionalRegistrationForm({ initialData, isAdmin }: ProfessionalFormProps) {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [userId, setUserId] = useState<string | null>(null);
     const router = useRouter();
     const supabase = createClient();
 
@@ -65,6 +67,16 @@ export function ProfessionalRegistrationForm({ initialData, isAdmin }: Professio
     const [honeypot, setHoneypot] = useState("");
     // Anti-spam: track form load time (minimum 5 seconds to submit)
     const [formLoadTime] = useState(Date.now());
+
+    useEffect(() => {
+        const getSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session?.user) {
+                setUserId(session.user.id);
+            }
+        };
+        getSession();
+    }, [supabase]);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -132,6 +144,7 @@ export function ProfessionalRegistrationForm({ initialData, isAdmin }: Professio
                 academic_level: values.academic_level,
                 profession: values.profession,
                 photo_url: values.photo_url,
+                user_id: userId,
                 // Status: if admin editing, keep existing status, otherwise default to pending
                 status: isAdmin ? (initialData?.status || "active") : "pending",
                 rating: initialData?.rating || 5.0,
@@ -162,6 +175,14 @@ export function ProfessionalRegistrationForm({ initialData, isAdmin }: Professio
             }
 
             if (error) throw error;
+
+            // If not admin, ensure the user has 'Gratuito' plan in profiles
+            if (!isAdmin && userId) {
+                await supabase
+                    .from('profiles')
+                    .update({ plan: 'Gratuito' })
+                    .eq('id', userId);
+            }
 
             if (isAdmin) {
                 toast.success(initialData ? "Profissional actualizado!" : "Profissional criado!");

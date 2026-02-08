@@ -228,14 +228,10 @@ export default function AdminApresentacoesPage() {
         }
 
         // Apply User Filter (Todas vs Minhas)
-        // Todas: Exclude current user (admin)
+        // Todas: Show ALL presentations (no filter)
         // Minhas: Only current user (admin)
-        if (currentUserId) {
-            if (categoryFilter === 'mine') {
-                items = items.filter(p => p.user_id === currentUserId);
-            } else if (categoryFilter === 'all') {
-                items = items.filter(p => p.user_id !== currentUserId);
-            }
+        if (currentUserId && categoryFilter === 'mine') {
+            items = items.filter(p => p.user_id === currentUserId);
         }
 
         return items;

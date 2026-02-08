@@ -108,7 +108,7 @@ export default function FormacaoPage() {
             return;
         }
 
-        const allowedPlans = ["Premium", "Parceiro", "Profissional", "Empresarial"];
+        const allowedPlans = ["Premium", "Parceiro", "Business Vendedor"];
         const currentPlan = userProfile?.user_type || "Básico";
 
         if (allowedPlans.includes(currentPlan) || userProfile?.role === 'admin') {

@@ -77,7 +77,7 @@ export function ActivePlanCard() {
 
     if (permissionsLoading) return <div className="animate-pulse h-64 bg-slate-100 rounded-[15px]"></div>;
 
-    const isFree = plan === "Gratuito" || plan === "Visitante";
+    const isFree = plan === "Gratuito";
     const privileges = PLAN_PRIVILEGES[plan] || [];
 
     return (

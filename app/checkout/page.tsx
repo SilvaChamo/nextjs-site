@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
+import { normalizePlanName } from "@/lib/plan-fields";
 
 function CheckoutContent() {
     const searchParams = useSearchParams();
@@ -63,7 +64,7 @@ function CheckoutContent() {
             "Suporte via E-mail"
         ],
         "Básico": [
-            "Tudo do Gratuito",
+            "Tudo do Free",
             "Alertas de Financiamento",
             "5% Desconto em Eventos",
             "10% Desconto em Serviços",
@@ -169,7 +170,7 @@ function CheckoutContent() {
     // Auto-redirect after success
     React.useEffect(() => {
         if (success) {
-            const isFree = planName.toLowerCase() === 'gratuito' || planName.toLowerCase() === 'visitante';
+            const isFree = normalizePlanName(planName) === 'Gratuito';
             const timer = setTimeout(() => {
                 router.push(isFree ? "/" : "/usuario/dashboard");
             }, 2500);
@@ -178,7 +179,7 @@ function CheckoutContent() {
     }, [success, router, planName]);
 
     if (success) {
-        const isFreePlan = planName === "Gratuito";
+        const isFreePlan = normalizePlanName(planName) === "Gratuito";
         return (
             <div className="min-h-[80vh] flex flex-col items-center justify-center p-4 text-center">
                 <div className="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-6 animate-bounce">

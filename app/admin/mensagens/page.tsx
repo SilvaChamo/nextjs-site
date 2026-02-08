@@ -82,7 +82,7 @@ export default function AdminMessagesPage() {
                 // Prepare normalized plans for query (case sensitive handling if needed)
                 const queryPlanNames = [...selectedPlanNames];
                 if (queryPlanNames.includes("Gratuito")) {
-                    queryPlanNames.push("Visitante", "free");
+                    queryPlanNames.push("Visitante", "free", "Free", "Gratuito", "gratuito");
                 }
                 if (queryPlanNames.includes("Básico")) {
                     queryPlanNames.push("Basic");

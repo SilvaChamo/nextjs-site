@@ -48,7 +48,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 let plan = normalizePlanName(profile?.plan);
 
                 // If no profile plan, check company plan
-                if (!plan || plan === 'Gratuito' || plan === 'Visitante') {
+                if (!plan || normalizePlanName(plan) === 'Gratuito') {
                     const { data: company } = await supabaseClient
                         .from('companies')
                         .select('plan')

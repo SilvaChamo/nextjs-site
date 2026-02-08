@@ -180,7 +180,7 @@ export function ProfessionalRegistrationForm({ initialData, isAdmin }: Professio
             if (!isAdmin && userId) {
                 await supabase
                     .from('profiles')
-                    .update({ plan: 'Gratuito' })
+                    .update({ plan: 'Free' })
                     .eq('id', userId);
             }
 

@@ -34,7 +34,7 @@ export default function PricingPage() {
             period: isAnnual ? "/ano" : "/mês",
             description: "Para profissionais e pequenas empresas em crescimento.",
             features: [
-                "Tudo do Gratuito",
+                "Tudo do Free",
                 "Alertas sobre financiamento",
                 "5% descontos nos eventos",
                 "Cadastrar básico da empresa",

@@ -682,7 +682,7 @@ export default function MinhaContaPage() {
                     <div className="lg:col-span-2 p-8">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                             {PLAN_HIERARCHY
-                                .filter(p => p !== formData.plan && p !== 'Básico' && p !== 'Business Vendedor' && p !== 'Gratuito')
+                                .filter(p => p !== formData.plan && p !== 'Parceiro')
                                 .slice(0, 4) // Show up to 4 other plans
                                 .map((p, idx) => (
                                     <div key={idx} className="space-y-4">

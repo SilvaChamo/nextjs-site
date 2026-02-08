@@ -165,10 +165,10 @@ export default function AdminEmpresasPage() {
         try {
             const { error } = await supabase
                 .from('companies')
-                .update({ plan: 'profissional' })
+                .update({ plan: 'Premium' })
                 .eq('id', itemToProcess.id);
             if (error) throw error;
-            toast.success("Plano Profissional ativado!");
+            toast.success("Plano Premium ativado!");
             fetchData();
         } catch (err: any) {
             toast.error("Erro: " + err.message);
@@ -532,10 +532,10 @@ export default function AdminEmpresasPage() {
                                                     <CheckCircle2 className="w-4 h-4" />
                                                 </button>
                                                 {item.is_archived && <span className="bg-slate-600 text-white px-2 py-0.5 rounded text-[10px] font-bold">Arquivada</span>}
-                                                {(item.plan === 'partner' || item.plan === 'parceiro') && <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-[10px] font-bold">Parceiro</span>}
-                                                {(item.plan === 'premium' || item.plan === 'profissional') && <span className="bg-orange-100 text-orange-600 px-2 py-0.5 rounded text-[10px] font-bold">Premium</span>}
-                                                {item.plan === 'basic' && <span className="bg-blue-100 text-blue-600 px-2 py-0.5 rounded text-[10px] font-bold">Básico</span>}
-                                                {item.plan === 'free' && <span className="bg-slate-100 text-slate-500 px-2 py-0.5 rounded text-[10px] font-bold">Gratuito</span>}
+                                                {(item.plan === 'partner' || item.plan?.toLowerCase() === 'parceiro') && <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-[10px] font-bold">Parceiro</span>}
+                                                {(item.plan?.toLowerCase() === 'premium' || item.plan?.toLowerCase() === 'profissional') && <span className="bg-orange-100 text-orange-600 px-2 py-0.5 rounded text-[10px] font-bold">Premium</span>}
+                                                {item.plan?.toLowerCase() === 'básico' || item.plan?.toLowerCase() === 'basic' && <span className="bg-blue-100 text-blue-600 px-2 py-0.5 rounded text-[10px] font-bold">Básico</span>}
+                                                {item.plan?.toLowerCase() === 'free' && <span className="bg-slate-100 text-slate-500 px-2 py-0.5 rounded text-[10px] font-bold">Free</span>}
                                                 {(!item.plan || item.plan === '' || item.plan === null) && <span className="bg-slate-50 text-slate-400 px-2 py-0.5 rounded text-[10px] font-bold border border-slate-200">Sem Plano</span>}
                                             </div>
 
@@ -637,8 +637,8 @@ export default function AdminEmpresasPage() {
                 isOpen={showPremiumConfirm}
                 onClose={() => setShowPremiumConfirm(false)}
                 onConfirm={confirmPremium}
-                title="Ativar Plano Profissional"
-                description={`Deseja ativar o plano Profissional para "${itemToProcess?.name}"?`}
+                title="Ativar Plano Premium"
+                description={`Deseja ativar o plano Premium para "${itemToProcess?.name}"?`}
                 confirmLabel="Ativar"
                 variant="default"
             />

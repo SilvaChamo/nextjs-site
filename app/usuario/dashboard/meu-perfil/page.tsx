@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
-import { PageHeader } from "../../../components/PageHeader";
-import { ProfessionalRegistrationForm } from "../../../components/ProfessionalRegistrationForm";
+import { PageHeader } from "@/components/PageHeader";
+import { ProfessionalRegistrationForm } from "@/components/ProfessionalRegistrationForm";
 import { ArrowLeft, Loader2, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -79,7 +79,7 @@ export default function MeuPerfilProfissionalPage() {
                         <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-100">
                             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                             <span className="text-xs font-black text-emerald-700 uppercase tracking-widest">
-                                Plano Gratuito Ativo
+                                Plano Free Ativo
                             </span>
                         </div>
                     </div>

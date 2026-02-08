@@ -201,7 +201,7 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
 
                 if (data.session && data.user) {
                     await supabase.from('profiles').update({
-                        plan: 'Visitante',
+                        plan: 'Free',
                         phone: cleanPhone,
                         full_name: formData.fullName
                     }).eq('id', data.user.id);

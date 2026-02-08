@@ -3,7 +3,7 @@
  * Defines which fields are editable for each subscription plan
  */
 
-export type PlanType = 'Gratuito' | 'Visitante' | 'Basic' | 'Básico' | 'Profissional' | 'Premium' | 'Business Vendedor' | 'Parceiro';
+export type PlanType = 'Gratuito' | 'Básico' | 'Premium' | 'Business Vendedor' | 'Parceiro';
 
 export interface FieldPermission {
     field: string;
@@ -13,25 +13,20 @@ export interface FieldPermission {
 
 // All company fields with their minimum required plan
 export const COMPANY_FIELDS: FieldPermission[] = [
-    // Basic Plan Fields (Available for Gratuito too)
+    // Free Plan Fields
     { field: 'name', label: 'Nome da Empresa', requiredPlan: 'Gratuito' },
-    { field: 'activity', label: 'Actividade Principal', requiredPlan: 'Gratuito' },
-    { field: 'category', label: 'Sector de Actuação', requiredPlan: 'Gratuito' },
-    { field: 'province', label: 'Província', requiredPlan: 'Gratuito' },
-    { field: 'address', label: 'Endereço Físico', requiredPlan: 'Gratuito' },
-    { field: 'description', label: 'Descrição Geral', requiredPlan: 'Gratuito' },
-    { field: 'logo_url', label: 'Logo', requiredPlan: 'Gratuito' },
-    { field: 'banner_url', label: 'Banner', requiredPlan: 'Gratuito' },
     { field: 'contact', label: 'Contacto', requiredPlan: 'Gratuito' },
+
+    // Básico Plan Fields
+    { field: 'district', label: 'Distrito', requiredPlan: 'Básico' },
+    { field: 'services', label: 'Serviços', requiredPlan: 'Básico' },
 
     // Premium Plan Fields
     { field: 'nuit', label: 'NUIT', requiredPlan: 'Premium' },
     { field: 'email', label: 'Email Corporativo', requiredPlan: 'Premium' },
-    { field: 'district', label: 'Distrito', requiredPlan: 'Premium' },
     { field: 'mission', label: 'Missão', requiredPlan: 'Premium' },
     { field: 'vision', label: 'Visão', requiredPlan: 'Premium' },
     { field: 'values', label: 'Valores', requiredPlan: 'Premium' },
-    { field: 'services', label: 'Serviços', requiredPlan: 'Premium' },
     { field: 'social_facebook', label: 'Facebook', requiredPlan: 'Premium' },
     { field: 'social_instagram', label: 'Instagram', requiredPlan: 'Premium' },
     { field: 'social_linkedin', label: 'LinkedIn', requiredPlan: 'Premium' },
@@ -45,10 +40,7 @@ export const COMPANY_FIELDS: FieldPermission[] = [
 // Plan hierarchy (higher index = more permissions)
 export const PLAN_HIERARCHY: PlanType[] = [
     'Gratuito',
-    'Visitante',
-    'Basic',
-    'Básico', // Portuguese alias for Basic
-    'Profissional',
+    'Básico',
     'Premium',
     'Business Vendedor',
     'Parceiro'
@@ -100,7 +92,6 @@ export function getEditableFields(userPlan: string | null | undefined): string[]
 
 /**
  * Check if user has dashboard access
- * Gratuito and Visitante plans do NOT have access to the dashboard
  */
 export function hasDashboardAccess(userPlan: string | null | undefined): boolean {
     // All logged in users now have access to the dashboard (some with restricted menus)
@@ -108,7 +99,7 @@ export function hasDashboardAccess(userPlan: string | null | undefined): boolean
 }
 
 /**
- * Normalize plan name to handle variations
+ * Normalize plan name to handle variations and map to official names
  */
 export function normalizePlanName(plan: string | null | undefined): PlanType {
     if (!plan) return 'Gratuito';
@@ -116,51 +107,41 @@ export function normalizePlanName(plan: string | null | undefined): PlanType {
     const trimmed = plan.trim();
     const normalized = trimmed.toLowerCase();
 
-    // Specific mapping for common aliases
-    if (normalized === 'básico' || normalized === 'basico' || normalized === 'basic') {
-        return 'Basic';
-    }
-    if (normalized === 'profissional' || normalized === 'professional') {
-        return 'Profissional';
-    }
-    if (normalized === 'premium') {
-        return 'Premium';
-    }
-    if (normalized === 'business vendedor' || normalized === 'business' || normalized === 'vendedor') {
-        return 'Business Vendedor';
-    }
-    if (normalized === 'parceiro' || normalized === 'partner') {
-        return 'Parceiro';
-    }
-    if (normalized === 'visitante' || normalized === 'visitor') {
-        return 'Visitante';
-    }
-    if (normalized === 'gratuito' || normalized === 'free') {
+    // Mapping to Gratuito (default case)
+    if (normalized === 'gratuito' || normalized === 'free' || normalized === 'visitante' || normalized === 'grátis' || normalized === 'gratis') {
         return 'Gratuito';
     }
 
-    // Attempt to match exactly from hierarchy (case-sensitive)
-    if (PLAN_HIERARCHY.includes(trimmed as PlanType)) {
-        return trimmed as PlanType;
+    // Mapping to Básico
+    if (normalized === 'básico' || normalized === 'basico' || normalized === 'basic') {
+        return 'Básico';
     }
 
-    // Last resort: find case-insensitive match in hierarchy
-    const found = PLAN_HIERARCHY.find(p => p.toLowerCase() === normalized);
-    if (found) return found;
+    // Mapping to Premium
+    if (normalized === 'premium' || normalized === 'profissional' || normalized === 'professional') {
+        return 'Premium';
+    }
+
+    // Mapping to Business Vendedor
+    if (normalized === 'business vendedor' || normalized === 'business' || normalized === 'vendedor' || normalized === 'empresarial') {
+        return 'Business Vendedor';
+    }
+
+    // Mapping to Parceiro
+    if (normalized === 'parceiro' || normalized === 'partner') {
+        return 'Parceiro';
+    }
 
     return 'Gratuito';
 }
 
 /**
- * Get display name for plan in Portuguese
+ * Get display name for plan
  */
 export function getPlanDisplayName(plan: PlanType): string {
     const names: Record<PlanType, string> = {
         'Gratuito': 'Gratuito',
-        'Visitante': 'Visitante',
-        'Basic': 'Básico',
         'Básico': 'Básico',
-        'Profissional': 'Profissional',
         'Premium': 'Premium',
         'Business Vendedor': 'Business Vendedor',
         'Parceiro': 'Parceiro'
@@ -177,10 +158,7 @@ export function getPlanDisplayName(plan: PlanType): string {
  */
 export const PLAN_LIMITS: Record<PlanType, { products_per_month: number }> = {
     'Gratuito': { products_per_month: 0 },
-    'Visitante': { products_per_month: 0 },
-    'Basic': { products_per_month: 1 },
     'Básico': { products_per_month: 1 },
-    'Profissional': { products_per_month: 3 },
     'Premium': { products_per_month: 7 },
     'Business Vendedor': { products_per_month: 10 },
     'Parceiro': { products_per_month: Infinity }
@@ -213,44 +191,8 @@ export const PLAN_FEATURES: Record<PlanType, {
         simple_company_edit: true,
         profile_sharing_management: false
     },
-    'Visitante': {
-        sms_notifications: false,
-        presentations: false,
-        featured_company: false,
-        business_analytics: false,
-        newsletter: true,
-        event_notifications: true,
-        funding_alerts: true,
-        email_support: true,
-        simple_company_edit: true,
-        profile_sharing_management: false
-    },
-    'Basic': {
-        sms_notifications: false,
-        presentations: false,
-        featured_company: false,
-        business_analytics: true,
-        newsletter: true,
-        event_notifications: true,
-        funding_alerts: true,
-        email_support: true,
-        simple_company_edit: true,
-        profile_sharing_management: true
-    },
     'Básico': {
         sms_notifications: false,
-        presentations: false,
-        featured_company: false,
-        business_analytics: true,
-        newsletter: true,
-        event_notifications: true,
-        funding_alerts: true,
-        email_support: true,
-        simple_company_edit: true,
-        profile_sharing_management: true
-    },
-    'Profissional': {
-        sms_notifications: true,
         presentations: false,
         featured_company: false,
         business_analytics: true,
@@ -310,39 +252,19 @@ export const PLAN_PRIVILEGES: Record<PlanType, string[]> = {
         'Visualizar notícias do sector',
         'Perfil público básico'
     ],
-    'Visitante': [
-        'Acesso limitado ao dashboard',
-        'Receber alertas de financiamento',
-        'Receber newsletter semanal',
-        'Visualizar notícias do sector',
-        'Perfil público básico'
-    ],
-    'Basic': [
-        'Tudo do plano Gratuito',
-        'Publicar 1 produto/serviço no catálogo',
-        'Acesso a métricas de visualização',
-        'Gestão de contactos e leads',
-        'Gestão de visibilidade do perfil'
-    ],
     'Básico': [
-        'Tudo do plano Gratuito',
+        'Tudo do plano Free',
         'Publicar 1 produto/serviço no catálogo',
         'Acesso a métricas de visualização',
         'Gestão de contactos e leads',
         'Gestão de visibilidade do perfil'
-    ],
-    'Profissional': [
-        'Tudo do plano Básico',
-        'Publicar até 3 produtos/serviços',
-        'Notificações SMS em tempo real',
-        'Destaque moderado nas procuras',
-        'Suporte prioritário por email'
     ],
     'Premium': [
-        'Tudo do plano Profissional',
+        'Tudo do plano Básico',
         'Publicar até 7 produtos/serviços',
         'Acesso a relatórios de mercado detalhados',
-        'Selo de empresa verificada'
+        'Selo de empresa verificada',
+        'Notificações SMS em tempo real'
     ],
     'Business Vendedor': [
         'Tudo do plano Premium',

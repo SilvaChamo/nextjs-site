@@ -24,9 +24,9 @@ function RegistroContent() {
     const router = useRouter();
     const supabase = createClient();
 
-    const planName = searchParams.get("plan") || "Básico";
-    const price = searchParams.get("price") || "1 000 MT";
-    const period = searchParams.get("period") || "/mês";
+    const planName = searchParams.get("plan") || "Gratuito";
+    const price = searchParams.get("price") || "Gratuito";
+    const period = searchParams.get("period") || "";
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -108,10 +108,12 @@ function RegistroContent() {
                 return;
             }
 
-            // Check if plan is free (Gratuito or 0 MT)
-            const isFree = planName.toLowerCase() === 'gratuito' ||
+            // Check if plan is free (Free, Gratuito or 0 MT)
+            const isFree = planName.toLowerCase() === 'free' ||
+                planName.toLowerCase() === 'gratuito' ||
                 planName.toLowerCase() === 'visitante' ||
                 price.toLowerCase() === 'gratuito' ||
+                price.toLowerCase() === 'free' ||
                 price === '0 MT' ||
                 price === '0' ||
                 parseInt(price.replace(/[^0-9]/g, '')) === 0;

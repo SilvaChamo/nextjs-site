@@ -56,7 +56,7 @@ export default function DashboardPage() {
     }>({
         isOpen: false,
         fieldLabel: "",
-        requiredPlan: "Basic"
+        requiredPlan: "Gratuito"
     });
 
 
@@ -133,7 +133,7 @@ export default function DashboardPage() {
         toggleSms();
     };
 
-    const handleCardClick = (e: React.MouseEvent, href: string, isLocked: boolean, label: string, requiredPlan: PlanType = "Basic") => {
+    const handleCardClick = (e: React.MouseEvent, href: string, isLocked: boolean, label: string, requiredPlan: PlanType = "Gratuito") => {
         if (isLocked) {
             e.preventDefault();
             setUpgradeModal({

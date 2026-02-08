@@ -52,7 +52,7 @@ export async function POST(request: Request) {
             .from('profiles')
             .update({
                 role: role || 'user',
-                plan: plan || 'Visitante',
+                plan: plan || 'Free',
                 email: email, // ensure email is set if trigger didn't do it
                 updated_at: new Date().toISOString()
             })
@@ -66,7 +66,7 @@ export async function POST(request: Request) {
                     id: authData.user.id,
                     email: email,
                     role: role || 'user',
-                    plan: plan || 'Visitante',
+                    plan: plan || 'Free',
                     created_at: new Date().toISOString()
                 });
         }

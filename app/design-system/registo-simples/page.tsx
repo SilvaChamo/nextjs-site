@@ -30,17 +30,16 @@ import { COMPANY_CATEGORIES, PROVINCES } from "@/lib/constants";
 import { RichTextEditor } from "@/components/RichTextEditor";
 import { PageHeader } from "@/components/PageHeader";
 
-const PlanBadge = ({ plan }: { plan: 'Basic' | 'Profissional' | 'Premium' | 'Parceiro' }) => {
+const PlanBadge = ({ plan }: { plan: 'Básico' | 'Premium' | 'Parceiro' }) => {
     const styles = {
-        Basic: "bg-slate-100 text-slate-600 border-slate-200",
-        Profissional: "bg-orange-50 text-orange-600 border-orange-200",
-        Premium: "bg-blue-50 text-blue-600 border-blue-200",
+        'Básico': "bg-slate-100 text-slate-600 border-slate-200",
+        Premium: "bg-orange-50 text-orange-600 border-orange-200",
         Parceiro: "bg-emerald-50 text-emerald-600 border-emerald-200"
     };
 
     return (
         <div className={`absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 px-2 py-1 rounded-md border ${styles[plan]}`}>
-            <span className="text-[10px] font-black uppercase tracking-widest">{plan === 'Basic' ? 'Básico' : plan}</span>
+            <span className="text-[10px] font-black uppercase tracking-widest">{plan}</span>
             <Lock className="w-3 h-3" />
         </div>
     );
@@ -294,7 +293,7 @@ export default function SimpleRegistrationPage() {
                 slug: slug,
                 registration_type: 'Simples',
                 is_archived: false,
-                plan: 'Basic',
+                plan: 'Básico',
                 updated_at: new Date().toISOString()
             }).select('id').single();
 
@@ -551,7 +550,7 @@ export default function SimpleRegistrationPage() {
                                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                                 Serviços
                             </div>
-                            <PlanBadge plan="Basic" />
+                            <PlanBadge plan="Básico" />
                         </h3>
 
                         <div className="space-y-4">

@@ -52,7 +52,7 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
         activity: initialData?.activity || "",
         secondary_contact: initialData?.secondary_contact || "",
         is_featured: initialData?.is_featured || false,
-        plan: initialData?.plan || "free",
+        plan: initialData?.plan || "Gratuito",
         portfolio_url: initialData?.portfolio_url || "",
         type: initialData?.type || "",
         sub_category: initialData?.sub_category || "",
@@ -279,11 +279,11 @@ export function CompanyEditor({ initialData, isNew = false }: CompanyEditorProps
                         onChange={(e) => setFormData({ ...formData, plan: e.target.value })}
                         className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-full shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none cursor-pointer transition-all"
                     >
-                        <option value="free">🆓 Grátis</option>
-                        <option value="basic">⭐ Básico</option>
-                        <option value="business">💼 Business</option>
-                        <option value="premium">💎 Premium</option>
-                        <option value="partner">🤝 Parceiro</option>
+                        <option value="Gratuito">🆓 Gratuito</option>
+                        <option value="Básico">⭐ Básico</option>
+                        <option value="Business Vendedor">💼 Business Vendedor</option>
+                        <option value="Premium">💎 Premium</option>
+                        <option value="Parceiro">🤝 Parceiro</option>
                     </select>
 
                     {/* Featured Toggle */}

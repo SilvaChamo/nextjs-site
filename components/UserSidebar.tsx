@@ -35,14 +35,14 @@ import { PLAN_HIERARCHY, normalizePlanName } from "@/lib/plan-fields";
 const navigation = [
     { name: "Minha Conta", href: "/usuario/dashboard/minha-conta", icon: User, requiredPlan: "Gratuito" },
     { name: "Minha Empresa", href: "/usuario/dashboard/empresa", icon: Building2, requiredPlan: "Gratuito" },
-    { name: "Meus Produtos", href: "/usuario/dashboard/produtos", icon: Package, requiredPlan: "Basic" },
+    { name: "Meus Produtos", href: "/usuario/dashboard/produtos", icon: Package, requiredPlan: "Básico" },
     { name: "Mensagens", href: "/usuario/dashboard/mensagens", icon: Mail, requiredPlan: "Gratuito" },
-    { name: "Contactos & Leads", href: "/usuario/dashboard/contactos", icon: Users, requiredPlan: "Basic" },
+    { name: "Contactos & Leads", href: "/usuario/dashboard/contactos", icon: Users, requiredPlan: "Básico" },
     { name: "Apresentações", href: "/usuario/dashboard/apresentacoes", icon: Presentation, requiredPlan: "Business Vendedor" }, // Restrito a Business/Parceiro
-    { name: "Análise de Dados", href: "/usuario/dashboard/analises", icon: BarChart3, requiredPlan: "Basic" },
-    { name: "Preços de Mercado", href: "/usuario/dashboard/mercado", icon: ShoppingCart, requiredPlan: "Basic" },
-    { name: "Formação Agrária", href: "/usuario/dashboard/formacao", icon: GraduationCap, requiredPlan: "Basic" },
-    { name: "Oportunidades", href: "/usuario/dashboard/emprego", icon: Briefcase, requiredPlan: "Basic" },
+    { name: "Análise de Dados", href: "/usuario/dashboard/analises", icon: BarChart3, requiredPlan: "Básico" },
+    { name: "Preços de Mercado", href: "/usuario/dashboard/mercado", icon: ShoppingCart, requiredPlan: "Básico" },
+    { name: "Formação Agrária", href: "/usuario/dashboard/formacao", icon: GraduationCap, requiredPlan: "Básico" },
+    { name: "Oportunidades", href: "/usuario/dashboard/emprego", icon: Briefcase, requiredPlan: "Básico" },
 ];
 
 interface UserSidebarProps {
@@ -212,7 +212,7 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
 
             {/* 3. Footer Area (Upgrade Notification) */}
             <div className="mt-auto border-t border-emerald-900 bg-emerald-950">
-                {!isCollapsed && (plan === 'Gratuito' || plan === 'Visitante') && (
+                {!isCollapsed && normalizePlanName(plan) === 'Gratuito' && (
                     <div className="w-full bg-white/5 backdrop-blur-md border-t border-white/5 p-4 relative overflow-hidden group hover:bg-white/10 transition-all cursor-pointer">
                         <div className="absolute top-0 right-0 p-2 opacity-5 group-hover:opacity-10 transition-opacity">
                             <Crown className="w-16 h-16 text-white" />

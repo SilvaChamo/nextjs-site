@@ -50,8 +50,10 @@ export default function RegisterCompanyPage() {
         nuit: "",
 
         // Passo 2: Plano
-        plan: "gratuito", // gratuito | profissional | empresarial | parceiro
+        plan: "Gratuito", // Gratuito | Premium | Business Vendedor | Parceiro
         billingPeriod: "monthly",
+        isCatalogUnlocked: false,
+        highlightCompany: false,
 
         // Passo 3: Localização
         province: "",
@@ -64,7 +66,7 @@ export default function RegisterCompanyPage() {
         tags: "",
 
         // Passo 5: Produtos
-        products: [] as { name: string; price: string; description: string }[],
+        products: [] as { name: string; description: string }[],
 
         // Passo 6: Pagamento
         paymentMethod: "",
@@ -226,6 +228,7 @@ export default function RegisterCompanyPage() {
                 nuit: formData.nuit,
                 billing_period: formData.billingPeriod,
                 products: formData.products,
+                is_premium: formData.highlightCompany,
                 payment_method: formData.paymentMethod,
                 payment_phone: formData.paymentPhone,
                 geo_location: `${formData.province}, ${formData.district}`,
@@ -400,8 +403,8 @@ export default function RegisterCompanyPage() {
                                 <div className="grid grid-cols-1 gap-4">
                                     {/* Gratuito */}
                                     <div
-                                        onClick={() => setFormData(p => ({ ...p, plan: 'gratuito' }))}
-                                        className={`p-6 rounded-xl border-2 transition-all cursor-pointer relative overflow-hidden ${formData.plan === 'gratuito' ? 'border-emerald-500 bg-emerald-50/30 shadow-md' : 'border-slate-100 hover:border-slate-200 bg-white'}`}
+                                        onClick={() => setFormData(p => ({ ...p, plan: 'Gratuito' }))}
+                                        className={`p-6 rounded-xl border-2 transition-all cursor-pointer relative overflow-hidden ${formData.plan === 'Gratuito' ? 'border-emerald-500 bg-emerald-50/30 shadow-md' : 'border-slate-100 hover:border-slate-200 bg-white'}`}
                                     >
                                         <div className="flex justify-between items-start">
                                             <div>
@@ -430,13 +433,13 @@ export default function RegisterCompanyPage() {
 
                                     {/* Profissional */}
                                     <div
-                                        onClick={() => setFormData(p => ({ ...p, plan: 'profissional' }))}
-                                        className={`p-6 rounded-xl border-2 transition-all cursor-pointer relative overflow-hidden ${formData.plan === 'profissional' ? 'border-orange-500 bg-orange-50/30 shadow-md' : 'border-slate-100 hover:border-slate-200 bg-white'}`}
+                                        onClick={() => setFormData(p => ({ ...p, plan: 'Premium' }))}
+                                        className={`p-6 rounded-xl border-2 transition-all cursor-pointer relative overflow-hidden ${formData.plan === 'Premium' ? 'border-orange-500 bg-orange-50/30 shadow-md' : 'border-slate-100 hover:border-slate-200 bg-white'}`}
                                     >
                                         <div className="flex justify-between items-start">
                                             <div>
                                                 <h3 className="font-black text-slate-800 text-lg flex items-center gap-2">
-                                                    Profissional <span className="text-[10px] bg-orange-500 text-white px-2 py-0.5 rounded-full uppercase">Pequenas Empresas</span>
+                                                    Premium <span className="text-[10px] bg-orange-500 text-white px-2 py-0.5 rounded-full uppercase">Pequenas Empresas</span>
                                                 </h3>
                                                 <p className="text-xs text-slate-500 mb-4">Crescimento e visibilidade</p>
                                                 <ul className="space-y-1.5 grid grid-cols-1 md:grid-cols-2 gap-x-4">
@@ -458,7 +461,7 @@ export default function RegisterCompanyPage() {
                                                 </ul>
                                             </div>
                                             <div className="text-right">
-                                                <span className="text-2xl font-black text-slate-800">250 MT</span>
+                                                <span className="text-2xl font-black text-slate-800">2 500 MT</span>
                                                 <p className="text-[10px] text-slate-500">por mês</p>
                                             </div>
                                         </div>
@@ -466,18 +469,18 @@ export default function RegisterCompanyPage() {
 
                                     {/* Empresarial */}
                                     <div
-                                        onClick={() => setFormData(p => ({ ...p, plan: 'empresarial' }))}
-                                        className={`p-6 rounded-xl border-2 transition-all cursor-pointer relative overflow-hidden ${formData.plan === 'empresarial' ? 'border-blue-600 bg-blue-50/30 shadow-md' : 'border-slate-100 hover:border-slate-200 bg-white'}`}
+                                        onClick={() => setFormData(p => ({ ...p, plan: 'Business Vendedor' }))}
+                                        className={`p-6 rounded-xl border-2 transition-all cursor-pointer relative overflow-hidden ${formData.plan === 'Business Vendedor' ? 'border-blue-600 bg-blue-50/30 shadow-md' : 'border-slate-100 hover:border-slate-200 bg-white'}`}
                                     >
                                         <div className="flex justify-between items-start relative z-10">
                                             <div>
                                                 <h3 className="font-black text-slate-800 text-lg flex items-center gap-2">
-                                                    Empresarial <Crown className="w-4 h-4 text-blue-600" />
+                                                    Business Vendedor <Crown className="w-4 h-4 text-blue-600" />
                                                 </h3>
                                                 <p className="text-xs text-slate-500 mb-4">Dados estratégicos e API</p>
                                                 <ul className="space-y-1.5 grid grid-cols-1 md:grid-cols-2 gap-x-4">
                                                     <li className="flex items-center gap-2 text-xs font-medium text-slate-600">
-                                                        <CheckCircle2 className="w-4 h-4 text-blue-600" /> Tudo do Profissional
+                                                        <CheckCircle2 className="w-4 h-4 text-blue-600" /> Tudo do Premium
                                                     </li>
                                                     <li className="flex items-center gap-2 text-xs font-medium text-slate-600">
                                                         <CheckCircle2 className="w-4 h-4 text-blue-600" /> Acesso API de dados
@@ -494,7 +497,7 @@ export default function RegisterCompanyPage() {
                                                 </ul>
                                             </div>
                                             <div className="text-right">
-                                                <span className="text-2xl font-black text-slate-800">1.000 MT</span>
+                                                <span className="text-2xl font-black text-slate-800">5 000 MT</span>
                                                 <p className="text-[10px] text-slate-500">por mês</p>
                                             </div>
                                         </div>
@@ -502,8 +505,8 @@ export default function RegisterCompanyPage() {
 
                                     {/* Parceiro */}
                                     <div
-                                        onClick={() => setFormData(p => ({ ...p, plan: 'parceiro' }))}
-                                        className={`p-6 rounded-xl border-2 transition-all cursor-pointer relative overflow-hidden ${formData.plan === 'parceiro' ? 'border-emerald-600 bg-emerald-950 text-white shadow-md' : 'border-slate-100 hover:border-slate-200 bg-white'}`}
+                                        onClick={() => setFormData(p => ({ ...p, plan: 'Parceiro' }))}
+                                        className={`p-6 rounded-xl border-2 transition-all cursor-pointer relative overflow-hidden ${formData.plan === 'Parceiro' ? 'border-emerald-600 bg-emerald-950 text-white shadow-md' : 'border-slate-100 hover:border-slate-200 bg-white'}`}
                                     >
                                         <div className="flex justify-between items-center">
                                             <div className="flex items-center gap-4">
@@ -523,7 +526,7 @@ export default function RegisterCompanyPage() {
                                 </div>
 
                                 {/* Partner Additional Fields */}
-                                {formData.plan === 'parceiro' && (
+                                {formData.plan === 'Parceiro' && (
                                     <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6 mt-6 animate-in fade-in slide-in-from-top-4">
                                         <h3 className="font-bold text-emerald-800 mb-4">Dados do Parceiro</h3>
                                         <div className="grid grid-cols-1 gap-4">
@@ -621,58 +624,99 @@ export default function RegisterCompanyPage() {
                             </div>
                         )}
 
-                        {/* PASSO 5: PRODUTOS */}
+                        {/* PASSO 5: PRODUTOS & DESTAQUE */}
                         {currentStep === 5 && (
                             <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-                                <div className="flex justify-between items-center">
-                                    <h2 className="text-2xl font-bold text-slate-800">Seu Catálogo</h2>
-                                    <Button
-                                        onClick={() => setFormData(p => ({ ...p, products: [...p.products, { name: "", price: "", description: "" }] }))}
-                                        className="bg-emerald-600 hover:bg-emerald-700 text-white"
-                                    >
-                                        + Adicionar Produto
-                                    </Button>
-                                </div>
-
-                                <div className="space-y-6">
-                                    {formData.products.length === 0 ? (
-                                        <div className="text-center py-12 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
-                                            <Save className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-                                            <p className="text-slate-500">Ainda não adicionou produtos ao seu catálogo.</p>
-                                        </div>
-                                    ) : (
-                                        formData.products.map((prod, idx) => (
-                                            <div key={idx} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                                                <div className="flex justify-between">
-                                                    <span className="text-xs font-black uppercase text-slate-400">Produto #{idx + 1}</span>
-                                                    <button onClick={() => setFormData(p => ({ ...p, products: p.products.filter((_, i) => i !== idx) }))} className="text-red-500 hover:text-red-700 text-xs font-bold">Remover</button>
+                                {formData.plan === 'Gratuito' ? (
+                                    <div className="space-y-6">
+                                        <div className="bg-white border border-slate-200 p-8 rounded-[15px] shadow-sm text-center">
+                                            <div className="max-w-md mx-auto">
+                                                <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                                    <Save className="w-8 h-8 text-slate-400" />
                                                 </div>
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <Input
-                                                        placeholder="NOME DO PRODUTO: Ex: Milho Branco"
-                                                        value={prod.name}
-                                                        onChange={e => {
-                                                            const newProds = [...formData.products];
-                                                            newProds[idx].name = e.target.value;
-                                                            setFormData(p => ({ ...p, products: newProds }));
-                                                        }}
-                                                        className="h-12 border-slate-200 p-[10px] text-sm font-sans font-semibold text-slate-600 bg-slate-50"
-                                                    />
-                                                    <Input
-                                                        placeholder="PREÇO: Ex: 100 MT"
-                                                        value={prod.price}
-                                                        onChange={e => {
-                                                            const newProds = [...formData.products];
-                                                            newProds[idx].price = e.target.value;
-                                                            setFormData(p => ({ ...p, products: newProds }));
-                                                        }}
-                                                        className="h-12 border-slate-200 p-[10px] text-sm font-sans font-semibold text-slate-600 bg-slate-50"
-                                                    />
+                                                <h2 className="text-xl font-black text-slate-800 uppercase tracking-tight">Catálogo Indisponível</h2>
+                                                <p className="text-slate-500 text-sm mt-2">
+                                                    A adição de produtos não está disponível no plano <span className="font-bold text-emerald-600">Gratuito</span>.
+                                                    Faça o Upgrade para o plano <span className="font-bold text-orange-500">Premium</span> para gerir o seu catálogo.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {/* OPÇÃO DE DESTAQUE */}
+                                        <div
+                                            onClick={() => setFormData(p => ({ ...p, highlightCompany: !p.highlightCompany }))}
+                                            className={`p-6 rounded-[15px] border-2 transition-all cursor-pointer relative overflow-hidden ${formData.highlightCompany ? 'border-orange-500 bg-orange-50/30' : 'border-slate-200 bg-white hover:border-slate-300'}`}
+                                        >
+                                            <div className="flex justify-between items-center relative z-10">
+                                                <div className="flex items-center gap-4">
+                                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${formData.highlightCompany ? 'bg-orange-500 text-white' : 'bg-slate-100 text-slate-400'}`}>
+                                                        <Crown className="w-6 h-6" />
+                                                    </div>
+                                                    <div className="text-left">
+                                                        <h3 className="font-black text-slate-800 uppercase tracking-tight">Destacar Minha Empresa</h3>
+                                                        <p className="text-xs text-slate-500">Apareça no topo das pesquisas e na página inicial.</p>
+                                                    </div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <span className="text-xl font-black text-slate-800">1 500 Mt</span>
+                                                    <div className={`w-6 h-6 rounded-full border-2 mt-1 mx-auto flex items-center justify-center ${formData.highlightCompany ? 'border-orange-500 bg-orange-500' : 'border-slate-300'}`}>
+                                                        {formData.highlightCompany && <CheckCircle2 className="w-4 h-4 text-white" />}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        ))
-                                    )}
-                                </div>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div className="flex justify-between items-center">
+                                            <h2 className="text-2xl font-bold text-slate-800">Seu Catálogo</h2>
+                                            <Button
+                                                onClick={() => setFormData(p => ({ ...p, products: [...p.products, { name: "", description: "" }] }))}
+                                                className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                                            >
+                                                + Adicionar Produto
+                                            </Button>
+                                        </div>
+
+                                        <div className="space-y-6">
+                                            {formData.products.length === 0 ? (
+                                                <div className="text-center py-12 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
+                                                    <Save className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+                                                    <p className="text-slate-500">Ainda não adicionou produtos ao seu catálogo.</p>
+                                                </div>
+                                            ) : (
+                                                formData.products.map((prod, idx) => (
+                                                    <div key={idx} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                                                        <div className="flex justify-between">
+                                                            <span className="text-xs font-black uppercase text-slate-400">Produto #{idx + 1}</span>
+                                                            <button onClick={() => setFormData(p => ({ ...p, products: p.products.filter((_, i) => i !== idx) }))} className="text-red-500 hover:text-red-700 text-xs font-bold">Remover</button>
+                                                        </div>
+                                                        <Input
+                                                            placeholder="NOME DO PRODUTO: Ex: Milho Branco"
+                                                            value={prod.name}
+                                                            onChange={e => {
+                                                                const newProds = [...formData.products];
+                                                                newProds[idx].name = e.target.value;
+                                                                setFormData(p => ({ ...p, products: newProds }));
+                                                            }}
+                                                            className="h-12 border-slate-200 p-[10px] text-sm font-sans font-semibold text-slate-600 bg-slate-50"
+                                                        />
+                                                        <Textarea
+                                                            placeholder="DESCRIÇÃO (Opcional)"
+                                                            value={prod.description}
+                                                            onChange={e => {
+                                                                const newProds = [...formData.products];
+                                                                newProds[idx].description = e.target.value;
+                                                                setFormData(p => ({ ...p, products: newProds }));
+                                                            }}
+                                                            className="min-h-[100px] border-slate-200 bg-slate-50 font-semibold text-slate-600"
+                                                        />
+                                                    </div>
+                                                ))
+                                            )}
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         )}
 
@@ -688,48 +732,112 @@ export default function RegisterCompanyPage() {
                                     <div className="text-right">
                                         <p className="text-[10px] font-black uppercase text-orange-600 tracking-widest">Total a Pagar</p>
                                         <h3 className="text-2xl font-black text-slate-800">
-                                            {formData.plan === 'gratuito' ? '0 MT' : formData.plan === 'profissional' ? '250 MT' : '1.000 MT'}
+                                            {(() => {
+                                                const planLower = formData.plan.toLowerCase();
+                                                const planCost = (planLower === 'gratuito' || planLower === 'free') ? 0 :
+                                                    planLower === 'premium' ? 2500 :
+                                                        planLower === 'básico' ? 1000 : 5000;
+                                                const highlightCost = formData.highlightCompany ? 1500 : 0;
+                                                return `${(planCost + highlightCost).toLocaleString()} MT`;
+                                            })()}
                                         </h3>
                                     </div>
                                 </div>
 
-                                {formData.plan !== 'gratuito' && (
-                                    <div className="space-y-4">
-                                        <p className="text-sm font-bold text-slate-700">Método de Pagamento</p>
-                                        <div className="grid grid-cols-3 gap-3">
-                                            {['Mpesa', 'Emola', 'Banco'].map(m => (
-                                                <button
-                                                    key={m}
-                                                    onClick={() => setFormData(p => ({ ...p, paymentMethod: m }))}
-                                                    className={`py-4 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest transition-all ${formData.paymentMethod === m ? 'border-emerald-600 bg-emerald-50 text-emerald-700' : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200'}`}
-                                                >
-                                                    {m}
-                                                </button>
-                                            ))}
-                                        </div>
-                                        {formData.paymentMethod && (
-                                            <div className="pt-4 space-y-4">
-                                                <Input
-                                                    placeholder={formData.paymentMethod === 'Banco' ? "Número do Comprovativo" : "Número de Telefone"}
-                                                    value={formData.paymentPhone}
-                                                    onChange={e => setFormData(p => ({ ...p, paymentPhone: e.target.value }))}
-                                                />
-                                                <Button
-                                                    onClick={() => {
-                                                        setLoading(true);
-                                                        setTimeout(() => {
-                                                            setLoading(false);
-                                                            setFormData(p => ({ ...p, paymentConfirmed: true }));
-                                                        }, 2000);
-                                                    }}
-                                                    className="w-full h-14 bg-[#10b981] text-white font-black uppercase tracking-widest"
-                                                >
-                                                    {loading ? <Loader2 className="animate-spin" /> : `CONFIRMAR PAGAMENTO ${formData.paymentMethod.toUpperCase()}`}
-                                                </Button>
+                                {(() => {
+                                    const planLower = formData.plan.toLowerCase();
+                                    const planCost = (planLower === 'gratuito' || planLower === 'free') ? 0 :
+                                        planLower === 'premium' ? 2500 :
+                                            planLower === 'básico' ? 1000 : 5000;
+                                    const highlightCost = formData.highlightCompany ? 1500 : 0;
+                                    const totalCost = planCost + highlightCost;
+
+                                    if (totalCost === 0) {
+                                        return (
+                                            <div className="bg-emerald-50/50 p-8 rounded-2xl border border-emerald-100 text-center animate-in zoom-in-95 duration-300">
+                                                <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                                    <CheckCircle2 className="w-8 h-8 text-emerald-600" />
+                                                </div>
+                                                <h3 className="text-xl font-black text-slate-800 uppercase">Tudo Pronto!</h3>
+                                                <p className="text-slate-500 text-sm mt-2 max-w-sm mx-auto">
+                                                    O seu registo no plano Gratuito não tem custos. Clique em **Finalizar Registo** para concluir.
+                                                </p>
                                             </div>
-                                        )}
-                                    </div>
-                                )}
+                                        );
+                                    }
+
+                                    return (
+                                        <div className="space-y-6">
+                                            <p className="text-sm font-bold text-slate-700">Escolha o Método de Pagamento</p>
+                                            <div className="grid grid-cols-3 gap-3">
+                                                {[
+                                                    { id: 'mpesa', label: 'MPESA', color: 'emerald' },
+                                                    { id: 'emola', label: 'EMOLA', color: 'blue' },
+                                                    { id: 'banco', label: 'BANCO', color: 'slate' }
+                                                ].map(m => (
+                                                    <button
+                                                        key={m.id}
+                                                        onClick={() => setFormData(p => ({ ...p, paymentMethod: m.id }))}
+                                                        className={`py-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${formData.paymentMethod === m.id ? 'border-emerald-600 bg-emerald-50 text-emerald-700 shadow-sm' : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200'}`}
+                                                    >
+                                                        <span className="font-black uppercase text-[10px] tracking-widest">{m.label}</span>
+                                                    </button>
+                                                ))}
+                                            </div>
+
+                                            {formData.paymentMethod && (
+                                                <div className="pt-4 space-y-4 animate-in slide-in-from-top-2 duration-200">
+                                                    {formData.paymentMethod !== 'banco' && (
+                                                        <div className="space-y-1">
+                                                            <Input
+                                                                placeholder={formData.paymentMethod === 'mpesa' ? "84 / 85 xxx xxxx" : "86 / 87 xxx xxxx"}
+                                                                value={formData.paymentPhone}
+                                                                onChange={e => setFormData(p => ({ ...p, paymentPhone: e.target.value }))}
+                                                                className="h-12 border-slate-200 font-mono text-center text-lg"
+                                                                maxLength={9}
+                                                            />
+                                                        </div>
+                                                    )}
+
+                                                    {formData.paymentMethod === 'banco' && (
+                                                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-2 text-xs font-medium text-slate-600">
+                                                            <p className="font-bold uppercase text-slate-400 text-[9px]">Dados para transferência:</p>
+                                                            <div className="flex justify-between"><span>Banco:</span> <span className="font-bold">Millennium BIM</span></div>
+                                                            <div className="flex justify-between"><span>Conta:</span> <span className="font-bold">123456789</span></div>
+                                                            <div className="flex justify-between"><span>NIB:</span> <span className="font-bold">0001 0000 1234 5678 9012 3</span></div>
+                                                        </div>
+                                                    )}
+
+                                                    <Button
+                                                        onClick={async () => {
+                                                            if (formData.paymentMethod !== 'banco') {
+                                                                if (!formData.paymentPhone || formData.paymentPhone.length < 9) {
+                                                                    alert("Por favor, insira um número válido.");
+                                                                    return;
+                                                                }
+                                                                setLoading(true);
+                                                                // Simulação de pagamento
+                                                                setTimeout(() => {
+                                                                    setLoading(false);
+                                                                    setFormData(p => ({ ...p, paymentConfirmed: true }));
+                                                                    alert("Pagamento confirmado com sucesso!");
+                                                                }, 2000);
+                                                            } else {
+                                                                alert("Por favor, anexe o comprovativo após finalizar o registo.");
+                                                                setFormData(p => ({ ...p, paymentConfirmed: true }));
+                                                            }
+                                                        }}
+                                                        disabled={loading || formData.paymentConfirmed}
+                                                        className={`w-full h-12 bg-emerald-500 hover:bg-emerald-600 text-white font-black uppercase tracking-widest rounded-xl transition-all ${formData.paymentConfirmed ? 'bg-slate-400' : ''}`}
+                                                    >
+                                                        {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                                                        {formData.paymentConfirmed ? "PAGAMENTO CONFIRMADO" : `CONFIRMAR PAGAMENTO ${formData.paymentMethod.toUpperCase()}`}
+                                                    </Button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })()}
                             </div>
                         )}
                     </div>
@@ -737,25 +845,39 @@ export default function RegisterCompanyPage() {
                     {/* Footer Actions */}
                     <div className="pt-8 border-t border-slate-100 flex justify-between mt-8">
                         {currentStep > 1 ? (
-                            <Button variant="outline" onClick={handleBack} className="h-12 px-6">
+                            <Button
+                                variant="outline"
+                                onClick={handleBack}
+                                className="h-12 px-6 text-slate-600 font-bold border-slate-200 bg-white shadow-sm hover:bg-slate-50"
+                                style={{ borderRadius: '12px' }}
+                            >
                                 <ArrowLeft className="w-4 h-4 mr-2" /> Voltar
                             </Button>
                         ) : (
-                            <div /> // Espaçador
+                            <div />
                         )}
 
                         {currentStep < 6 ? (
                             <Button
                                 onClick={handleNext}
                                 className="h-12 px-8 bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+                                style={{ borderRadius: '12px' }}
                             >
                                 Próximo Passo <ArrowRight className="w-4 h-4 ml-2" />
                             </Button>
                         ) : (
                             <Button
                                 onClick={handleSubmit}
-                                disabled={loading || (formData.plan !== 'gratuito' && !formData.paymentConfirmed)}
-                                className="h-12 px-8 bg-orange-500 hover:bg-orange-600 text-white font-bold shadow-lg shadow-orange-500/20"
+                                disabled={loading || (() => {
+                                    const planLower = formData.plan.toLowerCase();
+                                    const planCost = (planLower === 'gratuito' || planLower === 'free') ? 0 :
+                                        planLower === 'premium' ? 2500 :
+                                            planLower === 'básico' ? 1000 : 5000;
+                                    const totalCost = planCost + (formData.highlightCompany ? 1500 : 0);
+                                    return totalCost > 0 && !formData.paymentConfirmed;
+                                })()}
+                                className="h-12 px-10 bg-orange-500 hover:bg-orange-600 text-white font-black uppercase tracking-widest shadow-lg shadow-orange-500/20"
+                                style={{ borderRadius: '12px' }}
                             >
                                 {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
                                 Finalizar Cadastro

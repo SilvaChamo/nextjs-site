@@ -11,10 +11,14 @@ import { usePlanPermissions } from "@/hooks/usePlanPermissions";
 import { UpgradeModal, LockedFieldOverlay, PlanFieldWrapper } from "@/components/UpgradeModal";
 import { getRequiredPlan, type PlanType } from "@/lib/plan-fields";
 
-export default function EmpresaPage() {
+interface CompanyEditorProps {
+    user: User | null;
+}
+
+export function CompanyEditor({ user }: CompanyEditorProps) {
     const supabase = createClient();
     const [isRegistered, setIsRegistered] = useState(true);
-    const [user, setUser] = useState<User | null>(null);
+    // const [user, setUser] = useState<User | null>(null); // Received from props
     const [isEditingCompany, setIsEditingCompany] = useState(false);
     const [showSuccessPopup, setShowSuccessPopup] = useState(false);
     const [isUploadingLogo, setIsUploadingLogo] = useState(false);
@@ -65,14 +69,6 @@ export default function EmpresaPage() {
         target.style.height = 'auto';
         target.style.height = `${target.scrollHeight}px`;
     };
-
-    useEffect(() => {
-        const getUser = async () => {
-            const { data: { user } } = await supabase.auth.getUser();
-            setUser(user);
-        };
-        getUser();
-    }, []);
 
     useEffect(() => {
         const fetchCompany = async () => {
@@ -303,8 +299,8 @@ export default function EmpresaPage() {
 
             <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                    <h2 className="text-3xl font-[900] tracking-tight text-[#3a3f47]">Minha Empresa</h2>
-                    <p className="text-slate-500">Gerencie os dados e o perfil público da sua empresa.</p>
+                    {/* <h2 className="text-3xl font-[900] tracking-tight text-[#3a3f47]">Minha Empresa</h2> */}
+                    {/* <p className="text-slate-500">Gerencie os dados e o perfil público da sua empresa.</p> */}
                 </div>
                 {isRegistered && (
                     <Link href={`/empresas/${companyForm.slug}`} target="_blank">
@@ -694,38 +690,7 @@ export default function EmpresaPage() {
                                 </PlanFieldWrapper>
 
                                 {/* Products Management */}
-                                <div className="space-y-4 pt-4 border-t border-slate-100">
-                                    <div className="flex items-center justify-between">
-                                        <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Catálogo de Produtos</h4>
-                                        <Link href="/usuario/dashboard/produtos">
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                className="text-[#f97316] text-[10px] font-black uppercase tracking-widest hover:bg-orange-50"
-                                            >
-                                                + Gerir Produtos
-                                            </Button>
-                                        </Link>
-                                    </div>
-                                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                                        {products.length > 0 ? (
-                                            products.map((product) => (
-                                                <div key={product.id} className="group relative aspect-square bg-slate-50 rounded-lg border border-slate-100 overflow-hidden">
-                                                    <img
-                                                        src={product.image_url || "/images/Prototipo/caju.webp"}
-                                                        alt={product.name}
-                                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                                    />
-                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                        <p className="text-[8px] font-bold text-white truncate w-full uppercase">{product.name}</p>
-                                                    </div>
-                                                </div>
-                                            ))
-                                        ) : (
-                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest col-span-full py-4 text-center border border-dashed border-slate-200 rounded-xl">Nenhum produto cadastrado.</p>
-                                        )}
-                                    </div>
-                                </div>
+                                {/* REMOVED: Products specific section inside company editor to avoid duplication since we are merging tabs */}
                             </div>
 
                             <div className="mt-8 pt-6 border-t border-slate-100 flex justify-between items-center">
@@ -740,12 +705,7 @@ export default function EmpresaPage() {
                                             <Button onClick={handleUpdateCompany} className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold">SALVAR ALTERAÇÕES</Button>
                                         </>
                                     ) : (
-                                        <Link href="/usuario/dashboard/produtos">
-                                            <Button variant="outline" className="border-orange-200 text-[#f97316] hover:bg-orange-50 font-bold gap-2">
-                                                Gerir Produtos
-                                                <ArrowRight className="w-4 h-4" />
-                                            </Button>
-                                        </Link>
+                                        <div />
                                     )}
                                 </div>
                             </div>

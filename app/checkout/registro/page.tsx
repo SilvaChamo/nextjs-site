@@ -43,6 +43,19 @@ function RegistroContent() {
     const [honeypot, setHoneypot] = useState("");
     const [formLoadTime] = useState(Date.now());
 
+    // Redirect if user is already logged in
+    React.useEffect(() => {
+        const checkUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                // Redirect user to payment page if already logged in
+                const params = new URLSearchParams(searchParams);
+                router.push(`/checkout/pagamento?${params.toString()}`);
+            }
+        };
+        checkUser();
+    }, [supabase, router, searchParams]);
+
     const handleCreateAccount = async (e: React.FormEvent) => {
         e.preventDefault();
 

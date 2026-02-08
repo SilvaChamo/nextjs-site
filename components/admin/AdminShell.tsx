@@ -79,6 +79,13 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
         return () => clearInterval(interval);
     }, []);
 
+    // Auto-collapse sidebar on Presentation Editor
+    useEffect(() => {
+        if (pathname.startsWith('/admin/apresentacoes/editor')) {
+            setIsCollapsed(true);
+        }
+    }, [pathname]);
+
     const handleSync = async () => {
         if (!isOnline) {
             toast.error("Ainda sem conexão...");

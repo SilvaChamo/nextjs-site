@@ -1,20 +1,32 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Package, MapPin, Users, Lock } from "lucide-react";
+import { Package, MapPin, Users, Lock, Search, ArrowLeft, ExternalLink, Building2, MapPin as MapPinIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { createClient } from "@/utils/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { usePlanPermissions } from "@/hooks/usePlanPermissions";
 import { UpgradeModal } from "@/components/UpgradeModal";
+import { toast } from "sonner";
+import { PlanType } from "@/lib/plan-fields";
+import { CompanyEditor } from "@/components/dashboard/CompanyEditor";
 
 export default function MeuConteudoPage() {
     const supabase = createClient();
-    const [activeTab, setActiveTab] = useState<"produtos" | "propriedades" | "conexoes">("produtos");
+    const [activeTab, setActiveTab] = useState<"empresa" | "produtos" | "propriedades" | "conexoes">("empresa");
     const [user, setUser] = useState<User | null>(null);
     const [companyId, setCompanyId] = useState<string | null>(null);
     const [productsThisMonth, setProductsThisMonth] = useState(0);
-    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+    const [upgradeModal, setUpgradeModal] = useState<{
+        isOpen: boolean;
+        fieldLabel: string;
+        requiredPlan: PlanType;
+    }>({
+        isOpen: false,
+        fieldLabel: "Novos Produtos",
+        requiredPlan: "Premium"
+    });
 
     // Plan permissions
     const {
@@ -22,6 +34,7 @@ export default function MeuConteudoPage() {
         canCreateNewProduct,
         remainingProducts,
         planDisplayName,
+        plan,
         loading: planLoading
     } = usePlanPermissions();
 
@@ -43,6 +56,12 @@ export default function MeuConteudoPage() {
         description: "",
         imageUrl: ""
     });
+
+    // Partner Search State
+    const [showPartnerSearch, setShowPartnerSearch] = useState(false);
+    const [partners, setPartners] = useState<any[]>([]);
+    const [loadingPartners, setLoadingPartners] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
 
     // Fetch user products
     const [products, setProducts] = useState<any[]>([]);
@@ -88,11 +107,55 @@ export default function MeuConteudoPage() {
 
     const handleAddProductClick = () => {
         if (!canCreateNewProduct(productsThisMonth)) {
-            setShowUpgradeModal(true);
+            setUpgradeModal({
+                isOpen: true,
+                fieldLabel: "Novos Produtos",
+                requiredPlan: "Premium"
+            });
             return;
         }
         setIsAddingProduct(true);
     };
+
+    const handlePartnerSearch = async () => {
+        // Only Paid Plans can search partners
+        if (plan === 'Gratuito' || !plan) {
+            setUpgradeModal({
+                isOpen: true,
+                fieldLabel: "Buscar Parceiros",
+                requiredPlan: "Básico"
+            });
+            return;
+        }
+
+        setShowPartnerSearch(true);
+        if (partners.length === 0) {
+            fetchPartners();
+        }
+    };
+
+    const fetchPartners = async () => {
+        setLoadingPartners(true);
+        try {
+            const { data, error } = await supabase
+                .from('companies')
+                .select('*')
+                .in('plan', ['Business Vendedor', 'Parceiro'])
+                .order('name');
+
+            if (data) setPartners(data);
+        } catch (error) {
+            toast.error("Erro ao buscar parceiros.");
+        } finally {
+            setLoadingPartners(false);
+        }
+    };
+
+    const filteredPartners = partners.filter(p =>
+        p.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.province?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files || e.target.files.length === 0) return;
@@ -174,10 +237,10 @@ export default function MeuConteudoPage() {
         <div className="space-y-6">
             {/* Upgrade Modal */}
             <UpgradeModal
-                isOpen={showUpgradeModal}
-                onClose={() => setShowUpgradeModal(false)}
-                fieldLabel="Novos Produtos"
-                requiredPlan="Premium"
+                isOpen={upgradeModal.isOpen}
+                onClose={() => setUpgradeModal(prev => ({ ...prev, isOpen: false }))}
+                fieldLabel={upgradeModal.fieldLabel}
+                requiredPlan={upgradeModal.requiredPlan}
             />
 
             <div className="flex items-center justify-between mb-8">
@@ -216,13 +279,13 @@ export default function MeuConteudoPage() {
             {/* Tabs Navigation */}
             <div className="flex flex-wrap gap-2 border-b border-slate-300 mb-8">
                 <button
-                    onClick={() => setActiveTab("produtos")}
-                    className={`px-6 py-2 text-sm font-bold rounded-t-md transition-all border-t border-l border-r relative -mb-px ${activeTab === "produtos"
+                    onClick={() => setActiveTab("empresa")}
+                    className={`px-6 py-2 text-sm font-bold rounded-t-md transition-all border-t border-l border-r relative -mb-px ${activeTab === "empresa"
                         ? "text-orange-600 border-slate-300 border-b-transparent bg-white"
                         : "text-slate-500 border-transparent hover:text-orange-600"
                         }`}
                 >
-                    Meus Produtos
+                    Minha Empresa
                 </button>
                 <button
                     onClick={() => setActiveTab("propriedades")}
@@ -232,6 +295,15 @@ export default function MeuConteudoPage() {
                         }`}
                 >
                     Minhas Propriedades
+                </button>
+                <button
+                    onClick={() => setActiveTab("produtos")}
+                    className={`px-6 py-2 text-sm font-bold rounded-t-md transition-all border-t border-l border-r relative -mb-px ${activeTab === "produtos"
+                        ? "text-orange-600 border-slate-300 border-b-transparent bg-white"
+                        : "text-slate-500 border-transparent hover:text-orange-600"
+                        }`}
+                >
+                    Meus Produtos
                 </button>
                 <button
                     onClick={() => setActiveTab("conexoes")}
@@ -246,6 +318,12 @@ export default function MeuConteudoPage() {
 
             {/* Content Area */}
             <div className="min-h-[400px]">
+                {activeTab === "empresa" && (
+                    <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+                        <CompanyEditor user={user} />
+                    </div>
+                )}
+
                 {activeTab === "produtos" && (
                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
                         {isAddingProduct ? (
@@ -366,18 +444,90 @@ export default function MeuConteudoPage() {
 
                 {activeTab === "conexoes" && (
                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-                        <div className="border border-dashed border-slate-300 rounded-xl h-80 flex flex-col items-center justify-center bg-slate-50 text-slate-500 space-y-4">
-                            <div className="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center">
-                                <Users className="w-8 h-8 text-slate-400" />
+                        {showPartnerSearch ? (
+                            <div className="space-y-6">
+                                <div className="flex items-center gap-4">
+                                    <Button
+                                        variant="ghost"
+                                        onClick={() => setShowPartnerSearch(false)}
+                                        className="p-2 hover:bg-slate-100 rounded-full"
+                                    >
+                                        <ArrowLeft className="w-5 h-5 text-slate-500" />
+                                    </Button>
+                                    <div className="relative flex-1">
+                                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                        <Input
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                            placeholder="Buscar por nome, categoria ou província..."
+                                            className="pl-10 bg-white border-slate-200"
+                                        />
+                                    </div>
+                                </div>
+
+                                {loadingPartners ? (
+                                    <div className="flex justify-center py-12">
+                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
+                                    </div>
+                                ) : filteredPartners.length > 0 ? (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        {filteredPartners.map(partner => (
+                                            <div key={partner.id} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
+                                                <div className="flex items-start justify-between mb-3">
+                                                    <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600 font-bold text-lg">
+                                                        {partner.name?.substring(0, 2).toUpperCase()}
+                                                    </div>
+                                                    {partner.is_featured && (
+                                                        <span className="bg-orange-100 text-orange-700 text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-wider">
+                                                            Destaque
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <h4 className="font-bold text-slate-800 truncate mb-1">{partner.name}</h4>
+                                                <div className="space-y-1 mb-4">
+                                                    <div className="flex items-center gap-2 text-xs text-slate-500">
+                                                        <Building2 className="w-3 h-3" />
+                                                        <span className="truncate">{partner.category || "Sem Categoria"}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2 text-xs text-slate-500">
+                                                        <MapPinIcon className="w-3 h-3" />
+                                                        <span className="truncate">{partner.province || "Moçambique"}</span>
+                                                    </div>
+                                                </div>
+                                                <Button
+                                                    className="w-full h-8 text-xs font-bold bg-slate-50 hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 border border-slate-200 hover:border-emerald-200"
+                                                    onClick={() => window.open(`/empresa/${partner.id}`, '_blank')}
+                                                >
+                                                    Ver Perfil <ExternalLink className="w-3 h-3 ml-2" />
+                                                </Button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-12 text-slate-500">
+                                        <p>Nenhum parceiro encontrado com esses termos.</p>
+                                    </div>
+                                )}
                             </div>
-                            <div className="text-center">
-                                <h3 className="font-bold text-lg text-slate-700">Sem conexões ativas</h3>
-                                <p className="text-sm max-w-xs mx-auto mt-1">Conecte-se com outros produtores e empresas da rede.</p>
+                        ) : (
+                            <div className="border border-dashed border-slate-300 rounded-xl h-80 flex flex-col items-center justify-center bg-slate-50 text-slate-500 space-y-4">
+                                <div className="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center">
+                                    <Users className="w-8 h-8 text-slate-400" />
+                                </div>
+                                <div className="text-center">
+                                    <h3 className="font-bold text-lg text-slate-700">Sem conexões ativas</h3>
+                                    <p className="text-sm max-w-xs mx-auto mt-1">Conecte-se com outros produtores e empresas da rede.</p>
+                                </div>
+                                <Button
+                                    onClick={handlePartnerSearch}
+                                    variant="outline"
+                                    className="mt-4 border-slate-300 hover:bg-white hover:text-orange-600 hover:border-orange-200 gap-2"
+                                >
+                                    <Search className="w-4 h-4" />
+                                    Buscar Parceiros
+                                </Button>
                             </div>
-                            <Button variant="outline" className="mt-4 border-slate-300 hover:bg-white hover:text-orange-600 hover:border-orange-200">
-                                Buscar Parceiros
-                            </Button>
-                        </div>
+                        )}
                     </div>
                 )}
             </div>

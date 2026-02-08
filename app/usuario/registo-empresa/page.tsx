@@ -220,15 +220,15 @@ export default function RegisterCompanyPage() {
                 province: formData.province,
                 district: formData.district,
                 address: formData.address,
-                sector: formData.sector,
+                category: formData.sector,
                 description: formData.description,
                 plan: formData.plan,
                 website: formData.website,
-                representative: formData.representative,
+                representative_name: formData.representative,
                 nuit: formData.nuit,
                 billing_period: formData.billingPeriod,
                 products: formData.products,
-                is_premium: formData.highlightCompany,
+                is_featured: formData.highlightCompany,
                 payment_method: formData.paymentMethod,
                 payment_phone: formData.paymentPhone,
                 geo_location: `${formData.province}, ${formData.district}`,
@@ -736,7 +736,7 @@ export default function RegisterCompanyPage() {
                                                 const planLower = formData.plan.toLowerCase();
                                                 const planCost = (planLower === 'gratuito' || planLower === 'free') ? 0 :
                                                     planLower === 'premium' ? 2500 :
-                                                        planLower === 'básico' ? 1000 : 5000;
+                                                        planLower === 'básico' ? 1500 : 5000;
                                                 const highlightCost = formData.highlightCompany ? 1500 : 0;
                                                 return `${(planCost + highlightCost).toLocaleString()} MT`;
                                             })()}

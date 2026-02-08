@@ -99,6 +99,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         return null;
     }
 
+    // Check if we are in the presentation editor
+    const isPresentationEditor = pathname?.startsWith('/usuario/dashboard/apresentacoes/editor');
+
+    if (isPresentationEditor) {
+        return <>{children}</>;
+    }
+
     return (
         <div className="flex h-screen bg-slate-50 font-sans overflow-hidden">
             {/* Sidebar Fixa (Desktop) / Overlay (Mobile) */}

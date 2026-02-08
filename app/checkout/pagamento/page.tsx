@@ -15,8 +15,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import Image from "next/image";
+import { createClient } from "@/utils/supabase/client";
 
 function PagamentoContent() {
+    const supabase = createClient();
     const searchParams = useSearchParams();
     const router = useRouter();
 
@@ -38,6 +40,30 @@ function PagamentoContent() {
 
         // Simulate payment processing
         await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // Activate Plan Logic
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+
+            if (user) {
+                // 1. Update Profile Plan
+                await supabase
+                    .from('profiles')
+                    .update({ plan: planName })
+                    .eq('id', user.id);
+
+                // 2. Update Company Plan (if exists)
+                await supabase
+                    .from('companies')
+                    .update({ plan: planName })
+                    .eq('user_id', user.id);
+            }
+        } catch (error) {
+            console.error("Error activating plan:", error);
+            // Even if activation fails safely, we might want to log it or handle it.
+            // For now, we proceed to success to not block the user, 
+            // but in a real app, this should be handled more robustly via webhooks.
+        }
 
         // Redirect to success page
         router.push(`/checkout/sucesso?plan=${encodeURIComponent(planName)}`);

@@ -6,8 +6,43 @@ import { PageHeader } from "@/components/PageHeader";
 import { usePlanPermissions } from "@/hooks/usePlanPermissions";
 import Link from "next/link";
 
+import { useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
+import { toast } from "sonner";
+
 export default function UserPresentationsPage() {
     const { canPresentations, planDisplayName, loading } = usePlanPermissions();
+    const router = useRouter();
+    const supabase = createClient();
+    const [creating, setCreating] = React.useState(false);
+
+    const handleCreatePresentation = async () => {
+        setCreating(true);
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
+            const { data, error } = await supabase
+                .from('presentations')
+                .insert({
+                    user_id: user.id,
+                    title: "Nova Apresentação",
+                    status: "draft"
+                })
+                .select()
+                .single();
+
+            if (error) throw error;
+
+            toast.success("Apresentação criada!");
+            router.push(`/usuario/dashboard/apresentacoes/editor/${data.id}`);
+        } catch (error) {
+            console.error(error);
+            toast.error("Erro ao criar apresentação.");
+        } finally {
+            setCreating(false);
+        }
+    };
 
     if (loading) return (
         <div className="flex items-center justify-center min-h-[400px]">
@@ -31,7 +66,7 @@ export default function UserPresentationsPage() {
                             <HelpCircle className="w-32 h-32" />
                         </div>
                         <div className="relative z-10">
-                            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                            <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-white">
                                 <Lightbulb className="w-6 h-6 text-orange-400" />
                                 Como funcionam as Apresentações?
                             </h3>
@@ -41,13 +76,13 @@ export default function UserPresentationsPage() {
                             </p>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/10">
-                                    <h4 className="font-bold text-sm mb-2 flex items-center gap-2">
+                                    <h4 className="font-bold text-sm mb-2 flex items-center gap-2 text-white">
                                         <Play className="w-4 h-4" /> Autoplay
                                     </h4>
                                     <p className="text-[11px] text-white/70">Os slides passam automaticamente para o visitante, garantindo visibilidade total.</p>
                                 </div>
                                 <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/10">
-                                    <h4 className="font-bold text-sm mb-2 flex items-center gap-2">
+                                    <h4 className="font-bold text-sm mb-2 flex items-center gap-2 text-white">
                                         <MousePointer2 className="w-4 h-4" /> Interatividade
                                     </h4>
                                     <p className="text-[11px] text-white/70">Adicione botões e links diretos para seus produtos em cada slide.</p>
@@ -65,8 +100,12 @@ export default function UserPresentationsPage() {
                             <h3 className="font-bold text-lg text-slate-700">Você ainda não tem apresentações</h3>
                             <p className="text-sm max-w-xs mx-auto mt-1">Crie sua primeira vitrine interativa agora mesmo.</p>
                         </div>
-                        <button className="px-6 py-2 bg-emerald-600 text-white font-bold rounded-lg hover:bg-orange-500 transition-colors shadow-lg">
-                            + Nova Apresentação
+                        <button
+                            onClick={handleCreatePresentation}
+                            disabled={creating}
+                            className="px-6 py-2 bg-emerald-600 text-white font-bold rounded-lg hover:bg-orange-500 transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                        >
+                            {creating ? "Criando..." : "+ Nova Apresentação"}
                         </button>
                     </div>
                 </div>

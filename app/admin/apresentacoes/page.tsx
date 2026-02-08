@@ -29,11 +29,15 @@ export default function AdminApresentacoesPage() {
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
     const [statusFilter, setStatusFilter] = useState<'active' | 'archived' | 'deleted'>('active');
     const [categoryFilter, setCategoryFilter] = useState("all");
+    const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
     // Load both active and deleted presentations
     useEffect(() => {
         let isMounted = true;
         const load = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (isMounted && user) setCurrentUserId(user.id);
+
             // Load active presentations
             const { data: activeData } = await supabase
                 .from('presentations')
@@ -206,23 +210,35 @@ export default function AdminApresentacoesPage() {
 
     // Get items to display based on filter
     const getDisplayItems = () => {
-        if (statusFilter === 'deleted') {
-            return deletedPresentations.filter(p =>
-                p.title.toLowerCase().includes(search.toLowerCase()) ||
-                p.description?.toLowerCase().includes(search.toLowerCase())
+        let items = statusFilter === 'deleted' ? deletedPresentations : presentations;
+
+        // Apply Search
+        items = items.filter(p =>
+            p.title.toLowerCase().includes(search.toLowerCase()) ||
+            p.description?.toLowerCase().includes(search.toLowerCase())
+        );
+
+        // Apply Status Filter (Active/Archived) - only for non-deleted
+        if (statusFilter !== 'deleted') {
+            items = items.filter(p =>
+                statusFilter === 'active'
+                    ? (p.status === 'active' || !p.status)
+                    : p.status === 'archived'
             );
         }
 
-        return presentations.filter(p => {
-            const matchesSearch = p.title.toLowerCase().includes(search.toLowerCase()) ||
-                p.description?.toLowerCase().includes(search.toLowerCase());
+        // Apply User Filter (Todas vs Minhas)
+        // Todas: Exclude current user (admin)
+        // Minhas: Only current user (admin)
+        if (currentUserId) {
+            if (categoryFilter === 'mine') {
+                items = items.filter(p => p.user_id === currentUserId);
+            } else if (categoryFilter === 'all') {
+                items = items.filter(p => p.user_id !== currentUserId);
+            }
+        }
 
-            const matchesStatus = statusFilter === 'active'
-                ? (p.status === 'active' || !p.status)
-                : p.status === 'archived';
-
-            return matchesSearch && matchesStatus;
-        });
+        return items;
     };
 
     const filtered = getDisplayItems();
@@ -242,6 +258,7 @@ export default function AdminApresentacoesPage() {
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">Todas</SelectItem>
+                            <SelectItem value="mine">Minhas</SelectItem>
                         </SelectContent>
                     </Select>
 

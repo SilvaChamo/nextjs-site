@@ -59,12 +59,12 @@ export function Footer() {
                         <div className="col-span-1 lg:col-span-2 space-y-4 pt-[30px]">
                             <h3 className="text-lg font-bold text-gray-200">Links rápidos</h3>
                             <ul className="space-y-1 text-[15px] text-gray-400">
-                                <li><Link href="#" className="hover:text-[#f97316] transition-colors">Agro-negócio</Link></li>
-                                <li><Link href="#" className="hover:text-[#f97316] transition-colors">Tecnologia agrária</Link></li>
-                                <li><Link href="#" className="hover:text-[#f97316] transition-colors">Políticas agrárias</Link></li>
-                                <li><Link href="#" className="hover:text-[#f97316] transition-colors">Financiamento agrário</Link></li>
-                                <li><Link href="#" className="hover:text-[#f97316] transition-colors">Insumos agrícolas</Link></li>
-                                <li><Link href="#" className="hover:text-[#f97316] transition-colors">Produtos</Link></li>
+                                <li><Link href="/servicos" className="hover:text-[#f97316] transition-colors">Agro-negócio</Link></li>
+                                <li><Link href="/servicos/consultoria" className="hover:text-[#f97316] transition-colors">Tecnologia agrária</Link></li>
+                                <li><Link href="/servicos/assistencia" className="hover:text-[#f97316] transition-colors">Políticas agrárias</Link></li>
+                                <li><Link href="/estatisticas/economia" className="hover:text-[#f97316] transition-colors">Financiamento agrário</Link></li>
+                                <li><Link href="/servicos/insumos" className="hover:text-[#f97316] transition-colors">Insumos agrícolas</Link></li>
+                                <li><Link href="/mercado" className="hover:text-[#f97316] transition-colors">Produtos</Link></li>
                             </ul>
                         </div>
 
@@ -133,10 +133,10 @@ export function Footer() {
                             <Link href="/admin" className="hover:text-[#f97316] transition-colors text-white/30 hover:text-emerald-600">Cozinha</Link>
                         </div>
                         <div className="flex items-center gap-4">
-                            <SocialIcon Icon={Facebook} />
-                            <SocialIcon Icon={Linkedin} />
-                            <SocialIcon Icon={Instagram} />
-                            <SocialIcon Icon={Youtube} />
+                            <SocialIcon Icon={Facebook} href="https://facebook.com/baseagrodata" />
+                            <SocialIcon Icon={Linkedin} href="https://linkedin.com/company/baseagrodata" />
+                            <SocialIcon Icon={Instagram} href="https://instagram.com/baseagrodata" />
+                            <SocialIcon Icon={Youtube} href="https://youtube.com/@baseagrodata" />
                         </div>
                     </div>
                 </div>
@@ -155,9 +155,9 @@ export function Footer() {
     );
 }
 
-function SocialIcon({ Icon }: { Icon: any }) {
+function SocialIcon({ Icon, href = "#" }: { Icon: any; href?: string }) {
     return (
-        <a href="#" className="w-8 h-8 rounded-full border border-gray-500 flex items-center justify-center text-gray-400 hover:text-[#22c55e] hover:border-[#22c55e] transition-all">
+        <a href={href} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full border border-gray-500 flex items-center justify-center text-gray-400 hover:text-[#22c55e] hover:border-[#22c55e] transition-all">
             <Icon className="w-4 h-4" />
         </a>
     );

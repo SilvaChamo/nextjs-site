@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { CloudRain, Sun, Wind, Droplets, AlertTriangle, TrendingDown, Info, ArrowRight } from "lucide-react";
 
 export function MarketSidebar() {
@@ -106,9 +107,9 @@ export function MarketSidebar() {
                     </div>
                 </div>
 
-                <a href="#" className="flex items-center gap-2 text-[#f97316] text-sm font-bold mt-6 hover:gap-3 transition-all">
+                <Link href="/blog" className="flex items-center gap-2 text-[#f97316] text-sm font-bold mt-6 hover:gap-3 transition-all">
                     Ver todas notícias <ArrowRight className="w-4 h-4" />
-                </a>
+                </Link>
             </div>
 
         </div>

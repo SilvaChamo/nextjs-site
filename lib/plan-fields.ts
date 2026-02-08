@@ -263,7 +263,7 @@ export const PLAN_FEATURES: Record<PlanType, {
     },
     'Premium': {
         sms_notifications: true,
-        presentations: true,
+        presentations: false,
         featured_company: false,
         business_analytics: true,
         newsletter: true,
@@ -341,7 +341,6 @@ export const PLAN_PRIVILEGES: Record<PlanType, string[]> = {
     'Premium': [
         'Tudo do plano Profissional',
         'Publicar até 7 produtos/serviços',
-        'Criação de apresentações visuais ilimitadas',
         'Acesso a relatórios de mercado detalhados',
         'Selo de empresa verificada'
     ],

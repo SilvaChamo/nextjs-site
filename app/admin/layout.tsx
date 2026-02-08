@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Shield } from "lucide-react";
 import { AdminShell } from "@/components/admin/AdminShell";
+import { LogoutButton } from "@/components/LogoutButton";
 
 export default async function AdminLayout({
     children,
@@ -45,9 +46,18 @@ export default async function AdminLayout({
                             ON CONFLICT (id) DO UPDATE SET role = 'admin';
                         </code>
                     </div>
-                    <Link href="/" className="inline-flex items-center justify-center rounded-xl text-sm font-bold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-900 text-slate-50 hover:bg-slate-900/90 h-10 px-4 py-2 w-full">
-                        Voltar ao Início
-                    </Link>
+                    <div className="flex flex-col gap-3">
+                        <Link href="/" className="inline-flex items-center justify-center rounded-xl text-sm font-bold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-100 text-slate-900 hover:bg-slate-200 h-10 px-4 py-2 w-full">
+                            Voltar ao Início
+                        </Link>
+
+                        <div className="grid grid-cols-2 gap-3">
+                            <LogoutButton variant="outline" className="h-10 rounded-xl font-bold" />
+                            <Link href="/login" className="inline-flex items-center justify-center rounded-xl text-sm font-bold border border-slate-200 bg-white text-slate-900 hover:bg-slate-50 h-10 px-4 py-2">
+                                Trocar Conta
+                            </Link>
+                        </div>
+                    </div>
                 </div>
             </div>
         );

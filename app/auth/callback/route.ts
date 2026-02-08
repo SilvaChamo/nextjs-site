@@ -23,9 +23,8 @@ export async function GET(request: Request) {
                 return NextResponse.redirect(`${origin}/admin`)
             }
 
-            // If it's a free plan and they are heading to the dashboard, redirect home instead
-            const isFree = profile?.plan === 'Gratuito' || profile?.plan === 'Visitante' || !profile?.plan
-            const targetNext = (isFree && next.startsWith('/usuario/dashboard')) ? '/' : next
+            // All users end up on the destination or dashboard
+            const targetNext = next;
 
 
             const forwardedHost = request.headers.get('x-forwarded-host') // i.e. local.com:3000

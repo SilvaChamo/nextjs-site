@@ -209,7 +209,7 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                     const params = new URLSearchParams(window.location.search);
                     const redirectTo = params.get('next');
                     setLoading(false);
-                    router.push(redirectTo || "/"); // Default for registration is home as it starts with Visitante strategy usually
+                    router.push(redirectTo || "/usuario/dashboard");
                 } else {
                     const { error: signInError } = await supabase.auth.signInWithPassword({
                         email: formData.email,
@@ -218,7 +218,9 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
 
                     if (!signInError) {
                         setLoading(false);
-                        router.push("/");
+                        const params = new URLSearchParams(window.location.search);
+                        const redirectTo = params.get('next');
+                        router.push(redirectTo || "/usuario/dashboard");
                     } else {
                         setStatus({ type: 'success', message: 'Conta criada! Verifique sua caixa de entrada para confirmar o e-mail.' });
                     }

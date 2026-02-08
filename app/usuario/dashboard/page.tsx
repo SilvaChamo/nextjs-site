@@ -16,6 +16,8 @@ import Link from "next/link";
 import { Button } from "../../../components/ui/button";
 import { UpgradeModal } from "@/components/UpgradeModal";
 import { type PlanType } from "@/lib/plan-fields";
+import { Switch } from "@/components/ui/switch";
+import { NotificationPaymentModal } from "@/components/NotificationPaymentModal";
 
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { usePlanPermissions } from "@/hooks/usePlanPermissions";
@@ -41,10 +43,11 @@ export default function DashboardPage() {
     const [loading, setLoading] = useState(true);
     const [smsNotifications, setSmsNotifications] = useState(false);
     const [updatingSms, setUpdatingSms] = useState(false);
+    const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
     const supabase = createClient();
     const { settings, loading: settingsLoading } = useSiteSettings();
-    const { plan, canAnalytics, canManageSharing, canPresentations, loading: permissionsLoading } = usePlanPermissions();
+    const { plan, canAnalytics, canManageSharing, canPresentations, canSMS, loading: permissionsLoading } = usePlanPermissions();
 
     const [upgradeModal, setUpgradeModal] = useState<{
         isOpen: boolean;
@@ -122,6 +125,14 @@ export default function DashboardPage() {
         }
     };
 
+    const handleSmsToggle = async () => {
+        if (!canSMS && !smsNotifications) {
+            setIsPaymentModalOpen(true);
+            return;
+        }
+        toggleSms();
+    };
+
     const handleCardClick = (e: React.MouseEvent, href: string, isLocked: boolean, label: string, requiredPlan: PlanType = "Basic") => {
         if (isLocked) {
             e.preventDefault();
@@ -171,22 +182,24 @@ export default function DashboardPage() {
                         )}
 
                         {/* Profile Sharing Status - Linked to Settings */}
-                        <div className="bg-white rounded-[15px] p-6 border border-slate-100 shadow-sm cursor-pointer hover:border-emerald-200 transition-all group" onClick={() => router.push('/usuario/dashboard/minha-conta')}>
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
-                                        <Share2 className="w-5 h-5" />
+                        {canManageSharing && (
+                            <div className="bg-white rounded-[15px] p-6 border border-slate-100 shadow-sm cursor-pointer hover:border-emerald-200 transition-all group" onClick={() => router.push('/usuario/dashboard/minha-conta')}>
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
+                                            <Share2 className="w-5 h-5" />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-bold text-slate-800 text-sm italic">Marketing & Visibilidade</h4>
+                                            <p className="text-[10px] text-slate-500 italic">Gerencie a visibilidade pública a partir das Definições</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h4 className="font-bold text-slate-800 text-sm italic">Marketing & Visibilidade</h4>
-                                        <p className="text-[10px] text-slate-500 italic">Gerencie a visibilidade pública a partir das Definições</p>
+                                    <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                                        <ShieldCheck className="w-4 h-4" />
                                     </div>
-                                </div>
-                                <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-colors">
-                                    <ShieldCheck className="w-4 h-4" />
                                 </div>
                             </div>
-                        </div>
+                        )}
 
                         {/* Visibility Chart - PREMIUM Main Area */}
                         {canAnalytics && (
@@ -208,10 +221,20 @@ export default function DashboardPage() {
                             <div className="absolute top-0 right-0 p-3 opacity-10">
                                 <Bell className="w-12 h-12 text-blue-500" />
                             </div>
-                            <h4 className="font-extrabold text-slate-800 text-sm mb-4 uppercase tracking-tight flex items-center gap-2">
-                                <Bell className="w-4 h-4 text-blue-500" />
-                                Informações e Alertas
-                            </h4>
+                            <div className="flex items-center justify-between mb-4">
+                                <h4 className="font-extrabold text-slate-800 text-sm uppercase tracking-tight flex items-center gap-2">
+                                    <Bell className="w-4 h-4 text-blue-500" />
+                                    Informações e Alertas
+                                </h4>
+                                <div className="flex items-center gap-2 bg-slate-50 px-2 py-1 rounded-full border border-slate-100">
+                                    <span className="text-[9px] font-black uppercase text-slate-400">Alertas SMS</span>
+                                    <Switch
+                                        checked={smsNotifications}
+                                        onCheckedChange={handleSmsToggle}
+                                        disabled={updatingSms}
+                                    />
+                                </div>
+                            </div>
                             <div className="space-y-4">
                                 <div className="flex items-start gap-3">
                                     <div className="w-2 h-2 rounded-full bg-emerald-500 mt-1.5 flex-shrink-0"></div>
@@ -261,6 +284,14 @@ export default function DashboardPage() {
                 onClose={() => setUpgradeModal(prev => ({ ...prev, isOpen: false }))}
                 fieldLabel={upgradeModal.fieldLabel}
                 requiredPlan={upgradeModal.requiredPlan}
+            />
+            <NotificationPaymentModal
+                isOpen={isPaymentModalOpen}
+                onClose={() => setIsPaymentModalOpen(false)}
+                onSuccess={() => {
+                    // Force enable after successful payment simulation
+                    setSmsNotifications(true);
+                }}
             />
         </div >
     );

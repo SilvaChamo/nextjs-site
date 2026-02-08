@@ -100,8 +100,8 @@ export function Navbar() {
         { label: t("common.help_center"), link: "/ajuda" },
         { label: t("common.blog"), link: "/blog" },
         { label: t("common.careers"), link: "/carreiras" },
-        { label: t("common.terms"), link: "/terms" },
-        { label: t("common.privacy"), link: "/privacidade" },
+        { label: t("common.terms"), link: "/termos" },
+        { label: t("common.privacy"), link: "/politica-privacidade" },
     ];
 
     return (

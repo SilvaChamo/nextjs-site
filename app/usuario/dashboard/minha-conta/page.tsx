@@ -12,6 +12,8 @@ import { useRouter } from "next/navigation";
 import { normalizePlanName, getPlanDisplayName, PLAN_HIERARCHY, PLAN_PRIVILEGES, PlanType } from "@/lib/plan-fields";
 import { ChevronRight, Check } from "lucide-react";
 import { SuccessModal } from "@/components/ui/SuccessModal";
+import { PasswordChangeModal } from "@/components/PasswordChangeModal";
+import { KeywordsManagementModal } from "@/components/KeywordsManagementModal";
 
 export default function MinhaContaPage() {
     const supabase = createClient();
@@ -24,6 +26,8 @@ export default function MinhaContaPage() {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const [successModal, setSuccessModal] = useState({ isOpen: false, title: "", description: "" });
+    const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+    const [isKeywordsModalOpen, setIsKeywordsModalOpen] = useState(false);
 
     // Form State
     const [formData, setFormData] = useState({
@@ -559,7 +563,12 @@ export default function MinhaContaPage() {
                                                 <h5 className="font-bold text-slate-800 text-sm">Palavras-chave de Visibilidade</h5>
                                                 <p className="text-[11px] text-slate-500 italic">Termos que fazem o seu perfil aparecer em destaque.</p>
                                             </div>
-                                            <Button size="sm" variant="outline" className="text-[10px] font-black uppercase tracking-widest border-slate-200">
+                                            <Button
+                                                size="sm"
+                                                variant="outline"
+                                                className="text-[10px] font-black uppercase tracking-widest border-slate-200"
+                                                onClick={() => setIsKeywordsModalOpen(true)}
+                                            >
                                                 Gerir Palavras
                                             </Button>
                                         </div>
@@ -586,7 +595,12 @@ export default function MinhaContaPage() {
                                                 <h5 className="font-bold text-slate-800 text-sm">Segurança da Conta</h5>
                                                 <p className="text-[11px] text-slate-500 italic">Actualize a sua palavra-passe ou active MFA.</p>
                                             </div>
-                                            <Button size="sm" variant="outline" className="text-[10px] font-black uppercase tracking-widest border-slate-200">
+                                            <Button
+                                                size="sm"
+                                                variant="outline"
+                                                className="text-[10px] font-black uppercase tracking-widest border-slate-200"
+                                                onClick={() => setIsPasswordModalOpen(true)}
+                                            >
                                                 Alterar Senha
                                             </Button>
                                         </div>
@@ -696,6 +710,14 @@ export default function MinhaContaPage() {
                 onClose={() => setSuccessModal(prev => ({ ...prev, isOpen: false }))}
                 title={successModal.title}
                 description={successModal.description}
+            />
+            <PasswordChangeModal
+                isOpen={isPasswordModalOpen}
+                onClose={() => setIsPasswordModalOpen(false)}
+            />
+            <KeywordsManagementModal
+                isOpen={isKeywordsModalOpen}
+                onClose={() => setIsKeywordsModalOpen(false)}
             />
         </div >
     );

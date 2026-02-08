@@ -26,16 +26,19 @@ import {
     ShoppingCart,
     GraduationCap,
     Briefcase,
-    Lock
+    Lock,
+    Eye
 } from "lucide-react";
 
+import { PLAN_HIERARCHY, normalizePlanName } from "@/lib/plan-fields";
+
 const navigation = [
-    { name: "Minha Conta", href: "/usuario/dashboard/minha-conta", icon: User, requiredPlan: "Visitante" },
-    { name: "Minha Empresa", href: "/usuario/dashboard/empresa", icon: Building2, requiredPlan: "Visitante" },
+    { name: "Minha Conta", href: "/usuario/dashboard/minha-conta", icon: User, requiredPlan: "Gratuito" },
+    { name: "Minha Empresa", href: "/usuario/dashboard/empresa", icon: Building2, requiredPlan: "Gratuito" },
     { name: "Meus Produtos", href: "/usuario/dashboard/produtos", icon: Package, requiredPlan: "Basic" },
-    { name: "Mensagens", href: "/usuario/dashboard/mensagens", icon: Mail, requiredPlan: "Visitante" },
+    { name: "Mensagens", href: "/usuario/dashboard/mensagens", icon: Mail, requiredPlan: "Gratuito" },
     { name: "Contactos & Leads", href: "/usuario/dashboard/contactos", icon: Users, requiredPlan: "Basic" },
-    { name: "Apresentações", href: "/usuario/dashboard/apresentacoes", icon: Presentation, requiredPlan: "Basic" },
+    { name: "Apresentações", href: "/usuario/dashboard/apresentacoes", icon: Presentation, requiredPlan: "Business Vendedor" }, // Restrito a Business/Parceiro
     { name: "Análise de Dados", href: "/usuario/dashboard/analises", icon: BarChart3, requiredPlan: "Basic" },
     { name: "Preços de Mercado", href: "/usuario/dashboard/mercado", icon: ShoppingCart, requiredPlan: "Basic" },
     { name: "Formação Agrária", href: "/usuario/dashboard/formacao", icon: GraduationCap, requiredPlan: "Basic" },
@@ -61,10 +64,14 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
     } = usePlanPermissions();
 
     // Helper to check if a menu item should be locked
-    const isLocked = (requiredPlan: string) => {
-        if (requiredPlan === "Visitante") return false;
-        if (requiredPlan === "Basic" && !canAnalytics) return true;
-        return false;
+    const isLocked = (requiredPlanName: string) => {
+        const userPlan = normalizePlanName(plan);
+        const requiredPlan = normalizePlanName(requiredPlanName as any);
+
+        const userPlanIndex = PLAN_HIERARCHY.indexOf(userPlan);
+        const requiredPlanIndex = PLAN_HIERARCHY.indexOf(requiredPlan);
+
+        return userPlanIndex < requiredPlanIndex;
     };
 
     // Create Supabase client
@@ -154,20 +161,16 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
                     const isActive = pathname === item.href;
                     const locked = isLocked(item.requiredPlan);
 
+                    // Se estiver trancado, não renderiza o item no menu lateral para este utilizador
+                    if (locked) return null;
+
                     return (
                         <div key={item.href} className="relative group/item">
                             <Link
-                                href={locked ? "#" : item.href}
-                                onClick={(e) => {
-                                    if (locked) {
-                                        e.preventDefault();
-                                    }
-                                }}
+                                href={item.href}
                                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group ${isActive
                                     ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
-                                    : locked
-                                        ? "text-slate-600 cursor-not-allowed"
-                                        : "text-slate-400 hover:text-[#f97316] hover:bg-white/5"
+                                    : "text-slate-400 hover:text-[#f97316] hover:bg-white/5"
                                     } ${isCollapsed ? 'justify-center' : ''}`}
                                 title={isCollapsed ? item.name : undefined}
                             >
@@ -194,22 +197,6 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
                         {!isCollapsed && "Ajuda & Suporte"}
                     </Link>
 
-                    {/* Configurações de Conta Section */}
-                    {!isCollapsed && (
-                        <div className="mt-6 pt-6 border-t border-emerald-900/50">
-                            <p className="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Configurações de Conta</p>
-                            <div className="space-y-1">
-                                <Link href="/usuario/dashboard/minha-conta" className="flex items-center justify-between px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-white/5 hover:text-white transition-all group">
-                                    <span>Meus Dados</span>
-                                    <ArrowRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-orange-500 transition-colors" />
-                                </Link>
-                                <Link href="/usuario/dashboard/opcoes" className="flex items-center justify-between px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-white/5 hover:text-white transition-all group">
-                                    <span>Opções</span>
-                                    <ArrowRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-orange-500 transition-colors" />
-                                </Link>
-                            </div>
-                        </div>
-                    )}
 
                     {/* Logout Button */}
                     <button

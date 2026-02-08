@@ -222,7 +222,7 @@ export default function AdminApresentacoesPage() {
         if (statusFilter !== 'deleted') {
             items = items.filter(p =>
                 statusFilter === 'active'
-                    ? (p.status === 'active' || !p.status)
+                    ? (p.status === 'active' || p.status === 'draft' || !p.status)
                     : p.status === 'archived'
             );
         }

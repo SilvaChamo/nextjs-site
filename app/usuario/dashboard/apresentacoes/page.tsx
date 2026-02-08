@@ -247,7 +247,7 @@ export default function UserPresentationsPage() {
         if (statusFilter !== 'deleted') {
             items = items.filter(p =>
                 statusFilter === 'active'
-                    ? (p.status === 'active' || !p.status)
+                    ? (p.status === 'active' || p.status === 'draft' || !p.status)
                     : p.status === 'archived'
             );
         }
@@ -259,7 +259,7 @@ export default function UserPresentationsPage() {
 
     if (loading || permissionsLoading) return (
         <div className="flex items-center justify-center min-h-[400px]">
-            <Loader2 className="w-8 h-8 text-emerald-600" />
+            <Loader2 className="w-8 h-8 text-emerald-600 animate-spin" />
         </div>
     );
 
@@ -329,228 +329,280 @@ export default function UserPresentationsPage() {
                 </div>
             </div>
 
-            {/* Content Area */}
-            {filtered.length === 0 ? (
-                /* Empty State */
-                <div className="bg-white rounded-3xl border-2 border-dashed border-slate-200 p-20 text-center flex flex-col items-center gap-4">
-                    <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center">
-                        <Presentation className="w-10 h-10 text-slate-300" />
-                    </div>
-                    <div>
-                        <h3 className="text-lg font-bold text-slate-900">
-                            {statusFilter === 'deleted' ? "A reciclagem está vazia" : statusFilter === 'archived' ? "Nenhuma apresentação arquivada" : "Você ainda não tem apresentações"}
-                        </h3>
-                        <p className="text-slate-500 max-w-xs mx-auto mt-1">
-                            {statusFilter === 'active' && "Crie sua primeira vitrine interativa agora mesmo."}
-                        </p>
-                    </div>
-                    {statusFilter === 'active' && (
-                        <button
-                            onClick={handleCreatePresentation}
-                            disabled={creating}
-                            className="px-6 py-2 bg-emerald-600 text-white font-bold rounded-lg hover:bg-orange-500 transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mt-4"
-                        >
-                            {creating ? "Criando..." : "+ Nova Apresentação"}
-                        </button>
-                    )}
-                </div>
-            ) : viewMode === 'list' ? (
-                /* LIST VIEW */
-                <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
-                    <div className="px-6 py-4 border-b border-slate-100">
-                        <h2 className="text-sm font-bold text-slate-700">
-                            {statusFilter === 'deleted' ? "Reciclagem" : statusFilter === 'archived' ? "Apresentações Arquivadas" : "Lista de Apresentações"}
-                            <span className="text-slate-400 font-normal ml-2">({filtered.length})</span>
-                        </h2>
-                    </div>
-                    <table className="w-full">
-                        <thead>
-                            <tr className="border-b border-slate-100 text-left">
-                                <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">Título</th>
-                                <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">Slides</th>
-                                <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">Data</th>
-                                <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 text-right">Acções</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Main Content Area */}
+                <div className="lg:col-span-2 space-y-8">
+                    {filtered.length === 0 ? (
+                        /* Empty State */
+                        <div className="bg-white rounded-3xl border-2 border-dashed border-slate-200 p-20 text-center flex flex-col items-center gap-4">
+                            <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center">
+                                <Presentation className="w-10 h-10 text-slate-300" />
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-bold text-slate-900">
+                                    {statusFilter === 'deleted' ? "A reciclagem está vazia" : statusFilter === 'archived' ? "Nenhuma apresentação arquivada" : "Você ainda não tem apresentações"}
+                                </h3>
+                                <p className="text-slate-500 max-w-xs mx-auto mt-1">
+                                    {statusFilter === 'active' && "Crie sua primeira vitrine interativa agora mesmo."}
+                                </p>
+                            </div>
+                            {statusFilter === 'active' && (
+                                <button
+                                    onClick={handleCreatePresentation}
+                                    disabled={creating}
+                                    className="px-6 py-2 bg-emerald-600 text-white font-bold rounded-lg hover:bg-orange-500 transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mt-4"
+                                >
+                                    {creating ? "Criando..." : "+ Nova Apresentação"}
+                                </button>
+                            )}
+                        </div>
+                    ) : viewMode === 'list' ? (
+                        /* LIST VIEW */
+                        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                            <div className="px-6 py-4 border-b border-slate-100">
+                                <h2 className="text-sm font-bold text-slate-700">
+                                    {statusFilter === 'deleted' ? "Reciclagem" : statusFilter === 'archived' ? "Apresentações Arquivadas" : "Lista de Apresentações"}
+                                    <span className="text-slate-400 font-normal ml-2">({filtered.length})</span>
+                                </h2>
+                            </div>
+                            <table className="w-full">
+                                <thead>
+                                    <tr className="border-b border-slate-100 text-left">
+                                        <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">Título</th>
+                                        <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">Slides</th>
+                                        <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">Data</th>
+                                        <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 text-right">Acções</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filtered.map((item) => {
+                                        const slideCount = item.slides?.length || 0;
+                                        const createdDate = new Date(item.created_at).toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+                                        return (
+                                            <tr key={item.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+                                                <td className="px-6 py-4">
+                                                    <div className="flex flex-col">
+                                                        <span className="font-bold text-slate-800">{item.title || "Sem Título"}</span>
+                                                        {item.status === 'draft' && <span className="text-[10px] font-bold text-amber-600 uppercase tracking-tighter">Rascunho</span>}
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <span className="bg-emerald-50 text-emerald-700 text-xs font-bold px-2 py-1 rounded-full">{slideCount}</span>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <span className="text-slate-400 text-sm">{createdDate}</span>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center justify-end gap-1">
+                                                        <button
+                                                            onClick={() => router.push(`/apresentacao/${item.id}`)}
+                                                            className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all"
+                                                            title="Reproduzir"
+                                                        >
+                                                            <Play className="w-4 h-4 fill-current" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => router.push(`/usuario/dashboard/apresentacoes/editor/${item.id}`)}
+                                                            className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all"
+                                                            title="Editar"
+                                                        >
+                                                            <Pencil className="w-4 h-4" />
+                                                        </button>
+                                                        {statusFilter === 'deleted' ? (
+                                                            <button
+                                                                onClick={() => handleRestoreFromTrash(item)}
+                                                                className="w-8 h-8 rounded-lg flex items-center justify-center text-emerald-500 hover:text-emerald-700 hover:bg-emerald-50 transition-all"
+                                                                title="Restaurar"
+                                                            >
+                                                                <Archive className="w-4 h-4" />
+                                                            </button>
+                                                        ) : (
+                                                            <button
+                                                                onClick={() => handleArchive(item)}
+                                                                className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${item.status === 'archived' ? 'text-amber-500 hover:bg-amber-50' : 'text-slate-400 hover:text-amber-500 hover:bg-amber-50'}`}
+                                                                title={item.status === 'archived' ? "Restaurar" : "Arquivar"}
+                                                            >
+                                                                <Archive className="w-4 h-4" />
+                                                            </button>
+                                                        )}
+                                                        <button
+                                                            onClick={() => handleMoveToTrash(item)}
+                                                            className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-all"
+                                                            title={statusFilter === 'deleted' ? "Eliminar permanentemente" : "Mover para reciclagem"}
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    ) : (
+                        /* GRID VIEW */
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {filtered.map((item) => {
                                 const slideCount = item.slides?.length || 0;
+                                const firstSlideImage = item.slides?.[0]?.image_url;
                                 const createdDate = new Date(item.created_at).toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
                                 return (
-                                    <tr key={item.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                                        <td className="px-6 py-4">
-                                            <span className="font-bold text-slate-800">{item.title || "Sem Título"}</span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className="bg-emerald-50 text-emerald-700 text-xs font-bold px-2 py-1 rounded-full">{slideCount}</span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className="text-slate-400 text-sm">{createdDate}</span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center justify-end gap-1">
-                                                <button
-                                                    onClick={() => router.push(`/apresentacao/${item.id}`)}
-                                                    className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all"
-                                                    title="Reproduzir"
-                                                >
-                                                    <Play className="w-4 h-4 fill-current" />
-                                                </button>
-                                                <button
-                                                    onClick={() => router.push(`/usuario/dashboard/apresentacoes/editor/${item.id}`)}
-                                                    className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all"
-                                                    title="Editar"
-                                                >
-                                                    <Pencil className="w-4 h-4" />
-                                                </button>
-                                                {statusFilter === 'deleted' ? (
-                                                    <button
-                                                        onClick={() => handleRestoreFromTrash(item)}
-                                                        className="w-8 h-8 rounded-lg flex items-center justify-center text-emerald-500 hover:text-emerald-700 hover:bg-emerald-50 transition-all"
-                                                        title="Restaurar"
-                                                    >
-                                                        <Archive className="w-4 h-4" />
-                                                    </button>
-                                                ) : (
-                                                    <button
-                                                        onClick={() => handleArchive(item)}
-                                                        className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${item.status === 'archived' ? 'text-amber-500 hover:bg-amber-50' : 'text-slate-400 hover:text-amber-500 hover:bg-amber-50'}`}
-                                                        title={item.status === 'archived' ? "Restaurar" : "Arquivar"}
-                                                    >
-                                                        <Archive className="w-4 h-4" />
-                                                    </button>
-                                                )}
-                                                <button
-                                                    onClick={() => handleMoveToTrash(item)}
-                                                    className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-all"
-                                                    title={statusFilter === 'deleted' ? "Eliminar permanentemente" : "Mover para reciclagem"}
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
+                                    <div
+                                        key={item.id}
+                                        className="group relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 bg-slate-900"
+                                        style={{ aspectRatio: '16/10' }}
+                                    >
+                                        {/* Background */}
+                                        <div className="absolute inset-0">
+                                            {firstSlideImage ? (
+                                                <img
+                                                    src={firstSlideImage}
+                                                    alt={item.title}
+                                                    className="w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950" />
+                                            )}
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                                        </div>
+
+                                        {/* Content */}
+                                        <div className="relative h-full flex flex-col justify-between p-5">
+                                            {/* Top */}
+                                            <div className="flex items-start justify-between">
+                                                <div className="flex flex-col gap-2">
+                                                    <span className="bg-emerald-500 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
+                                                        {slideCount} Slides
+                                                    </span>
+                                                    {item.status === 'draft' && (
+                                                        <span className="bg-amber-500 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
+                                                            Rascunho
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                {/* Actions */}
+                                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                    {statusFilter === 'deleted' ? (
+                                                        <button
+                                                            onClick={(e) => { e.stopPropagation(); handleRestoreFromTrash(item); }}
+                                                            className="w-9 h-9 rounded-full border-2 border-emerald-400/50 flex items-center justify-center text-emerald-400 hover:border-emerald-400 hover:bg-emerald-400/10 transition-all bg-black/30 backdrop-blur-sm"
+                                                            title="Restaurar"
+                                                        >
+                                                            <Archive className="w-4 h-4" />
+                                                        </button>
+                                                    ) : (
+                                                        <>
+                                                            <button
+                                                                onClick={(e) => { e.stopPropagation(); handleArchive(item); }}
+                                                                className={`w-9 h-9 rounded-full border-2 flex items-center justify-center transition-all bg-black/30 backdrop-blur-sm ${item.status === 'archived' ? 'border-amber-400/50 text-amber-400 hover:border-amber-400' : 'border-white/40 text-white/80 hover:border-amber-400 hover:text-amber-400'}`}
+                                                                title={item.status === 'archived' ? "Restaurar" : "Arquivar"}
+                                                            >
+                                                                <Archive className="w-4 h-4" />
+                                                            </button>
+                                                            <button
+                                                                onClick={(e) => { e.stopPropagation(); handleMoveToTrash(item); }}
+                                                                className="w-9 h-9 rounded-full border-2 border-white/40 flex items-center justify-center text-white/80 hover:border-rose-400 hover:text-rose-400 transition-all bg-black/30 backdrop-blur-sm"
+                                                                title="Mover para reciclagem"
+                                                            >
+                                                                <Trash2 className="w-4 h-4" />
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                </div>
                                             </div>
-                                        </td>
-                                    </tr>
+
+                                            {/* Bottom */}
+                                            <div className="space-y-3">
+                                                <div>
+                                                    <h3 className="text-xl font-bold text-white leading-tight mb-1 truncate" title={item.title}>
+                                                        {item.title || "Sem Título"}
+                                                    </h3>
+                                                    <p className="text-white/70 text-sm line-clamp-2">
+                                                        {item.description || "Sem descrição disponível."}
+                                                    </p>
+                                                </div>
+
+                                                <div className="flex items-center justify-between pt-2">
+                                                    <Button
+                                                        variant="outline"
+                                                        onClick={() => router.push(`/usuario/dashboard/apresentacoes/editor/${item.id}`)}
+                                                        className="bg-transparent border-white/30 text-white text-[10px] font-bold uppercase tracking-widest h-9 px-4 rounded-full hover:bg-white/10 hover:border-white/50 gap-2"
+                                                    >
+                                                        Abrir Editor
+                                                        <ArrowRight className="w-3 h-3" />
+                                                    </Button>
+                                                    <button
+                                                        onClick={() => router.push(`/apresentacao/${item.id}`)}
+                                                        className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+                                                        title="Visualizar"
+                                                    >
+                                                        <Play className="w-3 h-3 fill-current" />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 );
                             })}
-                        </tbody>
-                    </table>
+                        </div>
+                    )}
+
+                    {/* Helper Banner */}
+                    <div className="bg-gradient-to-br from-emerald-600 to-emerald-800 rounded-2xl p-8 text-white shadow-xl relative overflow-hidden group mt-12">
+                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <HelpCircle className="w-32 h-32" />
+                        </div>
+                        <div className="relative z-10">
+                            <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-white">
+                                <Lightbulb className="w-6 h-6 text-orange-400" />
+                                Dica Pro
+                            </h3>
+                            <p className="text-emerald-50/80 mb-0 leading-relaxed max-w-2xl">
+                                Use o botão "Arquivar" para limpar sua visualização sem perder dados. Itens arquivados não aparecem publicamente, mas podem ser restaurados a qualquer momento.
+                            </p>
+                        </div>
+                    </div>
                 </div>
-            ) : (
-                /* GRID VIEW */
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filtered.map((item) => {
-                        const slideCount = item.slides?.length || 0;
-                        const firstSlideImage = item.slides?.[0]?.image_url;
-                        const createdDate = new Date(item.created_at).toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-                        return (
-                            <div
-                                key={item.id}
-                                className="group relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 bg-slate-900"
-                                style={{ aspectRatio: '16/10' }}
-                            >
-                                {/* Background */}
-                                <div className="absolute inset-0">
-                                    {firstSlideImage ? (
-                                        <img
-                                            src={firstSlideImage}
-                                            alt={item.title}
-                                            className="w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950" />
-                                    )}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-                                </div>
+                {/* Sidebar Tips */}
+                <div className="space-y-6">
+                    <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm sticky top-6">
+                        <h4 className="font-black text-[11px] text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                            <Info className="w-4 h-4 text-orange-500" />
+                            Dicas de Sucesso
+                        </h4>
+                        <ul className="space-y-4">
+                            <li className="flex gap-3">
+                                <div className="w-6 h-6 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center shrink-0 text-xs font-bold">1</div>
+                                <p className="text-[13px] text-slate-600 leading-snug">Use imagens de alta resolução para causar uma boa primeira impressão.</p>
+                            </li>
+                            <li className="flex gap-3">
+                                <div className="w-6 h-6 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center shrink-0 text-xs font-bold">2</div>
+                                <p className="text-[13px] text-slate-600 leading-snug">Seja conciso nos textos. Slides com pouco texto convertem melhor.</p>
+                            </li>
+                            <li className="flex gap-3">
+                                <div className="w-6 h-6 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center shrink-0 text-xs font-bold">3</div>
+                                <p className="text-[13px] text-slate-600 leading-snug">Adicione uma "Call to Action" (ex: Ver Preço) em todos os slides.</p>
+                            </li>
+                            <li className="flex gap-3">
+                                <div className="w-6 h-6 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center shrink-0 text-xs font-bold">4</div>
+                                <p className="text-[13px] text-slate-600 leading-snug">Revise a apresentação em modo de visualização antes de partilhar.</p>
+                            </li>
+                        </ul>
+                    </div>
 
-                                {/* Content */}
-                                <div className="relative h-full flex flex-col justify-between p-5">
-                                    {/* Top */}
-                                    <div className="flex items-start justify-between">
-                                        <span className="bg-emerald-500 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
-                                            {slideCount} Slides
-                                        </span>
-                                        {/* Actions */}
-                                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                            {statusFilter === 'deleted' ? (
-                                                <button
-                                                    onClick={(e) => { e.stopPropagation(); handleRestoreFromTrash(item); }}
-                                                    className="w-9 h-9 rounded-full border-2 border-emerald-400/50 flex items-center justify-center text-emerald-400 hover:border-emerald-400 hover:bg-emerald-400/10 transition-all bg-black/30 backdrop-blur-sm"
-                                                    title="Restaurar"
-                                                >
-                                                    <Archive className="w-4 h-4" />
-                                                </button>
-                                            ) : (
-                                                <>
-                                                    <button
-                                                        onClick={(e) => { e.stopPropagation(); handleArchive(item); }}
-                                                        className={`w-9 h-9 rounded-full border-2 flex items-center justify-center transition-all bg-black/30 backdrop-blur-sm ${item.status === 'archived' ? 'border-amber-400/50 text-amber-400 hover:border-amber-400' : 'border-white/40 text-white/80 hover:border-amber-400 hover:text-amber-400'}`}
-                                                        title={item.status === 'archived' ? "Restaurar" : "Arquivar"}
-                                                    >
-                                                        <Archive className="w-4 h-4" />
-                                                    </button>
-                                                    <button
-                                                        onClick={(e) => { e.stopPropagation(); handleMoveToTrash(item); }}
-                                                        className="w-9 h-9 rounded-full border-2 border-white/40 flex items-center justify-center text-white/80 hover:border-rose-400 hover:text-rose-400 transition-all bg-black/30 backdrop-blur-sm"
-                                                        title="Mover para reciclagem"
-                                                    >
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </button>
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {/* Bottom */}
-                                    <div className="space-y-3">
-                                        <div>
-                                            <h3 className="text-xl font-bold text-white leading-tight mb-1 truncate" title={item.title}>
-                                                {item.title || "Sem Título"}
-                                            </h3>
-                                            <p className="text-white/70 text-sm line-clamp-2">
-                                                {item.description || "Sem descrição disponível."}
-                                            </p>
-                                        </div>
-
-                                        <div className="flex items-center justify-between pt-2">
-                                            <Button
-                                                variant="outline"
-                                                onClick={() => router.push(`/usuario/dashboard/apresentacoes/editor/${item.id}`)}
-                                                className="bg-transparent border-white/30 text-white text-[10px] font-bold uppercase tracking-widest h-9 px-4 rounded-full hover:bg-white/10 hover:border-white/50 gap-2"
-                                            >
-                                                Abrir Editor
-                                                <ArrowRight className="w-3 h-3" />
-                                            </Button>
-                                            <button
-                                                onClick={() => router.push(`/apresentacao/${item.id}`)}
-                                                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
-                                                title="Visualizar"
-                                            >
-                                                <Play className="w-3 h-3 fill-current" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
-            )}
-
-            {/* Helper Banner */}
-            <div className="bg-gradient-to-br from-emerald-600 to-emerald-800 rounded-2xl p-8 text-white shadow-xl relative overflow-hidden group mt-12">
-                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                    <HelpCircle className="w-32 h-32" />
-                </div>
-                <div className="relative z-10">
-                    <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-white">
-                        <Lightbulb className="w-6 h-6 text-orange-400" />
-                        Dica Pro
-                    </h3>
-                    <p className="text-emerald-50/80 mb-0 leading-relaxed max-w-2xl">
-                        Use o botão "Arquivar" para limpar sua visualização sem perder dados. Itens arquivados não aparecem publicamente, mas podem ser restaurados a qualquer momento.
-                    </p>
+                    <div className="bg-orange-50 border border-orange-100 rounded-2xl p-6">
+                        <h4 className="font-bold text-orange-800 text-sm mb-2">Precisa de ajuda?</h4>
+                        <p className="text-xs text-orange-700/80 leading-relaxed mb-4">
+                            Nossa equipe de design pode ajudar a criar sua apresentação profissional.
+                        </p>
+                        <Link href="/usuario/dashboard/ajuda" className="text-xs font-black text-orange-600 uppercase tracking-widest hover:underline">
+                            Contactar Suporte &rarr;
+                        </Link>
+                    </div>
                 </div>
             </div>
 
@@ -566,7 +618,6 @@ export default function UserPresentationsPage() {
         </div>
     );
 }
-
 function Loader2({ className }: { className?: string }) {
     return <RefreshCw className={className + " animate-spin"} />;
 }

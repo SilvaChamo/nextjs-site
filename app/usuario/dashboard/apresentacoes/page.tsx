@@ -1,42 +1,78 @@
 "use client";
 
-import React from "react";
-import { Presentation, HelpCircle, Lightbulb, Play, MousePointer2, Info } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Presentation, HelpCircle, Lightbulb, Play, MousePointer2, Info, Archive, Trash2, LayoutGrid, List, Plus, ArrowRight, Calendar, Search, Pencil, RefreshCw } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { usePlanPermissions } from "@/hooks/usePlanPermissions";
 import Link from "next/link";
-
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 
 export default function UserPresentationsPage() {
-    const { canPresentations, planDisplayName, loading } = usePlanPermissions();
+    const { canPresentations, planDisplayName, loading: permissionsLoading } = usePlanPermissions();
     const router = useRouter();
     const supabase = createClient();
-    const [creating, setCreating] = React.useState(false);
 
-    // New State for Listing
-    const [presentations, setPresentations] = React.useState<any[]>([]);
-    const [loadingData, setLoadingData] = React.useState(true);
+    // State
+    const [presentations, setPresentations] = useState<any[]>([]);
+    const [deletedPresentations, setDeletedPresentations] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [creating, setCreating] = useState(false);
 
-    // Fetch Presentations
-    React.useEffect(() => {
-        const fetchPresentations = async () => {
+    // UI State
+    const [search, setSearch] = useState("");
+    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+    const [statusFilter, setStatusFilter] = useState<'active' | 'archived' | 'deleted'>('active');
+
+    // Modal State
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState<any>(null);
+
+    // Fetch Data
+    useEffect(() => {
+        let isMounted = true;
+        const load = async () => {
             const { data: { user } } = await supabase.auth.getUser();
-            if (user) {
-                const { data } = await supabase
-                    .from('presentations')
-                    .select('*')
-                    .eq('user_id', user.id)
-                    .order('created_at', { ascending: false });
-                setPresentations(data || []);
+            if (!user) return;
+
+            // Load active presentations
+            const { data: activeData } = await supabase
+                .from('presentations')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('created_at', { ascending: false });
+
+            // Load deleted presentations (recycle bin)
+            // Note: Assuming table exists as per Admin page logic
+            const { data: deletedData, error: deletedError } = await supabase
+                .from('deleted_presentations')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('deleted_at', { ascending: false });
+
+            if (deletedError && deletedError.code !== 'PGRST116') { // Ignore if table missing for now, though it should exist
+                console.error("Error fetching deleted items:", deletedError);
             }
-            setLoadingData(false);
+
+            if (isMounted) {
+                const normalized = (activeData || []).map(item => ({
+                    ...item,
+                    status: item.status || 'active'
+                }));
+                setPresentations(normalized);
+                setDeletedPresentations(deletedData || []);
+                setLoading(false);
+            }
         };
-        fetchPresentations();
+        load();
+        return () => { isMounted = false; };
     }, [supabase]);
 
+    // Handlers
     const handleCreatePresentation = async () => {
         setCreating(true);
         try {
@@ -66,195 +102,471 @@ export default function UserPresentationsPage() {
         }
     };
 
-    const handleDelete = async (id: string, e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        if (!window.confirm("Tem a certeza que deseja eliminar esta apresentação? Esta acção não pode ser desfeita.")) return;
+    const handleArchive = async (item: any) => {
+        const isCurrentlyArchived = item.status === 'archived';
+        const newStatus = isCurrentlyArchived ? 'active' : 'archived';
 
         try {
             const { error } = await supabase
                 .from('presentations')
-                .delete()
-                .eq('id', id);
+                .update({ status: newStatus })
+                .eq('id', item.id);
 
             if (error) throw error;
 
-            setPresentations(prev => prev.filter(p => p.id !== id));
-            toast.success("Apresentação eliminada.");
-        } catch (error) {
-            console.error(error);
-            toast.error("Erro ao eliminar apresentação.");
+            setPresentations(prev => prev.map(p =>
+                p.id === item.id ? { ...p, status: newStatus } : p
+            ));
+            toast.success(isCurrentlyArchived ? "Apresentação restaurada" : "Apresentação arquivada");
+        } catch (err: any) {
+            toast.error("Erro ao arquivar/restaurar: " + err.message);
         }
     };
 
-    if (loading || loadingData) return (
+    const handleMoveToTrash = (item: any) => {
+        setItemToDelete(item);
+        setShowDeleteConfirm(true);
+    };
+
+    const handleRestoreFromTrash = async (item: any) => {
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
+            // Re-insert into presentations
+            const { error: insertError } = await supabase
+                .from('presentations')
+                .insert({
+                    id: item.id,
+                    title: item.title,
+                    description: item.description,
+                    slides: item.slides,
+                    user_id: user.id, // Ensure ownership
+                    created_at: item.original_created_at || item.created_at,
+                    updated_at: new Date().toISOString(),
+                    status: 'active'
+                });
+
+            if (insertError) throw insertError;
+
+            // Remove from deleted_presentations
+            const { error: deleteError } = await supabase
+                .from('deleted_presentations')
+                .delete()
+                .eq('id', item.id);
+
+            if (deleteError) throw deleteError;
+
+            setDeletedPresentations(prev => prev.filter(p => p.id !== item.id));
+            setPresentations(prev => [{ ...item, status: 'active', created_at: item.original_created_at || item.created_at }, ...prev]);
+            toast.success("Apresentação restaurada!");
+        } catch (err: any) {
+            toast.error("Erro ao restaurar: " + err.message);
+        }
+    };
+
+    const handleDeleteConfirm = async () => {
+        if (!itemToDelete) return;
+
+        const isInTrash = statusFilter === 'deleted';
+
+        if (isInTrash) {
+            // Permanent delete
+            const { error } = await supabase
+                .from('deleted_presentations')
+                .delete()
+                .eq('id', itemToDelete.id);
+
+            if (error) {
+                toast.error("Erro ao eliminar permanentemente: " + error.message);
+            } else {
+                toast.success("Eliminado permanentemente!");
+                setDeletedPresentations(prev => prev.filter(p => p.id !== itemToDelete.id));
+            }
+        } else {
+            // Move to recycle bin
+            try {
+                const { error: insertError } = await supabase
+                    .from('deleted_presentations')
+                    .insert({
+                        id: itemToDelete.id,
+                        title: itemToDelete.title,
+                        description: itemToDelete.description,
+                        slides: itemToDelete.slides,
+                        user_id: itemToDelete.user_id,
+                        original_created_at: itemToDelete.created_at,
+                        deleted_at: new Date().toISOString()
+                    });
+
+                if (insertError) {
+                    // Fallback to permanent delete if recycled table fails/doesn't exist
+                    // This handles cases where deleted_presentations might not be set up or permission issues
+                    console.error("Recycle bin error, falling back to permanent delete:", insertError);
+
+                    const { error: delError } = await supabase
+                        .from('presentations')
+                        .delete()
+                        .eq('id', itemToDelete.id);
+
+                    if (delError) throw delError;
+
+                    toast.success("Apresentação eliminada permanentemente (Reciclagem indisponível).");
+                    setPresentations(prev => prev.filter(p => p.id !== itemToDelete.id));
+                } else {
+                    // Delete from active
+                    const { error: deleteError } = await supabase
+                        .from('presentations')
+                        .delete()
+                        .eq('id', itemToDelete.id);
+
+                    if (deleteError) throw deleteError;
+
+                    toast.success("Enviado para a reciclagem!");
+                    setPresentations(prev => prev.filter(p => p.id !== itemToDelete.id));
+                    setDeletedPresentations(prev => [{ ...itemToDelete, deleted_at: new Date().toISOString() }, ...prev]);
+                }
+            } catch (err: any) {
+                toast.error("Erro: " + err.message);
+            }
+        }
+        setShowDeleteConfirm(false);
+        setItemToDelete(null);
+    };
+
+    // Filter Logic
+    const getDisplayItems = () => {
+        let items = statusFilter === 'deleted' ? deletedPresentations : presentations;
+
+        // Apply Search
+        items = items.filter(p =>
+            p.title.toLowerCase().includes(search.toLowerCase()) ||
+            p.description?.toLowerCase().includes(search.toLowerCase())
+        );
+
+        // Apply Status Filter
+        if (statusFilter !== 'deleted') {
+            items = items.filter(p =>
+                statusFilter === 'active'
+                    ? (p.status === 'active' || !p.status)
+                    : p.status === 'archived'
+            );
+        }
+
+        return items;
+    };
+
+    const filtered = getDisplayItems();
+
+    if (loading || permissionsLoading) return (
         <div className="flex items-center justify-center min-h-[400px]">
-            <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+            <Loader2 className="w-8 h-8 text-emerald-600" />
         </div>
     );
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
-            {/* Header */}
+            {/* Header & Controls */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
                     <h2 className="text-3xl font-[900] tracking-tight text-[#3a3f47]">Minhas Apresentações</h2>
                     <p className="text-slate-500">Crie e gerencie seus slides interativos para demonstrações e mercado.</p>
                 </div>
-                {presentations.length > 0 && (
-                    <button
+
+                <div className="flex items-center flex-wrap gap-2">
+                    {/* Search Input */}
+                    <div className="relative w-64 md:w-72">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                        <Input
+                            placeholder="Buscar..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="pl-9 h-10 bg-white border-slate-200 text-sm"
+                        />
+                    </div>
+
+                    {/* Status Toggles */}
+                    <div className="flex items-center bg-white p-1 rounded-lg border border-slate-200 shadow-sm gap-1">
+                        <button
+                            onClick={() => setStatusFilter(statusFilter === 'archived' ? 'active' : 'archived')}
+                            className={`p-2 rounded-md transition-all ${statusFilter === 'archived' ? 'bg-amber-100 text-amber-700' : 'text-slate-400 hover:text-slate-600'}`}
+                            title="Arquivados"
+                        >
+                            <Archive className="w-4 h-4" />
+                        </button>
+                        <button
+                            onClick={() => setStatusFilter(statusFilter === 'deleted' ? 'active' : 'deleted')}
+                            className={`p-2 rounded-md transition-all ${statusFilter === 'deleted' ? 'bg-rose-100 text-rose-700' : 'text-slate-400 hover:text-slate-600'}`}
+                            title="Reciclagem"
+                        >
+                            <Trash2 className="w-4 h-4" />
+                        </button>
+                    </div>
+
+                    {/* View Toggles */}
+                    <div className="flex items-center bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
+                        <button
+                            onClick={() => setViewMode('grid')}
+                            className={`p-2 rounded-md transition-all ${viewMode === 'grid' ? 'bg-slate-100 text-emerald-600' : 'text-slate-400 hover:text-slate-600'}`}
+                        >
+                            <LayoutGrid className="w-4 h-4" />
+                        </button>
+                        <button
+                            onClick={() => setViewMode('list')}
+                            className={`p-2 rounded-md transition-all ${viewMode === 'list' ? 'bg-slate-100 text-emerald-600' : 'text-slate-400 hover:text-slate-600'}`}
+                        >
+                            <List className="w-4 h-4" />
+                        </button>
+                    </div>
+
+                    <Button
                         onClick={handleCreatePresentation}
                         disabled={creating}
-                        className="px-6 py-2.5 bg-emerald-600 text-white font-bold rounded-lg hover:bg-orange-500 transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm"
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-widest text-[10px] h-10 px-4 rounded-lg gap-2"
                     >
-                        {creating ? "Criando..." : "+ Nova Apresentação"}
-                    </button>
-                )}
+                        <Plus className="w-4 h-4" />
+                        {creating ? "..." : "Novo"}
+                    </Button>
+                </div>
             </div>
 
-            {/* Help/Orientation Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 space-y-6">
-
-                    {/* LIST OF PRESENTATIONS */}
-                    {presentations.length > 0 ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            {presentations.map((presentation) => {
-                                const slideCount = presentation.slides?.length || 0;
-                                const firstSlideImage = presentation.slides?.[0]?.image_url;
-                                const createdDate = new Date(presentation.created_at).toLocaleDateString('pt-PT');
+            {/* Content Area */}
+            {filtered.length === 0 ? (
+                /* Empty State */
+                <div className="bg-white rounded-3xl border-2 border-dashed border-slate-200 p-20 text-center flex flex-col items-center gap-4">
+                    <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center">
+                        <Presentation className="w-10 h-10 text-slate-300" />
+                    </div>
+                    <div>
+                        <h3 className="text-lg font-bold text-slate-900">
+                            {statusFilter === 'deleted' ? "A reciclagem está vazia" : statusFilter === 'archived' ? "Nenhuma apresentação arquivada" : "Você ainda não tem apresentações"}
+                        </h3>
+                        <p className="text-slate-500 max-w-xs mx-auto mt-1">
+                            {statusFilter === 'active' && "Crie sua primeira vitrine interativa agora mesmo."}
+                        </p>
+                    </div>
+                    {statusFilter === 'active' && (
+                        <button
+                            onClick={handleCreatePresentation}
+                            disabled={creating}
+                            className="px-6 py-2 bg-emerald-600 text-white font-bold rounded-lg hover:bg-orange-500 transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mt-4"
+                        >
+                            {creating ? "Criando..." : "+ Nova Apresentação"}
+                        </button>
+                    )}
+                </div>
+            ) : viewMode === 'list' ? (
+                /* LIST VIEW */
+                <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                    <div className="px-6 py-4 border-b border-slate-100">
+                        <h2 className="text-sm font-bold text-slate-700">
+                            {statusFilter === 'deleted' ? "Reciclagem" : statusFilter === 'archived' ? "Apresentações Arquivadas" : "Lista de Apresentações"}
+                            <span className="text-slate-400 font-normal ml-2">({filtered.length})</span>
+                        </h2>
+                    </div>
+                    <table className="w-full">
+                        <thead>
+                            <tr className="border-b border-slate-100 text-left">
+                                <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">Título</th>
+                                <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">Slides</th>
+                                <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">Data</th>
+                                <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 text-right">Acções</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filtered.map((item) => {
+                                const slideCount = item.slides?.length || 0;
+                                const createdDate = new Date(item.created_at).toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
                                 return (
-                                    <div key={presentation.id} className="group relative bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
-                                        {/* Preview Area */}
-                                        <div className="aspect-video bg-slate-100 relative overflow-hidden">
-                                            {firstSlideImage ? (
-                                                <img src={firstSlideImage} alt={presentation.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center bg-slate-50 text-slate-300">
-                                                    <Presentation className="w-12 h-12" />
-                                                </div>
-                                            )}
-                                            {/* Overlay Actions */}
-                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                                                <Link
-                                                    href={`/apresentacao/${presentation.id}`}
-                                                    className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-emerald-600 transition-colors"
-                                                    title="Visualizar"
+                                    <tr key={item.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+                                        <td className="px-6 py-4">
+                                            <span className="font-bold text-slate-800">{item.title || "Sem Título"}</span>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className="bg-emerald-50 text-emerald-700 text-xs font-bold px-2 py-1 rounded-full">{slideCount}</span>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className="text-slate-400 text-sm">{createdDate}</span>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center justify-end gap-1">
+                                                <button
+                                                    onClick={() => router.push(`/apresentacao/${item.id}`)}
+                                                    className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all"
+                                                    title="Reproduzir"
                                                 >
-                                                    <Play className="w-4 h-4 fill-current ml-0.5" />
-                                                </Link>
-                                                <Link
-                                                    href={`/usuario/dashboard/apresentacoes/editor/${presentation.id}`}
-                                                    className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-slate-900 transition-colors"
+                                                    <Play className="w-4 h-4 fill-current" />
+                                                </button>
+                                                <button
+                                                    onClick={() => router.push(`/usuario/dashboard/apresentacoes/editor/${item.id}`)}
+                                                    className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all"
                                                     title="Editar"
                                                 >
-                                                    <MousePointer2 className="w-4 h-4" />
-                                                </Link>
-                                            </div>
-                                            <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-md text-white text-[10px] font-bold px-2 py-1 rounded-full">
-                                                {slideCount} Slides
-                                            </div>
-                                        </div>
-
-                                        {/* Info Area */}
-                                        <div className="p-5 flex-1 flex flex-col">
-                                            <h3 className="font-bold text-slate-800 text-lg mb-1 truncate" title={presentation.title || "Sem Título"}>
-                                                {presentation.title || "Sem Título"}
-                                            </h3>
-                                            <p className="text-xs text-slate-500 mb-4 line-clamp-2 flex-1">
-                                                {presentation.description || "Sem descrição definida."}
-                                            </p>
-
-                                            <div className="flex items-center justify-between pt-4 border-t border-slate-100 mt-auto">
-                                                <span className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">
-                                                    {createdDate}
-                                                </span>
+                                                    <Pencil className="w-4 h-4" />
+                                                </button>
+                                                {statusFilter === 'deleted' ? (
+                                                    <button
+                                                        onClick={() => handleRestoreFromTrash(item)}
+                                                        className="w-8 h-8 rounded-lg flex items-center justify-center text-emerald-500 hover:text-emerald-700 hover:bg-emerald-50 transition-all"
+                                                        title="Restaurar"
+                                                    >
+                                                        <Archive className="w-4 h-4" />
+                                                    </button>
+                                                ) : (
+                                                    <button
+                                                        onClick={() => handleArchive(item)}
+                                                        className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${item.status === 'archived' ? 'text-amber-500 hover:bg-amber-50' : 'text-slate-400 hover:text-amber-500 hover:bg-amber-50'}`}
+                                                        title={item.status === 'archived' ? "Restaurar" : "Arquivar"}
+                                                    >
+                                                        <Archive className="w-4 h-4" />
+                                                    </button>
+                                                )}
                                                 <button
-                                                    onClick={(e) => handleDelete(presentation.id, e)}
-                                                    className="text-xs text-red-400 hover:text-red-600 font-medium transition-colors"
+                                                    onClick={() => handleMoveToTrash(item)}
+                                                    className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-all"
+                                                    title={statusFilter === 'deleted' ? "Eliminar permanentemente" : "Mover para reciclagem"}
                                                 >
-                                                    Eliminar
+                                                    <Trash2 className="w-4 h-4" />
                                                 </button>
                                             </div>
-                                        </div>
-                                    </div>
+                                        </td>
+                                    </tr>
                                 );
                             })}
-                        </div>
-                    ) : (
-                        /* Empty State */
-                        <div className="border border-dashed border-slate-300 rounded-2xl h-80 flex flex-col items-center justify-center bg-slate-50 text-slate-500 space-y-4">
-                            <div className="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center">
-                                <Presentation className="w-8 h-8 text-slate-400" />
-                            </div>
-                            <div className="text-center">
-                                <h3 className="font-bold text-lg text-slate-700">Você ainda não tem apresentações</h3>
-                                <p className="text-sm max-w-xs mx-auto mt-1">Crie sua primeira vitrine interativa agora mesmo.</p>
-                            </div>
-                            <button
-                                onClick={handleCreatePresentation}
-                                disabled={creating}
-                                className="px-6 py-2 bg-emerald-600 text-white font-bold rounded-lg hover:bg-orange-500 transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                            >
-                                {creating ? "Criando..." : "+ Nova Apresentação"}
-                            </button>
-                        </div>
-                    )}
-
-                    {/* Banner Promocional (moved here to be below list) */}
-                    <div className="bg-gradient-to-br from-emerald-600 to-emerald-800 rounded-2xl p-8 text-white shadow-xl relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                            <HelpCircle className="w-32 h-32" />
-                        </div>
-                        <div className="relative z-10">
-                            <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-white">
-                                <Lightbulb className="w-6 h-6 text-orange-400" />
-                                Como funcionam as Apresentações?
-                            </h3>
-                            <p className="text-emerald-50/80 mb-6 leading-relaxed">
-                                As apresentações são uma forma dinâmica de mostrar seus produtos e serviços diretamente no mercado da BaseAgroData.
-                                Ao criar um conjunto de slides, você pode contar a história da sua marca de forma visual e impactante.
-                            </p>
-                        </div>
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
+            ) : (
+                /* GRID VIEW */
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filtered.map((item) => {
+                        const slideCount = item.slides?.length || 0;
+                        const firstSlideImage = item.slides?.[0]?.image_url;
+                        const createdDate = new Date(item.created_at).toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-                {/* Sidebar Tips */}
-                <div className="space-y-6">
-                    <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                        <h4 className="font-black text-[11px] text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-                            <Info className="w-4 h-4 text-orange-500" />
-                            Dicas de Sucesso
-                        </h4>
-                        <ul className="space-y-4">
-                            <li className="flex gap-3">
-                                <div className="w-6 h-6 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center shrink-0 text-xs font-bold">1</div>
-                                <p className="text-[13px] text-slate-600 leading-snug">Use imagens de alta resolução para causar uma boa primeira impressão.</p>
-                            </li>
-                            <li className="flex gap-3">
-                                <div className="w-6 h-6 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center shrink-0 text-xs font-bold">2</div>
-                                <p className="text-[13px] text-slate-600 leading-snug">Seja conciso nos textos. Slides com pouco texto convertem melhor.</p>
-                            </li>
-                            <li className="flex gap-3">
-                                <div className="w-6 h-6 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center shrink-0 text-xs font-bold">3</div>
-                                <p className="text-[13px] text-slate-600 leading-snug">Adicione uma "Call to Action" (ex: Ver Preço) em todos os slides.</p>
-                            </li>
-                        </ul>
-                    </div>
+                        return (
+                            <div
+                                key={item.id}
+                                className="group relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 bg-slate-900"
+                                style={{ aspectRatio: '16/10' }}
+                            >
+                                {/* Background */}
+                                <div className="absolute inset-0">
+                                    {firstSlideImage ? (
+                                        <img
+                                            src={firstSlideImage}
+                                            alt={item.title}
+                                            className="w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950" />
+                                    )}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                                </div>
 
-                    <div className="bg-orange-50 border border-orange-100 rounded-2xl p-6">
-                        <h4 className="font-bold text-orange-800 text-sm mb-2">Precisa de ajuda?</h4>
-                        <p className="text-xs text-orange-700/80 leading-relaxed mb-4">
-                            Nossa equipe de design pode ajudar a criar sua apresentação profissional.
-                        </p>
-                        <Link href="/usuario/dashboard/ajuda" className="text-xs font-black text-orange-600 uppercase tracking-widest hover:underline">
-                            Contactar Suporte &rarr;
-                        </Link>
-                    </div>
+                                {/* Content */}
+                                <div className="relative h-full flex flex-col justify-between p-5">
+                                    {/* Top */}
+                                    <div className="flex items-start justify-between">
+                                        <span className="bg-emerald-500 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
+                                            {slideCount} Slides
+                                        </span>
+                                        {/* Actions */}
+                                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                            {statusFilter === 'deleted' ? (
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); handleRestoreFromTrash(item); }}
+                                                    className="w-9 h-9 rounded-full border-2 border-emerald-400/50 flex items-center justify-center text-emerald-400 hover:border-emerald-400 hover:bg-emerald-400/10 transition-all bg-black/30 backdrop-blur-sm"
+                                                    title="Restaurar"
+                                                >
+                                                    <Archive className="w-4 h-4" />
+                                                </button>
+                                            ) : (
+                                                <>
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); handleArchive(item); }}
+                                                        className={`w-9 h-9 rounded-full border-2 flex items-center justify-center transition-all bg-black/30 backdrop-blur-sm ${item.status === 'archived' ? 'border-amber-400/50 text-amber-400 hover:border-amber-400' : 'border-white/40 text-white/80 hover:border-amber-400 hover:text-amber-400'}`}
+                                                        title={item.status === 'archived' ? "Restaurar" : "Arquivar"}
+                                                    >
+                                                        <Archive className="w-4 h-4" />
+                                                    </button>
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); handleMoveToTrash(item); }}
+                                                        className="w-9 h-9 rounded-full border-2 border-white/40 flex items-center justify-center text-white/80 hover:border-rose-400 hover:text-rose-400 transition-all bg-black/30 backdrop-blur-sm"
+                                                        title="Mover para reciclagem"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </button>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Bottom */}
+                                    <div className="space-y-3">
+                                        <div>
+                                            <h3 className="text-xl font-bold text-white leading-tight mb-1 truncate" title={item.title}>
+                                                {item.title || "Sem Título"}
+                                            </h3>
+                                            <p className="text-white/70 text-sm line-clamp-2">
+                                                {item.description || "Sem descrição disponível."}
+                                            </p>
+                                        </div>
+
+                                        <div className="flex items-center justify-between pt-2">
+                                            <Button
+                                                variant="outline"
+                                                onClick={() => router.push(`/usuario/dashboard/apresentacoes/editor/${item.id}`)}
+                                                className="bg-transparent border-white/30 text-white text-[10px] font-bold uppercase tracking-widest h-9 px-4 rounded-full hover:bg-white/10 hover:border-white/50 gap-2"
+                                            >
+                                                Abrir Editor
+                                                <ArrowRight className="w-3 h-3" />
+                                            </Button>
+                                            <button
+                                                onClick={() => router.push(`/apresentacao/${item.id}`)}
+                                                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+                                                title="Visualizar"
+                                            >
+                                                <Play className="w-3 h-3 fill-current" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
+
+            {/* Helper Banner */}
+            <div className="bg-gradient-to-br from-emerald-600 to-emerald-800 rounded-2xl p-8 text-white shadow-xl relative overflow-hidden group mt-12">
+                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <HelpCircle className="w-32 h-32" />
+                </div>
+                <div className="relative z-10">
+                    <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-white">
+                        <Lightbulb className="w-6 h-6 text-orange-400" />
+                        Dica Pro
+                    </h3>
+                    <p className="text-emerald-50/80 mb-0 leading-relaxed max-w-2xl">
+                        Use o botão "Arquivar" para limpar sua visualização sem perder dados. Itens arquivados não aparecem publicamente, mas podem ser restaurados a qualquer momento.
+                    </p>
                 </div>
             </div>
+
+            <ConfirmationModal
+                isOpen={showDeleteConfirm}
+                onClose={() => setShowDeleteConfirm(false)}
+                onConfirm={handleDeleteConfirm}
+                title="Eliminar Apresentação"
+                description={`Tem a certeza que deseja eliminar "${itemToDelete?.title}"? ${statusFilter === 'deleted' ? 'Esta acção é permanente e não pode ser desfeita.' : 'O item será movido para a reciclagem.'}`}
+                confirmLabel={statusFilter === 'deleted' ? "Eliminar Permanentemente" : "Mover para Reciclagem"}
+                variant="destructive"
+            />
         </div>
     );
+}
+
+function Loader2({ className }: { className?: string }) {
+    return <RefreshCw className={className + " animate-spin"} />;
 }

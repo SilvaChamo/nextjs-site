@@ -21,14 +21,30 @@ export default function AjudaPage() {
     }, [supabase]);
 
     const handleSendSupport = async () => {
-        if (!supportMessage.trim()) return;
+        if (!supportMessage.trim() || !user) return;
         setSendingSupport(true);
-        // Simulate sending email
-        setTimeout(() => {
+
+        try {
+            const { error } = await supabase
+                .from('support_tickets')
+                .insert({
+                    user_id: user.id,
+                    user_email: user.email,
+                    subject: "Pedido de Suporte Técnico",
+                    message: supportMessage,
+                    status: 'pending'
+                });
+
+            if (error) throw error;
+
             alert("Sua mensagem foi enviada para a nossa equipa de suporte. Responderemos em breve para " + user?.email);
             setSupportMessage("");
+        } catch (error: any) {
+            console.error("Error sending support ticket:", error);
+            alert("Erro ao enviar mensagem: " + error.message);
+        } finally {
             setSendingSupport(false);
-        }, 1500);
+        }
     };
 
     return (

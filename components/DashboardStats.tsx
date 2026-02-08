@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { Calendar, Download, TrendingUp, TrendingDown, Eye, MousePointerClick, MessageSquare, Percent } from "lucide-react";
+import { Calendar, Download, TrendingUp, TrendingDown, Eye, MousePointerClick, MessageSquare, Percent, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DashboardPageHeader } from "@/components/DashboardPageHeader";
 
@@ -19,39 +19,67 @@ export function DashboardStats({
     subtitleStyle,
     cardTitleStyle
 }: DashboardStatsProps) {
-    const [quotationsCount, setQuotationsCount] = useState(0);
+    const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState({
-        impressions: 1248,
-        clicks: 84,
-        ctr: 6.7
+        impressions: 0,
+        clicks: 0,
+        leads: 0,
+        ctr: 0
     });
     const supabase = createClient();
 
-    // Fetch real quotations count
     useEffect(() => {
-        const fetchQuotations = async () => {
+        const fetchRealStats = async () => {
             try {
-                const { count, error } = await supabase
-                    .from('quotations')
-                    .select('*', { count: 'exact', head: true });
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) return;
 
-                if (!error && count !== null) {
-                    setQuotationsCount(count);
-                }
+                // 1. Fetch Impressions (Total Page Views for user's content)
+                const { count: impressionsCount } = await supabase
+                    .from('page_views')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('user_id', user.id);
+
+                // 2. Fetch Profile Clicks (Views specifically of type 'profile')
+                const { count: profileClicksCount } = await supabase
+                    .from('page_views')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('user_id', user.id)
+                    .eq('target_type', 'profile');
+
+                // 3. Fetch Total Leads
+                const { count: leadsCount } = await supabase
+                    .from('leads')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('user_id', user.id);
+
+                const totalImpressions = impressionsCount || 0;
+                const totalClicks = profileClicksCount || 0;
+                const totalLeads = leadsCount || 0;
+                const realCtr = totalImpressions > 0 ? parseFloat(((totalClicks / totalImpressions) * 100).toFixed(1)) : 0;
+
+                setStats({
+                    impressions: totalImpressions,
+                    clicks: totalClicks,
+                    leads: totalLeads,
+                    ctr: realCtr
+                });
             } catch (err) {
-                console.error("Error fetching quotations:", err);
+                console.error("Error fetching real dashboard stats:", err);
+            } finally {
+                setLoading(false);
             }
         };
 
-        fetchQuotations();
+        fetchRealStats();
 
-        // Subscribe to new quotations for real-time update
-        const channel = supabase.channel('quotations-count')
+        // Optional: Real-time subscription for leads
+        const channel = supabase.channel('leads-updates')
             .on(
                 'postgres_changes',
-                { event: 'INSERT', schema: 'public', table: 'quotations' },
-                (payload) => {
-                    setQuotationsCount((prev) => prev + 1);
+                { event: 'INSERT', schema: 'public', table: 'leads' },
+                () => {
+                    fetchRealStats();
                 }
             )
             .subscribe();
@@ -59,29 +87,6 @@ export function DashboardStats({
         return () => {
             supabase.removeChannel(channel);
         };
-    }, []);
-
-    // Oscillating/Live stats simulation
-    useEffect(() => {
-
-        const interval = setInterval(() => {
-            setStats(prev => {
-                const randomImpressions = Math.floor(Math.random() * 5); // Add 0-4 impressions
-                const randomClicks = Math.random() > 0.7 ? 1 : 0; // Occasional click
-
-                const newImpressions = prev.impressions + randomImpressions;
-                const newClicks = prev.clicks + randomClicks;
-                const newCtr = parseFloat(((newClicks / newImpressions) * 100).toFixed(1));
-
-                return {
-                    impressions: newImpressions,
-                    clicks: newClicks,
-                    ctr: newCtr
-                };
-            });
-        }, 3000); // Update every 3 seconds
-
-        return () => clearInterval(interval);
     }, []);
 
     return (
@@ -114,9 +119,9 @@ export function DashboardStats({
                         </div>
                     </div>
                     <div className="flex items-baseline gap-2">
-                        <h3 className="text-3xl font-black text-slate-800">{stats.impressions.toLocaleString()}</h3>
+                        <h3 className="text-3xl font-black text-slate-800">{loading ? "..." : stats.impressions.toLocaleString()}</h3>
                         <span className="text-xs font-bold text-emerald-500 flex items-center gap-0.5 bg-emerald-50 px-1.5 py-0.5 rounded-full">
-                            <TrendingUp className="w-3 h-3" /> Live
+                            <ShieldCheck className="w-3 h-3" /> Real
                         </span>
                     </div>
                 </div>
@@ -130,23 +135,23 @@ export function DashboardStats({
                         </div>
                     </div>
                     <div className="flex items-baseline gap-2">
-                        <h3 className="text-3xl font-black text-slate-800">{stats.clicks.toLocaleString()}</h3>
+                        <h3 className="text-3xl font-black text-slate-800">{loading ? "..." : stats.clicks.toLocaleString()}</h3>
                         <span className="text-xs font-bold text-emerald-500 flex items-center gap-0.5 bg-emerald-50 px-1.5 py-0.5 rounded-full">
-                            <TrendingUp className="w-3 h-3" /> Live
+                            <ShieldCheck className="w-3 h-3" /> Real
                         </span>
                     </div>
                 </div>
 
-                {/* KPI 3 - Cotações */}
+                {/* KPI 3 - Leads */}
                 <div className="bg-white p-6 rounded-[15px] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
                     <div className="flex justify-between items-start mb-2">
-                        <p className="text-sm font-semibold text-slate-500" style={cardTitleStyle}>Solicitações de Cotação</p>
+                        <p className="text-sm font-semibold text-slate-500" style={cardTitleStyle}>Total de Leads</p>
                         <div className="p-2 bg-orange-50 rounded-[10px] text-orange-600 group-hover:scale-110 transition-transform">
                             <MessageSquare className="w-4 h-4" />
                         </div>
                     </div>
                     <div className="flex items-baseline gap-2">
-                        <h3 className="text-3xl font-black text-slate-800">{quotationsCount}</h3>
+                        <h3 className="text-3xl font-black text-slate-800">{loading ? "..." : stats.leads}</h3>
                         <span className="text-xs font-bold text-orange-500 flex items-center gap-0.5 bg-orange-50 px-1.5 py-0.5 rounded-full">
                             <TrendingUp className="w-3 h-3" /> Real
                         </span>
@@ -162,9 +167,9 @@ export function DashboardStats({
                         </div>
                     </div>
                     <div className="flex items-baseline gap-2">
-                        <h3 className="text-3xl font-black text-slate-800">{stats.ctr}%</h3>
+                        <h3 className="text-3xl font-black text-slate-800">{loading ? "..." : stats.ctr}%</h3>
                         <span className="text-xs font-bold text-emerald-500 flex items-center gap-0.5 bg-emerald-50 px-1.5 py-0.5 rounded-full">
-                            <TrendingUp className="w-3 h-3" /> Live
+                            <ShieldCheck className="w-3 h-3" /> Real
                         </span>
                     </div>
                 </div>

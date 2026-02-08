@@ -80,12 +80,42 @@ export default function ProductDetailClient({
     similarProducts?: (Product & { companySlug: string })[]
 }) {
 
+    const [stats, setStats] = useState({ views: 0, leads: 0 });
     const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
     const [submitting, setSubmitting] = useState(false);
-
-    // Anti-spam states
     const [honeypot, setHoneypot] = useState("");
     const [formLoadTime, setFormLoadTime] = useState(0);
+    const supabase = createClient();
+
+    // Track View & Fetch Stats
+    React.useEffect(() => {
+        if (product?.id) {
+            const initStats = async () => {
+                // 1. Log view
+                await supabase.from('page_views').insert({
+                    target_type: 'product',
+                    target_id: product.id,
+                    user_id: company.user_id
+                });
+
+                // 2. Fetch counts
+                const { count: viewCount } = await supabase
+                    .from('page_views')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('target_type', 'product')
+                    .eq('target_id', product.id);
+
+                const { count: leadCount } = await supabase
+                    .from('leads')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('source_type', 'product')
+                    .eq('source_id', product.id);
+
+                setStats({ views: viewCount || 0, leads: leadCount || 0 });
+            };
+            initStats();
+        }
+    }, [product?.id]);
 
     // Update formLoadTime when modal opens
     React.useEffect(() => {
@@ -93,8 +123,6 @@ export default function ProductDetailClient({
             setFormLoadTime(Date.now());
         }
     }, [isQuoteModalOpen]);
-
-    const supabase = createClient();
 
     const handleQuoteSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -117,20 +145,24 @@ export default function ProductDetailClient({
         const formData = new FormData(e.currentTarget);
 
         const data = {
+            user_id: company.user_id,
             sender_name: formData.get("sender_name") as string,
             sender_email: formData.get("sender_email") as string,
             sender_phone: formData.get("sender_phone") as string,
+            subject: `Solicitação de Cotação: ${product.name}`,
             message: formData.get("message") as string,
-            product_id: product.id,
-            company_id: company.id,
-            status: 'pending'
+            source_type: 'product',
+            source_id: product.id,
+            status: 'new'
         };
 
         try {
-            const { error } = await supabase.from('quotations').insert(data);
+            const { error } = await supabase.from('leads').insert(data);
             if (error) throw error;
             toast.success("Solicitação enviada com sucesso!");
             setIsQuoteModalOpen(false);
+            // Increment local interest count
+            setStats(prev => ({ ...prev, leads: prev.leads + 1 }));
         } catch (error) {
             console.error("Error sending quote:", error);
             toast.error("Erro ao enviar solicitação. Tente novamente.");
@@ -475,7 +507,7 @@ export default function ProductDetailClient({
                                             <Eye className="w-4 h-4 text-primary" />
                                             <span className="text-[10px] font-black text-slate-400 leading-none">Visitas</span>
                                         </div>
-                                        <p className="text-2xl font-black text-slate-800 tracking-tight">1.248</p>
+                                        <p className="text-2xl font-black text-slate-800 tracking-tight">{stats.views.toLocaleString()}</p>
                                     </div>
 
                                     <div className="bg-white rounded-[15px] p-4 border border-slate-200">
@@ -483,7 +515,7 @@ export default function ProductDetailClient({
                                             <ShoppingCart className="w-4 h-4 text-accent" />
                                             <span className="text-[10px] font-black text-slate-400 leading-none">Interesse</span>
                                         </div>
-                                        <p className="text-2xl font-black text-slate-800 tracking-tight">85</p>
+                                        <p className="text-2xl font-black text-slate-800 tracking-tight">{stats.leads.toLocaleString()}</p>
                                     </div>
                                 </div>
                             </div>

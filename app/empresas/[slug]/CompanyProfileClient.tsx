@@ -6,6 +6,10 @@ import { StandardBlogTemplate } from "@/components/StandardBlogTemplate";
 import { CheckCircle2, MapPin, Phone, Mail, Globe, Share2, Building2, Package, ArrowRight, FileText, Link as LinkIcon, MessageCircle, Facebook, Linkedin, Twitter } from 'lucide-react';
 import Link from 'next/link';
 import { MapNavigation } from '@/components/MapNavigation';
+import { createClient } from '@/utils/supabase/client';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className || "w-5 h-5"}>
@@ -19,11 +23,27 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
 
     const [mounted, setMounted] = React.useState(false);
     const [shareUrl, setShareUrl] = React.useState('');
+    const [showLeadModal, setShowLeadModal] = useState(false);
+    const [leadForm, setLeadForm] = useState({ name: '', email: '', phone: '', message: '' });
+    const [submittingLead, setSubmittingLead] = useState(false);
+    const supabase = createClient();
 
     React.useEffect(() => {
         setMounted(true);
         setShareUrl(`${window.location.origin}/empresas/${slug}`);
-    }, [slug]);
+
+        // Track Page View
+        const trackView = async () => {
+            if (company?.id) {
+                await supabase.from('page_views').insert({
+                    target_type: 'profile',
+                    target_id: company.id,
+                    user_id: company.user_id
+                });
+            }
+        };
+        trackView();
+    }, [slug, company?.id]);
 
     const slugify = (text: string) => (text || "").toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
 
@@ -45,8 +65,34 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                 break;
             case 'copy':
                 navigator.clipboard.writeText(url);
-                alert('Link copiado para a área de transferência!');
+                toast.success('Link copiado para a área de transferência!');
                 break;
+        }
+    };
+
+    const handleLeadSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!company?.user_id) return;
+        setSubmittingLead(true);
+        try {
+            const { error } = await supabase.from('leads').insert({
+                user_id: company.user_id,
+                sender_name: leadForm.name,
+                sender_email: leadForm.email,
+                sender_phone: leadForm.phone,
+                subject: `Interesse em ${company.name}`,
+                message: leadForm.message,
+                source_type: 'profile',
+                source_id: company.id
+            });
+            if (error) throw error;
+            toast.success("Mensagem enviada com sucesso!");
+            setShowLeadModal(false);
+            setLeadForm({ name: '', email: '', phone: '', message: '' });
+        } catch (error: any) {
+            toast.error("Erro ao enviar mensagem.");
+        } finally {
+            setSubmittingLead(false);
         }
     };
 
@@ -107,14 +153,22 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                             </ul>
                         </div>
 
+                        <button
+                            onClick={() => setShowLeadModal(true)}
+                            className="btn-primary w-full py-3 flex items-center justify-center gap-2 shadow-lg shadow-emerald-100 hover:scale-[1.02] active:scale-95 transition-all h-auto mb-2"
+                        >
+                            <Mail className="w-5 h-5" />
+                            <span className="text-sm font-bold uppercase tracking-tight">Enviar Mensagem</span>
+                        </button>
+
                         <a
                             href={`https://wa.me/${company.phone?.replace(/\s+/g, '') || ''}?text=${encodeURIComponent(`Olá, vi o perfil da ${company.name} no BaseAgroData e gostaria de saber mais.`)}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="btn-primary w-full py-3 flex items-center justify-center gap-2 shadow-lg shadow-emerald-100 hover:scale-[1.02] active:scale-95 transition-all h-auto"
+                            className="w-full py-3 flex items-center justify-center gap-2 border border-emerald-600 text-emerald-600 rounded-lg hover:bg-emerald-50 transition-all h-auto"
                         >
                             <WhatsAppIcon className="w-5 h-5" />
-                            <span className="text-sm font-bold uppercase tracking-tight">Contactar Empresa</span>
+                            <span className="text-sm font-bold uppercase tracking-tight">WhatsApp</span>
                         </a>
                     </div>
 
@@ -481,6 +535,66 @@ export default function CompanyProfileClient({ company, slug }: { company: any, 
                 )}
 
             </div>
+            {/* Lead Modal */}
+            <Dialog open={showLeadModal} onOpenChange={setShowLeadModal}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle className="text-xl font-black uppercase text-slate-800">Enviar Mensagem</DialogTitle>
+                        <DialogDescription className="text-slate-500">
+                            Preencha o formulário abaixo para entrar em contacto com a **{company.name}**.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleLeadSubmit} className="space-y-4 pt-4">
+                        <div className="space-y-1">
+                            <label className="text-[10px] font-black uppercase text-slate-400">Seu Nome</label>
+                            <input
+                                required
+                                value={leadForm.name}
+                                onChange={e => setLeadForm(prev => ({ ...prev, name: e.target.value }))}
+                                className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+                                placeholder="Seu nome completo"
+                            />
+                        </div>
+                        <div className="space-y-1">
+                            <label className="text-[10px] font-black uppercase text-slate-400">Email de Contacto</label>
+                            <input
+                                required
+                                type="email"
+                                value={leadForm.email}
+                                onChange={e => setLeadForm(prev => ({ ...prev, email: e.target.value }))}
+                                className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+                                placeholder="seu@email.com"
+                            />
+                        </div>
+                        <div className="space-y-1">
+                            <label className="text-[10px] font-black uppercase text-slate-400">Telemóvel (Opcional)</label>
+                            <input
+                                value={leadForm.phone}
+                                onChange={e => setLeadForm(prev => ({ ...prev, phone: e.target.value }))}
+                                className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+                                placeholder="+258..."
+                            />
+                        </div>
+                        <div className="space-y-1">
+                            <label className="text-[10px] font-black uppercase text-slate-400">Mensagem</label>
+                            <textarea
+                                required
+                                value={leadForm.message}
+                                onChange={e => setLeadForm(prev => ({ ...prev, message: e.target.value }))}
+                                className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none min-h-[100px] resize-none"
+                                placeholder="Descreva o seu interesse..."
+                            />
+                        </div>
+                        <Button
+                            type="submit"
+                            disabled={submittingLead}
+                            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase tracking-widest text-[10px] h-11"
+                        >
+                            {submittingLead ? "Enviando..." : "Enviar Pedido de Contacto"}
+                        </Button>
+                    </form>
+                </DialogContent>
+            </Dialog>
         </StandardBlogTemplate>
     );
 }

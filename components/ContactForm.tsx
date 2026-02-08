@@ -3,37 +3,57 @@
 import React, { useState } from "react";
 import { Send } from "lucide-react";
 import { toast } from "sonner";
+import { createClient } from "@/utils/supabase/client";
 
 export function ContactForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [honeypot, setHoneypot] = useState("");
     const [formLoadTime] = useState(Date.now());
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const supabase = createClient();
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
         // Anti-spam checks
         if (honeypot) {
-            e.preventDefault();
             console.warn("Spam detected: honeypot filled");
             return;
         }
 
         const timeTaken = Date.now() - formLoadTime;
         if (timeTaken < 5000) {
-            e.preventDefault();
             console.warn("Spam detected: submitted too quickly", timeTaken);
             toast.error("Por favor, preencha o formulário com calma.");
             return;
         }
 
-        if (isSubmitting) {
-            e.preventDefault();
-            return;
-        }
+        if (isSubmitting) return;
+
         setIsSubmitting(true);
-        setTimeout(() => {
-            setIsSubmitting(false);
+        const form = e.currentTarget as HTMLFormElement;
+        const formData = new FormData(form);
+
+        try {
+            const { error } = await supabase.from('leads').insert({
+                sender_name: formData.get("nome") as string,
+                sender_email: formData.get("email") as string,
+                message: formData.get("mensagem") as string,
+                subject: "Contacto Geral - Plataforma",
+                source_type: 'platform',
+                status: 'new'
+            });
+
+            if (error) throw error;
+
             toast.success("Mensagem enviada! Entraremos em contacto em breve.");
-        }, 1500);
+            form.reset();
+        } catch (error) {
+            console.error("Error submitting contact form:", error);
+            toast.error("Erro ao enviar mensagem. Tente novamente mais tarde.");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -54,9 +74,6 @@ export function ContactForm() {
             <form
                 id="contact-form"
                 className="flex flex-col items-start space-y-5"
-                action="mailto:geral@baseagrodata.com"
-                method="POST"
-                encType="text/plain"
                 onSubmit={handleSubmit}
             >
                 {/* Honeypot field - hidden from users, visible to bots */}

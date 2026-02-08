@@ -4,9 +4,32 @@ import Link from "next/link";
 import { Facebook, Instagram, Linkedin, Send, Youtube } from "lucide-react";
 import { usePathname } from "next/navigation";
 
+import { useEffect, useState } from "react";
+import { createClient } from "@/utils/supabase/client";
+
 export function Footer() {
     const pathname = usePathname();
     const showTopBorder = pathname !== "/sobre-aplicativo";
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+        const checkRole = async () => {
+            const supabase = createClient();
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('role')
+                    .eq('id', user.id)
+                    .single();
+
+                if (profile && (profile.role === 'admin' || profile.role === 'superadmin')) {
+                    setIsAdmin(true);
+                }
+            }
+        };
+        checkRole();
+    }, []);
 
     return (
         <footer className="w-full font-sans">
@@ -128,9 +151,11 @@ export function Footer() {
                         <div className="flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-2 text-gray-300 text-[10px] font-black uppercase tracking-widest">
                             <Link href="/politica-privacidade" className="hover:text-[#f97316] transition-colors">Política de privacidade</Link>
                             <Link href="/termos" className="hover:text-[#f97316] transition-colors">Termos e condições</Link>
+                            <Link href="/ajuda" className="hover:text-[#f97316] transition-colors">Ajuda</Link>
                             <Link href="/contactos" className="hover:text-[#f97316] transition-colors">Suporte</Link>
-                            <Link href="/design-system" className="hover:text-[#f97316] transition-colors text-emerald-600/70">Kit Padrão</Link>
-                            <Link href="/admin" className="hover:text-[#f97316] transition-colors text-white/30 hover:text-emerald-600">Cozinha</Link>
+                            {isAdmin && (
+                                <Link href="/admin" className="hover:text-[#f97316] transition-colors text-emerald-600/70">Admin</Link>
+                            )}
                         </div>
                         <div className="flex items-center gap-4">
                             <SocialIcon Icon={Facebook} href="https://facebook.com/baseagrodata" />

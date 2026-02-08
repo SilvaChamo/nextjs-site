@@ -8,6 +8,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { ArrowLeft, Plus, Trash2, Save, Loader2, Play, Image as ImageIcon, FileText, ChevronUp, ChevronDown, Layout, Sidebar as SidebarIcon, Menu, Maximize2, Monitor, Copy } from "lucide-react";
 import { useRouter } from "next/navigation";
+
+// Helper for generating IDs safely
+const generateId = () => Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { RichTextEditor } from "@/components/RichTextEditor";
 import { cn } from "@/lib/utils";
@@ -30,7 +33,7 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
         title: "",
         description: "",
         slides: [
-            { id: crypto.randomUUID(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, cta_text: "", cta_link: "", animation_text: "fade-in", animation_image: "fade-in" }
+            { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, cta_text: "", cta_link: "", animation_text: "fade-in", animation_image: "fade-in" }
         ]
     });
 
@@ -52,7 +55,7 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                     image_side: s.image_side || 'left',
                     image_disabled: s.image_disabled || false
                 })) : [
-                    { id: crypto.randomUUID(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, cta_text: "", cta_link: "", animation_text: "fade-in", animation_image: "fade-in" }
+                    { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, cta_text: "", cta_link: "", animation_text: "fade-in", animation_image: "fade-in" }
                 ];
 
                 setPresentation({
@@ -73,7 +76,7 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
     const handleAddSlide = () => {
         setPresentation(prev => ({
             ...prev,
-            slides: [...prev.slides, { id: crypto.randomUUID(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, cta_text: "", cta_link: "", animation_text: "fade-in", animation_image: "fade-in" }]
+            slides: [...prev.slides, { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, cta_text: "", cta_link: "", animation_text: "fade-in", animation_image: "fade-in" }]
         }));
     };
 
@@ -81,7 +84,7 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
         const slideToDuplicate = presentation.slides[index];
         const duplicatedSlide = {
             ...slideToDuplicate,
-            id: crypto.randomUUID(),
+            id: generateId(),
             title: `${slideToDuplicate.title} (Cópia)`
         };
 

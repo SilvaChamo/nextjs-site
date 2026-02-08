@@ -196,6 +196,20 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
                         {!isCollapsed && "Ajuda & Suporte"}
                     </Link>
 
+                    {!isCollapsed && (
+                        <div className="mx-3 mt-6 p-4 rounded-xl bg-orange-500/10 border border-orange-500/20">
+                            <h4 className="text-xs font-bold text-orange-500 mb-1">Precisa de ajuda?</h4>
+                            <p className="text-[10px] text-slate-400 leading-snug mb-3">
+                                Nossa equipe pode ajudar a criar sua apresentação.
+                            </p>
+                            <Link
+                                href="/usuario/dashboard/ajuda"
+                                className="text-[10px] font-black text-orange-500 uppercase tracking-wider hover:text-orange-400 flex items-center gap-1"
+                            >
+                                Contactar Suporte <ArrowRight className="w-3 h-3" />
+                            </Link>
+                        </div>
+                    )}
 
                     {/* Logout Button */}
                     <button
@@ -211,7 +225,7 @@ export function UserSidebar({ isCollapsed, toggleSidebar }: UserSidebarProps) {
 
             {/* 3. Footer Area (Upgrade Notification) */}
             <div className="mt-auto border-t border-emerald-900 bg-emerald-950">
-                {!isCollapsed && normalizePlanName(plan) === 'Gratuito' && (
+                {!isCollapsed && normalizePlanName(plan) !== 'Parceiro' && (
                     <div className="w-full bg-white/5 backdrop-blur-md border-t border-white/5 p-4 relative overflow-hidden group hover:bg-white/10 transition-all cursor-pointer">
                         <div className="absolute top-0 right-0 p-2 opacity-5 group-hover:opacity-10 transition-opacity">
                             <Crown className="w-16 h-16 text-white" />

@@ -83,6 +83,14 @@ function RegistroContent() {
             return;
         }
 
+        // SMS plans require phone
+        const smsPlans = ['Premium', 'Business Vendedor', 'Parceiro'];
+        if (smsPlans.includes(planName) && !phone.trim()) {
+            setError("O plano escolhido inclui alertas por SMS. Por favor, insira o seu número de telefone.");
+            setLoading(false);
+            return;
+        }
+
         if (password.length < 6) {
             setError("A senha deve ter pelo menos 6 caracteres.");
             setLoading(false);
@@ -98,7 +106,8 @@ function RegistroContent() {
                     data: {
                         full_name: fullName.trim(),
                         phone: phone.trim(),
-                        plan: planName
+                        plan: planName,
+                        sms_notifications: smsPlans.includes(planName) ? true : false
                     }
                 }
             });

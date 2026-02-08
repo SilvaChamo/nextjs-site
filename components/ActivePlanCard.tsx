@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { usePlanPermissions } from "@/hooks/usePlanPermissions";
-import { PLAN_PRIVILEGES } from "@/lib/plan-fields";
+import { PLAN_PRIVILEGES, normalizePlanName } from "@/lib/plan-fields";
 
 export function ActivePlanCard() {
     const { plan, planDisplayName, loading: permissionsLoading } = usePlanPermissions();
@@ -120,12 +120,14 @@ export function ActivePlanCard() {
 
                 {/* Action */}
                 <div className="shrink-0 w-full md:w-auto flex flex-col gap-3">
-                    <Button
-                        className={`w-full text-white font-bold h-11 px-6 shadow-lg uppercase tracking-wide text-xs transition-all hover:scale-105 ${isFree ? "bg-orange-500 hover:bg-orange-600 shadow-orange-900/20" : "bg-[#f97316] hover:bg-[#ea580c] shadow-orange-900/20"}`}
-                        onClick={() => router.push("/planos")}
-                    >
-                        {isFree ? "Fazer Upgrade Agora" : "Fazer Upgrade"}
-                    </Button>
+                    {normalizePlanName(plan) !== 'Parceiro' && (
+                        <Button
+                            className={`w-full text-white font-bold h-11 px-6 shadow-lg uppercase tracking-wide text-xs transition-all hover:scale-105 ${isFree ? "bg-orange-500 hover:bg-orange-600 shadow-orange-900/20" : "bg-[#f97316] hover:bg-[#ea580c] shadow-orange-900/20"}`}
+                            onClick={() => router.push("/planos")}
+                        >
+                            {isFree ? "Fazer Upgrade Agora" : "Fazer Upgrade"}
+                        </Button>
+                    )}
                     {!isFree && companyId && (
                         <button
                             onClick={handleCancel}

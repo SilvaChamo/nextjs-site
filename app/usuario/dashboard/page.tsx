@@ -15,7 +15,7 @@ import { Building2, ShoppingCart, Briefcase, GraduationCap, ArrowRight, LayoutDa
 import Link from "next/link";
 import { Button } from "../../../components/ui/button";
 import { UpgradeModal } from "@/components/UpgradeModal";
-import { type PlanType } from "@/lib/plan-fields";
+import { type PlanType, normalizePlanName } from "@/lib/plan-fields";
 import { Switch } from "@/components/ui/switch";
 import { NotificationPaymentModal } from "@/components/NotificationPaymentModal";
 
@@ -76,7 +76,10 @@ export default function DashboardPage() {
                     .single();
 
                 if (profile) {
-                    setSmsNotifications(profile.sms_notifications || false);
+                    const normalizedPlan = normalizePlanName(profile.plan);
+                    const isHighPlan = normalizedPlan === 'Business Vendedor' || normalizedPlan === 'Parceiro' || normalizedPlan === 'Premium';
+                    const smsSetting = profile.sms_notifications === null && isHighPlan ? true : (profile.sms_notifications || false);
+                    setSmsNotifications(smsSetting);
 
                     // Admins always have access
                     if (profile.role === 'admin') {
@@ -218,10 +221,10 @@ export default function DashboardPage() {
 
                         {/* Information & Notifications Card - New Section */}
                         <div className="bg-white rounded-[15px] p-6 border border-slate-100 shadow-sm relative overflow-hidden">
-                            <div className="absolute top-0 right-0 p-3 opacity-10">
+                            <div className="absolute top-0 right-0 p-3 opacity-10 pointer-events-none">
                                 <Bell className="w-12 h-12 text-blue-500" />
                             </div>
-                            <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center justify-between mb-4 relative z-10">
                                 <h4 className="font-extrabold text-slate-800 text-sm uppercase tracking-tight flex items-center gap-2">
                                     <Bell className="w-4 h-4 text-blue-500" />
                                     Informações e Alertas

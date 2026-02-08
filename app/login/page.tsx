@@ -203,7 +203,8 @@ export default function LoginPage({ initialMode = "login" }: LoginPageProps) {
                     await supabase.from('profiles').update({
                         plan: 'Free',
                         phone: cleanPhone,
-                        full_name: formData.fullName
+                        full_name: formData.fullName,
+                        sms_notifications: false // Default for Free
                     }).eq('id', data.user.id);
                     // Check for redirect param
                     const params = new URLSearchParams(window.location.search);

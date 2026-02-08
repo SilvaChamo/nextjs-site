@@ -269,7 +269,6 @@ export default function UserPresentationsPage() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
                     <h2 className="text-3xl font-[900] tracking-tight text-[#3a3f47]">Minhas Apresentações</h2>
-                    <p className="text-slate-500">Crie e gerencie seus slides interativos para demonstrações e mercado.</p>
                 </div>
 
                 <div className="flex items-center flex-wrap gap-2">
@@ -384,7 +383,7 @@ export default function UserPresentationsPage() {
                                                 <td className="px-6 py-4">
                                                     <div className="flex flex-col">
                                                         <span className="font-bold text-slate-800">{item.title || "Sem Título"}</span>
-                                                        {item.status === 'draft' && <span className="text-[10px] font-bold text-amber-600 uppercase tracking-tighter">Rascunho</span>}
+                                                        {item.status === 'draft' && <span className="text-[10px] font-bold text-amber-500 uppercase tracking-tighter">Rascunho</span>}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4">
@@ -478,7 +477,7 @@ export default function UserPresentationsPage() {
                                                         {slideCount} Slides
                                                     </span>
                                                     {item.status === 'draft' && (
-                                                        <span className="bg-amber-500 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
+                                                        <span className="text-amber-500 text-[10px] font-black uppercase tracking-wider drop-shadow-sm">
                                                             Rascunho
                                                         </span>
                                                     )}

@@ -9,7 +9,7 @@ import { DashboardPageHeader } from "@/components/DashboardPageHeader";
 import { createClient } from "@/utils/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
-import { normalizePlanName, getPlanDisplayName, PLAN_HIERARCHY, PLAN_PRIVILEGES, PlanType } from "@/lib/plan-fields";
+import { normalizePlanName, getPlanDisplayName, PLAN_HIERARCHY, PLAN_PRIVILEGES, PlanType, canManageProfileSharing } from "@/lib/plan-fields";
 import { ChevronRight, Check } from "lucide-react";
 import { SuccessModal } from "@/components/ui/SuccessModal";
 import { PasswordChangeModal } from "@/components/PasswordChangeModal";
@@ -39,7 +39,12 @@ export default function MinhaContaPage() {
         academicLevel: "",
         avatarUrl: "",
         smsNotifications: false,
-        isProfilePublic: true, // New field for company sharing
+        isProfilePublic: true,
+        facebookUrl: "",
+        instagramUrl: "",
+        linkedinUrl: "",
+        websiteUrl: "",
+        keywords: [] as string[],
         plan: "Gratuito" as PlanType
     });
 
@@ -73,8 +78,13 @@ export default function MinhaContaPage() {
                     profession: user.user_metadata?.profession || "",
                     academicLevel: user.user_metadata?.academic_level || "",
                     avatarUrl: profile?.avatar_url || user.user_metadata?.avatar_url || user.user_metadata?.picture || "",
-                    smsNotifications: profile?.sms_notifications || false,
+                    smsNotifications: (profile?.sms_notifications === null && (normalizePlanName(profile?.plan) === 'Business Vendedor' || normalizePlanName(profile?.plan) === 'Parceiro' || normalizePlanName(profile?.plan) === 'Premium')) ? true : (profile?.sms_notifications || false),
                     isProfilePublic: company?.is_public ?? true,
+                    facebookUrl: profile?.facebook_url || "",
+                    instagramUrl: profile?.instagram_url || "",
+                    linkedinUrl: profile?.linkedin_url || "",
+                    websiteUrl: profile?.website_url || "",
+                    keywords: profile?.keywords || [],
                     plan: normalizePlanName(profile?.plan || user.user_metadata?.plan)
                 });
             }
@@ -139,7 +149,12 @@ export default function MinhaContaPage() {
                     phone: formData.phone,
                     province: formData.province,
                     avatar_url: formData.avatarUrl,
-                    sms_notifications: formData.smsNotifications
+                    sms_notifications: formData.smsNotifications,
+                    facebook_url: formData.facebookUrl,
+                    instagram_url: formData.instagramUrl,
+                    linkedin_url: formData.linkedinUrl,
+                    website_url: formData.websiteUrl,
+                    keywords: formData.keywords
                 })
                 .eq('id', user.id);
 
@@ -368,126 +383,258 @@ export default function MinhaContaPage() {
 
                     <div className="p-8 flex-1">
                         {activeTab === "perfil" && (
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                                <div className="space-y-6">
-                                    {/* Email */}
-                                    <div className="flex items-center gap-4 p-4 rounded-xl bg-slate-50/50 border border-slate-100">
-                                        <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0 shadow-sm">
-                                            <Mail className="w-5 h-5 text-emerald-600" />
+                            <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-10">
+                                {/* Coluna Esquerda: Dados Detalhados */}
+                                <div className="space-y-0 divide-y divide-slate-100 border-t border-slate-100 lg:border-t-0 lg:mt-0">
+                                    {/* Nome Completo */}
+                                    <div className="py-5 first:pt-0">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0 border border-slate-100">
+                                                <User className="w-5 h-5 text-emerald-600" />
+                                            </div>
+                                            <div className="flex-1">
+                                                <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Nome Completo</p>
+                                                {isEditing ? (
+                                                    <Input
+                                                        name="fullName"
+                                                        value={formData.fullName}
+                                                        onChange={handleInputChange}
+                                                        className="mt-1 font-bold text-slate-800 h-10 border-slate-200"
+                                                    />
+                                                ) : (
+                                                    <p className="text-sm font-bold text-slate-800">{formData.fullName || "Não informado"}</p>
+                                                )}
+                                            </div>
                                         </div>
-                                        <div className="flex-1">
-                                            <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Email Principal</p>
-                                            <p className="text-sm font-bold text-slate-800">{user?.email}</p>
+                                    </div>
+
+                                    {/* Email */}
+                                    <div className="py-5 first:pt-0">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0 border border-slate-100">
+                                                <Mail className="w-5 h-5 text-emerald-600" />
+                                            </div>
+                                            <div className="flex-1">
+                                                <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Email Principal</p>
+                                                <p className="text-sm font-bold text-slate-800">{user?.email}</p>
+                                            </div>
                                         </div>
                                     </div>
 
                                     {/* Telefone */}
-                                    <div className={`p-4 rounded-xl border transition-all ${isEditing ? 'bg-white border-emerald-200 ring-2 ring-emerald-50' : 'bg-slate-50/50 border-slate-100'}`}>
-                                        <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-2">Telefone de Contacto</p>
-                                        {isEditing ? (
-                                            <div className="relative">
-                                                <Phone className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
-                                                <Input
-                                                    name="phone"
-                                                    value={formData.phone}
-                                                    onChange={handleInputChange}
-                                                    placeholder="+258..."
-                                                    className="pl-10 font-bold text-slate-800 h-10 border-slate-200"
-                                                />
+                                    <div className="py-5">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0 border border-slate-100">
+                                                <Phone className="w-5 h-5 text-emerald-600" />
                                             </div>
-                                        ) : (
-                                            <div className="flex items-center gap-3">
-                                                <Phone className="w-4 h-4 text-emerald-600" />
-                                                <p className="text-sm font-bold text-slate-800">{formData.phone || "Não informado"}</p>
+                                            <div className="flex-1">
+                                                <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Telefone de Contacto</p>
+                                                {isEditing ? (
+                                                    <Input
+                                                        name="phone"
+                                                        value={formData.phone}
+                                                        onChange={handleInputChange}
+                                                        placeholder="+258..."
+                                                        className="mt-1 font-bold text-slate-800 h-10 border-slate-200"
+                                                    />
+                                                ) : (
+                                                    <p className="text-sm font-bold text-slate-800">{formData.phone || "Não informado"}</p>
+                                                )}
                                             </div>
-                                        )}
+                                        </div>
                                     </div>
 
-                                    {/* Localização */}
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className={`p-4 rounded-xl border transition-all ${isEditing ? 'bg-white border-emerald-200 ring-2 ring-emerald-50' : 'bg-slate-50/50 border-slate-100'}`}>
-                                            <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-2">Província</p>
-                                            {isEditing ? (
-                                                <Input
-                                                    name="province"
-                                                    value={formData.province}
-                                                    onChange={handleInputChange}
-                                                    className="font-bold text-slate-800 h-10 border-slate-200"
-                                                />
-                                            ) : (
-                                                <p className="text-sm font-bold text-slate-800">{formData.province || "---"}</p>
-                                            )}
+                                    {/* Localização (Província) */}
+                                    <div className="py-5">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0 border border-slate-100">
+                                                <MapPin className="w-5 h-5 text-emerald-600" />
+                                            </div>
+                                            <div className="flex-1">
+                                                <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Localização (Província)</p>
+                                                {isEditing ? (
+                                                    <Input
+                                                        name="province"
+                                                        value={formData.province}
+                                                        onChange={handleInputChange}
+                                                        className="mt-1 font-bold text-slate-800 h-10 border-slate-200"
+                                                    />
+                                                ) : (
+                                                    <p className="text-sm font-bold text-slate-800">{formData.province || "Não informado"}</p>
+                                                )}
+                                            </div>
                                         </div>
-                                        <div className={`p-4 rounded-xl border transition-all ${isEditing ? 'bg-white border-emerald-200 ring-2 ring-emerald-50' : 'bg-slate-50/50 border-slate-100'}`}>
-                                            <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-2">Cidade/Endereço</p>
-                                            {isEditing ? (
-                                                <Input
-                                                    name="address"
-                                                    value={formData.address}
-                                                    onChange={handleInputChange}
-                                                    className="font-bold text-slate-800 h-10 border-slate-200"
-                                                />
-                                            ) : (
-                                                <p className="text-sm font-bold text-slate-800 truncate">{formData.address || "---"}</p>
-                                            )}
+                                    </div>
+
+                                    {/* Morada/Endereço */}
+                                    <div className="py-5">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0 border border-slate-100">
+                                                <Map className="w-5 h-5 text-emerald-600" />
+                                            </div>
+                                            <div className="flex-1">
+                                                <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Endereço Detalhado</p>
+                                                {isEditing ? (
+                                                    <Input
+                                                        name="address"
+                                                        value={formData.address}
+                                                        onChange={handleInputChange}
+                                                        className="mt-1 font-bold text-slate-800 h-10 border-slate-200"
+                                                    />
+                                                ) : (
+                                                    <p className="text-sm font-bold text-slate-800">{formData.address || "---"}</p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Profissão */}
+                                    <div className="py-5">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0 border border-slate-100">
+                                                <Briefcase className="w-5 h-5 text-emerald-600" />
+                                            </div>
+                                            <div className="flex-1">
+                                                <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Profissão / Cargo</p>
+                                                {isEditing ? (
+                                                    <Input
+                                                        name="profession"
+                                                        value={formData.profession}
+                                                        onChange={handleInputChange}
+                                                        className="mt-1 font-bold text-slate-800 h-10 border-slate-200"
+                                                    />
+                                                ) : (
+                                                    <p className="text-sm font-bold text-slate-800">{formData.profession || "Não especificada"}</p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Nível Académico */}
+                                    <div className="py-5">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0 border border-slate-100">
+                                                <GraduationCap className="w-5 h-5 text-emerald-600" />
+                                            </div>
+                                            <div className="flex-1">
+                                                <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Grau Académico</p>
+                                                {isEditing ? (
+                                                    <Input
+                                                        name="academicLevel"
+                                                        value={formData.academicLevel}
+                                                        onChange={handleInputChange}
+                                                        className="mt-1 font-bold text-slate-800 h-10 border-slate-200"
+                                                    />
+                                                ) : (
+                                                    <p className="text-sm font-bold text-slate-800">{formData.academicLevel || "Não especificado"}</p>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
+                                {/* Coluna Direita: Redes Sociais e Visibilidade */}
                                 <div className="space-y-6">
-                                    {/* Profissão */}
-                                    <div className={`p-4 rounded-xl border transition-all ${isEditing ? 'bg-white border-emerald-200 ring-2 ring-emerald-50' : 'bg-slate-50/50 border-slate-100'}`}>
-                                        <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-2">Profissão / Cargo</p>
-                                        {isEditing ? (
-                                            <Input
-                                                name="profession"
-                                                value={formData.profession}
-                                                onChange={handleInputChange}
-                                                className="font-bold text-slate-800 h-10 border-slate-200"
-                                            />
-                                        ) : (
-                                            <div className="flex items-center gap-3">
-                                                <Briefcase className="w-4 h-4 text-emerald-600" />
-                                                <p className="text-sm font-bold text-slate-800">{formData.profession || "Não especificada"}</p>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* Nível Académico */}
-                                    <div className={`p-4 rounded-xl border transition-all ${isEditing ? 'bg-white border-emerald-200 ring-2 ring-emerald-50' : 'bg-slate-50/50 border-slate-100'}`}>
-                                        <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-2">Grau Académico</p>
-                                        {isEditing ? (
-                                            <Input
-                                                name="academicLevel"
-                                                value={formData.academicLevel}
-                                                onChange={handleInputChange}
-                                                className="font-bold text-slate-800 h-10 border-slate-200"
-                                            />
-                                        ) : (
-                                            <div className="flex items-center gap-3">
-                                                <GraduationCap className="w-4 h-4 text-emerald-600" />
-                                                <p className="text-sm font-bold text-slate-800">{formData.academicLevel || "Não especificado"}</p>
-                                            </div>
-                                        )}
-                                    </div>
-
                                     {/* Redes Sociais */}
-                                    <div className="p-4 rounded-xl bg-slate-50/50 border border-slate-100">
+                                    <div className="p-6 rounded-2xl bg-slate-50 border border-slate-100 shadow-sm">
                                         <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-4">Presença Online</p>
-                                        <div className="flex gap-3">
-                                            <button className="w-10 h-10 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-blue-600 hover:scale-110 transition-transform shadow-sm">
-                                                <Facebook className="w-5 h-5" />
-                                            </button>
-                                            <button className="w-10 h-10 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-pink-600 hover:scale-110 transition-transform shadow-sm">
-                                                <Instagram className="w-5 h-5" />
-                                            </button>
-                                            <button className="w-10 h-10 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-sky-600 hover:scale-110 transition-transform shadow-sm">
-                                                <Linkedin className="w-5 h-5" />
-                                            </button>
-                                            <button className="w-10 h-10 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-slate-600 hover:scale-110 transition-transform shadow-sm">
-                                                <Globe className="w-5 h-5" />
+                                        <div className="space-y-3">
+                                            {isEditing ? (
+                                                <>
+                                                    <div className="flex items-center gap-2">
+                                                        <Facebook className="w-4 h-4 text-blue-600 shrink-0" />
+                                                        <Input
+                                                            name="facebookUrl"
+                                                            value={formData.facebookUrl}
+                                                            onChange={handleInputChange}
+                                                            placeholder="Facebook URL"
+                                                            className="h-8 text-xs"
+                                                        />
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <Instagram className="w-4 h-4 text-pink-600 shrink-0" />
+                                                        <Input
+                                                            name="instagramUrl"
+                                                            value={formData.instagramUrl}
+                                                            onChange={handleInputChange}
+                                                            placeholder="Instagram URL"
+                                                            className="h-8 text-xs"
+                                                        />
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <Linkedin className="w-4 h-4 text-sky-600 shrink-0" />
+                                                        <Input
+                                                            name="linkedinUrl"
+                                                            value={formData.linkedinUrl}
+                                                            onChange={handleInputChange}
+                                                            placeholder="LinkedIn URL"
+                                                            className="h-8 text-xs"
+                                                        />
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <Globe className="w-4 h-4 text-slate-600 shrink-0" />
+                                                        <Input
+                                                            name="websiteUrl"
+                                                            value={formData.websiteUrl}
+                                                            onChange={handleInputChange}
+                                                            placeholder="Website/Portfolio URL"
+                                                            className="h-8 text-xs"
+                                                        />
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <div className="grid grid-cols-2 gap-3">
+                                                    <a href={formData.facebookUrl || "#"} target="_blank" rel="noopener noreferrer" className={`h-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-blue-600 hover:bg-slate-50 transition-all shadow-sm group ${!formData.facebookUrl && 'opacity-30 pointer-events-none'}`}>
+                                                        <Facebook className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                                                    </a>
+                                                    <a href={formData.instagramUrl || "#"} target="_blank" rel="noopener noreferrer" className={`h-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-pink-600 hover:bg-slate-50 transition-all shadow-sm group ${!formData.instagramUrl && 'opacity-30 pointer-events-none'}`}>
+                                                        <Instagram className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                                                    </a>
+                                                    <a href={formData.linkedinUrl || "#"} target="_blank" rel="noopener noreferrer" className={`h-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-sky-600 hover:bg-slate-50 transition-all shadow-sm group ${!formData.linkedinUrl && 'opacity-30 pointer-events-none'}`}>
+                                                        <Linkedin className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                                                    </a>
+                                                    <a href={formData.websiteUrl || "#"} target="_blank" rel="noopener noreferrer" className={`h-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-600 hover:bg-slate-50 transition-all shadow-sm group ${!formData.websiteUrl && 'opacity-30 pointer-events-none'}`}>
+                                                        <Globe className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                                                    </a>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Visibilidade do Perfil */}
+                                    <div className={`p-6 rounded-2xl border shadow-sm space-y-4 ${canManageProfileSharing(formData.plan) ? 'bg-emerald-50 border-emerald-100' : 'bg-slate-50 border-slate-200 opacity-60'}`}>
+                                        <div className="flex items-center gap-3">
+                                            <Eye className={`w-5 h-5 ${canManageProfileSharing(formData.plan) ? 'text-emerald-600' : 'text-slate-400'}`} />
+                                            <h5 className={`font-black uppercase text-xs tracking-tight ${canManageProfileSharing(formData.plan) ? 'text-emerald-900' : 'text-slate-600'}`}>Visibilidade do Perfil</h5>
+                                        </div>
+                                        <p className={`text-[11px] leading-relaxed font-medium ${canManageProfileSharing(formData.plan) ? 'text-emerald-700' : 'text-slate-500'}`}>
+                                            {canManageProfileSharing(formData.plan)
+                                                ? "Permita que a sua empresa e perfil sejam vistos publicamente no diretório e motores de busca."
+                                                : "Este recurso está disponível a partir do Plano Básico. Faça upgrade para aumentar sua visibilidade."}
+                                        </p>
+                                        <div className="flex items-center justify-between pt-2">
+                                            <span className={`text-[10px] font-bold uppercase ${canManageProfileSharing(formData.plan) ? 'text-emerald-800' : 'text-slate-500'}`}>Status do Perfil</span>
+                                            <button
+                                                type="button"
+                                                disabled={!canManageProfileSharing(formData.plan)}
+                                                onClick={() => {
+                                                    if (!isEditing) {
+                                                        setIsEditing(true);
+                                                    }
+                                                    setFormData(prev => ({ ...prev, isProfilePublic: !prev.isProfilePublic }));
+                                                }}
+                                                className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 ${formData.isProfilePublic && canManageProfileSharing(formData.plan) ? 'bg-emerald-600' : 'bg-slate-300'} ${canManageProfileSharing(formData.plan) ? 'cursor-pointer' : 'cursor-not-allowed'}`}
+                                            >
+                                                <span
+                                                    className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform ${formData.isProfilePublic && canManageProfileSharing(formData.plan) ? 'translate-x-6' : 'translate-x-1'}`}
+                                                />
                                             </button>
                                         </div>
+                                        {!canManageProfileSharing(formData.plan) && (
+                                            <Link href="/planos" className="block text-center py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-[10px] font-black uppercase rounded-lg transition-colors">
+                                                Fazer Upgrade
+                                            </Link>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -580,9 +727,13 @@ export default function MinhaContaPage() {
                                             </div>
                                             <button
                                                 type="button"
-                                                disabled={!isEditing}
-                                                onClick={() => setFormData(prev => ({ ...prev, isProfilePublic: !prev.isProfilePublic }))}
-                                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 ${formData.isProfilePublic ? 'bg-emerald-500' : 'bg-slate-200'} ${!isEditing ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                                                onClick={() => {
+                                                    if (!isEditing) {
+                                                        setIsEditing(true);
+                                                    }
+                                                    setFormData(prev => ({ ...prev, isProfilePublic: !prev.isProfilePublic }));
+                                                }}
+                                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 ${formData.isProfilePublic ? 'bg-emerald-500' : 'bg-slate-200'} cursor-pointer`}
                                             >
                                                 <span
                                                     className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${formData.isProfilePublic ? 'translate-x-6' : 'translate-x-1'}`}
@@ -718,6 +869,11 @@ export default function MinhaContaPage() {
             <KeywordsManagementModal
                 isOpen={isKeywordsModalOpen}
                 onClose={() => setIsKeywordsModalOpen(false)}
+                initialKeywords={formData.keywords}
+                onSave={(newKeywords) => {
+                    setFormData(prev => ({ ...prev, keywords: newKeywords }));
+                    if (!isEditing) setIsEditing(true);
+                }}
             />
         </div >
     );

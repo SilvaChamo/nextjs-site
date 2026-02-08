@@ -10,11 +10,18 @@ import { X, Search, Plus, Star } from "lucide-react";
 interface KeywordsManagementModalProps {
     isOpen: boolean;
     onClose: () => void;
+    initialKeywords: string[];
+    onSave: (keywords: string[]) => void;
 }
 
-export function KeywordsManagementModal({ isOpen, onClose }: KeywordsManagementModalProps) {
-    const [keywords, setKeywords] = useState(["Agricultura", "Logística", "Maputo", "Comércio"]);
+export function KeywordsManagementModal({ isOpen, onClose, initialKeywords, onSave }: KeywordsManagementModalProps) {
+    const [keywords, setKeywords] = useState(initialKeywords);
     const [newKeyword, setNewKeyword] = useState("");
+
+    // Update local state when initialKeywords change
+    React.useEffect(() => {
+        setKeywords(initialKeywords);
+    }, [initialKeywords]);
 
     const handleAdd = () => {
         if (newKeyword && !keywords.includes(newKeyword)) {
@@ -25,6 +32,11 @@ export function KeywordsManagementModal({ isOpen, onClose }: KeywordsManagementM
 
     const handleRemove = (keyword: string) => {
         setKeywords(keywords.filter(k => k !== keyword));
+    };
+
+    const handleSave = () => {
+        onSave(keywords);
+        onClose();
     };
 
     return (
@@ -93,7 +105,7 @@ export function KeywordsManagementModal({ isOpen, onClose }: KeywordsManagementM
 
                 <DialogFooter className="p-6 pt-0">
                     <Button
-                        onClick={onClose}
+                        onClick={handleSave}
                         className="w-full bg-slate-900 hover:bg-emerald-600 text-white font-black uppercase text-[9px] tracking-widest h-10 rounded-lg transition-all shadow-lg active:scale-95"
                     >
                         Guardar Alterações

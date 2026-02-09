@@ -175,7 +175,7 @@ export default function UserPresentationsPage() {
                         pptSlide.addImage({
                             path: slide.image_url,
                             x: 6.5, y: 1.5, w: 4, h: 3,
-                            sizing: { type: 'contain' }
+                            sizing: { type: 'contain', w: 4, h: 3 }
                         });
                     } catch (e) {
                         console.warn("Failed to add image to slide", e);

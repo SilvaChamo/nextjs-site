@@ -113,7 +113,7 @@ export function UndoRedoPanel({ onUndo, onRedo }: UndoRedoPanelProps) {
           </div>
         ) : (
           <div className="space-y-2 max-h-64 overflow-y-auto">
-            {history.map((action: any, index: number) => (
+            {history.map((action, index) => (
               <div
                 key={action.id}
                 className={`flex items-center justify-between p-3 rounded-lg border transition-all ${

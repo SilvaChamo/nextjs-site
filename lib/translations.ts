@@ -36,7 +36,52 @@ export const translations = {
             partnership: "Parceria",
             market: "Mercado",
             contacts: "Contactos",
-            app: "Sobre o app",
+            innovation: "Inovação",
+            innovation_tech: "Inovação",
+            app: "Sobre app",
+            about_registration: "Cadastro",
+            innovation_sections: {
+                presence: "Cadastro & Visibilidade",
+                tools: "Comunicação & Design",
+                science: "Ciência & Tecnologia"
+            },
+            innovation_menu: {
+                registration: {
+                    title: "Cadastro de Empresa",
+                    description: "Junte-se à maior rede de agro-negócio de Moçambique.",
+                    link: "/inovacao/vantagens-cadastro"
+                },
+                communication: {
+                    title: "Comunicação Massiva",
+                    description: "Sistemas de SMS e E-mail para alcance imediato.",
+                    link: "/inovacao/comunicacao-sms"
+                },
+                visibility: {
+                    title: "Destacar Empresa",
+                    description: "Coloque a sua marca no topo das pesquisas e destaques.",
+                    link: "/inovacao/seo-google"
+                },
+                identity: {
+                    title: "Identidade Digital",
+                    description: "Perfis profissionais e cartões de visita com QR Code.",
+                    link: "/inovacao/perfil-digital"
+                },
+                presentations: {
+                    title: "Apresentações Visuais",
+                    description: "Editor de slides interativos para catálogos e relatórios.",
+                    link: "/inovacao/apresentacoes"
+                },
+                scientific: {
+                    title: "Repositório Científico",
+                    description: "Pesquisa dinâmica e semântica de artigos académicos.",
+                    link: "/inovacao/repositorio-cientifico"
+                },
+                agrobotanica: {
+                    title: "AgroBotanica AI",
+                    description: "Scanner inteligente para diagnóstico de pragas e doenças.",
+                    link: "/inovacao/agrobotanica"
+                }
+            }
         },
         parceria: {
             header_title: "Seja nosso",
@@ -110,7 +155,52 @@ export const translations = {
             partnership: "Partnership",
             market: "Market",
             contacts: "Contacts",
+            innovation: "Innovation",
+            innovation_tech: "Innovation",
             app: "About app",
+            about_registration: "Registration",
+            innovation_sections: {
+                presence: "Registration & Visibility",
+                tools: "Communication & Design",
+                science: "Science & Technology"
+            },
+            innovation_menu: {
+                registration: {
+                    title: "Company Registration",
+                    description: "Join Mozambique's largest agribusiness network.",
+                    link: "/inovacao/vantagens-cadastro"
+                },
+                communication: {
+                    title: "Mass Communication",
+                    description: "SMS and E-mail systems for immediate reach.",
+                    link: "/inovacao/comunicacao-sms"
+                },
+                visibility: {
+                    title: "Feature Company",
+                    description: "Stand out your brand at the top of Google and search engines.",
+                    link: "/inovacao/seo-google"
+                },
+                identity: {
+                    title: "Digital Identity",
+                    description: "Professional profiles and business cards with QR Code.",
+                    link: "/inovacao/perfil-digital"
+                },
+                presentations: {
+                    title: "Visual Presentations",
+                    description: "Interactive slide editor for catalogs and reports.",
+                    link: "/inovacao/apresentacoes"
+                },
+                scientific: {
+                    title: "Scientific Repository",
+                    description: "Dynamic and semantic search for academic articles.",
+                    link: "/inovacao/repositorio-cientifico"
+                },
+                agrobotanica: {
+                    title: "AgroBotanica AI",
+                    description: "Intelligent scanner for diagnosing pests and diseases.",
+                    link: "/inovacao/agrobotanica"
+                }
+            }
         },
         parceria: {
             header_title: "Become our",

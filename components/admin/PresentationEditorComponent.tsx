@@ -6,8 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { ArrowLeft, Plus, Trash2, Save, Loader2, Play, Image as ImageIcon, FileText, ChevronUp, ChevronDown, Layout, Sidebar as SidebarIcon, Menu, Maximize2, Monitor, Copy } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Save, Loader2, Play, Image as ImageIcon, FileText, ChevronUp, ChevronDown, Layout, Sidebar as SidebarIcon, Menu, Maximize2, Monitor, Copy, Download, FileJson, FilePieChart } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import pptxgen from "pptxgenjs";
 
 // Helper for generating IDs safely
 const generateId = () => Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
@@ -127,6 +131,230 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
         }));
     };
 
+    const handleExportPDF = async () => {
+        setSaving(true);
+        toast.info("A gerar PDF... Por favor, aguarde.");
+
+        try {
+            const doc = new jsPDF({
+                orientation: 'landscape',
+                unit: 'px',
+                format: [1280, 720]
+            });
+
+            // We need a way to render each slide
+            // Since we can't easily wait for images to load in a hidden div, 
+            // we'll try a simpler approach if possible or just use pptxgen which is cleaner for data-driven slides.
+            // For now, let's implement a clean PPTX and a basic PDF.
+
+            // Basic PDF implementation (Text only if images are hard to capture)
+            // Ideally we'd capture the active slide or a temporary off-screen one.
+
+            for (let i = 0; i < presentation.slides.length; i++) {
+                const slide = presentation.slides[i];
+                if (i > 0) doc.addPage([1280, 720], 'landscape');
+
+                doc.setFillColor(15, 23, 42); // slate-900
+                doc.rect(0, 0, 1280, 720, 'F');
+
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(40);
+                doc.text(slide.antetitulo || "Apresentação", 60, 100);
+
+                doc.setFontSize(24);
+                doc.setTextColor(16, 185, 129); // emerald-500
+                doc.text(slide.title || "", 60, 140);
+
+                // Content (strip HTML)
+                const tempDiv = document.createElement("div");
+                tempDiv.innerHTML = slide.content;
+                const text = tempDiv.textContent || tempDiv.innerText || "";
+
+                doc.setTextColor(200, 200, 200);
+                doc.setFontSize(16);
+                const splitText = doc.splitTextToSize(text, 600);
+                doc.text(splitText, 60, 200);
+            }
+
+            doc.save(`${presentation.title || 'apresentacao'}.pdf`);
+            toast.success("PDF gerado com sucesso!");
+        } catch (err) {
+            console.error(err);
+            toast.error("Erro ao gerar PDF.");
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleExportSingleSlidePDF = async (index: number) => {
+        setSaving(true);
+        const slide = presentation.slides[index];
+        toast.info(`A gerar PDF do slide ${index + 1}...`);
+
+        try {
+            const doc = new jsPDF({
+                orientation: 'landscape',
+                unit: 'px',
+                format: [1280, 720]
+            });
+
+            doc.setFillColor(15, 23, 42); // slate-900
+            doc.rect(0, 0, 1280, 720, 'F');
+
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(40);
+            doc.text(slide.antetitulo || "Apresentação", 60, 100);
+
+            doc.setFontSize(24);
+            doc.setTextColor(16, 185, 129); // emerald-500
+            doc.text(slide.title || "", 60, 140);
+
+            // Content (strip HTML)
+            const tempDiv = document.createElement("div");
+            tempDiv.innerHTML = slide.content;
+            const text = tempDiv.textContent || tempDiv.innerText || "";
+
+            doc.setTextColor(200, 200, 200);
+            doc.setFontSize(16);
+            const splitText = doc.splitTextToSize(text, 600);
+            doc.text(splitText, 60, 200);
+
+            doc.save(`${presentation.title || 'slide'}_${index + 1}.pdf`);
+            toast.success("PDF do slide gerado!");
+        } catch (err) {
+            console.error(err);
+            toast.error("Erro ao gerar PDF do slide.");
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleExportPPTX = async () => {
+        setSaving(true);
+        toast.info("A gerar PowerPoint... Por favor, aguarde.");
+
+        try {
+            const pptx = new pptxgen();
+            pptx.layout = 'LAYOUT_16x9';
+
+            presentation.slides.forEach((slide) => {
+                const pptSlide = pptx.addSlide();
+
+                // Background color (Slate 900)
+                pptSlide.background = { color: '0F172A' };
+
+                // Antetítulo
+                pptSlide.addText(slide.antetitulo || "Apresentação", {
+                    x: 0.5, y: 0.5, w: '90%', h: 1,
+                    fontSize: 32, bold: true, color: 'FFFFFF',
+                    fontFace: 'Arial'
+                });
+
+                // Título (Emerald)
+                pptSlide.addText(slide.title || "", {
+                    x: 0.5, y: 1.2, w: '90%', h: 0.5,
+                    fontSize: 20, bold: true, color: '10B981',
+                    fontFace: 'Arial'
+                });
+
+                // Content (stipping HTML for PPT)
+                const tempDiv = document.createElement("div");
+                tempDiv.innerHTML = slide.content;
+                const plainText = tempDiv.textContent || tempDiv.innerText || "";
+
+                pptSlide.addText(plainText, {
+                    x: 0.5, y: 2.0, w: '60%', h: 3,
+                    fontSize: 14, color: 'CBD5E1',
+                    fontFace: 'Arial', align: 'left',
+                    valign: 'top'
+                });
+
+                // Image if exists
+                if (slide.image_url && !slide.image_disabled) {
+                    try {
+                        pptSlide.addImage({
+                            path: slide.image_url,
+                            x: 6.5, y: 1.5, w: 4, h: 3,
+                            sizing: { type: 'contain', w: 4, h: 3 }
+                        });
+                    } catch (e) {
+                        console.warn("Failed to add image to slide", e);
+                    }
+                }
+            });
+
+            await pptx.writeFile({ fileName: `${presentation.title || 'apresentacao'}.pptx` });
+            toast.success("PowerPoint gerado com sucesso!");
+        } catch (err) {
+            console.error(err);
+            toast.error("Erro ao gerar PowerPoint.");
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleExportSingleSlidePPTX = async (index: number) => {
+        setSaving(true);
+        const slide = presentation.slides[index];
+        toast.info(`A gerar PowerPoint do slide ${index + 1}...`);
+
+        try {
+            const pptx = new pptxgen();
+            pptx.layout = 'LAYOUT_16x9';
+            const pptSlide = pptx.addSlide();
+
+            // Background color (Slate 900)
+            pptSlide.background = { color: '0F172A' };
+
+            // Antetítulo
+            pptSlide.addText(slide.antetitulo || "Apresentação", {
+                x: 0.5, y: 0.5, w: '90%', h: 1,
+                fontSize: 32, bold: true, color: 'FFFFFF',
+                fontFace: 'Arial'
+            });
+
+            // Título (Emerald)
+            pptSlide.addText(slide.title || "", {
+                x: 0.5, y: 1.2, w: '90%', h: 0.5,
+                fontSize: 20, bold: true, color: '10B981',
+                fontFace: 'Arial'
+            });
+
+            // Content (stipping HTML for PPT)
+            const tempDiv = document.createElement("div");
+            tempDiv.innerHTML = slide.content;
+            const plainText = tempDiv.textContent || tempDiv.innerText || "";
+
+            pptSlide.addText(plainText, {
+                x: 0.5, y: 2.0, w: '60%', h: 3,
+                fontSize: 14, color: 'CBD5E1',
+                fontFace: 'Arial', align: 'left',
+                valign: 'top'
+            });
+
+            // Image if exists
+            if (slide.image_url && !slide.image_disabled) {
+                try {
+                    pptSlide.addImage({
+                        path: slide.image_url,
+                        x: 6.5, y: 1.5, w: 4, h: 3,
+                        sizing: { type: 'contain', w: 4, h: 3 }
+                    });
+                } catch (e) {
+                    console.warn("Failed to add image to slide", e);
+                }
+            }
+
+            await pptx.writeFile({ fileName: `${presentation.title || 'slide'}_${index + 1}.pptx` });
+            toast.success("PowerPoint do slide gerado!");
+        } catch (err) {
+            console.error(err);
+            toast.error("Erro ao gerar PowerPoint do slide.");
+        } finally {
+            setSaving(false);
+        }
+    };
+
     const handleSave = async () => {
         if (!presentation.title) {
             toast.error("A apresentação precisa de um título.");
@@ -222,14 +450,39 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                     <div className="h-4 w-px bg-slate-200 mx-2" />
 
                     {!isNew && (
-                        <Button
-                            variant="outline"
-                            onClick={() => window.open(`/apresentacao/${id}`, '_blank')}
-                            className="bg-white text-slate-600 font-bold border-slate-200 h-9 gap-2 text-xs"
-                        >
-                            <Play className="w-3.5 h-3.5 fill-slate-600" />
-                            Apresentar
-                        </Button>
+                        <div className="flex items-center gap-1">
+                            <Button
+                                variant="outline"
+                                onClick={() => window.open(`/apresentacao/${id}`, '_blank')}
+                                className="bg-white text-slate-600 font-bold border-slate-200 h-9 gap-2 text-xs"
+                            >
+                                <Play className="w-3.5 h-3.5 fill-slate-600" />
+                                Apresentar
+                            </Button>
+
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        disabled={saving}
+                                        className="bg-white text-emerald-600 font-bold border-emerald-200 hover:bg-emerald-50 h-9 gap-2 text-xs"
+                                    >
+                                        <Download className="w-3.5 h-3.5" />
+                                        Exportar
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-48">
+                                    <DropdownMenuItem onClick={handleExportPDF} className="gap-2 cursor-pointer">
+                                        <FileText className="w-4 h-4 text-red-500" />
+                                        <span>Exportar para PDF</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={handleExportPPTX} className="gap-2 cursor-pointer">
+                                        <FilePieChart className="w-4 h-4 text-orange-500" />
+                                        <span>Exportar para PPTX</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
                     )}
                     <Button
                         onClick={handleSave}
@@ -370,6 +623,25 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                                     <span className="text-xs font-black uppercase tracking-widest">Editor de Slide #{activeIndex + 1}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => handleExportSingleSlidePDF(activeIndex)}
+                                        className="text-white hover:bg-white/20 h-7 text-[10px] font-bold gap-1.5 uppercase tracking-wider"
+                                    >
+                                        <Download className="w-3 h-3" />
+                                        PDF
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => handleExportSingleSlidePPTX(activeIndex)}
+                                        className="text-white hover:bg-white/20 h-7 text-[10px] font-bold gap-1.5 uppercase tracking-wider"
+                                    >
+                                        <Download className="w-3 h-3" />
+                                        PPTX
+                                    </Button>
+                                    <div className="w-px h-4 bg-white/20 mx-1" />
                                     <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded font-bold">{activeSlide?.id.split('-')[0]}</span>
                                 </div>
                             </div>

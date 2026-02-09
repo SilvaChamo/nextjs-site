@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import { PageHeader } from "@/components/PageHeader";
 import {
     Info, ArrowRight, CheckCircle2, Zap, Globe2,
     Target, Eye, Gem, TrendingUp, Database,
@@ -12,18 +11,9 @@ import Link from "next/link";
 export default function SobrePage() {
     return (
         <main className="min-h-screen overflow-x-hidden">
-            <PageHeader
-                title={<>Sobre <span className="text-[#f97316]">Nós</span></>}
-                icon={Info}
-                backgroundImage="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=2000&auto=format&fit=crop"
-                breadcrumbs={[
-                    { label: "Início", href: "/" },
-                    { label: "Sobre Nós", href: undefined }
-                ]}
-            />
 
             {/* 1. Introdução Premium (Redesigned - Left Image) */}
-            <div className="w-full relative bg-transparent overflow-hidden">
+            <div className="w-full relative bg-transparent overflow-hidden pt-[100px]">
                 {/* Background Image Overlay */}
                 <div
                     className="absolute inset-0 z-0 opacity-[0.15] pointer-events-none bg-center bg-cover bg-no-repeat"

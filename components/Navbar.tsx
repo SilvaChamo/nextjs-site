@@ -13,6 +13,21 @@ import {
     SheetTrigger,
     SheetClose,
 } from "@/components/ui/sheet";
+import {
+    MessageSquare,
+    Search,
+    QrCode,
+    Presentation,
+    Library,
+    ScanLine,
+    ShieldCheck,
+    Smartphone,
+    TrendingUp,
+    Globe,
+    ArrowRight,
+    Star,
+    Zap
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/lib/supabaseClient";
@@ -31,6 +46,7 @@ export function Navbar() {
     const [success, setSuccess] = useState<{ contact: boolean; register: boolean }>({ contact: false, register: false });
 
     const [user, setUser] = useState<any>(null);
+    const [isMegaMenuForcedClosed, setIsMegaMenuForcedClosed] = useState(false);
 
     useEffect(() => {
         // Verificar usuário inicial
@@ -86,6 +102,7 @@ export function Navbar() {
     const menuItems = [
         { label: t("navbar.services"), link: "/servicos" },
         { label: t("navbar.repository"), link: "/repositorio" },
+        { label: t("navbar.innovation"), link: "/inovacao" },
         { label: t("navbar.market"), link: "/mercado" },
         { label: t("navbar.contacts"), link: "/contactos" },
     ];
@@ -93,7 +110,30 @@ export function Navbar() {
     const baseItems = [
         { label: t("navbar.about"), link: "/sobre-nos" },
         { label: t("navbar.history"), link: "/sobre-nos/historial" },
-        { label: t("navbar.app"), link: "/sobre-aplicativo" },
+    ];
+
+    const innovationSections = [
+        {
+            key: 'presence',
+            items: [
+                { key: 'registration', icon: Star },
+                { key: 'identity', icon: QrCode }
+            ]
+        },
+        {
+            key: 'tools',
+            items: [
+                { key: 'communication', icon: MessageSquare },
+                { key: 'presentations', icon: Presentation }
+            ]
+        },
+        {
+            key: 'science',
+            items: [
+                { key: 'scientific', icon: Library },
+                { key: 'agrobotanica', icon: ScanLine }
+            ]
+        }
     ];
 
     const offCanvasItems = [
@@ -154,6 +194,82 @@ export function Navbar() {
 
                     {menuItems.map((item, i) => {
                         const isActive = pathname === item.link || (item.link !== '/' && pathname.startsWith(item.link));
+
+                        if (item.link === '/inovacao') {
+                            return (
+                                <div
+                                    key={i}
+                                    className="group py-4"
+                                    onMouseEnter={() => setIsMegaMenuForcedClosed(false)}
+                                >
+                                    <div
+                                        className={`flex items-center gap-1.5 text-[15px] font-medium transition-colors whitespace-nowrap tracking-tight font-sans cursor-pointer ${isActive ? "text-[#f97316]" : "text-gray-600 hover:text-[#f97316]"
+                                            }`}
+                                    >
+                                        <span className="leading-none">{item.label}</span>
+                                        <ChevronDown className="w-3.5 h-3.5 opacity-70 group-hover:rotate-180 transition-transform duration-300" />
+                                    </div>
+
+                                    {/* Innovation Mega Menu Content */}
+                                    <div className={`absolute left-0 w-full top-full opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 pointer-events-none group-hover:pointer-events-auto ${isMegaMenuForcedClosed ? "!hidden" : ""}`}>
+                                        <div className="absolute top-[-15px] left-0 w-full h-[15px] bg-transparent" /> {/* Invisible bridge to maintain hover */}
+                                        <div className="bg-white border-y border-slate-200 rounded-none shadow-[0_40px_80px_rgba(0,0,0,0.1)] overflow-hidden">
+                                            <div className="container-site py-12">
+                                                <div className="grid grid-cols-3 gap-x-16">
+                                                    {innovationSections.map((section, idx) => (
+                                                        <div key={idx} className="space-y-8">
+                                                            <div className="flex flex-col gap-1">
+                                                                <div className="h-[1px] w-full bg-orange-100/50 mb-6" />
+
+                                                                <div className="space-y-4">
+                                                                    {section.items.map((item, si) => {
+                                                                        const title = t(`navbar.innovation_menu.${item.key}.title`);
+                                                                        const description = t(`navbar.innovation_menu.${item.key}.description`);
+                                                                        const link = t(`navbar.innovation_menu.${item.key}.link`);
+                                                                        const Icon = item.icon;
+
+                                                                        return (
+                                                                            <Link
+                                                                                key={si}
+                                                                                href={link}
+                                                                                onClick={() => setIsMegaMenuForcedClosed(true)}
+                                                                                className="flex items-start gap-4 p-3 -mx-3 rounded-xl hover:bg-slate-50 transition-all group/item"
+                                                                            >
+                                                                                <div className="w-11 h-11 rounded-lg bg-orange-50 flex items-center justify-center shrink-0 group-hover/item:bg-[#f97316] group-hover/item:text-white transition-colors">
+                                                                                    <Icon className="w-6 h-6 text-[#f97316] group-hover/item:text-white" />
+                                                                                </div>
+                                                                                <div>
+                                                                                    <h4 className="font-bold text-slate-800 text-[15px] mb-0.5 group-hover/item:text-[#f97316] transition-colors">{title}</h4>
+                                                                                    <p className="text-[13px] text-slate-500 leading-tight font-medium line-clamp-2">{description}</p>
+                                                                                </div>
+                                                                            </Link>
+                                                                        );
+                                                                    })}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                                <div className="mt-12 pt-8 border-t border-slate-100 flex items-center justify-between">
+                                                    <div className="flex items-center gap-8 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                                        <span className="flex items-center gap-2"><ShieldCheck className="w-4 h-4" /> Segurança Garantida</span>
+                                                        <span className="flex items-center gap-2"><Globe className="w-4 h-4 text-emerald-600/50" /> Disponibilidade Nacional</span>
+                                                        <span className="flex items-center gap-2"><TrendingUp className="w-4 h-4 text-orange-600/50" /> Alta Performance</span>
+                                                    </div>
+                                                    <Link
+                                                        href="/inovacao"
+                                                        onClick={() => setIsMegaMenuForcedClosed(true)}
+                                                        className="text-[14px] font-bold text-[#f97316] hover:text-emerald-600 transition-colors flex items-center gap-2"
+                                                    >
+                                                        Ver Visão Geral do Módulo <ArrowRight className="w-4 h-4" />
+                                                    </Link>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        }
 
                         return (
                             <Link
@@ -230,17 +346,47 @@ export function Navbar() {
                                     </div>
 
                                     <div className="px-6 mb-8">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Navegação Principal</p>
-                                        <div className="space-y-1">
-                                            {menuItems.map((item, i) => (
-                                                <Link
-                                                    key={i}
-                                                    href={item.link}
-                                                    className={`block py-3 text-slate-700 font-bold border-b border-slate-50 ${pathname === item.link ? "text-emerald-600" : ""}`}
-                                                >
-                                                    {item.label}
-                                                </Link>
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Módulo de Inovação</p>
+                                        <div className="space-y-6">
+                                            {innovationSections.map((section, idx) => (
+                                                <div key={idx} className="space-y-2">
+
+                                                    <div className="space-y-1">
+                                                        {section.items.map((subItem, si) => {
+                                                            const title = t(`navbar.innovation_menu.${subItem.key}.title`);
+                                                            const link = t(`navbar.innovation_menu.${subItem.key}.link`);
+                                                            return (
+                                                                <Link
+                                                                    key={si}
+                                                                    href={link}
+                                                                    className={`flex items-center gap-3 py-2 text-slate-600 font-medium hover:text-emerald-600 pl-4 ${pathname === link ? "text-emerald-600" : ""}`}
+                                                                >
+                                                                    <span className="w-1 h-1 rounded-full bg-slate-300"></span>
+                                                                    {title}
+                                                                </Link>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
                                             ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="px-6 mb-8">
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Outros Serviços</p>
+                                        <div className="space-y-1">
+                                            {menuItems.filter(item => item.link !== '/inovacao').map((item, i) => {
+                                                const isActive = pathname === item.link || (item.link !== '/' && pathname.startsWith(item.link));
+                                                return (
+                                                    <Link
+                                                        key={i}
+                                                        href={item.link}
+                                                        className={`block py-3 text-slate-700 font-bold border-b border-slate-50 ${isActive ? "text-emerald-600" : ""}`}
+                                                    >
+                                                        {item.label}
+                                                    </Link>
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 </div>

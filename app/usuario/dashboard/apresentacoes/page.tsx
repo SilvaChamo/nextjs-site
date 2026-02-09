@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Presentation, HelpCircle, Lightbulb, Play, MousePointer2, Info, Archive, Trash2, LayoutGrid, List, Plus, ArrowRight, Calendar, Search, Pencil, RefreshCw } from "lucide-react";
+import { Presentation, HelpCircle, Lightbulb, Play, MousePointer2, Info, Archive, Trash2, LayoutGrid, List, Plus, ArrowRight, Calendar, Search, Pencil, RefreshCw, Download, FileText, FilePieChart, Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { usePlanPermissions } from "@/hooks/usePlanPermissions";
 import Link from "next/link";
@@ -11,6 +11,9 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import jsPDF from "jspdf";
+import pptxgen from "pptxgenjs";
 
 export default function UserPresentationsPage() {
     const { canPresentations, planDisplayName, loading: permissionsLoading } = usePlanPermissions();
@@ -22,6 +25,7 @@ export default function UserPresentationsPage() {
     const [deletedPresentations, setDeletedPresentations] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [creating, setCreating] = useState(false);
+    const [exporting, setExporting] = useState(false);
 
     // UI State
     const [search, setSearch] = useState("");
@@ -47,14 +51,13 @@ export default function UserPresentationsPage() {
                 .order('created_at', { ascending: false });
 
             // Load deleted presentations (recycle bin)
-            // Note: Assuming table exists as per Admin page logic
             const { data: deletedData, error: deletedError } = await supabase
                 .from('deleted_presentations')
                 .select('*')
                 .eq('user_id', user.id)
                 .order('deleted_at', { ascending: false });
 
-            if (deletedError && deletedError.code !== 'PGRST116') { // Ignore if table missing for now, though it should exist
+            if (deletedError && deletedError.code !== 'PGRST116') {
                 console.error("Error fetching deleted items:", deletedError);
             }
 
@@ -71,6 +74,124 @@ export default function UserPresentationsPage() {
         load();
         return () => { isMounted = false; };
     }, [supabase]);
+
+    const handleExportPDF = async (item: any) => {
+        setExporting(true);
+        toast.info("A gerar PDF... Por favor, aguarde.");
+
+        try {
+            const doc = new jsPDF({
+                orientation: 'landscape',
+                unit: 'px',
+                format: [1280, 720]
+            });
+
+            const slides = item.slides || [];
+            if (slides.length === 0) {
+                toast.error("A apresentação não tem slides para exportar.");
+                setExporting(false);
+                return;
+            }
+
+            for (let i = 0; i < slides.length; i++) {
+                const slide = slides[i];
+                if (i > 0) doc.addPage([1280, 720], 'landscape');
+
+                doc.setFillColor(15, 23, 42);
+                doc.rect(0, 0, 1280, 720, 'F');
+
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(40);
+                doc.text(slide.antetitulo || "Apresentação", 60, 100);
+
+                doc.setFontSize(24);
+                doc.setTextColor(16, 185, 129);
+                doc.text(slide.title || "", 60, 140);
+
+                const tempDiv = document.createElement("div");
+                tempDiv.innerHTML = slide.content;
+                const text = tempDiv.textContent || tempDiv.innerText || "";
+
+                doc.setTextColor(200, 200, 200);
+                doc.setFontSize(16);
+                const splitText = doc.splitTextToSize(text, 600);
+                doc.text(splitText, 60, 200);
+            }
+
+            doc.save(`${item.title || 'apresentacao'}.pdf`);
+            toast.success("PDF gerado com sucesso!");
+        } catch (err) {
+            console.error(err);
+            toast.error("Erro ao gerar PDF.");
+        } finally {
+            setExporting(false);
+        }
+    };
+
+    const handleExportPPTX = async (item: any) => {
+        setExporting(true);
+        toast.info("A gerar PowerPoint... Por favor, aguarde.");
+
+        try {
+            const pptx = new pptxgen();
+            pptx.layout = 'LAYOUT_16x9';
+
+            const slides = item.slides || [];
+            if (slides.length === 0) {
+                toast.error("A apresentação não tem slides para exportar.");
+                setExporting(false);
+                return;
+            }
+
+            slides.forEach((slide: any) => {
+                const pptSlide = pptx.addSlide();
+                pptSlide.background = { color: '0F172A' };
+
+                pptSlide.addText(slide.antetitulo || "Apresentação", {
+                    x: 0.5, y: 0.5, w: '90%', h: 1,
+                    fontSize: 32, bold: true, color: 'FFFFFF',
+                    fontFace: 'Arial'
+                });
+
+                pptSlide.addText(slide.title || "", {
+                    x: 0.5, y: 1.2, w: '90%', h: 0.5,
+                    fontSize: 20, bold: true, color: '10B981',
+                    fontFace: 'Arial'
+                });
+
+                const tempDiv = document.createElement("div");
+                tempDiv.innerHTML = slide.content;
+                const plainText = tempDiv.textContent || tempDiv.innerText || "";
+
+                pptSlide.addText(plainText, {
+                    x: 0.5, y: 2.0, w: '60%', h: 3,
+                    fontSize: 14, color: 'CBD5E1',
+                    fontFace: 'Arial', align: 'left',
+                    valign: 'top'
+                });
+
+                if (slide.image_url && !slide.image_disabled) {
+                    try {
+                        pptSlide.addImage({
+                            path: slide.image_url,
+                            x: 6.5, y: 1.5, w: 4, h: 3,
+                            sizing: { type: 'contain' }
+                        });
+                    } catch (e) {
+                        console.warn("Failed to add image to slide", e);
+                    }
+                }
+            });
+
+            await pptx.writeFile({ fileName: `${item.title || 'apresentacao'}.pptx` });
+            toast.success("PowerPoint gerado com sucesso!");
+        } catch (err) {
+            console.error(err);
+            toast.error("Erro ao gerar PowerPoint.");
+        } finally {
+            setExporting(false);
+        }
+    };
 
     // Handlers
     const handleCreatePresentation = async () => {
@@ -199,28 +320,20 @@ export default function UserPresentationsPage() {
                     });
 
                 if (insertError) {
-                    // Fallback to permanent delete if recycled table fails/doesn't exist
-                    // This handles cases where deleted_presentations might not be set up or permission issues
                     console.error("Recycle bin error, falling back to permanent delete:", insertError);
-
                     const { error: delError } = await supabase
                         .from('presentations')
                         .delete()
                         .eq('id', itemToDelete.id);
-
                     if (delError) throw delError;
-
-                    toast.success("Apresentação eliminada permanentemente (Reciclagem indisponível).");
+                    toast.success("Apresentação eliminada permanentemente.");
                     setPresentations(prev => prev.filter(p => p.id !== itemToDelete.id));
                 } else {
-                    // Delete from active
                     const { error: deleteError } = await supabase
                         .from('presentations')
                         .delete()
                         .eq('id', itemToDelete.id);
-
                     if (deleteError) throw deleteError;
-
                     toast.success("Enviado para a reciclagem!");
                     setPresentations(prev => prev.filter(p => p.id !== itemToDelete.id));
                     setDeletedPresentations(prev => [{ ...itemToDelete, deleted_at: new Date().toISOString() }, ...prev]);
@@ -236,14 +349,10 @@ export default function UserPresentationsPage() {
     // Filter Logic
     const getDisplayItems = () => {
         let items = statusFilter === 'deleted' ? deletedPresentations : presentations;
-
-        // Apply Search
         items = items.filter(p =>
             p.title.toLowerCase().includes(search.toLowerCase()) ||
             p.description?.toLowerCase().includes(search.toLowerCase())
         );
-
-        // Apply Status Filter
         if (statusFilter !== 'deleted') {
             items = items.filter(p =>
                 statusFilter === 'active'
@@ -251,7 +360,6 @@ export default function UserPresentationsPage() {
                     : p.status === 'archived'
             );
         }
-
         return items;
     };
 
@@ -265,14 +373,12 @@ export default function UserPresentationsPage() {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
-            {/* Header & Controls */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
                     <h2 className="text-3xl font-[900] tracking-tight text-[#3a3f47]">Minhas Apresentações</h2>
                 </div>
 
                 <div className="flex items-center flex-wrap gap-2">
-                    {/* Search Input */}
                     <div className="relative w-64 md:w-72">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
                         <Input
@@ -283,7 +389,6 @@ export default function UserPresentationsPage() {
                         />
                     </div>
 
-                    {/* Status Toggles */}
                     <div className="flex items-center bg-white p-1 rounded-lg border border-slate-200 shadow-sm gap-1">
                         <button
                             onClick={() => setStatusFilter(statusFilter === 'archived' ? 'active' : 'archived')}
@@ -301,7 +406,6 @@ export default function UserPresentationsPage() {
                         </button>
                     </div>
 
-                    {/* View Toggles */}
                     <div className="flex items-center bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
                         <button
                             onClick={() => setViewMode('grid')}
@@ -329,10 +433,8 @@ export default function UserPresentationsPage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Main Content Area */}
                 <div className="lg:col-span-2 space-y-8">
                     {filtered.length === 0 ? (
-                        /* Empty State */
                         <div className="bg-white rounded-3xl border-2 border-dashed border-slate-200 p-20 text-center flex flex-col items-center gap-4">
                             <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center">
                                 <Presentation className="w-10 h-10 text-slate-300" />
@@ -356,7 +458,6 @@ export default function UserPresentationsPage() {
                             )}
                         </div>
                     ) : viewMode === 'list' ? (
-                        /* LIST VIEW */
                         <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
                             <div className="px-6 py-4 border-b border-slate-100">
                                 <h2 className="text-sm font-bold text-slate-700">
@@ -395,12 +496,33 @@ export default function UserPresentationsPage() {
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center justify-end gap-1">
                                                         <button
-                                                            onClick={() => router.push(`/apresentacao/${item.id}`)}
+                                                            onClick={() => window.open(`/apresentacao/${item.id}`, '_blank')}
                                                             className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all"
                                                             title="Reproduzir"
                                                         >
                                                             <Play className="w-4 h-4 fill-current" />
                                                         </button>
+                                                        <DropdownMenu>
+                                                            <DropdownMenuTrigger asChild>
+                                                                <button
+                                                                    disabled={exporting}
+                                                                    className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all"
+                                                                    title="Exportar"
+                                                                >
+                                                                    {exporting ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                                                                </button>
+                                                            </DropdownMenuTrigger>
+                                                            <DropdownMenuContent align="end" className="w-48">
+                                                                <DropdownMenuItem onClick={() => handleExportPDF(item)} className="gap-2 cursor-pointer">
+                                                                    <FileText className="w-4 h-4 text-red-500" />
+                                                                    <span>Exportar para PDF</span>
+                                                                </DropdownMenuItem>
+                                                                <DropdownMenuItem onClick={() => handleExportPPTX(item)} className="gap-2 cursor-pointer">
+                                                                    <FilePieChart className="w-4 h-4 text-orange-500" />
+                                                                    <span>Exportar para PPTX</span>
+                                                                </DropdownMenuItem>
+                                                            </DropdownMenuContent>
+                                                        </DropdownMenu>
                                                         <button
                                                             onClick={() => router.push(`/usuario/dashboard/apresentacoes/editor/${item.id}`)}
                                                             className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all"
@@ -441,20 +563,16 @@ export default function UserPresentationsPage() {
                             </table>
                         </div>
                     ) : (
-                        /* GRID VIEW */
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {filtered.map((item) => {
                                 const slideCount = item.slides?.length || 0;
                                 const firstSlideImage = item.slides?.[0]?.image_url;
-                                const createdDate = new Date(item.created_at).toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric' });
-
                                 return (
                                     <div
                                         key={item.id}
                                         className="group relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 bg-slate-900"
                                         style={{ aspectRatio: '16/10' }}
                                     >
-                                        {/* Background */}
                                         <div className="absolute inset-0">
                                             {firstSlideImage ? (
                                                 <img
@@ -468,9 +586,7 @@ export default function UserPresentationsPage() {
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
                                         </div>
 
-                                        {/* Content */}
                                         <div className="relative h-full flex flex-col justify-between p-5">
-                                            {/* Top */}
                                             <div className="flex items-start justify-between">
                                                 <div className="flex flex-col gap-2">
                                                     <span className="bg-emerald-500 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
@@ -482,7 +598,6 @@ export default function UserPresentationsPage() {
                                                         </span>
                                                     )}
                                                 </div>
-                                                {/* Actions */}
                                                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                                     {statusFilter === 'deleted' ? (
                                                         <button
@@ -513,7 +628,6 @@ export default function UserPresentationsPage() {
                                                 </div>
                                             </div>
 
-                                            {/* Bottom */}
                                             <div className="space-y-3">
                                                 <div>
                                                     <h3 className="text-xl font-bold text-white leading-tight mb-1 truncate" title={item.title}>
@@ -533,13 +647,36 @@ export default function UserPresentationsPage() {
                                                         Abrir Editor
                                                         <ArrowRight className="w-3 h-3" />
                                                     </Button>
-                                                    <button
-                                                        onClick={() => router.push(`/apresentacao/${item.id}`)}
-                                                        className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
-                                                        title="Visualizar"
-                                                    >
-                                                        <Play className="w-3 h-3 fill-current" />
-                                                    </button>
+                                                    <div className="flex items-center gap-2">
+                                                        <button
+                                                            onClick={() => window.open(`/apresentacao/${item.id}`, '_blank')}
+                                                            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+                                                            title="Visualizar"
+                                                        >
+                                                            <Play className="w-3 h-3 fill-current" />
+                                                        </button>
+                                                        <DropdownMenu>
+                                                            <DropdownMenuTrigger asChild>
+                                                                <button
+                                                                    disabled={exporting}
+                                                                    className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+                                                                    title="Exportar"
+                                                                >
+                                                                    {exporting ? <RefreshCw className="w-3 h-3 animate-spin" /> : <Download className="w-3 h-3" />}
+                                                                </button>
+                                                            </DropdownMenuTrigger>
+                                                            <DropdownMenuContent align="end" className="w-48">
+                                                                <DropdownMenuItem onClick={() => handleExportPDF(item)} className="gap-2 cursor-pointer">
+                                                                    <FileText className="w-4 h-4 text-red-500" />
+                                                                    <span>Exportar para PDF</span>
+                                                                </DropdownMenuItem>
+                                                                <DropdownMenuItem onClick={() => handleExportPPTX(item)} className="gap-2 cursor-pointer">
+                                                                    <FilePieChart className="w-4 h-4 text-orange-500" />
+                                                                    <span>Exportar para PPTX</span>
+                                                                </DropdownMenuItem>
+                                                            </DropdownMenuContent>
+                                                        </DropdownMenu>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -549,7 +686,6 @@ export default function UserPresentationsPage() {
                         </div>
                     )}
 
-                    {/* Helper Banner */}
                     <div className="bg-gradient-to-br from-emerald-600 to-emerald-800 rounded-2xl p-8 text-white shadow-xl relative overflow-hidden group mt-12">
                         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                             <HelpCircle className="w-32 h-32" />
@@ -566,7 +702,6 @@ export default function UserPresentationsPage() {
                     </div>
                 </div>
 
-                {/* Sidebar Tips */}
                 <div className="space-y-6">
                     <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm sticky top-6">
                         <h4 className="font-black text-[11px] text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
@@ -616,7 +751,4 @@ export default function UserPresentationsPage() {
             />
         </div>
     );
-}
-function Loader2({ className }: { className?: string }) {
-    return <RefreshCw className={className + " animate-spin"} />;
 }

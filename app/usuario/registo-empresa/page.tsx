@@ -400,11 +400,11 @@ export default function RegisterCompanyPage() {
                                 <h2 className="text-2xl font-bold text-slate-800 mb-2">Escolha seu Plano</h2>
                                 <p className="text-slate-500 text-sm mb-6">Selecione o nível de visibilidade que sua empresa deseja ter.</p>
 
-                                <div className="grid grid-cols-1 gap-4">
+                                <div className="grid grid-cols-1 gap-[20px]">
                                     {/* Gratuito */}
                                     <div
                                         onClick={() => setFormData(p => ({ ...p, plan: 'Gratuito' }))}
-                                        className={`p-6 rounded-xl border-2 transition-all cursor-pointer relative overflow-hidden ${formData.plan === 'Gratuito' ? 'border-emerald-500 bg-emerald-50/30 shadow-md' : 'border-slate-100 hover:border-slate-200 bg-white'}`}
+                                        className={`p-6 rounded-[15px] border-2 transition-all cursor-pointer relative overflow-hidden ${formData.plan === 'Gratuito' ? 'border-emerald-500 bg-emerald-50/30 shadow-md' : 'border-slate-100 hover:border-slate-200 bg-white'}`}
                                     >
                                         <div className="flex justify-between items-start">
                                             <div>
@@ -434,7 +434,7 @@ export default function RegisterCompanyPage() {
                                     {/* Profissional */}
                                     <div
                                         onClick={() => setFormData(p => ({ ...p, plan: 'Premium' }))}
-                                        className={`p-6 rounded-xl border-2 transition-all cursor-pointer relative overflow-hidden ${formData.plan === 'Premium' ? 'border-orange-500 bg-orange-50/30 shadow-md' : 'border-slate-100 hover:border-slate-200 bg-white'}`}
+                                        className={`p-6 rounded-[15px] border-2 transition-all cursor-pointer relative overflow-hidden ${formData.plan === 'Premium' ? 'border-orange-500 bg-orange-50/30 shadow-md' : 'border-slate-100 hover:border-slate-200 bg-white'}`}
                                     >
                                         <div className="flex justify-between items-start">
                                             <div>
@@ -470,7 +470,7 @@ export default function RegisterCompanyPage() {
                                     {/* Empresarial */}
                                     <div
                                         onClick={() => setFormData(p => ({ ...p, plan: 'Business Vendedor' }))}
-                                        className={`p-6 rounded-xl border-2 transition-all cursor-pointer relative overflow-hidden ${formData.plan === 'Business Vendedor' ? 'border-blue-600 bg-blue-50/30 shadow-md' : 'border-slate-100 hover:border-slate-200 bg-white'}`}
+                                        className={`p-6 rounded-[15px] border-2 transition-all cursor-pointer relative overflow-hidden ${formData.plan === 'Business Vendedor' ? 'border-blue-600 bg-blue-50/30 shadow-md' : 'border-slate-100 hover:border-slate-200 bg-white'}`}
                                     >
                                         <div className="flex justify-between items-start relative z-10">
                                             <div>
@@ -506,7 +506,7 @@ export default function RegisterCompanyPage() {
                                     {/* Parceiro */}
                                     <div
                                         onClick={() => setFormData(p => ({ ...p, plan: 'Parceiro' }))}
-                                        className={`p-6 rounded-xl border-2 transition-all cursor-pointer relative overflow-hidden ${formData.plan === 'Parceiro' ? 'border-emerald-600 bg-emerald-950 text-white shadow-md' : 'border-slate-100 hover:border-slate-200 bg-white'}`}
+                                        className={`p-6 rounded-[15px] border-2 transition-all cursor-pointer relative overflow-hidden ${formData.plan === 'Parceiro' ? 'border-emerald-600 bg-emerald-950 text-white shadow-md' : 'border-slate-100 hover:border-slate-200 bg-white'}`}
                                     >
                                         <div className="flex justify-between items-center">
                                             <div className="flex items-center gap-4">
@@ -527,7 +527,7 @@ export default function RegisterCompanyPage() {
 
                                 {/* Partner Additional Fields */}
                                 {formData.plan === 'Parceiro' && (
-                                    <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6 mt-6 animate-in fade-in slide-in-from-top-4">
+                                    <div className="bg-emerald-50 border border-emerald-200 rounded-[15px] p-6 mt-6 animate-in fade-in slide-in-from-top-4">
                                         <h3 className="font-bold text-emerald-800 mb-4">Dados do Parceiro</h3>
                                         <div className="grid grid-cols-1 gap-4">
                                             <Input
@@ -562,7 +562,7 @@ export default function RegisterCompanyPage() {
                             <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                                 <h2 className="text-2xl font-bold text-slate-800 mb-6">Onde sua empresa está?</h2>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-[20px]">
                                     <Input
                                         name="province"
                                         value={formData.province}
@@ -678,15 +678,15 @@ export default function RegisterCompanyPage() {
                                             </Button>
                                         </div>
 
-                                        <div className="space-y-6">
+                                        <div className="space-y-[20px]">
                                             {formData.products.length === 0 ? (
-                                                <div className="text-center py-12 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
+                                                <div className="text-center py-12 bg-slate-50 rounded-[15px] border-2 border-dashed border-slate-200">
                                                     <Save className="w-12 h-12 text-slate-300 mx-auto mb-4" />
                                                     <p className="text-slate-500">Ainda não adicionou produtos ao seu catálogo.</p>
                                                 </div>
                                             ) : (
                                                 formData.products.map((prod, idx) => (
-                                                    <div key={idx} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                                                    <div key={idx} className="bg-white p-6 rounded-[15px] border border-slate-200 shadow-sm space-y-4">
                                                         <div className="flex justify-between">
                                                             <span className="text-xs font-black uppercase text-slate-400">Produto #{idx + 1}</span>
                                                             <button onClick={() => setFormData(p => ({ ...p, products: p.products.filter((_, i) => i !== idx) }))} className="text-red-500 hover:text-red-700 text-xs font-bold">Remover</button>
@@ -724,7 +724,7 @@ export default function RegisterCompanyPage() {
                         {currentStep === 6 && (
                             <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                                 <h2 className="text-2xl font-bold text-slate-800 mb-6">Finalizar e Pagar</h2>
-                                <div className="bg-orange-50 p-6 rounded-2xl border border-orange-100 flex items-center justify-between">
+                                <div className="bg-orange-50 p-6 rounded-[15px] border border-orange-100 flex items-center justify-between">
                                     <div>
                                         <p className="text-[10px] font-black uppercase text-orange-600 tracking-widest">Plano Seleccionado</p>
                                         <h3 className="text-xl font-black text-slate-800 uppercase">{formData.plan}</h3>
@@ -754,7 +754,7 @@ export default function RegisterCompanyPage() {
 
                                     if (totalCost === 0) {
                                         return (
-                                            <div className="bg-emerald-50/50 p-8 rounded-2xl border border-emerald-100 text-center animate-in zoom-in-95 duration-300">
+                                            <div className="bg-emerald-50/50 p-8 rounded-[15px] border border-emerald-100 text-center animate-in zoom-in-95 duration-300">
                                                 <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                                     <CheckCircle2 className="w-8 h-8 text-emerald-600" />
                                                 </div>
@@ -769,7 +769,7 @@ export default function RegisterCompanyPage() {
                                     return (
                                         <div className="space-y-6">
                                             <p className="text-sm font-bold text-slate-700">Escolha o Método de Pagamento</p>
-                                            <div className="grid grid-cols-3 gap-3">
+                                            <div className="grid grid-cols-3 gap-[20px]">
                                                 {[
                                                     { id: 'mpesa', label: 'MPESA', color: 'emerald' },
                                                     { id: 'emola', label: 'EMOLA', color: 'blue' },
@@ -778,7 +778,7 @@ export default function RegisterCompanyPage() {
                                                     <button
                                                         key={m.id}
                                                         onClick={() => setFormData(p => ({ ...p, paymentMethod: m.id }))}
-                                                        className={`py-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${formData.paymentMethod === m.id ? 'border-emerald-600 bg-emerald-50 text-emerald-700 shadow-sm' : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200'}`}
+                                                        className={`py-4 rounded-[15px] border flex flex-col items-center gap-2 transition-all ${formData.paymentMethod === m.id ? 'border-emerald-600 bg-emerald-50 text-emerald-700 shadow-sm' : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200'}`}
                                                     >
                                                         <span className="font-black uppercase text-[10px] tracking-widest">{m.label}</span>
                                                     </button>

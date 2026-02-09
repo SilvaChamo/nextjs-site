@@ -316,7 +316,7 @@
   }
 
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-25px);
   }
 
   100% {
@@ -325,7 +325,7 @@
 }
 
 .animate-float {
-  animation: float 6s ease-in-out infinite;
+  animation: float 3s ease-in-out infinite;
 }
 
 .animate-float-delayed {
@@ -482,4 +482,108 @@ font {
 
 .animate-presentation-bounce {
   animation: presentation-bounce 0.8s ease-out forwards;
+}
+
+/* BUBBLE ANIMATIONS */
+@keyframes bubble-float-1 {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+@keyframes bubble-float-2 {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate(-40px, 40px) scale(1.2);
+  }
+}
+
+@keyframes bubble-float-3 {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  40% {
+    transform: translate(50px, 20px) scale(0.8);
+  }
+
+  80% {
+    transform: translate(-30px, -40px) scale(1.1);
+  }
+}
+
+.animate-bubble-1 {
+  animation: bubble-float-1 20s ease-in-out infinite;
+}
+
+.animate-bubble-2 {
+  animation: bubble-float-2 25s ease-in-out infinite;
+}
+
+.animate-bubble-3 {
+  animation: bubble-float-3 18s ease-in-out infinite;
+}
+
+/* GOOGLE BOUNCE ANIMATIONS - INTENSE & FAST */
+@keyframes google-bounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-80px);
+  }
+}
+
+.animate-google-bounce-1 {
+  animation: google-bounce 2s ease-in-out infinite;
+}
+
+.animate-google-bounce-2 {
+  animation: google-bounce 2.5s ease-in-out 0.5s infinite;
+}
+
+.animate-google-bounce-3 {
+  animation: google-bounce 1.8s ease-in-out 0.2s infinite;
+}
+
+.animate-google-bounce-4 {
+  animation: google-bounce 3s ease-in-out 1s infinite;
+}
+
+/* SEARCH INPUT TYPING PULSE */
+@keyframes typing-pulse {
+
+  0%,
+  100% {
+    border-color: transparent;
+  }
+
+  50% {
+    border-color: #059669;
+  }
+}
+
+.animate-typing-pulse {
+  border-right: 2px solid #059669;
+  animation: typing-pulse 1s step-end infinite;
 }

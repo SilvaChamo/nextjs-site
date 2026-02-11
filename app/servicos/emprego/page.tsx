@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
+import { RecruitCTA } from "@/components/RecruitCTA";
 import { Briefcase, MapPin, Building2, Clock, ArrowRight, Search } from "lucide-react";
 
 export default function EmpregoPage() {
@@ -107,13 +108,11 @@ export default function EmpregoPage() {
                     <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[100px]" />
                     <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <div className="space-y-4">
-                            <h3 className="text-3xl font-black">Recrute os melhores talentos</h3>
+                            <h3 className="text-3xl font-black text-white">Recrute os melhores talentos</h3>
                             <p className="text-slate-400 font-medium">A sua empresa precisa de especialistas? Publique as suas vagas na maior base de dados agrária.</p>
                         </div>
                         <div className="lg:text-right">
-                            <button className="px-12 py-4 bg-emerald-500 text-white rounded-md font-bold text-base transition-all shadow-lg hover:scale-105 active:scale-95">
-                                Publicar Nova Vaga
-                            </button>
+                            <RecruitCTA />
                         </div>
                     </div>
                 </div>

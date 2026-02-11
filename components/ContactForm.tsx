@@ -57,7 +57,7 @@ export function ContactForm() {
     };
 
     return (
-        <div className="card-agro-lg relative overflow-hidden flex flex-col p-[40px]">
+        <div className="card-agro-lg relative overflow-hidden flex flex-col p-[40px] rounded-[15px]">
 
             <div className="pb-6">
                 <h4 className="text-[45px] font-black text-slate-800/80 mb-2 leading-[1.1]">

@@ -13,3 +13,35 @@
  ○ Compiling / ...
  ✓ Compiled / in 11.4s
  HEAD / 200 in 13194ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/macbook/Desktop/APP/baseagrodata.com/.next/server/app/page/app-build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/macbook/Desktop/APP/baseagrodata.com/.next/server/app/page/app-build-manifest.json'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 2s
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.upf1k2wcs2b'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.upf1k2wcs2b'
+}
+[Error: ENOENT: no such file or directory, open '/Users/macbook/Desktop/APP/baseagrodata.com/.next/server/app/page/app-build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/macbook/Desktop/APP/baseagrodata.com/.next/server/app/page/app-build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.axhtyqqk5kv'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.axhtyqqk5kv'
+}
+[Error: ENOENT: no such file or directory, open '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.eprzd5jcaal'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.eprzd5jcaal'
+}

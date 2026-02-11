@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { QrCode, Share2, Smartphone, ShieldCheck, User, Globe, ArrowRight, CheckCircle2, Building2, Facebook } from "lucide-react";
+import { QrCode, Share2, Smartphone, ShieldCheck, User, Globe, ArrowRight, CheckCircle2, Building2, Facebook, MessageCircle, Linkedin } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -52,12 +52,18 @@ export default function DigitalProfilePage() {
                                     </div>
 
                                     <div className="mt-6 flex gap-3 justify-center">
-                                        <button className="w-10 h-10 bg-emerald-600 hover:bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-emerald-600/20 hover:shadow-emerald-600/40 transition-all hover:scale-110 active:scale-95">
-                                            <Share2 className="w-5 h-5" />
-                                        </button>
-                                        <button className="w-10 h-10 bg-blue-600 hover:bg-blue-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-blue-600/20 hover:shadow-blue-600/40 transition-all hover:scale-110 active:scale-95">
-                                            <Facebook className="w-5 h-5" />
-                                        </button>
+                                        <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 active:scale-95 transition-all cursor-pointer">
+                                            <Share2 className="w-4 h-4" />
+                                        </div>
+                                        <div className="w-10 h-10 bg-[#1877F2] rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 active:scale-95 transition-all cursor-pointer">
+                                            <Facebook className="w-4 h-4" />
+                                        </div>
+                                        <div className="w-10 h-10 bg-[#25D366] rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 active:scale-95 transition-all cursor-pointer">
+                                            <MessageCircle className="w-4 h-4 text-white fill-current" />
+                                        </div>
+                                        <div className="w-10 h-10 bg-[#0A66C2] rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 active:scale-95 transition-all cursor-pointer">
+                                            <Linkedin className="w-4 h-4" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>

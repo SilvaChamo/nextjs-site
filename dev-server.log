@@ -1,0 +1,127 @@
+
+> nextjs@0.1.0 dev
+> next dev -p 3000 --turbo
+
+   ▲ Next.js 15.5.12 (Turbopack)
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.8.106:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Compiled middleware in 464ms
+ ✓ Ready in 3.2s
+ ○ Compiling / ...
+ ✓ Compiled / in 13s
+ HEAD / 200 in 14862ms
+ GET / 200 in 12326ms
+ ○ Compiling /icon.png ...
+ ✓ Compiled /icon.png in 1146ms
+ GET /icon.png?icon.55ddb8df.png 200 in 1487ms
+ ○ Compiling /inovacao/perfil-digital ...
+ ✓ Compiled /inovacao/perfil-digital in 682ms
+ GET /inovacao/perfil-digital 200 in 799ms
+ GET /icon.png?icon.55ddb8df.png 200 in 290ms
+ ○ Compiling /mercado ...
+ ✓ Compiled /mercado in 544ms
+ GET /mercado 200 in 643ms
+ ○ Compiling /_not-found/page ...
+ ✓ Compiled /_not-found/page in 535ms
+ GET /cadastro-empresa 404 in 629ms
+ GET /cadastro-empresa 404 in 160ms
+ GET /icon.png?icon.55ddb8df.png 200 in 296ms
+ GET /mercado 200 in 308ms
+ ✓ Compiled in 638ms
+ ○ Compiling /contactos ...
+ ✓ Compiled /contactos in 1392ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.wl577pptdyl'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.wl577pptdyl'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 3.3s
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.nmbx2vcxqt9'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.nmbx2vcxqt9'
+}
+[Error: ENOENT: no such file or directory, open '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.wl577pptdyl'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.wl577pptdyl'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.2hb4xhh16cx'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.2hb4xhh16cx'
+}
+[Error: ENOENT: no such file or directory, open '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.3tzk9pcrw0l'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.3tzk9pcrw0l'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.idz8dnzh8zl'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.idz8dnzh8zl'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.g8xuyhai968'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.g8xuyhai968'
+}
+[Error: ENOENT: no such file or directory, open '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.idz8dnzh8zl'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.idz8dnzh8zl'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.ij2hfp4jrfn'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.ij2hfp4jrfn'
+}
+[Error: ENOENT: no such file or directory, open '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.pztnfxu03de'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.pztnfxu03de'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.fqy192wbo9'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.fqy192wbo9'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.j0hbvpljis'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.j0hbvpljis'
+}
+[Error: ENOENT: no such file or directory, open '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.fqy192wbo9'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.fqy192wbo9'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.f8cysuldjmf'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.f8cysuldjmf'
+}
+[Error: ENOENT: no such file or directory, open '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.xkbd6twv3bj'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/macbook/Desktop/APP/baseagrodata.com/.next/static/development/_buildManifest.js.tmp.xkbd6twv3bj'
+}

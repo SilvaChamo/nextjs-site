@@ -16,6 +16,13 @@ interface RichTextEditorProps {
 export function RichTextEditor({ value, onChange, placeholder, className }: RichTextEditorProps) {
     const editorRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [activeStyles, setActiveStyles] = useState({
+        bold: false,
+        italic: false,
+        justifyLeft: false,
+        justifyCenter: false,
+        justifyRight: false,
+    });
     const [isFocused, setIsFocused] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [selectedImage, setSelectedImage] = useState<HTMLImageElement | null>(null);
@@ -29,6 +36,25 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
                 editorRef.current.innerHTML = value;
             }
         }
+    }, []);
+
+    // Check current styles based on selection
+    const checkStyles = () => {
+        if (typeof document !== 'undefined') {
+            setActiveStyles({
+                bold: document.queryCommandState("bold"),
+                italic: document.queryCommandState("italic"),
+                justifyLeft: document.queryCommandState("justifyLeft"),
+                justifyCenter: document.queryCommandState("justifyCenter"),
+                justifyRight: document.queryCommandState("justifyRight"),
+            });
+        }
+    };
+
+    useEffect(() => {
+        const handler = () => checkStyles();
+        document.addEventListener("selectionchange", handler);
+        return () => document.removeEventListener("selectionchange", handler);
     }, []);
 
     // Clear selected image when clicking outside
@@ -49,6 +75,7 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
     const handleInput = () => {
         if (editorRef.current) {
             onChange(editorRef.current.innerHTML);
+            checkStyles();
         }
     };
 
@@ -57,6 +84,7 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
         if (editorRef.current) {
             editorRef.current.focus();
         }
+        checkStyles();
     };
 
     // Compress image if > 1MB
@@ -210,6 +238,7 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
             img.classList.add('rich-text-image-selected');
             setSelectedImage(img);
         }
+        checkStyles();
     };
 
     // Resize selected image
@@ -262,15 +291,15 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
         <div className={cn("flex flex-col bg-white overflow-hidden transition-all relative", className)}>
             {/* Toolbar */}
             <div className="flex items-center gap-1 p-2 border-b border-slate-100 bg-slate-50 flex-wrap">
-                <ToolbarButton onClick={() => execCommand("bold")} icon={<span className="font-black text-lg leading-none font-serif">B</span>} title="Bold" />
-                <ToolbarButton onClick={() => execCommand("italic")} icon={<Italic className="w-4 h-4" />} title="Italic" />
+                <ToolbarButton onClick={() => execCommand("bold")} icon={<span className="font-black text-lg leading-none font-serif">B</span>} title="Bold" isActive={activeStyles.bold} />
+                <ToolbarButton onClick={() => execCommand("italic")} icon={<Italic className="w-4 h-4" />} title="Italic" isActive={activeStyles.italic} />
 
                 <div className="w-px h-4 bg-slate-300 mx-1" />
 
                 {/* Text Alignment */}
-                <ToolbarButton onClick={() => execCommand("justifyLeft")} icon={<AlignLeft className="w-4 h-4" />} title="Alinhar à Esquerda" />
-                <ToolbarButton onClick={() => execCommand("justifyCenter")} icon={<AlignCenter className="w-4 h-4" />} title="Centralizar Texto" />
-                <ToolbarButton onClick={() => execCommand("justifyRight")} icon={<AlignRight className="w-4 h-4" />} title="Alinhar à Direita" />
+                <ToolbarButton onClick={() => execCommand("justifyLeft")} icon={<AlignLeft className="w-4 h-4" />} title="Alinhar à Esquerda" isActive={activeStyles.justifyLeft} />
+                <ToolbarButton onClick={() => execCommand("justifyCenter")} icon={<AlignCenter className="w-4 h-4" />} title="Centralizar Texto" isActive={activeStyles.justifyCenter} />
+                <ToolbarButton onClick={() => execCommand("justifyRight")} icon={<AlignRight className="w-4 h-4" />} title="Alinhar à Direita" isActive={activeStyles.justifyRight} />
 
                 <div className="w-px h-4 bg-slate-300 mx-1" />
 
@@ -367,6 +396,8 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
                 onClick={handleEditorClick}
+                onKeyUp={checkStyles}
+                onMouseUp={checkStyles}
                 data-placeholder={placeholder}
                 style={{ fontWeight: 400 }} // Base weight
             />
@@ -390,7 +421,7 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
     );
 }
 
-function ToolbarButton({ onClick, icon, title, disabled }: { onClick: () => void; icon: React.ReactNode; title: string; disabled?: boolean }) {
+function ToolbarButton({ onClick, icon, title, disabled, isActive }: { onClick: () => void; icon: React.ReactNode; title: string; disabled?: boolean; isActive?: boolean }) {
     return (
         <button
             type="button"
@@ -401,6 +432,7 @@ function ToolbarButton({ onClick, icon, title, disabled }: { onClick: () => void
             disabled={disabled}
             className={cn(
                 "p-1.5 text-slate-500 hover:text-emerald-700 hover:bg-emerald-50 rounded-md transition-colors",
+                isActive && "text-orange-600 bg-orange-50 hover:bg-orange-100 hover:text-orange-700",
                 disabled && "opacity-50 cursor-not-allowed"
             )}
             title={title}

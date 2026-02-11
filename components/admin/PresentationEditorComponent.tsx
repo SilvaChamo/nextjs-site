@@ -731,11 +731,11 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                                         <div className="relative pt-1">
                                             <input
                                                 type="range"
-                                                min="0"
-                                                max="100"
-                                                step="25"
-                                                value={((activeSlide?.image_height || 550) - 300) / 5}
-                                                onChange={(e) => updateSlide(activeSlide.id, { image_height: 300 + (parseInt(e.target.value) * 5) })}
+                                                min="300"
+                                                max="800"
+                                                step="125"
+                                                value={activeSlide?.image_height || 550}
+                                                onChange={(e) => updateSlide(activeSlide.id, { image_height: parseInt(e.target.value) })}
                                                 className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 transition-all hover:bg-slate-300"
                                             />
                                             <div className="flex justify-between mt-2">

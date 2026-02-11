@@ -10,6 +10,7 @@ import {
     FileText, BookOpen
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
+import { ContactCTA } from "@/components/ContactCTA";
 
 export default function RepositorioPage() {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -210,7 +211,7 @@ export default function RepositorioPage() {
                                 }}>Limpar tudo</button>
                             </div>
 
-                            <div className="bg-slate-50 p-5 rounded-[10px] space-y-4 border border-slate-100">
+                            <div className="bg-slate-50 p-5 rounded-[15px] space-y-4 border border-slate-100">
                                 <h3 className="text-sm font-bold text-slate-900">Categorias</h3>
                                 <div className="space-y-3">
                                     {[
@@ -240,7 +241,7 @@ export default function RepositorioPage() {
                             <div className="space-y-3">
                                 <h3 className="text-sm font-bold text-slate-900">Ordenar por</h3>
                                 <select
-                                    className="w-full bg-white border border-slate-200 rounded-[10px] py-2.5 px-4 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+                                    className="w-full bg-white border border-slate-200 rounded-[15px] py-2.5 px-4 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
                                     value={sortOption}
                                     onChange={(e) => setSortOption(e.target.value)}
                                 >
@@ -252,11 +253,11 @@ export default function RepositorioPage() {
                                 </select>
                             </div>
 
-                            <div className="bg-emerald-50 border border-emerald-100 p-5 rounded-[10px] space-y-4">
+                            <div className="bg-emerald-50 border border-emerald-100 p-5 rounded-[15px] space-y-4">
                                 <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Dica Pro</p>
                                 <p className="text-sm text-emerald-900 font-medium">Registe-se como vendedor para listar os seus produtos gratuitamente.</p>
                                 <Link href="/planos">
-                                    <button className="w-full py-3 bg-emerald-600 text-white text-xs font-bold rounded-[10px] hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-600/20">
+                                    <button className="w-full py-3 bg-emerald-600 text-white text-xs font-bold rounded-[15px] hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-600/20">
                                         Tornar-se Vendedor
                                     </button>
                                 </Link>
@@ -294,6 +295,12 @@ export default function RepositorioPage() {
                         </div>
                     </div>
                 </div>
+
+                <ContactCTA
+                    title="Não encontrou o que procurava?"
+                    description="O nosso repositório está em constante crescimento. Se procura algo específico ou quer destacar a sua empresa, entre em contacto."
+                    buttonText="Falar com Suporte"
+                />
             </main>
         </div>
     );

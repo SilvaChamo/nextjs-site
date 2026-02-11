@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { Monitor, Settings, Headphones, Rocket, ArrowRight } from "lucide-react";
+import { ContactCTA } from "@/components/ContactCTA";
 
 export default function AssistenciaPage() {
     const services = [
@@ -48,7 +49,7 @@ export default function AssistenciaPage() {
                 {/* Services Grid - On Background */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {services.map((service, i) => (
-                        <div key={i} className="p-6 md:p-8 rounded-[12px] bg-white border border-slate-200 shadow-lg shadow-slate-200/50 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col gap-4 group">
+                        <div key={i} className="p-6 md:p-8 rounded-[15px] bg-white border border-slate-200 shadow-lg shadow-slate-200/50 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col gap-4 group">
                             <div className="flex items-start gap-4">
                                 <div className={`w-12 h-12 rounded-[10px] flex items-center justify-center shrink-0 ${service.iconBg}`}>
                                     <service.icon className={`h-6 w-6 ${service.iconColor}`} />
@@ -68,24 +69,11 @@ export default function AssistenciaPage() {
                 </div>
 
                 {/* Bottom CTA */}
-                <div className="mt-20 bg-[#111827] rounded-[12px] p-12 text-left relative overflow-hidden border border-slate-800 shadow-2xl shadow-slate-900/20 text-white">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 blur-[100px]" />
-                    <div className="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-12">
-                        <div className="max-w-xl space-y-4">
-                            <h3 className="text-3xl font-black">Pronto para digitalizar o seu negócio?</h3>
-                            <p className="text-slate-400 font-medium leading-relaxed">
-                                Oferecemos consultoria tecnológica especializada para modernizar a sua presença online no sector agrário.
-                            </p>
-                        </div>
-                        <Link href="/contactos">
-                            <Link href="/registar">
-                                <button className="px-12 py-4 bg-white text-[#f97316] rounded-md font-black uppercase text-sm tracking-widest hover:scale-105 active:scale-95 shadow-xl transition-all">
-                                    Anunciar Produto
-                                </button>
-                            </Link>
-                        </Link>
-                    </div>
-                </div>
+                <ContactCTA
+                    title="Pronto para digitalizar o seu negócio?"
+                    description="Oferecemos consultoria tecnológica especializada para modernizar a sua presença online no sector agrário."
+                    buttonText="Falar com Especialistas"
+                />
             </div>
         </main>
     );

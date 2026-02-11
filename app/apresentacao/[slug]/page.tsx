@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-export default function PresentationViewerPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = use(params);
+export default function PresentationViewerPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = use(params);
     const supabase = createClient();
     const router = useRouter();
     const [presentation, setPresentation] = useState<any>(null);
@@ -23,7 +23,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
             const { data } = await supabase
                 .from('presentations')
                 .select('*')
-                .eq('id', id)
+                .eq('slug', slug)
                 .single();
 
             if (isMounted) {
@@ -33,7 +33,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
         };
         loadPresentation();
         return () => { isMounted = false; };
-    }, [id, supabase]);
+    }, [slug, supabase]);
 
     const toggleFullscreen = useCallback(async () => {
         const element = document.getElementById("presentation-root");

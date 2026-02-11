@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { Calendar, MapPin, Users, Ticket, ArrowRight, ChevronLeft, ChevronRight, Mic2, Award } from "lucide-react";
+import { ContactCTA } from "@/components/ContactCTA";
 
 export default function EventosPage() {
     // Left Column Data (Past Events Highlights)
@@ -100,7 +101,7 @@ export default function EventosPage() {
                             {pastEvents.map((event, i) => (
                                 <div
                                     key={i}
-                                    className="p-6 rounded-[12px] bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col gap-3"
+                                    className="p-6 rounded-[15px] bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col gap-3"
                                 >
                                     <div className="flex items-center gap-4">
                                         <div className={`w-10 h-10 rounded-[10px] flex items-center justify-center shrink-0 ${event.iconBg}`}>
@@ -128,7 +129,7 @@ export default function EventosPage() {
                                 <Link
                                     key={event.id}
                                     href={`/servicos/eventos/${event.id}`}
-                                    className="flex flex-col rounded-[12px] bg-white border border-slate-200 shadow-lg shadow-slate-200/50 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 group overflow-hidden"
+                                    className="flex flex-col rounded-[15px] bg-white border border-slate-200 shadow-lg shadow-slate-200/50 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 group overflow-hidden"
                                 >
                                     {/* Top Section: Date & Details */}
                                     <div className="flex flex-row flex-1 border-b border-slate-100">
@@ -202,34 +203,11 @@ export default function EventosPage() {
                 </div>
 
                 {/* CTA Section */}
-                <div className="mt-24 rounded-[12px] p-8 md:p-12 text-center shadow-2xl shadow-slate-200/50 overflow-hidden relative group">
-                    {/* Animated Background */}
-                    <div
-                        className="absolute inset-0 z-0 animate-ken-burns"
-                        style={{
-                            backgroundImage: "url('/assets/cta-gradient-bg.webp')",
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center'
-                        }}
-                    ></div>
-
-                    {/* Green Overlay */}
-                    <div className="absolute inset-0 bg-emerald-900/75 z-0 backdrop-blur-[1px]"></div>
-
-                    <h3 className="text-2xl md:text-3xl font-black text-white mb-4 relative z-10">
-                        Tem um evento para <span className="text-[#f97316]">promover?</span>
-                    </h3>
-                    <p className="text-indigo-100 font-medium mb-6 max-w-2xl mx-auto relative z-10">
-                        Oferecemos cobertura media, gestão de convites e logística para o seu evento agrário.
-                    </p>
-                    <Link
-                        href="/contactos"
-                        className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/30 text-white font-bold px-8 py-4 rounded-lg transition-all duration-300 hover:scale-105 hover:bg-white/20 hover:text-[#f97316] hover:border-[#f97316] shadow-lg relative z-10"
-                    >
-                        Solicitar Apoio
-                        <ArrowRight className="w-5 h-5" />
-                    </Link>
-                </div>
+                <ContactCTA
+                    title="Tem um evento para promover?"
+                    description="Oferecemos cobertura media, gestão de convites e logística completa para o seu evento agrário. Vamos tornar o seu evento memorável."
+                    buttonText="Solicitar Apoio"
+                />
             </div>
         </main>
     );

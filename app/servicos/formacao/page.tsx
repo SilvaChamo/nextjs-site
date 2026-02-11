@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { GraduationCap, BookOpen, Users, Laptop, ArrowRight, Calendar, Clock, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
+import { ContactCTA } from "@/components/ContactCTA";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
@@ -150,7 +151,7 @@ export default function FormacaoPage() {
                             {programs.map((program, i) => (
                                 <div
                                     key={i}
-                                    className="p-6 rounded-[12px] bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col gap-3"
+                                    className="p-6 rounded-[15px] bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col gap-3"
                                 >
                                     <div className="flex items-center gap-4">
                                         <div className={`w-10 h-10 rounded-[10px] flex items-center justify-center shrink-0 ${program.iconBg}`}>
@@ -193,7 +194,7 @@ export default function FormacaoPage() {
                                         <Link
                                             key={training.id}
                                             href={`/servicos/formacao/${training.id}`}
-                                            className="flex flex-col rounded-[12px] bg-white border border-slate-200 shadow-lg shadow-slate-200/50 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 group overflow-hidden"
+                                            className="flex flex-col rounded-[15px] bg-white border border-slate-200 shadow-lg shadow-slate-200/50 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 group overflow-hidden"
                                         >
                                             {/* Top Section: Date & Details */}
                                             <div className="flex flex-row flex-1 border-b border-slate-100">
@@ -272,34 +273,19 @@ export default function FormacaoPage() {
 
                 {/* CTA Section */}
                 {/* CTA Section */}
-                <div className="mt-24 rounded-[12px] p-8 md:p-12 text-center shadow-2xl shadow-slate-200/50 overflow-hidden relative group">
-                    {/* Animated Background */}
-                    <div
-                        className="absolute inset-0 z-0 animate-ken-burns"
-                        style={{
-                            backgroundImage: "url('/assets/cta-gradient-bg.webp')",
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center'
-                        }}
-                    ></div>
-
-                    {/* Green Overlay */}
-                    <div className="absolute inset-0 bg-emerald-900/75 z-0 backdrop-blur-[1px]"></div>
-
-                    <h3 className="text-2xl md:text-3xl font-black text-white mb-4 relative z-10">
-                        Invista no desenvolvimento da <span className="text-[#f97316]">sua equipa</span>
-                    </h3>
-                    <p className="text-indigo-100 font-medium mb-6 max-w-2xl mx-auto relative z-10">
-                        Publique a sua formação ou contacte-nos para conhecer os nossos programas personalizados.
-                    </p>
+                <ContactCTA
+                    title="Invista no desenvolvimento da sua equipa"
+                    description="Publique a sua formação ou contacte-nos para conhecer os nossos programas personalizados de capacitação agrária."
+                    buttonText="Falar com Especialistas"
+                >
                     <button
                         onClick={handlePublishCourse}
-                        className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/30 text-white font-bold px-8 py-4 rounded-lg transition-all duration-300 hover:scale-105 hover:bg-white/20 hover:text-[#f97316] hover:border-[#f97316] shadow-lg relative z-10"
+                        className="inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-md border border-white/30 text-white font-bold px-8 py-4 rounded-lg transition-all duration-300 hover:scale-105 hover:bg-white/20 sm:w-auto w-full"
                     >
                         Cadastrar Curso
-                        <ArrowRight className="w-5 h-5" />
+                        <ArrowRight className="w-5 h-5 text-[#f97316]" />
                     </button>
-                </div>
+                </ContactCTA>
             </div>
 
             <PermissionModal

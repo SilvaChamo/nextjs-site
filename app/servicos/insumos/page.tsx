@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { ShoppingCart, MapPin, Phone, ArrowRight, Package, BadgeCheck, Clock, Building2 } from "lucide-react";
+import { ContactCTA } from "@/components/ContactCTA";
 
 export default function InsumosPage() {
     const stores = [
@@ -58,7 +59,7 @@ export default function InsumosPage() {
                 {/* Stores Grid - Using Emprego Card Style */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {stores.map((store, i) => (
-                        <div key={i} className="p-6 md:p-8 rounded-[12px] bg-white border border-slate-200 shadow-lg shadow-slate-200/50 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-6 group">
+                        <div key={i} className="p-6 md:p-8 rounded-[15px] bg-white border border-slate-200 shadow-lg shadow-slate-200/50 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-6 group">
                             <div className="flex items-center gap-6">
                                 <div className={`w-14 h-14 rounded-[10px] flex items-center justify-center shrink-0 ${store.iconBg}`}>
                                     <Package className={`h-7 w-7 ${store.iconColor}`} />
@@ -93,22 +94,12 @@ export default function InsumosPage() {
                 </div>
 
                 {/* Bottom CTA */}
-                <div className="mt-20 bg-[#111827] rounded-[12px] p-12 text-left relative overflow-hidden border border-slate-800 shadow-2xl shadow-slate-900/20 text-white">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[100px]" />
-                    <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                        <div className="space-y-4">
-                            <h3 className="text-3xl font-black">Registe a sua loja</h3>
-                            <p className="text-slate-400 font-medium">Aumente a visibilidade do seu negócio e alcance mais produtores em todo o país.</p>
-                        </div>
-                        <div className="lg:text-right">
-                            <Link href="/registar">
-                                <button className="px-12 py-4 bg-emerald-500 text-white rounded-md font-bold text-base transition-all shadow-lg hover:scale-105 active:scale-95">
-                                    Registar Loja Nova
-                                </button>
-                            </Link>
-                        </div>
-                    </div>
-                </div>
+                <ContactCTA
+                    title="Tem uma loja de insumos?"
+                    description="Aumente a visibilidade do seu negócio e alcance mais produtores em todo o país. Registe a sua loja hoje mesmo."
+                    buttonText="Registar Loja Nova"
+                    href="/registar"
+                />
             </div>
         </main>
     );

@@ -97,7 +97,7 @@ export default function PresentationsGalleryPage() {
 
                                             <div className="pt-4 flex items-center justify-between">
                                                 <Link
-                                                    href={`/apresentacao/${item.id}`}
+                                                    href={`/apresentacao/${item.slug || item.id}`}
                                                     className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white text-slate-950 rounded-full text-[9px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition-all duration-300"
                                                 >
                                                     Abrir Projecto
@@ -112,7 +112,7 @@ export default function PresentationsGalleryPage() {
                                     </div>
 
                                     {/* Invisible full-card link for convenience */}
-                                    <Link href={`/apresentacao/${item.id}`} className="absolute inset-0 z-30"></Link>
+                                    <Link href={`/apresentacao/${item.slug || item.id}`} className="absolute inset-0 z-30"></Link>
                                 </div>
                             );
                         })}

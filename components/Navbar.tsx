@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, ChevronLeft, ChevronDown, Facebook, Instagram, Linkedin, Twitter, Loader2, CheckCircle, Building2, User, Home } from "lucide-react";
+import { Menu, ChevronLeft, ChevronDown, Facebook, Instagram, Linkedin, Twitter, Loader2, CheckCircle, Building2, User, Home, ShieldCheck, Globe, TrendingUp, ArrowRight, Star, Zap, QrCode, Presentation, Library, ScanLine, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     Sheet,
@@ -13,21 +13,6 @@ import {
     SheetTrigger,
     SheetClose,
 } from "@/components/ui/sheet";
-import {
-    MessageSquare,
-    Search,
-    QrCode,
-    Presentation,
-    Library,
-    ScanLine,
-    ShieldCheck,
-    Smartphone,
-    TrendingUp,
-    Globe,
-    ArrowRight,
-    Star,
-    Zap
-} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/lib/supabaseClient";
@@ -47,7 +32,6 @@ export function Navbar() {
     const [success, setSuccess] = useState<{ contact: boolean; register: boolean }>({ contact: false, register: false });
 
     const [user, setUser] = useState<any>(null);
-    const [isMegaMenuForcedClosed, setIsMegaMenuForcedClosed] = useState(false);
 
     useEffect(() => {
         // Verificar usuário inicial
@@ -137,14 +121,6 @@ export function Navbar() {
         }
     ];
 
-    const offCanvasItems = [
-        { label: t("common.help_center"), link: "/ajuda" },
-        { label: t("common.blog"), link: "/blog" },
-        { label: t("common.careers"), link: "/carreiras" },
-        { label: t("common.terms"), link: "/termos" },
-        { label: t("common.privacy"), link: "/politica-privacidade" },
-    ];
-
     return (
         <header className="w-full fixed top-0 left-0 z-50 bg-white shadow-md">
             <div className="container-site py-3 flex items-center justify-between flex-nowrap gap-4">
@@ -164,7 +140,7 @@ export function Navbar() {
                     </Link>
                 </div>
 
-                {/* Desktop Navigation (Moved from Off-canvas) */}
+                {/* Desktop Navigation */}
                 <nav className="hidden lg:flex items-center gap-6 xl:gap-8 flex-1 justify-center">
                     {/* Base Dropdown */}
                     <div className="relative group py-4">
@@ -198,42 +174,28 @@ export function Navbar() {
 
                         if (item.link === '/servicos') {
                             return (
-                                <div
-                                    key={i}
-                                    className="group py-4"
-                                    onMouseEnter={() => setIsMegaMenuForcedClosed(false)}
-                                >
-                                    <div
-                                        className={`flex items-center gap-1.5 text-[15px] font-medium transition-colors whitespace-nowrap tracking-tight font-sans cursor-pointer ${isActive ? "text-[#f97316]" : "text-gray-600 hover:text-[#f97316]"
-                                            }`}
-                                    >
+                                <div key={i} className="group py-4">
+                                    <div className={`flex items-center gap-1.5 text-[15px] font-medium transition-colors whitespace-nowrap tracking-tight font-sans cursor-pointer ${isActive ? "text-[#f97316]" : "text-gray-600 hover:text-[#f97316]"}`}>
                                         <span className="leading-none">{item.label}</span>
                                         <ChevronDown className="w-3.5 h-3.5 opacity-70 group-hover:rotate-180 transition-transform duration-300" />
                                     </div>
-
-                                    <ServicesMegaMenu onClose={() => setIsMegaMenuForcedClosed(true)} />
+                                    <div className="absolute left-0 w-full top-full opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 pointer-events-none group-hover:pointer-events-auto">
+                                        <div className="absolute top-[-15px] left-0 w-full h-[15px] bg-transparent" />
+                                        <ServicesMegaMenu isOpen={true} onClose={() => { }} />
+                                    </div>
                                 </div>
                             );
                         }
 
                         if (item.link === '/inovacao') {
                             return (
-                                <div
-                                    key={i}
-                                    className="group py-4"
-                                    onMouseEnter={() => setIsMegaMenuForcedClosed(false)}
-                                >
-                                    <div
-                                        className={`flex items-center gap-1.5 text-[15px] font-medium transition-colors whitespace-nowrap tracking-tight font-sans cursor-pointer ${isActive ? "text-[#f97316]" : "text-gray-600 hover:text-[#f97316]"
-                                            }`}
-                                    >
+                                <div key={i} className="group py-4">
+                                    <div className={`flex items-center gap-1.5 text-[15px] font-medium transition-colors whitespace-nowrap tracking-tight font-sans cursor-pointer ${isActive ? "text-[#f97316]" : "text-gray-600 hover:text-[#f97316]"}`}>
                                         <span className="leading-none">{item.label}</span>
                                         <ChevronDown className="w-3.5 h-3.5 opacity-70 group-hover:rotate-180 transition-transform duration-300" />
                                     </div>
-
-                                    {/* Innovation Mega Menu Content */}
-                                    <div className={`absolute left-0 w-full top-full opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 pointer-events-none group-hover:pointer-events-auto ${isMegaMenuForcedClosed ? "!hidden" : ""}`}>
-                                        <div className="absolute top-[-15px] left-0 w-full h-[15px] bg-transparent" /> {/* Invisible bridge to maintain hover */}
+                                    <div className="absolute left-0 w-full top-full opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 pointer-events-none group-hover:pointer-events-auto">
+                                        <div className="absolute top-[-15px] left-0 w-full h-[15px] bg-transparent" />
                                         <div className="bg-white border-y border-slate-200 rounded-none shadow-[0_40px_80px_rgba(0,0,0,0.1)] overflow-hidden">
                                             <div className="container-site py-12">
                                                 <div className="grid grid-cols-3 gap-x-16">
@@ -241,21 +203,14 @@ export function Navbar() {
                                                         <div key={idx} className="space-y-8">
                                                             <div className="flex flex-col gap-1">
                                                                 <div className="h-[1px] w-full bg-orange-100/50 mb-6" />
-
                                                                 <div className="space-y-4">
-                                                                    {section.items.map((item, si) => {
-                                                                        const title = t(`navbar.innovation_menu.${item.key}.title`);
-                                                                        const description = t(`navbar.innovation_menu.${item.key}.description`);
-                                                                        const link = t(`navbar.innovation_menu.${item.key}.link`);
-                                                                        const Icon = item.icon;
-
+                                                                    {section.items.map((subItem, si) => {
+                                                                        const title = t(`navbar.innovation_menu.${subItem.key}.title`);
+                                                                        const description = t(`navbar.innovation_menu.${subItem.key}.description`);
+                                                                        const link = t(`navbar.innovation_menu.${subItem.key}.link`);
+                                                                        const Icon = subItem.icon;
                                                                         return (
-                                                                            <Link
-                                                                                key={si}
-                                                                                href={link}
-                                                                                onClick={() => setIsMegaMenuForcedClosed(true)}
-                                                                                className="flex items-start gap-4 p-3 -mx-3 rounded-xl hover:bg-slate-50 transition-all group/item"
-                                                                            >
+                                                                            <Link key={si} href={link} className="flex items-start gap-4 p-3 -mx-3 rounded-xl hover:bg-slate-50 transition-all group/item">
                                                                                 <div className="w-11 h-11 rounded-lg bg-orange-50 flex items-center justify-center shrink-0 group-hover/item:bg-[#f97316] group-hover/item:text-white transition-colors">
                                                                                     <Icon className="w-6 h-6 text-[#f97316] group-hover/item:text-white" />
                                                                                 </div>
@@ -277,11 +232,7 @@ export function Navbar() {
                                                         <span className="flex items-center gap-2"><Globe className="w-4 h-4 text-emerald-600/50" /> Disponibilidade Nacional</span>
                                                         <span className="flex items-center gap-2"><TrendingUp className="w-4 h-4 text-orange-600/50" /> Alta Performance</span>
                                                     </div>
-                                                    <Link
-                                                        href="/inovacao"
-                                                        onClick={() => setIsMegaMenuForcedClosed(true)}
-                                                        className="text-[14px] font-bold text-[#f97316] hover:text-emerald-600 transition-colors flex items-center gap-2"
-                                                    >
+                                                    <Link href="/inovacao" className="text-[14px] font-bold text-[#f97316] hover:text-emerald-600 transition-colors flex items-center gap-2">
                                                         Ver Visão Geral do Módulo <ArrowRight className="w-4 h-4" />
                                                     </Link>
                                                 </div>
@@ -296,35 +247,21 @@ export function Navbar() {
                             <Link
                                 key={i}
                                 href={item.link}
-                                className={`text-[15px] font-medium transition-colors whitespace-nowrap tracking-tight font-sans ${isActive
-                                    ? "text-[#f97316]"
-                                    : "text-gray-600 hover:text-[#f97316]"
-                                    }`}
+                                className={`text-[15px] font-medium transition-colors whitespace-nowrap tracking-tight font-sans ${isActive ? "text-[#f97316]" : "text-gray-600 hover:text-[#f97316]"}`}
                             >
                                 {item.label}
                             </Link>
                         );
                     })}
-
-
                 </nav>
 
                 {/* Right Actions Section */}
                 <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
-                    {/* Language Toggle */}
-                    <button
-                        onClick={toggleLanguage}
-                        className="notranslate w-9 h-9 flex items-center justify-center rounded-[8px] bg-[#f97316]/10 font-medium text-[13px] text-[#f97316] hover:bg-[#f97316]/20 transition-all uppercase tracking-tight shadow-sm"
-                        title={language === "PT" ? "Switch to English" : "Mudar para Português"}
-                    >
+                    <button onClick={toggleLanguage} className="notranslate w-9 h-9 flex items-center justify-center rounded-[8px] bg-[#f97316]/10 font-medium text-[13px] text-[#f97316] hover:bg-[#f97316]/20 transition-all uppercase tracking-tight shadow-sm">
                         {language === "PT" ? "EN" : "PT"}
                     </button>
-
-                    {/* Minimalist Login Button (Always dynamic translation) */}
                     <Link href="/login" className="hidden sm:block">
-                        <Button
-                            className="notranslate bg-emerald-600 hover:bg-[#f97316] text-white text-[12px] font-bold px-5 h-9 rounded-[8px] transition-all shadow-sm border-none"
-                        >
+                        <Button className="notranslate bg-emerald-600 hover:bg-[#f97316] text-white text-[12px] font-bold px-5 h-9 rounded-[8px] transition-all shadow-sm border-none">
                             {t("common.login")}
                         </Button>
                     </Link>
@@ -339,16 +276,13 @@ export function Navbar() {
                         <SheetContent side="right" className="w-[300px] sm:w-[350px] p-0 border-l border-slate-100">
                             <div className="flex flex-col h-full bg-white">
                                 <div className="p-6 border-b border-slate-50 flex items-center justify-between">
-                                    <SheetTitle className="text-xl font-black text-slate-800">
-                                        {t("common.menu")}
-                                    </SheetTitle>
+                                    <SheetTitle className="text-xl font-black text-slate-800">{t("common.menu")}</SheetTitle>
                                     <SheetClose asChild>
                                         <Button variant="ghost" size="icon" className="text-slate-400">
                                             <ChevronLeft className="w-5 h-5 rotate-180" />
                                         </Button>
                                     </SheetClose>
                                 </div>
-
                                 <div className="flex-1 overflow-y-auto py-4">
                                     <div className="px-6 mb-8">
                                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Acesso Rápido</p>
@@ -365,23 +299,17 @@ export function Navbar() {
                                             ))}
                                         </div>
                                     </div>
-
                                     <div className="px-6 mb-8">
                                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Módulo de Inovação</p>
                                         <div className="space-y-6">
                                             {innovationSections.map((section, idx) => (
                                                 <div key={idx} className="space-y-2">
-
                                                     <div className="space-y-1">
                                                         {section.items.map((subItem, si) => {
                                                             const title = t(`navbar.innovation_menu.${subItem.key}.title`);
                                                             const link = t(`navbar.innovation_menu.${subItem.key}.link`);
                                                             return (
-                                                                <Link
-                                                                    key={si}
-                                                                    href={link}
-                                                                    className={`flex items-center gap-3 py-2 text-slate-600 font-medium hover:text-emerald-600 pl-4 ${pathname === link ? "text-emerald-600" : ""}`}
-                                                                >
+                                                                <Link key={si} href={link} className={`flex items-center gap-3 py-2 text-slate-600 font-medium hover:text-emerald-600 pl-4 ${pathname === link ? "text-emerald-600" : ""}`}>
                                                                     <span className="w-1 h-1 rounded-full bg-slate-300"></span>
                                                                     {title}
                                                                 </Link>
@@ -392,18 +320,13 @@ export function Navbar() {
                                             ))}
                                         </div>
                                     </div>
-
                                     <div className="px-6 mb-8">
                                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Outros Serviços</p>
                                         <div className="space-y-1">
                                             {menuItems.filter(item => item.link !== '/inovacao').map((item, i) => {
                                                 const isActive = pathname === item.link || (item.link !== '/' && pathname.startsWith(item.link));
                                                 return (
-                                                    <Link
-                                                        key={i}
-                                                        href={item.link}
-                                                        className={`block py-3 text-slate-700 font-bold border-b border-slate-50 ${isActive ? "text-emerald-600" : ""}`}
-                                                    >
+                                                    <Link key={i} href={item.link} className={`block py-3 text-slate-700 font-bold border-b border-slate-50 ${isActive ? "text-emerald-600" : ""}`}>
                                                         {item.label}
                                                     </Link>
                                                 );
@@ -411,7 +334,6 @@ export function Navbar() {
                                         </div>
                                     </div>
                                 </div>
-
                                 <div className="p-6 border-t border-slate-50 space-y-4">
                                     <Link href="/login" className="block w-full">
                                         <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-12 rounded-[12px]">

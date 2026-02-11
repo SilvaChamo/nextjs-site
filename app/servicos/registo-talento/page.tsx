@@ -25,7 +25,7 @@ export default function RegisterTalentPage() {
                     {/* Sidebar Information */}
                     <div className="hidden lg:block lg:col-span-1 sticky top-24 space-y-6">
                         {/* Info Card 1 */}
-                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                        <div className="bg-white p-6 rounded-[15px] shadow-sm border border-slate-100">
                             <h3 className="font-heading font-black text-xl text-slate-800 mb-4">
                                 Informação Importante
                             </h3>
@@ -56,7 +56,7 @@ export default function RegisterTalentPage() {
                         </div>
 
                         {/* Support Card */}
-                        <div className="bg-emerald-900 p-6 rounded-2xl shadow-lg relative overflow-hidden group">
+                        <div className="bg-emerald-900 p-6 rounded-[15px] shadow-lg relative overflow-hidden group">
                             <div className="absolute top-0 right-0 p-4 opacity-10">
                                 <UserPlus className="w-24 h-24 text-white transform rotate-12" />
                             </div>

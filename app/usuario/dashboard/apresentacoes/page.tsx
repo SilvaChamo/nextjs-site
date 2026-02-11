@@ -433,7 +433,7 @@ export default function UserPresentationsPage() {
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center justify-end gap-1">
                                                         <button
-                                                            onClick={() => window.open(`/apresentacao/${item.id}`, '_blank')}
+                                                            onClick={() => window.open(`/apresentacao/${item.slug || item.id}`, '_blank')}
                                                             className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all"
                                                             title="Reproduzir"
                                                         >
@@ -582,7 +582,7 @@ export default function UserPresentationsPage() {
                                                     </Button>
                                                     <div className="flex items-center gap-2">
                                                         <button
-                                                            onClick={() => window.open(`/apresentacao/${item.id}`, '_blank')}
+                                                            onClick={() => window.open(`/apresentacao/${item.slug || item.id}`, '_blank')}
                                                             className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
                                                             title="Visualizar"
                                                         >

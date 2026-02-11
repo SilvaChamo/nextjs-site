@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { ShoppingBag, TrendingUp, BarChart3, ArrowUpRight, Tags, ShieldCheck, ArrowRight, Search, X } from "lucide-react";
 import { usePlanPermissions } from "@/hooks/usePlanPermissions";
 import { SearchSection } from "@/components/SearchSection";
+import { ContactCTA } from "@/components/ContactCTA";
 
 export default function MercadoServicoPage() {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -81,29 +82,10 @@ export default function MercadoServicoPage() {
             <SearchSection isOpen={isSearchOpen} withBottomBorder={true} />
 
             <div className="container-site relative z-20 mt-[50px] pb-24">
-                {/* Intro Section - White Box */}
-                <div className="bg-white rounded-[15px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] border border-slate-100 px-8 md:px-10 lg:px-12 py-10 md:py-12 mb-12">
-                    <div className="grid grid-cols-1 lg:grid-cols-[7fr_3fr] gap-12">
-                        <div className="space-y-6">
-                            <h2 className="text-2xl md:text-[45px] font-heading font-black text-slate-900 tracking-tight leading-[1.2]">
-                                O mercado agrário com <span className="text-[#f97316]">transparência e segurança.</span>
-                            </h2>
-                            <div className="space-y-4 text-slate-500 font-medium leading-relaxed">
-                                <p>
-                                    Bem-vindo ao maior hub de comercialização agrícola de Moçambique. Nossa plataforma elimina intermediários desnecessários, conectando quem produz directamente a quem compra.
-                                </p>
-                                <p>
-                                    Aqui, os produtores encontram <strong>liquidez imediata</strong> para suas colheitas, enquanto grandes compradores garantem acesso a produtos de qualidade com rastreabilidade. Oferecemos cotações em tempo real e um ambiente seguro para negociações.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 {/* Market Info Grid - On Background */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
                     {marketInfo.map((item, i) => (
-                        <div key={i} className="p-6 md:p-8 rounded-[12px] bg-white border border-slate-200 shadow-lg shadow-slate-200/50 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col gap-4 group">
+                        <div key={i} className="p-6 md:p-8 rounded-[15px] bg-white border border-slate-200 shadow-lg shadow-slate-200/50 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col gap-4 group">
                             <div className="flex items-start justify-between">
                                 <div className="flex items-start gap-4">
                                     <div className={`w-12 h-12 rounded-[10px] flex items-center justify-center shrink-0 ${item.iconBg}`}>
@@ -200,21 +182,18 @@ export default function MercadoServicoPage() {
                     </div>
                 </div>
 
-                {/* Bottom CTA - Updated with Dark Green Gradient and Plan Logic */}
-                <div className="mt-20 bg-gradient-to-r from-emerald-950 via-emerald-900 to-emerald-950 rounded-[12px] p-12 text-left relative overflow-hidden shadow-2xl shadow-emerald-900/40 text-white">
-                    <div className="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
-                        <div className="max-w-xl space-y-4">
-                            <h3 className="text-3xl font-black leading-tight">Comece a vender agora!</h3>
-                            <p className="text-emerald-50 font-medium">Publique o seu stock e conecte-se com centenas de compradores em todo o país.</p>
-                        </div>
-                        <button
-                            onClick={handleAnunciarClick}
-                            className="px-12 py-4 bg-white text-emerald-900 rounded-md font-black uppercase text-sm tracking-widest hover:scale-105 active:scale-95 shadow-xl transition-all"
-                        >
-                            Anunciar Produto
-                        </button>
-                    </div>
-                </div>
+                <ContactCTA
+                    title="Quer começar a vender agora?"
+                    description="Publique o seu stock e conecte-se com centenas de compradores em todo o país através do nosso mercado digital."
+                    buttonText="Falar com Especialistas"
+                >
+                    <button
+                        onClick={handleAnunciarClick}
+                        className="inline-flex items-center justify-center px-12 py-4 bg-white text-emerald-900 rounded-md font-black uppercase text-sm tracking-widest hover:scale-105 active:scale-95 shadow-xl transition-all sm:w-auto w-full"
+                    >
+                        Anunciar Produto
+                    </button>
+                </ContactCTA>
             </div>
         </main>
     );

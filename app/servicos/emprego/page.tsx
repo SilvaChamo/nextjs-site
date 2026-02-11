@@ -4,6 +4,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { RecruitCTA } from "@/components/RecruitCTA";
 import { Briefcase, MapPin, Building2, Clock, ArrowRight, Search } from "lucide-react";
+import { ContactCTA } from "@/components/ContactCTA";
 
 export default function EmpregoPage() {
     const jobs = [
@@ -60,9 +61,9 @@ export default function EmpregoPage() {
 
             <div className="container-site relative z-20 mt-[50px] pb-24">
                 {/* Jobs Grid - On Background */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-6">
                     {jobs.map((job, i) => (
-                        <div key={i} className="p-6 md:p-8 md:pb-[15px] pb-[15px] rounded-[12px] bg-white border border-slate-200 shadow-lg shadow-slate-200/50 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col justify-between gap-4 group relative">
+                        <div key={i} className="p-6 md:p-8 rounded-[15px] bg-white border border-slate-200 shadow-lg shadow-slate-200/50 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-6 group cursor-pointer">
                             {/* Job Type Badge - Absolute Top Right */}
                             <span className="absolute top-6 right-6 md:top-8 md:right-8 text-[10px] font-black uppercase bg-slate-100 text-slate-500 px-2 py-1 rounded border border-slate-200">{job.type}</span>
 
@@ -103,19 +104,13 @@ export default function EmpregoPage() {
                     ))}
                 </div>
 
-                {/* Bottom CTA */}
-                <div className="mt-20 bg-[#111827] rounded-[12px] p-12 text-left relative overflow-hidden border border-slate-800 shadow-2xl shadow-slate-900/20 text-white">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[100px]" />
-                    <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                        <div className="space-y-4">
-                            <h3 className="text-3xl font-black text-white">Recrute os melhores talentos</h3>
-                            <p className="text-slate-400 font-medium">A sua empresa precisa de especialistas? Publique as suas vagas na maior base de dados agrária.</p>
-                        </div>
-                        <div className="lg:flex lg:justify-end">
-                            <RecruitCTA />
-                        </div>
-                    </div>
-                </div>
+                <ContactCTA
+                    title="Recrute os melhores talentos"
+                    description="A sua empresa precisa de especialistas? Publique as suas vagas na maior base de dados agrária e conecte-se com profissionais qualificados."
+                    buttonText="Falar com Especialistas"
+                >
+                    <RecruitCTA />
+                </ContactCTA>
             </div>
         </main>
     );

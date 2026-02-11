@@ -77,16 +77,16 @@ export default function TransportePage() {
                     <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[100px]" />
                     <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <div className="space-y-6">
-                            <h3 className="text-3xl font-black">Pronto para transportar grandes volumes?</h3>
+                            <h3 className="text-3xl font-black text-white">Pronto para transportar grandes volumes?</h3>
                             <p className="text-slate-400 font-medium leading-relaxed">
                                 Seja para transporte nacional entre províncias ou para exportação em grandes quantidades, facilitamos a conexão com operadores logísticos certificados.
                             </p>
                         </div>
                         <div className="lg:text-right">
-                            <button className="px-12 py-4 bg-[#f97316] text-white rounded-md font-bold text-base transition-all shadow-lg hover:scale-105 active:scale-95 flex items-center gap-3 ml-auto">
+                            <Link href="/contactos" className="inline-flex items-center justify-center px-12 py-4 bg-[#f97316] text-white rounded-md font-bold text-base transition-all shadow-lg hover:scale-105 active:scale-95 gap-3 ml-auto">
                                 Solicitar Cotação
                                 <Clock className="w-4 h-4" />
-                            </button>
+                            </Link>
                         </div>
                     </div>
                 </div>

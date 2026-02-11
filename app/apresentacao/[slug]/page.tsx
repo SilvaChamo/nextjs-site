@@ -20,11 +20,19 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ s
     useEffect(() => {
         let isMounted = true;
         const loadPresentation = async () => {
-            const { data } = await supabase
+            const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
+
+            const query = supabase
                 .from('presentations')
-                .select('*')
-                .eq('slug', slug)
-                .single();
+                .select('*');
+
+            if (isUUID) {
+                query.eq('id', slug);
+            } else {
+                query.eq('slug', slug);
+            }
+
+            const { data } = await query.maybeSingle();
 
             if (isMounted) {
                 if (data) setPresentation(data);
@@ -113,7 +121,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ s
     return (
         <div
             id="presentation-root"
-            className={`fixed inset-0 bg-slate-950 text-white overflow-hidden transition-all duration-700`}
+            className={`fixed inset-0 bg-slate-950 text-white overflow-hidden transition-all duration-700 z-[9999]`}
         >
             {/* Top Right: Actions & Timer */}
             <div className="absolute top-10 right-10 z-[100] flex items-center gap-4">
@@ -148,7 +156,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ s
                         return (
                             <div
                                 key={index}
-                                className={`h-full absolute inset-0 py-[40px] px-0 flex items-center justify-center transition-all duration-[1000ms] ease-in-out ${isActive ? 'opacity-100 z-10 scale-100' : 'opacity-0 z-0 scale-[1.02] pointer-events-none'}`}
+                                className={`h-full absolute inset-0 pt-0 pb-[40px] px-0 flex items-center justify-center transition-all duration-[1000ms] ease-in-out ${isActive ? 'opacity-100 z-10 scale-100' : 'opacity-0 z-0 scale-[1.02] pointer-events-none'}`}
                                 style={{ minWidth: '100%' }}
                             >
 

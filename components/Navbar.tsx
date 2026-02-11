@@ -32,6 +32,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/lib/supabaseClient";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { ServicesMegaMenu } from "./ServicesMegaMenu";
 
 export function Navbar() {
     const pathname = usePathname();
@@ -194,6 +195,26 @@ export function Navbar() {
 
                     {menuItems.map((item, i) => {
                         const isActive = pathname === item.link || (item.link !== '/' && pathname.startsWith(item.link));
+
+                        if (item.link === '/servicos') {
+                            return (
+                                <div
+                                    key={i}
+                                    className="group py-4"
+                                    onMouseEnter={() => setIsMegaMenuForcedClosed(false)}
+                                >
+                                    <div
+                                        className={`flex items-center gap-1.5 text-[15px] font-medium transition-colors whitespace-nowrap tracking-tight font-sans cursor-pointer ${isActive ? "text-[#f97316]" : "text-gray-600 hover:text-[#f97316]"
+                                            }`}
+                                    >
+                                        <span className="leading-none">{item.label}</span>
+                                        <ChevronDown className="w-3.5 h-3.5 opacity-70 group-hover:rotate-180 transition-transform duration-300" />
+                                    </div>
+
+                                    <ServicesMegaMenu onClose={() => setIsMegaMenuForcedClosed(true)} />
+                                </div>
+                            );
+                        }
 
                         if (item.link === '/inovacao') {
                             return (

@@ -192,9 +192,14 @@ export default function AgroBotanicaPage() {
                         <button className="px-10 py-4 bg-emerald-600 shadow-lg shadow-emerald-500/20 text-white font-black uppercase text-[13px] tracking-widest rounded-full hover:bg-emerald-500 transition-all active:scale-95">
                             Baixar Aplicativo
                         </button>
-                        <button className="px-10 py-4 bg-white/5 border border-white/20 text-white font-black uppercase text-[13px] tracking-widest rounded-full hover:bg-white/10 transition-all active:scale-95">
+                        <a
+                            href="https://botanicamoz.vercel.app"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-10 py-4 bg-white/5 border border-white/20 text-white font-black uppercase text-[13px] tracking-widest rounded-full hover:bg-white/10 transition-all active:scale-95 flex items-center justify-center"
+                        >
                             Ver Demonstração
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>

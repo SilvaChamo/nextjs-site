@@ -63,14 +63,22 @@ export function MobileAppSection() {
                             </p>
                         </div>
 
-                        <div className="pt-4">
-                            <button className="inline-flex items-center gap-3 bg-emerald-700 hover:bg-[#f97316] text-white px-6 py-3 rounded-[7px] font-bold text-base transition-all duration-300 shadow-xl hover:shadow-[#f97316]/30 hover:-translate-y-1 group">
+                        <div className="pt-4 flex flex-col sm:flex-row gap-4">
+                            <button className="inline-flex items-center gap-3 bg-emerald-700 hover:bg-[#f97316] text-white px-6 py-[9px] rounded-[7px] font-bold text-base transition-all duration-300 shadow-xl hover:shadow-[#f97316]/30 hover:-translate-y-1 group">
                                 <Download className="w-5 h-5" />
                                 Baixar Aplicativo
                                 <ArrowRight className="w-5 h-5 opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />
                             </button>
-                            <p className="text-xs text-slate-400 mt-2 ml-1 font-medium">Disponível para Android e iOS</p>
+                            <a
+                                href="https://botanicamoz.vercel.app"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center justify-center gap-3 bg-transparent border-2 border-emerald-600/30 hover:border-[#f97316] text-emerald-700 hover:text-[#f97316] px-6 py-[9px] rounded-[7px] font-bold text-base transition-all duration-300 hover:-translate-y-1"
+                            >
+                                Testar Aplicativo!
+                            </a>
                         </div>
+                        <p className="text-xs text-slate-400 mt-2 ml-1 font-medium">Disponível para Android e iOS</p>
                     </div>
 
                     {/* Right Column: App Interface Image */}

@@ -152,7 +152,7 @@ export function ServicesMegaMenu({ isOpen, onClose }: { isOpen: boolean; onClose
 
     return (
         <div className={`absolute left-0 w-full top-full transition-all duration-300 z-50 ${isOpen ? 'opacity-100 visible pointer-events-auto' : 'opacity-0 invisible pointer-events-none'}`}>
-            <div className="absolute top-[-15px] left-0 w-full h-[15px] bg-transparent" />
+            <div className="absolute top-[-25px] left-0 w-full h-[25px] bg-transparent" />
             <div className="bg-white border-y border-slate-200 shadow-[0_40px_80px_rgba(0,0,0,0.12)] overflow-hidden">
                 <div className="container-site flex min-h-[500px]">
                     {/* Left Sidebar - Categories (Hover Activated) */}
@@ -164,10 +164,8 @@ export function ServicesMegaMenu({ isOpen, onClose }: { isOpen: boolean; onClose
                                 return (
                                     <button
                                         key={cat.id}
-                                        onMouseEnter={() => setActiveTab(cat.id)}
                                         onClick={() => {
                                             setActiveTab(cat.id);
-                                            onClose();
                                         }}
                                         className={`w-full flex items-center justify-between px-5 py-2 text-left transition-all relative group/tab ${isActive
                                             ? "bg-white text-[#f97316] font-bold shadow-sm"

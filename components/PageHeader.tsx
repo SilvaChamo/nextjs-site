@@ -109,7 +109,7 @@ export function PageHeader({ title, breadcrumbs, backgroundImage, icon: Icon, ba
             {/* ORANGE LINE - Single Element Switching Mode */}
             <div
                 key={isSticky ? 'sticky' : 'static'}
-                className={`w-full left-0 z-30 pointer-events-none ${isSticky
+                className={`w-full left-0 z-40 pointer-events-none ${isSticky
                     ? "fixed top-[64px] md:top-[72px]"
                     : "absolute -bottom-[6px]"
                     }`}

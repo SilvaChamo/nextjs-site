@@ -72,10 +72,10 @@ export function Footer() {
                             <ul className="space-y-1 text-[15px] text-gray-400">
                                 <li><Link href="/sobre-nos" className="hover:text-[#f97316] transition-colors">Sobre nós</Link></li>
                                 <li><Link href="/login" className="hover:text-[#f97316] transition-colors">Minha conta</Link></li>
-                                <li><Link href="/forum" className="hover:text-[#f97316] transition-colors">Fórum</Link></li>
                                 <li><Link href="/artigos" className="hover:text-[#f97316] transition-colors">Actividades</Link></li>
                                 <li><Link href="/blog" className="hover:text-[#f97316] transition-colors">Blog do Agro</Link></li>
                                 <li><Link href="/usuario/dashboard" className="hover:text-[#f97316] transition-colors">Dashboard</Link></li>
+                                <li><Link href="/contactos" className="hover:text-[#f97316] transition-colors">Contactos</Link></li>
                             </ul>
                         </div>
 

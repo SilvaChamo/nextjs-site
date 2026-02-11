@@ -30,7 +30,7 @@ export default function ForumPage() {
     }, [supabase]);
 
     return (
-        <div className="min-h-screen bg-white dark:bg-black pt-20">
+        <div className="min-h-screen bg-white dark:bg-black">
             <PageHeader
                 title="Fórum de Debate"
                 breadcrumbs={[

@@ -68,7 +68,7 @@ export default function ServiceSubCategoryPage() {
                                         <div className="relative z-50">
                                             <Link
                                                 href="/registar"
-                                                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-md font-bold text-[13px] hover:bg-[#f97316] !important transition-all group shadow-md shadow-emerald-500/10 hover:shadow-orange-500/20 cursor-pointer"
+                                                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-md font-bold text-[13px] hover:!bg-[#f97316] transition-all group shadow-md shadow-emerald-500/10 hover:shadow-orange-500/20 cursor-pointer"
                                             >
                                                 Registe a sua Empresa Agora
                                                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -140,7 +140,7 @@ export default function ServiceSubCategoryPage() {
                             <div className="relative z-50">
                                 <Link
                                     href={contactHref}
-                                    className="inline-flex items-center justify-center w-fit px-4 py-2 bg-emerald-600 text-white rounded-md font-bold text-[13px] hover:bg-[#f97316] !important transition-all shadow-md shadow-emerald-500/10 hover:shadow-orange-500/20 cursor-pointer"
+                                    className="inline-flex items-center justify-center w-fit px-4 py-2 bg-emerald-600 text-white rounded-md font-bold text-[13px] hover:!bg-[#f97316] transition-all shadow-md shadow-emerald-500/10 hover:shadow-orange-500/20 cursor-pointer"
                                 >
                                     {contactText}
                                 </Link>

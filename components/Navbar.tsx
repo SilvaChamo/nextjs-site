@@ -108,7 +108,7 @@ export function Navbar() {
         { label: t("navbar.repository"), link: "/repositorio" },
         { label: t("navbar.innovation"), link: "/inovacao" },
         { label: t("navbar.market"), link: "/mercado" },
-        { label: t("navbar.contacts"), link: "/contactos" },
+        { label: t("navbar.forum"), link: "/forum" },
     ];
 
     const baseItems = [
@@ -160,17 +160,22 @@ export function Navbar() {
                 </div>
 
                 {/* Desktop Navigation */}
-                <nav className="hidden lg:flex items-center gap-6 xl:gap-8 flex-1 justify-center">
+                <nav className="hidden md:flex items-center gap-3 lg:gap-4 xl:gap-6 flex-1 justify-center">
                     {/* Base Dropdown */}
-                    <div className="relative py-2">
-                        <div
-                            onClick={() => toggleMenu('base')}
-                            className={`flex items-center gap-1.5 text-[15px] font-medium transition-colors whitespace-nowrap tracking-tight font-sans cursor-pointer ${pathname === "/" || activeMenu === 'base' ? "text-[#f97316]" : "text-gray-600 hover:text-[#f97316]"
+                    <div
+                        className="relative py-2"
+                        onMouseEnter={() => setActiveMenu('base')}
+                        onMouseLeave={closeAllMenus}
+                    >
+                        <Link
+                            href="/"
+                            onClick={closeAllMenus}
+                            className={`flex items-center gap-1.5 text-[13px] lg:text-[15px] font-medium transition-colors whitespace-nowrap tracking-tight font-sans cursor-pointer ${pathname === "/" || activeMenu === 'base' ? "text-[#f97316]" : "text-gray-600 hover:text-[#f97316]"
                                 }`}
                         >
                             <span className="leading-none">{t("navbar.base")}</span>
                             <ChevronDown className={`w-3.5 h-3.5 opacity-70 transition-transform duration-300 ${activeMenu === 'base' ? 'rotate-180' : ''}`} />
-                        </div>
+                        </Link>
 
                         {/* Dropdown Content */}
                         <div className={`absolute left-1/2 -translate-x-1/2 top-[calc(100%-10px)] pt-4 transition-all duration-300 z-50 ${activeMenu === 'base' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'}`}>
@@ -195,16 +200,20 @@ export function Navbar() {
                         if (item.link === '/servicos') {
                             const isOpen = activeMenu === 'servicos';
                             return (
-                                <div key={i} className="py-0.5">
+                                <div
+                                    key={i}
+                                    className="py-0.5"
+                                    onMouseEnter={() => setActiveMenu('servicos')}
+                                    onMouseLeave={closeAllMenus}
+                                >
                                     <div
-                                        onClick={() => toggleMenu('servicos')}
-                                        className={`flex items-center gap-1.5 text-[15px] font-medium transition-colors whitespace-nowrap tracking-tight font-sans cursor-pointer ${isActive || isOpen ? "text-[#f97316]" : "text-gray-600 hover:text-[#f97316]"}`}
+                                        className={`flex items-center gap-1.5 text-[13px] lg:text-[15px] font-medium transition-colors whitespace-nowrap tracking-tight font-sans cursor-pointer ${isActive || isOpen ? "text-[#f97316]" : "text-gray-600 hover:text-[#f97316]"}`}
                                     >
                                         <span className="leading-none">{item.label}</span>
                                         <ChevronDown className={`w-3.5 h-3.5 opacity-70 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
                                     </div>
                                     <div className={`absolute left-0 w-full top-full transition-all duration-300 z-50 ${isOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}>
-                                        <ServicesMegaMenu isOpen={true} onClose={closeAllMenus} />
+                                        <ServicesMegaMenu isOpen={isOpen} onClose={closeAllMenus} />
                                     </div>
                                 </div>
                             );
@@ -213,14 +222,19 @@ export function Navbar() {
                         if (item.link === '/inovacao') {
                             const isOpen = activeMenu === 'inovacao';
                             return (
-                                <div key={i} className="py-0.5">
+                                <div
+                                    key={i}
+                                    className="py-0.5"
+                                    onMouseEnter={() => setActiveMenu('inovacao')}
+                                    onMouseLeave={closeAllMenus}
+                                >
                                     <div
-                                        onClick={() => toggleMenu('inovacao')}
-                                        className={`flex items-center gap-1.5 text-[15px] font-medium transition-colors whitespace-nowrap tracking-tight font-sans cursor-pointer ${isActive || isOpen ? "text-[#f97316]" : "text-gray-600 hover:text-[#f97316]"}`}>
+                                        className={`flex items-center gap-1.5 text-[13px] lg:text-[15px] font-medium transition-colors whitespace-nowrap tracking-tight font-sans cursor-pointer ${isActive || isOpen ? "text-[#f97316]" : "text-gray-600 hover:text-[#f97316]"}`}>
                                         <span className="leading-none">{item.label}</span>
                                         <ChevronDown className={`w-3.5 h-3.5 opacity-70 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
                                     </div>
                                     <div className={`absolute left-0 w-full top-full transition-all duration-300 z-50 ${isOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}>
+                                        <div className="absolute top-[-25px] left-0 w-full h-[25px] bg-transparent" />
                                         <div className="bg-white border-y border-slate-200 rounded-none shadow-[0_40px_80px_rgba(0,0,0,0.1)] overflow-hidden">
                                             <div className="container-site py-12">
                                                 <div className="grid grid-cols-3 gap-x-16">
@@ -272,7 +286,7 @@ export function Navbar() {
                             <Link
                                 key={i}
                                 href={item.link}
-                                className={`text-[15px] font-medium transition-colors whitespace-nowrap tracking-tight font-sans ${isActive ? "text-[#f97316]" : "text-gray-600 hover:text-[#f97316]"}`}
+                                className={`text-[13px] lg:text-[15px] font-medium transition-colors whitespace-nowrap tracking-tight font-sans ${isActive ? "text-[#f97316]" : "text-gray-600 hover:text-[#f97316]"}`}
                             >
                                 {item.label}
                             </Link>
@@ -294,7 +308,7 @@ export function Navbar() {
                     {/* Mobile Menu Trigger */}
                     <Sheet>
                         <SheetTrigger asChild>
-                            <Button variant="ghost" size="icon" className="lg:hidden text-gray-600">
+                            <Button variant="ghost" size="icon" className="md:hidden text-gray-600">
                                 <Menu className="w-6 h-6" />
                             </Button>
                         </SheetTrigger>

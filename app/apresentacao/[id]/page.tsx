@@ -35,20 +35,22 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
         return () => { isMounted = false; };
     }, [id, supabase]);
 
-    const toggleFullscreen = useCallback(() => {
+    const toggleFullscreen = useCallback(async () => {
         const element = document.getElementById("presentation-root");
         if (!element) return;
 
-        if (!document.fullscreenElement) {
-            element.requestFullscreen().catch((err) => {
-                console.error(`Error attempting to enable full-screen mode: ${err.message}`);
-            });
-            setIsFullscreen(true);
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-                setIsFullscreen(false);
+        try {
+            if (!document.fullscreenElement) {
+                await element.requestFullscreen();
+                setIsFullscreen(true);
+            } else {
+                if (document.exitFullscreen) {
+                    await document.exitFullscreen();
+                    setIsFullscreen(false);
+                }
             }
+        } catch (err) {
+            console.error(`Error attempting to toggle full-screen mode: ${err}`);
         }
     }, []);
 

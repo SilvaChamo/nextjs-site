@@ -203,7 +203,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                         </div>
                                                     )}
                                                     {slide.title && (
-                                                        <div className="mb-[15px]">
+                                                        <div className="mb-[15px]" style={{ textAlign: (slide.title_align as any) || 'center' }}>
                                                             <span
                                                                 className="text-white font-bold first-letter:uppercase tracking-tight leading-[1.1] block"
                                                                 style={{ fontSize: `${slide.title_size || 52}px` }}
@@ -310,7 +310,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                             </div>
                                                         )}
                                                         {slide.title && (
-                                                            <div className="mb-[15px]">
+                                                            <div className="mb-[15px]" style={{ textAlign: (slide.title_align as any) || (slide.image_side === 'center' ? 'center' : 'left') }}>
                                                                 <span
                                                                     className="text-white font-bold first-letter:uppercase tracking-tight leading-[1.1] block"
                                                                     style={{ fontSize: `${slide.title_size || 52}px` }}

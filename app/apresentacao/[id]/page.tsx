@@ -269,9 +269,11 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                                     key={`img-${index}-${currentIndex}`}
                                                                     className={cn(
                                                                         "relative w-full rounded-[20px] overflow-hidden border border-white/10 shadow-2xl bg-slate-900/50",
-                                                                        slide.image_side === 'center' ? "h-auto aspect-video" : "h-[550px]",
+                                                                        slide.image_side === 'center' ? "h-auto aspect-video" : "",
                                                                         isActive && getAnimationClass(slide.animation_image)
-                                                                    )}>
+                                                                    )}
+                                                                    style={slide.image_side !== 'center' ? { height: `${slide.image_height || 550}px` } : {}}
+                                                                >
                                                                     <img
                                                                         src={slide.image_url}
                                                                         alt=""
@@ -285,7 +287,10 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                                     </div>
                                                                 </div>
                                                             ) : (
-                                                                <div className="relative w-full h-[550px] rounded-[20px] bg-white/5 border border-dashed border-white/10 flex items-center justify-center">
+                                                                <div
+                                                                    className="relative w-full rounded-[20px] bg-white/5 border border-dashed border-white/10 flex items-center justify-center"
+                                                                    style={{ height: `${slide.image_height || 550}px` }}
+                                                                >
                                                                     <div className="text-center">
                                                                         <Loader2 className="w-8 h-8 text-white/10 animate-spin mx-auto mb-3" />
                                                                         <p className="text-[10px] font-bold text-white/10 uppercase tracking-widest">Sem recurso visual</p>

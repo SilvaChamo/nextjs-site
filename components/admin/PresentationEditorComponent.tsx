@@ -37,7 +37,7 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
         title: "",
         description: "",
         slides: [
-            { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", title_align: "center", antetitulo_align: "center", cta_text: "", cta_link: "", cta_align: "center", animation_text: "fade-in", animation_image: "fade-in", title_size: 52 }
+            { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", title_align: "center", antetitulo_align: "center", cta_text: "", cta_link: "", cta_align: "center", animation_text: "fade-in", animation_image: "fade-in", title_size: 52, image_height: 550 }
         ]
     });
 
@@ -62,9 +62,10 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                     title_align: s.title_align || 'center',
                     antetitulo_align: s.antetitulo_align || 'center',
                     cta_align: s.cta_align || 'center',
-                    title_size: s.title_size || 52
+                    title_size: s.title_size || 52,
+                    image_height: s.image_height || 550
                 })) : [
-                    { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", title_align: "center", antetitulo_align: "center", cta_text: "", cta_link: "", cta_align: "center", animation_text: "fade-in", animation_image: "fade-in", title_size: 52 }
+                    { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", title_align: "center", antetitulo_align: "center", cta_text: "", cta_link: "", cta_align: "center", animation_text: "fade-in", animation_image: "fade-in", title_size: 52, image_height: 550 }
                 ];
 
                 setPresentation({
@@ -85,7 +86,7 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
     const handleAddSlide = () => {
         setPresentation(prev => ({
             ...prev,
-            slides: [...prev.slides, { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", title_align: "center", antetitulo_align: "center", cta_text: "", cta_link: "", cta_align: "center", animation_text: "fade-in", animation_image: "fade-in", title_size: 52 }]
+            slides: [...prev.slides, { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", title_align: "center", antetitulo_align: "center", cta_text: "", cta_link: "", cta_align: "center", animation_text: "fade-in", animation_image: "fade-in", title_size: 52, image_height: 550 }]
         }));
     };
 
@@ -691,6 +692,27 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                                                 >
                                                     Desactivar
                                                 </button>
+                                            </div>
+                                        </div>
+
+                                        {/* Animation Options */}
+                                        <div className="flex flex-col gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-[10px] font-black uppercase text-slate-400">Altura da Imagem</span>
+                                                <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">{activeSlide?.image_height || 550}px</span>
+                                            </div>
+                                            <input
+                                                type="range"
+                                                min="300"
+                                                max="800"
+                                                step="10"
+                                                value={activeSlide?.image_height || 550}
+                                                onChange={(e) => updateSlide(activeSlide.id, { image_height: parseInt(e.target.value) })}
+                                                className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 transition-all hover:bg-slate-300"
+                                            />
+                                            <div className="flex justify-between text-[8px] font-bold text-slate-400 uppercase tracking-widest">
+                                                <span>Compacto</span>
+                                                <span>Impacto</span>
                                             </div>
                                         </div>
 

@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import jsPDF from "jspdf";
-import pptxgen from "pptxgenjs";
+
 
 export default function UserPresentationsPage() {
     const { canPresentations, planDisplayName, loading: permissionsLoading } = usePlanPermissions();
@@ -128,70 +128,7 @@ export default function UserPresentationsPage() {
         }
     };
 
-    const handleExportPPTX = async (item: any) => {
-        setExporting(true);
-        toast.info("A gerar PowerPoint... Por favor, aguarde.");
 
-        try {
-            const pptx = new pptxgen();
-            pptx.layout = 'LAYOUT_16x9';
-
-            const slides = item.slides || [];
-            if (slides.length === 0) {
-                toast.error("A apresentação não tem slides para exportar.");
-                setExporting(false);
-                return;
-            }
-
-            slides.forEach((slide: any) => {
-                const pptSlide = pptx.addSlide();
-                pptSlide.background = { color: '0F172A' };
-
-                pptSlide.addText(slide.antetitulo || "Apresentação", {
-                    x: 0.5, y: 0.5, w: '90%', h: 1,
-                    fontSize: 32, bold: true, color: 'FFFFFF',
-                    fontFace: 'Arial'
-                });
-
-                pptSlide.addText(slide.title || "", {
-                    x: 0.5, y: 1.2, w: '90%', h: 0.5,
-                    fontSize: 20, bold: true, color: '10B981',
-                    fontFace: 'Arial'
-                });
-
-                const tempDiv = document.createElement("div");
-                tempDiv.innerHTML = slide.content;
-                const plainText = tempDiv.textContent || tempDiv.innerText || "";
-
-                pptSlide.addText(plainText, {
-                    x: 0.5, y: 2.0, w: '60%', h: 3,
-                    fontSize: 14, color: 'CBD5E1',
-                    fontFace: 'Arial', align: 'left',
-                    valign: 'top'
-                });
-
-                if (slide.image_url && !slide.image_disabled) {
-                    try {
-                        pptSlide.addImage({
-                            path: slide.image_url,
-                            x: 6.5, y: 1.5, w: 4, h: 3,
-                            sizing: { type: 'contain', w: 4, h: 3 }
-                        });
-                    } catch (e) {
-                        console.warn("Failed to add image to slide", e);
-                    }
-                }
-            });
-
-            await pptx.writeFile({ fileName: `${item.title || 'apresentacao'}.pptx` });
-            toast.success("PowerPoint gerado com sucesso!");
-        } catch (err) {
-            console.error(err);
-            toast.error("Erro ao gerar PowerPoint.");
-        } finally {
-            setExporting(false);
-        }
-    };
 
     // Handlers
     const handleCreatePresentation = async () => {
@@ -517,10 +454,6 @@ export default function UserPresentationsPage() {
                                                                     <FileText className="w-4 h-4 text-red-500" />
                                                                     <span>Exportar para PDF</span>
                                                                 </DropdownMenuItem>
-                                                                <DropdownMenuItem onClick={() => handleExportPPTX(item)} className="gap-2 cursor-pointer">
-                                                                    <FilePieChart className="w-4 h-4 text-orange-500" />
-                                                                    <span>Exportar para PPTX</span>
-                                                                </DropdownMenuItem>
                                                             </DropdownMenuContent>
                                                         </DropdownMenu>
                                                         <button
@@ -669,10 +602,6 @@ export default function UserPresentationsPage() {
                                                                 <DropdownMenuItem onClick={() => handleExportPDF(item)} className="gap-2 cursor-pointer">
                                                                     <FileText className="w-4 h-4 text-red-500" />
                                                                     <span>Exportar para PDF</span>
-                                                                </DropdownMenuItem>
-                                                                <DropdownMenuItem onClick={() => handleExportPPTX(item)} className="gap-2 cursor-pointer">
-                                                                    <FilePieChart className="w-4 h-4 text-orange-500" />
-                                                                    <span>Exportar para PPTX</span>
                                                                 </DropdownMenuItem>
                                                             </DropdownMenuContent>
                                                         </DropdownMenu>

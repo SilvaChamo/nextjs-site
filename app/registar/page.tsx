@@ -1,8 +1,12 @@
 "use client";
 
-import LoginPage from "../login/page";
+import { AuthForm } from "../login/AuthForm";
 
-export default function RegisterUserPage() {
-    // Reutilizamos o componente de login/registro para consistência
-    return <LoginPage initialMode="register" />;
+interface PageProps {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+    params: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
+export default function RegisterPage(props: PageProps) {
+    return <AuthForm searchParams={props.searchParams} initialMode="register" />;
 }

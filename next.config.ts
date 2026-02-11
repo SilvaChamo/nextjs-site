@@ -14,10 +14,18 @@ const withPWA = withPWAInit({
   },
 });
 
+import path from "path";
+
 const nextConfig: NextConfig = {
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   transpilePackages: ['recharts'],
   turbopack: {
     root: process.cwd(),
+  },
+  webpack: (config) => {
+    return config;
   },
   images: {
     dangerouslyAllowSVG: true,

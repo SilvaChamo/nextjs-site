@@ -71,7 +71,7 @@ export default function AdminNoticiasPage() {
 
                 if (error) throw error;
                 if (count === 0) throw new Error("Permissão negada ou item não encontrado.");
-                
+
                 toast.success("Artigo eliminado permanentemente!");
             } else {
                 // Soft Delete (Move to Bin) for active items
@@ -82,7 +82,7 @@ export default function AdminNoticiasPage() {
 
                 if (error) throw error;
                 if (count === 0) throw new Error("Permissão negada ou item não encontrado.");
-                
+
                 toast.success("Artigo movido para a lixeira!");
             }
 
@@ -104,7 +104,7 @@ export default function AdminNoticiasPage() {
 
             if (error) throw error;
             if (count === 0) throw new Error("Permissão negada ou item não encontrado.");
-            
+
             toast.success("Artigo restaurado com sucesso!");
             await fetchArticles();
         } catch (error: any) {
@@ -120,7 +120,7 @@ export default function AdminNoticiasPage() {
                 .not('deleted_at', 'is', null);
 
             if (error) throw error;
-            
+
             toast.success(`Lixeira esvaziada! ${count} artigo(s) eliminado(s) permanentemente.`);
             await fetchArticles();
         } catch (error: any) {
@@ -172,8 +172,8 @@ export default function AdminNoticiasPage() {
         const matchesType = activeTab === 'Todas'
             ? true
             : activeTab === 'Notícia'
-            ? (a.type === 'Notícia' || !a.type) // Default to Notícia if null
-            : a.type === activeTab;
+                ? (a.type === 'Notícia' || !a.type) // Default to Notícia if null
+                : a.type === activeTab;
 
         return matchesSearch && matchesType;
     });
@@ -303,113 +303,114 @@ export default function AdminNoticiasPage() {
 
             {/* Content - with 40px margin from menu */}
             <div className="pt-10">
-            {loading ? (
-                <div className="flex justify-center py-20">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
-                </div>
-            ) : filteredArticles.length === 0 ? (
-                <div className="text-center py-20 text-slate-400">
-                    Nenhum conteúdo encontrado nesta categoria.
-                </div>
-            ) : viewMode === 'grid' ? (
-                // Grid View
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredArticles.map((article) => (
-                        <NewsCard
-                            key={article.id}
-                            title={article.title}
-                            subtitle={article.subtitle}
-                            category={article.type}
-                            date={article.date || article.created_at}
-                            image={article.image_url}
-                            slug={article.slug}
-                            isAdmin={true}
-                            isDeleted={showBin}
-                            onEdit={() => handleEdit(article)}
-                            onDelete={() => handleDelete(article)}
-                            onRestore={() => handleRestore(article)}
-                        />
-                    ))}
-                </div>
-            ) : (
-                // List View
-                <AdminDataTable
-                    title={activeTab}
-                    columns={columns}
-                    data={filteredArticles}
-                    loading={loading}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
-                    selectedIds={selectedIds}
-                    onSelectRow={(id: string, selected: boolean) => {
-                        if (selected) setSelectedIds(prev => [...prev, id]);
-                        else setSelectedIds(prev => prev.filter(i => i !== id));
-                    }}
-                    onSelectAll={(all: boolean) => {
-                        if (all) {
-                            setSelectedIds(filteredArticles.map(r => r.id));
-                        } else {
-                            setSelectedIds([]);
+                {loading ? (
+                    <div className="flex justify-center py-20">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+                    </div>
+                ) : filteredArticles.length === 0 ? (
+                    <div className="text-center py-20 text-slate-400">
+                        Nenhum conteúdo encontrado nesta categoria.
+                    </div>
+                ) : viewMode === 'grid' ? (
+                    // Grid View
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {filteredArticles.map((article) => (
+                            <NewsCard
+                                key={article.id}
+                                title={article.title}
+                                subtitle={article.subtitle}
+                                category={article.type}
+                                date={article.date || article.created_at}
+                                image={article.image_url}
+                                slug={article.slug}
+                                isAdmin={true}
+                                isDeleted={showBin}
+                                onEdit={() => handleEdit(article)}
+                                onDelete={() => handleDelete(article)}
+                                onRestore={() => handleRestore(article)}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    // List View
+                    <AdminDataTable
+                        title={activeTab}
+                        columns={columns}
+                        data={filteredArticles}
+                        loading={loading}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                        selectedIds={selectedIds}
+                        onSelectRow={(id: string, selected: boolean) => {
+                            if (selected) setSelectedIds(prev => [...prev, id]);
+                            else setSelectedIds(prev => prev.filter(i => i !== id));
+                        }}
+                        onSelectAll={(all: boolean) => {
+                            if (all) {
+                                setSelectedIds(filteredArticles.map(r => r.id));
+                            } else {
+                                setSelectedIds([]);
+                            }
+                        }}
+                        bulkActions={
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() => setShowBulkDeleteConfirm(true)}
+                                    className="p-2 hover:bg-white/10 rounded-full transition-colors text-white"
+                                    title="Eliminar seleccionados"
+                                >
+                                    <Trash2 className="w-5 h-5" />
+                                </button>
+                            </div>
                         }
-                    }}
-                    bulkActions={
-                        <div className="flex items-center gap-2">
-                            <button
-                                onClick={() => setShowBulkDeleteConfirm(true)}
-                                className="p-2 hover:bg-white/10 rounded-full transition-colors text-white"
-                                title="Eliminar seleccionados"
-                            >
-                                <Trash2 className="w-5 h-5" />
-                            </button>
-                        </div>
+                        hideHeader={true}
+                        pageSize={50}
+                    />
+                )}
+
+                {/* Modal */}
+                {isFormOpen && (
+                    <ArticleForm
+                        onClose={() => setIsFormOpen(false)}
+                        onSuccess={handleSuccess}
+                        initialData={editingArticle}
+                    />
+                )}
+
+                <ConfirmationModal
+                    isOpen={showDeleteConfirm}
+                    onClose={() => setShowDeleteConfirm(false)}
+                    onConfirm={confirmDelete}
+                    title={showBin ? "Eliminar Permanentemente" : "Mover para Lixeira"}
+                    description={
+                        showBin
+                            ? `Tem a certeza que deseja eliminar PERMANENTEMENTE o artigo "${articleToDelete?.title}"? Esta acção NÃO pode ser desfeita.`
+                            : `O artigo "${articleToDelete?.title}" será movido para a lixeira. Poderá restaurá-lo mais tarde.`
                     }
-                    hideHeader={true}
-                    pageSize={50}
+                    confirmLabel={showBin ? "Eliminar de vez" : "Mover para Lixeira"}
+                    variant="destructive"
                 />
-            )}
 
-            {/* Modal */}
-            {isFormOpen && (
-                <ArticleForm
-                    onClose={() => setIsFormOpen(false)}
-                    onSuccess={handleSuccess}
-                    initialData={editingArticle}
+                <ConfirmationModal
+                    isOpen={showEmptyBinConfirm}
+                    onClose={() => setShowEmptyBinConfirm(false)}
+                    onConfirm={handleEmptyBin}
+                    title="Esvaziar Lixeira"
+                    description="Tem a certeza que deseja eliminar PERMANENTEMENTE todos os artigos na lixeira? Esta acção NÃO pode ser desfeita."
+                    confirmLabel="Esvaziar Lixeira"
+                    variant="destructive"
                 />
-            )}
 
-            <ConfirmationModal
-                isOpen={showDeleteConfirm}
-                onClose={() => setShowDeleteConfirm(false)}
-                onConfirm={confirmDelete}
-                title={showBin ? "Eliminar Permanentemente" : "Mover para Lixeira"}
-                description={
-                    showBin
-                        ? `Tem a certeza que deseja eliminar PERMANENTEMENTE o artigo "${articleToDelete?.title}"? Esta acção NÃO pode ser desfeita.`
-                        : `O artigo "${articleToDelete?.title}" será movido para a lixeira. Poderá restaurá-lo mais tarde.`
-                }
-                confirmLabel={showBin ? "Eliminar de vez" : "Mover para Lixeira"}
-                variant="destructive"
-            />
-
-            <ConfirmationModal
-                isOpen={showEmptyBinConfirm}
-                onClose={() => setShowEmptyBinConfirm(false)}
-                onConfirm={handleEmptyBin}
-                title="Esvaziar Lixeira"
-                description="Tem a certeza que deseja eliminar PERMANENTEMENTE todos os artigos na lixeira? Esta acção NÃO pode ser desfeita."
-                confirmLabel="Esvaziar Lixeira"
-                variant="destructive"
-            />
-
-            <ConfirmationModal
-                isOpen={showBulkDeleteConfirm}
-                onClose={() => setShowBulkDeleteConfirm(false)}
-                onConfirm={confirmBulkDelete}
-                title="Eliminar em Massa"
-                description={`Tem a certeza que deseja eliminar ${selectedIds.length} artigos? Esta acção não pode ser desfeita.`}
-                confirmLabel="Eliminar Todos"
-                variant="destructive"
-            />
+                <ConfirmationModal
+                    isOpen={showBulkDeleteConfirm}
+                    onClose={() => setShowBulkDeleteConfirm(false)}
+                    onConfirm={confirmBulkDelete}
+                    title="Eliminar em Massa"
+                    description={`Tem a certeza que deseja eliminar ${selectedIds.length} artigos? Esta acção não pode ser desfeita.`}
+                    confirmLabel="Eliminar Todos"
+                    variant="destructive"
+                />
+            </div>
         </div>
     );
 }

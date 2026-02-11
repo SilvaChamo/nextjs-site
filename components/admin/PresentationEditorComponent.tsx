@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import pptxgen from "pptxgenjs";
+
 
 // Helper for generating IDs safely
 const generateId = () => Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
@@ -229,131 +229,9 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
         }
     };
 
-    const handleExportPPTX = async () => {
-        setSaving(true);
-        toast.info("A gerar PowerPoint... Por favor, aguarde.");
 
-        try {
-            const pptx = new pptxgen();
-            pptx.layout = 'LAYOUT_16x9';
 
-            presentation.slides.forEach((slide) => {
-                const pptSlide = pptx.addSlide();
 
-                // Background color (Slate 900)
-                pptSlide.background = { color: '0F172A' };
-
-                // Antetítulo
-                pptSlide.addText(slide.antetitulo || "Apresentação", {
-                    x: 0.5, y: 0.5, w: '90%', h: 1,
-                    fontSize: 32, bold: true, color: 'FFFFFF',
-                    fontFace: 'Arial'
-                });
-
-                // Título (Emerald)
-                pptSlide.addText(slide.title || "", {
-                    x: 0.5, y: 1.2, w: '90%', h: 0.5,
-                    fontSize: 20, bold: true, color: '10B981',
-                    fontFace: 'Arial'
-                });
-
-                // Content (stipping HTML for PPT)
-                const tempDiv = document.createElement("div");
-                tempDiv.innerHTML = slide.content;
-                const plainText = tempDiv.textContent || tempDiv.innerText || "";
-
-                pptSlide.addText(plainText, {
-                    x: 0.5, y: 2.0, w: '60%', h: 3,
-                    fontSize: 14, color: 'CBD5E1',
-                    fontFace: 'Arial', align: 'left',
-                    valign: 'top'
-                });
-
-                // Image if exists
-                if (slide.image_url && !slide.image_disabled) {
-                    try {
-                        pptSlide.addImage({
-                            path: slide.image_url,
-                            x: 6.5, y: 1.5, w: 4, h: 3,
-                            sizing: { type: 'contain', w: 4, h: 3 }
-                        });
-                    } catch (e) {
-                        console.warn("Failed to add image to slide", e);
-                    }
-                }
-            });
-
-            await pptx.writeFile({ fileName: `${presentation.title || 'apresentacao'}.pptx` });
-            toast.success("PowerPoint gerado com sucesso!");
-        } catch (err) {
-            console.error(err);
-            toast.error("Erro ao gerar PowerPoint.");
-        } finally {
-            setSaving(false);
-        }
-    };
-
-    const handleExportSingleSlidePPTX = async (index: number) => {
-        setSaving(true);
-        const slide = presentation.slides[index];
-        toast.info(`A gerar PowerPoint do slide ${index + 1}...`);
-
-        try {
-            const pptx = new pptxgen();
-            pptx.layout = 'LAYOUT_16x9';
-            const pptSlide = pptx.addSlide();
-
-            // Background color (Slate 900)
-            pptSlide.background = { color: '0F172A' };
-
-            // Antetítulo
-            pptSlide.addText(slide.antetitulo || "Apresentação", {
-                x: 0.5, y: 0.5, w: '90%', h: 1,
-                fontSize: 32, bold: true, color: 'FFFFFF',
-                fontFace: 'Arial'
-            });
-
-            // Título (Emerald)
-            pptSlide.addText(slide.title || "", {
-                x: 0.5, y: 1.2, w: '90%', h: 0.5,
-                fontSize: 20, bold: true, color: '10B981',
-                fontFace: 'Arial'
-            });
-
-            // Content (stipping HTML for PPT)
-            const tempDiv = document.createElement("div");
-            tempDiv.innerHTML = slide.content;
-            const plainText = tempDiv.textContent || tempDiv.innerText || "";
-
-            pptSlide.addText(plainText, {
-                x: 0.5, y: 2.0, w: '60%', h: 3,
-                fontSize: 14, color: 'CBD5E1',
-                fontFace: 'Arial', align: 'left',
-                valign: 'top'
-            });
-
-            // Image if exists
-            if (slide.image_url && !slide.image_disabled) {
-                try {
-                    pptSlide.addImage({
-                        path: slide.image_url,
-                        x: 6.5, y: 1.5, w: 4, h: 3,
-                        sizing: { type: 'contain', w: 4, h: 3 }
-                    });
-                } catch (e) {
-                    console.warn("Failed to add image to slide", e);
-                }
-            }
-
-            await pptx.writeFile({ fileName: `${presentation.title || 'slide'}_${index + 1}.pptx` });
-            toast.success("PowerPoint do slide gerado!");
-        } catch (err) {
-            console.error(err);
-            toast.error("Erro ao gerar PowerPoint do slide.");
-        } finally {
-            setSaving(false);
-        }
-    };
 
     const handleSave = async () => {
         if (!presentation.title) {
@@ -475,10 +353,6 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                                     <DropdownMenuItem onClick={handleExportPDF} className="gap-2 cursor-pointer">
                                         <FileText className="w-4 h-4 text-red-500" />
                                         <span>Exportar para PDF</span>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={handleExportPPTX} className="gap-2 cursor-pointer">
-                                        <FilePieChart className="w-4 h-4 text-orange-500" />
-                                        <span>Exportar para PPTX</span>
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
@@ -632,15 +506,7 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                                         <Download className="w-3 h-3" />
                                         PDF
                                     </Button>
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => handleExportSingleSlidePPTX(activeIndex)}
-                                        className="text-white hover:bg-white/20 h-7 text-[10px] font-bold gap-1.5 uppercase tracking-wider"
-                                    >
-                                        <Download className="w-3 h-3" />
-                                        PPTX
-                                    </Button>
+
                                     <div className="w-px h-4 bg-white/20 mx-1" />
                                     <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded font-bold">{activeSlide?.id.split('-')[0]}</span>
                                 </div>

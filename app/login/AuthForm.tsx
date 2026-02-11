@@ -320,7 +320,7 @@ export function AuthForm(props: AuthFormProps) {
                             <button
                                 type="button"
                                 onClick={() => { setAuthMethod('email'); setShowOtpInput(false); setStatus(null); setCaptchaToken(null); }}
-                                className={`text-[11px] font-bold uppercase tracking-wide py-2 rounded-md transition-all ${authMethod === 'email' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+                                className={`text-[11px] font-bold uppercase tracking-wide py-2 rounded-agro-btn transition-all ${authMethod === 'email' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'
                                     }`}
                             >
                                 Email
@@ -328,7 +328,7 @@ export function AuthForm(props: AuthFormProps) {
                             <button
                                 type="button"
                                 onClick={() => { setAuthMethod('phone'); setShowOtpInput(false); setStatus(null); setCaptchaToken(null); }}
-                                className={`text-[11px] font-bold uppercase tracking-wide py-2 rounded-md transition-all ${authMethod === 'phone' ? 'bg-white text-[#f97316] shadow-sm' : 'text-slate-500 hover:text-slate-700'
+                                className={`text-[11px] font-bold uppercase tracking-wide py-2 rounded-agro-btn transition-all ${authMethod === 'phone' ? 'bg-white text-[#f97316] shadow-sm' : 'text-slate-500 hover:text-slate-700'
                                     }`}
                             >
                                 Telefone (SMS)
@@ -358,12 +358,12 @@ export function AuthForm(props: AuthFormProps) {
                                 <div className="space-y-1.5">
                                     <div className="relative group">
                                         <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-20" />
-                                        <div className="candy-border-wrapper rounded-md">
+                                        <div className="candy-border-wrapper rounded-agro-btn">
                                             <Input
                                                 type="text"
                                                 required={!isLogin}
                                                 placeholder="Seu Nome Completo"
-                                                className="pl-11 h-10 bg-white/95 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-400 rounded-md transition-all duration-300 relative z-10"
+                                                className="pl-11 h-10 bg-white/95 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-400 rounded-agro-btn transition-all duration-300 relative z-10"
                                                 value={formData.fullName}
                                                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                                             />
@@ -373,12 +373,12 @@ export function AuthForm(props: AuthFormProps) {
                                 <div className="space-y-1.5">
                                     <div className="relative group">
                                         <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-20" />
-                                        <div className="candy-border-wrapper rounded-md">
+                                        <div className="candy-border-wrapper rounded-agro-btn">
                                             <Input
                                                 type="tel"
                                                 required={!isLogin}
                                                 placeholder="Seu Número de Telefone (+258...)"
-                                                className="pl-11 h-10 bg-white/95 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-400 rounded-md transition-all duration-300 relative z-10"
+                                                className="pl-11 h-10 bg-white/95 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-400 rounded-agro-btn transition-all duration-300 relative z-10"
                                                 value={formData.phoneNumber}
                                                 onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
                                             />
@@ -394,12 +394,12 @@ export function AuthForm(props: AuthFormProps) {
 
                                 <div className="relative">
                                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-20" />
-                                    <div className="candy-border-wrapper rounded-md">
+                                    <div className="candy-border-wrapper rounded-agro-btn">
                                         <Input
                                             type="email"
                                             required
                                             placeholder="exemplo@servico.com"
-                                            className="pl-11 h-10 bg-white/95 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-400 rounded-md transition-all duration-300 relative z-10"
+                                            className="pl-11 h-10 bg-white/95 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-400 rounded-agro-btn transition-all duration-300 relative z-10"
                                             value={formData.email}
                                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                         />
@@ -410,12 +410,12 @@ export function AuthForm(props: AuthFormProps) {
                                     <div className="space-y-4">
                                         <div className="relative">
                                             <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-20" />
-                                            <div className="candy-border-wrapper rounded-md">
+                                            <div className="candy-border-wrapper rounded-agro-btn">
                                                 <Input
                                                     type={showPassword ? "text" : "password"}
                                                     required
                                                     placeholder="Digite sua senha"
-                                                    className="pl-11 pr-24 h-10 bg-white/95 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-400 rounded-md transition-all duration-300 relative z-10"
+                                                    className="pl-11 pr-24 h-10 bg-white/95 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-400 rounded-agro-btn transition-all duration-300 relative z-10"
                                                     value={formData.password}
                                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                                 />
@@ -425,7 +425,7 @@ export function AuthForm(props: AuthFormProps) {
                                                     <button
                                                         type="button"
                                                         onClick={handleGeneratePassword}
-                                                        className="p-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-md transition-colors"
+                                                        className="p-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-agro-btn transition-colors"
                                                         title="Gerar Senha"
                                                     >
                                                         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L12 3Z" /></svg>
@@ -444,12 +444,12 @@ export function AuthForm(props: AuthFormProps) {
                                         {!isLogin && (
                                             <div className="relative animate-in fade-in slide-in-from-top-2 duration-300">
                                                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-20" />
-                                                <div className="candy-border-wrapper rounded-md">
+                                                <div className="candy-border-wrapper rounded-agro-btn">
                                                     <Input
                                                         type={showPassword ? "text" : "password"}
                                                         required={!isLogin}
                                                         placeholder="Sua senha novamente"
-                                                        className="pl-11 h-10 bg-white/95 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-400 rounded-md transition-all duration-300 relative z-10"
+                                                        className="pl-11 h-10 bg-white/95 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-400 rounded-agro-btn transition-all duration-300 relative z-10"
                                                         value={formData.confirmPassword}
                                                         onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                                                     />
@@ -467,12 +467,12 @@ export function AuthForm(props: AuthFormProps) {
                                 {!showOtpInput ? (
                                     <div className="relative">
                                         <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-20" />
-                                        <div className="candy-border-wrapper rounded-md">
+                                        <div className="candy-border-wrapper rounded-agro-btn">
                                             <Input
                                                 type="tel"
                                                 required
                                                 placeholder="9X XXX XXXX"
-                                                className="pl-11 h-10 bg-white/95 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-400 rounded-md transition-all duration-300 relative z-10"
+                                                className="pl-11 h-10 bg-white/95 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-400 rounded-agro-btn transition-all duration-300 relative z-10"
                                                 value={formData.phoneNumber}
                                                 onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
                                             />
@@ -484,12 +484,12 @@ export function AuthForm(props: AuthFormProps) {
                                 ) : (
                                     <div className="relative animate-in fade-in slide-in-from-right-4">
                                         <MessageSquare className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-20" />
-                                        <div className="candy-border-wrapper rounded-md">
+                                        <div className="candy-border-wrapper rounded-agro-btn">
                                             <Input
                                                 type="text"
                                                 required
                                                 placeholder="000 000"
-                                                className="pl-11 h-10 bg-white/95 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-400 rounded-md transition-all duration-300 relative z-10"
+                                                className="pl-11 h-10 bg-white/95 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-400 rounded-agro-btn transition-all duration-300 relative z-10"
                                                 value={otpCode}
                                                 onChange={(e) => setOtpCode(e.target.value)}
                                             />
@@ -568,7 +568,7 @@ export function AuthForm(props: AuthFormProps) {
                                             type="number"
                                             required
                                             placeholder="Sua Resposta"
-                                            className="pl-24 h-10 bg-white/90 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-900 placeholder:opacity-100 rounded-md transition-all duration-300 relative z-10"
+                                            className="pl-24 h-10 bg-white/90 backdrop-blur-sm focus:bg-white border-white/20 shadow-sm border-none focus-candy text-[13px] text-slate-900 placeholder:text-slate-900 placeholder:opacity-100 rounded-agro-btn transition-all duration-300 relative z-10"
                                             value={userCaptchaAnswer}
                                             onChange={(e) => setUserCaptchaAnswer(e.target.value)}
                                         />

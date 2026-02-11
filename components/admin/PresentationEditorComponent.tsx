@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { ArrowLeft, Plus, Trash2, Save, Loader2, Play, Image as ImageIcon, FileText, ChevronUp, ChevronDown, Layout, Sidebar as SidebarIcon, Menu, Maximize2, Monitor, Copy, Download, FileJson, FilePieChart } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Save, Loader2, Play, Image as ImageIcon, FileText, ChevronUp, ChevronDown, Layout, Sidebar as SidebarIcon, Menu, Maximize2, Monitor, Copy, Download, FileJson, FilePieChart, AlignLeft, AlignCenter } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import jsPDF from "jspdf";
@@ -37,7 +37,7 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
         title: "",
         description: "",
         slides: [
-            { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, cta_text: "", cta_link: "", animation_text: "fade-in", animation_image: "fade-in" }
+            { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", cta_text: "", cta_link: "", animation_text: "fade-in", animation_image: "fade-in" }
         ]
     });
 
@@ -57,9 +57,10 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                     ...s,
                     id: s.id || `slide-${idx}-${Date.now()}`,
                     image_side: s.image_side || 'left',
-                    image_disabled: s.image_disabled || false
+                    image_disabled: s.image_disabled || false,
+                    text_align: s.text_align || 'center'
                 })) : [
-                    { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, cta_text: "", cta_link: "", animation_text: "fade-in", animation_image: "fade-in" }
+                    { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", cta_text: "", cta_link: "", animation_text: "fade-in", animation_image: "fade-in" }
                 ];
 
                 setPresentation({
@@ -80,7 +81,7 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
     const handleAddSlide = () => {
         setPresentation(prev => ({
             ...prev,
-            slides: [...prev.slides, { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, cta_text: "", cta_link: "", animation_text: "fade-in", animation_image: "fade-in" }]
+            slides: [...prev.slides, { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", cta_text: "", cta_link: "", animation_text: "fade-in", animation_image: "fade-in" }]
         }));
     };
 

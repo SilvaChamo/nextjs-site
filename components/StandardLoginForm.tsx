@@ -7,7 +7,7 @@ import Link from "next/link";
 export function StandardLoginForm() {
     return (
         <div className="flex items-center justify-center py-24">
-            <div className="card-agro-lg w-full max-w-[450px] text-center form-premium-card">
+            <div className="card-agro-lg w-full max-w-[450px] text-center form-premium-card rounded-agro-lg">
                 {/* Header Section */}
                 <div className="mb-6">
                     <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-600">
@@ -21,11 +21,11 @@ export function StandardLoginForm() {
                 <form className="space-y-5 text-left">
                     <div>
                         <label className="block text-sm font-bold text-slate-700 mb-2">Email</label>
-                        <div className="candy-border-wrapper rounded-sm">
+                        <div className="candy-border-wrapper rounded-agro-btn">
                             <input
                                 type="email"
                                 placeholder="exemplo@baseagro.com"
-                                className="w-full bg-[#F8FAFC] border-none px-5 py-3 focus-candy outline-none transition-all font-medium text-sm text-slate-700 relative z-10 rounded-sm"
+                                className="w-full bg-[#F8FAFC] border-none px-5 py-3 focus-candy outline-none transition-all font-medium text-sm text-slate-700 relative z-10 rounded-agro-btn"
                             />
                         </div>
                     </div>
@@ -37,11 +37,11 @@ export function StandardLoginForm() {
                                 Esqueceu-se?
                             </Link>
                         </div>
-                        <div className="candy-border-wrapper rounded-sm">
+                        <div className="candy-border-wrapper rounded-agro-btn">
                             <input
                                 type="password"
                                 placeholder="••••••••"
-                                className="w-full bg-[#F8FAFC] border-none px-5 py-3 focus-candy outline-none transition-all font-medium text-sm text-slate-700 relative z-10 rounded-sm"
+                                className="w-full bg-[#F8FAFC] border-none px-5 py-3 focus-candy outline-none transition-all font-medium text-sm text-slate-700 relative z-10 rounded-agro-btn"
                             />
                         </div>
                     </div>

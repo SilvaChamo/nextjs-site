@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
+import { useState, useEffect, useCallback, memo } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { syncManager } from "@/lib/syncManager";
@@ -49,13 +49,13 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
     const [pendingCount, setPendingCount] = useState(0);
     const [openSubmenus, setOpenSubmenus] = useState<string[]>([]);
 
-    const toggleSubmenu = (menu: string) => {
+    const toggleSubmenu = useCallback((menu: string) => {
         setOpenSubmenus(prev =>
             prev.includes(menu) ? prev.filter(m => m !== menu) : [...prev, menu]
         );
-    };
+    }, []);
 
-    const handleSignOut = async () => {
+    const handleSignOut = useCallback(async () => {
         setIsSigningOut(true);
         try {
             await supabase.auth.signOut();
@@ -67,7 +67,7 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
         } finally {
             setIsSigningOut(false);
         }
-    };
+    }, [supabase.auth, router]);
 
     useEffect(() => {
         const checkQueue = () => {
@@ -75,7 +75,8 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
             setPendingCount(queue.length);
         };
         checkQueue();
-        const interval = setInterval(checkQueue, 5000);
+        // Reduced frequency to 15s to avoid main thread starvation
+        const interval = setInterval(checkQueue, 15000);
         return () => clearInterval(interval);
     }, []);
 
@@ -86,7 +87,7 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
         }
     }, [pathname]);
 
-    const handleSync = async () => {
+    const handleSync = useCallback(async () => {
         if (!isOnline) {
             toast.error("Ainda sem conexão...");
             return;
@@ -99,7 +100,7 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
         } else {
             toast.info("Nada para sincronizar.");
         }
-    };
+    }, [isOnline]);
 
     const isActive = (path: string) => {
         if (path === "/admin" && pathname === "/admin") return true;
@@ -107,7 +108,7 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
         return false;
     };
 
-    const LinkItem = ({ href, icon: Icon, label }: { href: string; icon: any; label: string }) => {
+    const LinkItem = memo(({ href, icon: Icon, label }: { href: string; icon: any; label: string }) => {
         const active = isActive(href);
         return (
             <Link
@@ -123,7 +124,8 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
                 {!isCollapsed && <span>{label}</span>}
             </Link>
         );
-    };
+    });
+    LinkItem.displayName = "LinkItem";
 
     return (
         <div className="flex min-h-screen bg-slate-100 font-sans">

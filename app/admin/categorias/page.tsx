@@ -1,14 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/utils/supabase/client";
 import { AdminDataTable } from "@/components/admin/AdminDataTable";
+import { Grid2X2 } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { CategoryForm } from "@/components/admin/CategoryForm";
 import { toast } from "sonner";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 
 export default function AdminCategoriesPage() {
+    const supabase = createClient();
     const [categories, setCategories] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);

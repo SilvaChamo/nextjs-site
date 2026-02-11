@@ -636,7 +636,7 @@ export function ProfessionalRegistrationForm({ initialData, isAdmin }: Professio
                     <Button
                         type="submit"
                         size="lg"
-                        className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-14 rounded-xl px-12 text-lg shadow-lg shadow-emerald-600/20"
+                        className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-14 rounded-agro-btn px-12 text-lg shadow-lg shadow-emerald-600/20"
                         disabled={loading}
                     >
                         {loading ? (

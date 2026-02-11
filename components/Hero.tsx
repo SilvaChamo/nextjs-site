@@ -67,8 +67,8 @@ export function Hero({ onToggleSearch, isSearchOpen, stats }: HeroProps) {
                 {/* Coluna Direita: Grelha de Cartões de Estatísticas */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 animate-in slide-in-from-right-6 duration-700 delay-200">
                     {/* Cartão 1: Empresas Agrárias */}
-                    <Link href="/estatisticas/empresas" className="block h-full animate-float">
-                        <div className="bg-gradient-to-br from-white/20 to-white/5 border border-[#f97316] p-5 rounded-[10px] shadow-2xl hover:from-white/30 hover:to-white/10 hover:border-[#f97316] transition-all group relative overflow-hidden h-full">
+                    <Link href="/estatisticas/empresas" className="block h-full animate-float transition-transform duration-300 hover:scale-105">
+                        <div className="bg-gradient-to-br from-white/20 to-white/5 border border-[#f97316] p-5 rounded-[10px] shadow-2xl hover:from-white/30 hover:to-white/10 hover:shadow-[0_0_30px_rgba(249,115,22,0.3)] transition-all duration-300 group relative overflow-hidden h-full cursor-pointer">
                             <div className="absolute top-0 right-0 p-2 opacity-50">
                                 <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
                             </div>
@@ -82,8 +82,8 @@ export function Hero({ onToggleSearch, isSearchOpen, stats }: HeroProps) {
                     </Link>
 
                     {/* Cartão 2: Produção Agrária 2025 */}
-                    <Link href="/estatisticas/producao" className="block h-full animate-float-delayed">
-                        <div className="bg-gradient-to-br from-white/20 to-white/5 border border-white/40 p-5 rounded-[10px] shadow-2xl hover:from-white/30 hover:to-white/10 hover:border-[#f97316] transition-all group relative h-full">
+                    <Link href="/estatisticas/producao" className="block h-full animate-float-delayed transition-transform duration-300 hover:scale-105">
+                        <div className="bg-gradient-to-br from-white/20 to-white/5 border border-white/40 p-5 rounded-[10px] shadow-2xl hover:from-white/30 hover:to-white/10 hover:border-[#f97316] hover:shadow-[0_0_30px_rgba(249,115,22,0.3)] transition-all duration-300 group relative h-full cursor-pointer">
                             <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-100 mb-2 truncate drop-shadow-md" suppressHydrationWarning>Produção Agrária 2025</h4>
                             <div className="flex items-baseline gap-1">
                                 <h3 className="text-4xl font-heading font-black text-white drop-shadow-md" suppressHydrationWarning><span>{getVal('hero-production', '20M+').split(' ')[0]}</span></h3>
@@ -96,8 +96,8 @@ export function Hero({ onToggleSearch, isSearchOpen, stats }: HeroProps) {
                     </Link>
 
                     {/* Cartão 3: Economia Agrária 2025 */}
-                    <Link href="/estatisticas/economia" className="block h-full md:col-span-2 lg:col-span-1 animate-float">
-                        <div className="bg-gradient-to-br from-white/20 to-white/5 border border-white/40 p-5 rounded-[10px] shadow-2xl hover:from-white/30 hover:to-white/10 hover:border-[#f97316] transition-all group relative h-full">
+                    <Link href="/estatisticas/economia" className="block h-full md:col-span-2 lg:col-span-1 animate-float transition-transform duration-300 hover:scale-105">
+                        <div className="bg-gradient-to-br from-white/20 to-white/5 border border-white/40 p-5 rounded-[10px] shadow-2xl hover:from-white/30 hover:to-white/10 hover:border-[#f97316] hover:shadow-[0_0_30px_rgba(249,115,22,0.3)] transition-all duration-300 group relative h-full cursor-pointer">
                             <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-100 mb-2 truncate drop-shadow-md" suppressHydrationWarning>Economia Agrária 2025</h4>
                             <div className="space-y-1">
                                 <h3 className="text-3xl font-heading font-black text-white leading-tight drop-shadow-md" suppressHydrationWarning><span>{getVal('hero-economy', '91.4B').split(' ')[0]}</span> <span className="text-base text-gray-200">MZN</span></h3>
@@ -111,8 +111,8 @@ export function Hero({ onToggleSearch, isSearchOpen, stats }: HeroProps) {
                     </Link>
 
                     {/* Cartão 4: Empregos na Agricultura */}
-                    <Link href="/estatisticas/emprego" className="block h-full md:col-span-2 lg:col-span-1 animate-float-delayed">
-                        <div className="bg-gradient-to-br from-white/20 to-white/5 border border-white/40 p-5 rounded-[10px] shadow-2xl hover:from-white/30 hover:to-white/10 hover:border-[#f97316] transition-all group md:col-span-2 lg:col-span-1 h-full">
+                    <Link href="/estatisticas/emprego" className="block h-full md:col-span-2 lg:col-span-1 animate-float-delayed transition-transform duration-300 hover:scale-105">
+                        <div className="bg-gradient-to-br from-white/20 to-white/5 border border-white/40 p-5 rounded-[10px] shadow-2xl hover:from-white/30 hover:to-white/10 hover:border-[#f97316] hover:shadow-[0_0_30px_rgba(249,115,22,0.3)] transition-all duration-300 group md:col-span-2 lg:col-span-1 h-full cursor-pointer">
                             <h4 className="text-[10px] font-black uppercase tracking-widest text-emerald-500 mb-2 truncate drop-shadow-md" suppressHydrationWarning>Emprego Agrícola</h4>
                             <div className="flex items-end gap-2">
                                 <h3 className="text-4xl font-heading font-black text-white leading-none drop-shadow-md" suppressHydrationWarning><span>{getVal('hero-jobs', '70%')}</span></h3>

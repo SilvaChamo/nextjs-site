@@ -75,7 +75,16 @@ const config: Config = {
             },
             spacing: {
                 agro: "var(--gap-agro)",
-            }
+            },
+            keyframes: {
+                shine: {
+                    "0%": { transform: "translateX(-100%)" },
+                    "100%": { transform: "translateX(100%)" },
+                },
+            },
+            animation: {
+                shine: "shine 0.8s ease-out forwards",
+            },
         },
     },
     plugins: [require("@tailwindcss/typography")],

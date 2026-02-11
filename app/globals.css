@@ -88,6 +88,12 @@
   --sidebar-border: #e2e8f0;
   --sidebar-ring: #059669;
 
+  /* AGRO DESIGN TOKENS */
+  --radius-agro: 15px;
+  --radius-agro-lg: 15px;
+  --radius-agro-btn: 8px;
+  --gap-agro: 20px;
+
   --site-max-width: 1380px;
 }
 
@@ -110,6 +116,12 @@
   --border: #334155;
   --input: #334155;
   --ring: #f97316;
+
+  /* AGRO DESIGN TOKENS DARK MODE */
+  --radius-agro: 15px;
+  --radius-agro-lg: 15px;
+  --radius-agro-btn: 8px;
+  --gap-agro: 20px;
 }
 
 @layer base {

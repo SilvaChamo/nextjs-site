@@ -21,9 +21,6 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   transpilePackages: ['recharts'],
-  turbopack: {
-    root: process.cwd(),
-  },
   webpack: (config) => {
     return config;
   },

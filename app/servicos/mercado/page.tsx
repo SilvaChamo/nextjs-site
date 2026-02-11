@@ -1,10 +1,26 @@
 "use client";
 
+import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components/PageHeader";
-import { ShoppingBag, TrendingUp, BarChart3, ArrowUpRight, Tags, ShieldCheck, ArrowRight } from "lucide-react";
+import { ShoppingBag, TrendingUp, BarChart3, ArrowUpRight, Tags, ShieldCheck, ArrowRight, Search, X } from "lucide-react";
+import { usePlanPermissions } from "@/hooks/usePlanPermissions";
+import { SearchSection } from "@/components/SearchSection";
 
-export default function MercadoPage() {
+export default function MercadoServicoPage() {
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const { plan } = usePlanPermissions();
+    const router = useRouter();
+
+    const handleAnunciarClick = () => {
+        if (plan === 'Business Vendedor' || plan === 'Parceiro') {
+            router.push('/usuario/dashboard/produtos');
+        } else {
+            router.push('/planos');
+        }
+    };
+
     const marketInfo = [
         {
             title: "Cotações do Dia",
@@ -34,16 +50,35 @@ export default function MercadoPage() {
 
     return (
         <main className="min-h-screen bg-slate-50">
-            <PageHeader
-                title="Compra & Venda"
-                icon={ShoppingBag}
-                backgroundImage="https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=2000&auto=format&fit=crop"
-                breadcrumbs={[
-                    { label: "Início", href: "/" },
-                    { label: "Serviços", href: "/servicos" },
-                    { label: "Mercado", href: undefined }
-                ]}
-            />
+            <div className="relative">
+                <PageHeader
+                    title={<>Mercado <span className="text-[#f97316]">Digital</span></>}
+                    icon={ShoppingBag}
+                    backgroundImage="https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=2000&auto=format&fit=crop"
+                    breadcrumbs={[
+                        { label: "Início", href: "/" },
+                        { label: "Serviços", href: "/servicos" },
+                        { label: "Mercado", href: undefined }
+                    ]}
+                />
+
+                {/* Floating Search Toggle */}
+                <div className="absolute bottom-6 w-full z-20 pointer-events-none">
+                    <div className="container-site mx-auto flex justify-end">
+                        <button
+                            onClick={() => setIsSearchOpen(!isSearchOpen)}
+                            className={`w-12 h-12 rounded-[7px] flex items-center justify-center transition-all duration-300 shadow-xl pointer-events-auto animate-in fade-in slide-in-from-bottom-8 duration-700 ${isSearchOpen
+                                ? "bg-[#f97316] text-white rotate-90 border border-[#f97316]"
+                                : "bg-[#22c55e] text-white hover:bg-[#f97316] hover:scale-110"
+                                }`}
+                        >
+                            {isSearchOpen ? <X className="w-6 h-6" /> : <Search className="w-6 h-6" />}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <SearchSection isOpen={isSearchOpen} withBottomBorder={true} />
 
             <div className="container-site relative z-20 mt-[50px] pb-24">
                 {/* Intro Section - White Box */}
@@ -81,7 +116,7 @@ export default function MercadoPage() {
                                 </div>
                             </div>
                             <p className="text-sm leading-relaxed text-slate-500 flex-1">{item.description}</p>
-                            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 group-hover:text-slate-900 transition-colors pt-4">
+                            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 group-hover:text-slate-900 transition-colors pt-4 font-black uppercase tracking-widest cursor-pointer">
                                 Ver Detalhes <ArrowUpRight className="h-3 w-3" />
                             </div>
                         </div>
@@ -165,14 +200,17 @@ export default function MercadoPage() {
                     </div>
                 </div>
 
-                {/* Bottom CTA */}
-                <div className="mt-20 bg-[#f97316] rounded-[12px] p-12 text-left relative overflow-hidden shadow-2xl shadow-orange-500/20 text-white">
+                {/* Bottom CTA - Updated with Dark Green Gradient and Plan Logic */}
+                <div className="mt-20 bg-gradient-to-r from-emerald-950 via-emerald-900 to-emerald-950 rounded-[12px] p-12 text-left relative overflow-hidden shadow-2xl shadow-emerald-900/40 text-white">
                     <div className="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-8">
                         <div className="max-w-xl space-y-4">
                             <h3 className="text-3xl font-black leading-tight">Comece a vender agora!</h3>
-                            <p className="text-orange-50 font-medium">Publique o seu stock e conecte-se com centenas de compradores em todo o país.</p>
+                            <p className="text-emerald-50 font-medium">Publique o seu stock e conecte-se com centenas de compradores em todo o país.</p>
                         </div>
-                        <button className="px-12 py-4 bg-white text-[#f97316] rounded-md font-black uppercase text-sm tracking-widest hover:scale-105 active:scale-95 shadow-xl transition-all">
+                        <button
+                            onClick={handleAnunciarClick}
+                            className="px-12 py-4 bg-white text-emerald-900 rounded-md font-black uppercase text-sm tracking-widest hover:scale-105 active:scale-95 shadow-xl transition-all"
+                        >
                             Anunciar Produto
                         </button>
                     </div>

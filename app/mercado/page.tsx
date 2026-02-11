@@ -9,9 +9,21 @@ import { MarketPriceTable } from "@/components/MarketPriceTable";
 import { MarketSidebar } from "@/components/MarketSidebar";
 import { SupermarketCarousel } from "@/components/SupermarketCarousel";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { usePlanPermissions } from "@/hooks/usePlanPermissions";
 
 export default function MercadoPage() {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const router = useRouter();
+    const { plan } = usePlanPermissions();
+
+    const handleAnunciarClick = () => {
+        if (plan === 'Business Vendedor' || plan === 'Parceiro') {
+            router.push('/usuario/dashboard/produtos');
+        } else {
+            router.push('/planos');
+        }
+    };
 
     return (
         <div className="min-h-screen bg-slate-50 text-slate-900 font-sans relative">
@@ -178,11 +190,12 @@ export default function MercadoPage() {
                                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
                                     <span className="text-[40px] md:text-[56px] font-black text-emerald-600 leading-none">+250</span>
                                     <span className="text-[10px] md:text-[12px] font-black uppercase tracking-widest text-emerald-900 mt-2">Empresas Activas</span>
-                                    <Link href="/registar">
-                                        <button className="px-12 py-4 bg-white text-[#f97316] rounded-md font-black uppercase text-sm tracking-widest hover:scale-105 active:scale-95 shadow-xl transition-all">
-                                            Anunciar Produto
-                                        </button>
-                                    </Link>
+                                    <button
+                                        onClick={handleAnunciarClick}
+                                        className="px-12 py-4 bg-white text-emerald-900 rounded-md font-black uppercase text-sm tracking-widest hover:scale-105 active:scale-95 shadow-xl transition-all"
+                                    >
+                                        Anunciar Produto
+                                    </button>
                                 </div>
                             </div>
                         </div>

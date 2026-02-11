@@ -42,14 +42,13 @@ interface UsePlanPermissionsResult {
 export function usePlanPermissions(): UsePlanPermissionsResult {
     const [plan, setPlan] = useState<PlanType>('Gratuito');
     const [loading, setLoading] = useState(true);
-    const supabase = createClient();
-
     useEffect(() => {
         const fetchPlan = async () => {
             try {
-                const { data: { user } } = await supabase.auth.getUser();
+                const supabase = createClient();
+                const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-                if (!user) {
+                if (userError || !user) {
                     setPlan('Gratuito');
                     setLoading(false);
                     return;

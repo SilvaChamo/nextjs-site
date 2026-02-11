@@ -133,8 +133,10 @@ export default function ServicesIndexPage() {
                             <p className="text-sm leading-relaxed text-slate-500 flex-1">
                                 {service.description}
                             </p>
-                            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 group-hover:text-slate-900 transition-colors pt-4">
-                                Explorar Serviço <ArrowRight className="h-3 w-3" />
+                            <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
+                                <span className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-emerald-500 text-white text-sm font-bold rounded-md shadow-sm group-hover:bg-emerald-600 transition-all group-hover:shadow-md group-hover:scale-[1.02]">
+                                    Explorar Serviço <ArrowRight className="h-4 w-4" />
+                                </span>
                             </div>
                         </Link>
                     ))}

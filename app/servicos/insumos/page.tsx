@@ -101,9 +101,11 @@ export default function InsumosPage() {
                             <p className="text-slate-400 font-medium">Aumente a visibilidade do seu negócio e alcance mais produtores em todo o país.</p>
                         </div>
                         <div className="lg:text-right">
-                            <button className="px-12 py-4 bg-emerald-500 text-white rounded-md font-bold text-base transition-all shadow-lg hover:scale-105 active:scale-95">
-                                Registar Loja Nova
-                            </button>
+                            <Link href="/registar">
+                                <button className="px-12 py-4 bg-emerald-500 text-white rounded-md font-bold text-base transition-all shadow-lg hover:scale-105 active:scale-95">
+                                    Registar Loja Nova
+                                </button>
+                            </Link>
                         </div>
                     </div>
                 </div>

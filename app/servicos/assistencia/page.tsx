@@ -77,9 +77,13 @@ export default function AssistenciaPage() {
                                 Oferecemos consultoria tecnológica especializada para modernizar a sua presença online no sector agrário.
                             </p>
                         </div>
-                        <button className="px-12 py-4 bg-blue-500 text-white rounded-md font-bold text-base transition-all shadow-lg hover:bg-blue-600 hover:scale-105 active:scale-95">
-                            Falar com Especialista
-                        </button>
+                        <Link href="/contactos">
+                            <Link href="/registar">
+                                <button className="px-12 py-4 bg-white text-[#f97316] rounded-md font-black uppercase text-sm tracking-widest hover:scale-105 active:scale-95 shadow-xl transition-all">
+                                    Anunciar Produto
+                                </button>
+                            </Link>
+                        </Link>
                     </div>
                 </div>
             </div>

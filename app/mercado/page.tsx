@@ -152,10 +152,17 @@ export default function MercadoPage() {
                                 Registe a sua empresa hoje mesmo e comece a ser encontrado por milhares de compradores em todo o país.
                             </p>
                             <div className="flex flex-wrap gap-4">
-                                <Link href="/cadastro-empresa">
+                                <Link href="/registar">
                                     <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-xl font-black uppercase tracking-widest text-xs transition-all shadow-lg shadow-emerald-600/20 flex items-center gap-3">
                                         Registar Empresa <MousePointer2 className="w-4 h-4" />
                                     </button>
+                                </Link>
+                                <Link
+                                    href="/registar"
+                                    className="inline-flex items-center justify-center gap-2 bg-[#f97316] hover:bg-[#ea6a0a] text-white font-bold px-8 py-4 rounded-lg transition-all duration-300 hover:scale-105"
+                                >
+                                    Registar como Produtor
+                                    <ArrowRight className="w-5 h-5" />
                                 </Link>
                                 <Link href="/contactos">
                                     <button className="bg-white hover:bg-slate-50 text-emerald-950 px-8 py-4 rounded-xl font-black uppercase tracking-widest text-xs transition-all border border-emerald-200">
@@ -171,6 +178,11 @@ export default function MercadoPage() {
                                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
                                     <span className="text-[40px] md:text-[56px] font-black text-emerald-600 leading-none">+250</span>
                                     <span className="text-[10px] md:text-[12px] font-black uppercase tracking-widest text-emerald-900 mt-2">Empresas Activas</span>
+                                    <Link href="/registar">
+                                        <button className="px-12 py-4 bg-white text-[#f97316] rounded-md font-black uppercase text-sm tracking-widest hover:scale-105 active:scale-95 shadow-xl transition-all">
+                                            Anunciar Produto
+                                        </button>
+                                    </Link>
                                 </div>
                             </div>
                         </div>

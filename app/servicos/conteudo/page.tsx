@@ -88,9 +88,11 @@ export default function ConteudoPage() {
                                 <span className="text-xs font-black uppercase tracking-[0.2em]">Foco em Resultados</span>
                             </div>
                         </div>
-                        <button className="px-12 py-4 bg-white text-blue-600 rounded-md font-bold text-base transition-all shadow-lg hover:scale-105">
-                            Solicitar Proposta
-                        </button>
+                        <Link href="/contactos">
+                            <button className="px-12 py-4 bg-white text-blue-600 rounded-md font-bold text-base transition-all shadow-lg hover:scale-105">
+                                Solicitar Proposta
+                            </button>
+                        </Link>
                     </div>
                 </div>
             </div>

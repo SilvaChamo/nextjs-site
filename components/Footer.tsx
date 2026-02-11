@@ -85,7 +85,7 @@ export function Footer() {
                                 <li><Link href="/servicos" className="hover:text-[#f97316] transition-colors">Agro-negócio</Link></li>
                                 <li><Link href="/servicos/consultoria" className="hover:text-[#f97316] transition-colors">Tecnologia agrária</Link></li>
                                 <li><Link href="/servicos/assistencia" className="hover:text-[#f97316] transition-colors">Políticas agrárias</Link></li>
-                                <li><Link href="/estatisticas/economia" className="hover:text-[#f97316] transition-colors">Financiamento agrário</Link></li>
+                                <li><Link href="/servicos" className="hover:text-[#f97316] transition-colors">Financiamento agrário</Link></li>
                                 <li><Link href="/servicos/insumos" className="hover:text-[#f97316] transition-colors">Insumos agrícolas</Link></li>
                                 <li><Link href="/mercado" className="hover:text-[#f97316] transition-colors">Produtos</Link></li>
                             </ul>

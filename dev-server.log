@@ -315,3 +315,138 @@ Import trace for requested module:
  GET /servicos/eventos 200 in 55ms
  GET /servicos/eventos 200 in 53ms
  GET /servicos/eventos 200 in 57ms
+ ✓ Compiled in 4.9s (2673 modules)
+ GET /servicos/eventos 200 in 474ms
+ GET /forum 200 in 474ms
+ ✓ Compiled /icon.png in 239ms (662 modules)
+ GET /icon.png?fadd2cca2c622a0c 200 in 500ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1917ms (2244 modules)
+ GET / 200 in 5553ms
+ ✓ Compiled in 7.3s (4249 modules)
+ GET /servicos/eventos 200 in 566ms
+ GET /forum 200 in 541ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 3.6s (4240 modules)
+ GET /servicos/compra-venda 404 in 3837ms
+ GET /servicos/compra-venda 404 in 539ms
+ GET / 200 in 838ms
+ ✓ Compiled in 3.4s (4249 modules)
+ GET /forum 200 in 271ms
+ GET / 200 in 377ms
+ ✓ Compiled /icon.png in 443ms (2238 modules)
+ GET /icon.png?fadd2cca2c622a0c 200 in 779ms
+ ✓ Compiled in 1222ms (4266 modules)
+ GET /forum 200 in 768ms
+ GET / 200 in 764ms
+ GET /icon.png?fadd2cca2c622a0c 200 in 60ms
+ ✓ Compiled in 3.5s (4266 modules)
+ GET /forum 200 in 238ms
+ GET / 200 in 314ms
+ ✓ Compiled in 1034ms (4266 modules)
+ GET /forum 200 in 198ms
+ GET / 200 in 296ms
+ ✓ Compiled in 999ms (4266 modules)
+ GET /forum 200 in 319ms
+ GET / 200 in 305ms
+ ✓ Compiled in 2.2s (4249 modules)
+ GET /forum 200 in 382ms
+ GET / 200 in 460ms
+ ○ Compiling /servicos/assistencia ...
+ ✓ Compiled /servicos/assistencia in 6.5s (4244 modules)
+ GET /servicos/assistencia 200 in 6734ms
+ GET / 200 in 1472ms
+ ✓ Compiled in 3.8s (4252 modules)
+ GET / 200 in 459ms
+ GET / 200 in 468ms
+ ✓ Compiled in 1205ms (4252 modules)
+ GET / 200 in 271ms
+ GET / 200 in 171ms
+ GET /servicos/mercado 200 in 79ms
+ GET /servicos/mercado 200 in 51ms
+ GET /servicos/mercado 200 in 52ms
+ GET /servicos/mercado 200 in 46ms
+ GET /servicos/mercado 200 in 64ms
+ GET /servicos/assistencia 200 in 66ms
+ ✓ Compiled in 4.2s (4252 modules)
+ GET /servicos/assistencia 200 in 442ms
+ GET / 200 in 444ms
+ ○ Compiling /repositorio ...
+ ✓ Compiled /repositorio in 4.6s (2227 modules)
+ GET /repositorio 200 in 4868ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled in 11.7s (4253 modules)
+ GET /repositorio 200 in 2906ms
+ GET / 200 in 4214ms
+ ✓ Compiled in 1550ms (4253 modules)
+ GET /repositorio 200 in 310ms
+ GET / 200 in 290ms
+ ✓ Compiled in 4.1s (4253 modules)
+ GET /repositorio 200 in 156ms
+ GET / 200 in 206ms
+ GET /repositorio 200 in 44ms
+ ✓ Compiled in 1061ms (4253 modules)
+ GET /repositorio 200 in 315ms
+ GET / 200 in 344ms
+ GET /repositorio 200 in 81ms
+ GET / 200 in 795ms
+ ✓ Compiled in 1537ms (4253 modules)
+ GET / 200 in 166ms
+ ○ Compiling /icon.png ...
+ ✓ Compiled /icon.png in 2.4s (2239 modules)
+ GET /icon.png?fadd2cca2c622a0c 200 in 3543ms
+ GET / 200 in 1827ms
+ ✓ Compiled in 4.1s (4253 modules)
+ GET / 200 in 819ms
+ GET / 200 in 803ms
+ GET /repositorio 200 in 979ms
+ ✓ Compiled in 3.9s (4253 modules)
+ GET / 200 in 307ms
+ GET / 200 in 325ms
+ GET /servicos/assistencia 200 in 74ms
+ GET /repositorio 200 in 79ms
+ GET / 200 in 535ms
+ ○ Compiling /icon.png ...
+ ✓ Compiled /icon.png in 2.2s (2239 modules)
+ GET /icon.png?fadd2cca2c622a0c 200 in 2413ms
+ ✓ Compiled in 5.3s (4253 modules)
+ GET / 200 in 572ms
+ GET / 200 in 71ms
+ ✓ Compiled in 2s (4253 modules)
+ GET / 200 in 741ms
+ GET / 200 in 101ms
+ ✓ Compiled in 6.4s (4418 modules)
+ GET / 200 in 5523ms
+ GET / 200 in 5225ms
+ GET / 200 in 92ms
+ GET / 200 in 128ms
+ ○ Compiling /servicos/[category]/[slug] ...
+ ✓ Compiled /servicos/[category]/[slug] in 4.9s (4252 modules)
+ GET /servicos/compra-venda/cotacoes 200 in 6054ms
+ GET /servicos/consultoria/estrategia 200 in 58ms
+ GET /servicos/assistencia/apps 200 in 65ms
+ GET /servicos/gestao-conteudo/redes 200 in 63ms
+ GET /servicos/eventos/bilheteira 200 in 53ms
+ ⨯ ./components/ServicesMegaMenu.tsx
+Error:   [31mx[0m Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+     ,-[[36;1;4m/Users/macbook/Desktop/APP/baseagrodata.com/components/ServicesMegaMenu.tsx[0m:226:1]
+ [2m223[0m |                                     ))}
+ [2m224[0m |                                 </div>
+ [2m225[0m | 
+ [2m226[0m |                                 )}
+     : [35;1m                                 ^[0m
+ [2m227[0m |                             </div>
+ [2m228[0m |                         </div>
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/ServicesMegaMenu.tsx
+./components/Navbar.tsx
+./app/components/NavFooterToggle.tsx
+ ✓ Compiled in 9.3s (4258 modules)
+ GET /servicos/eventos/bilheteira 200 in 216ms
+ GET / 200 in 207ms

@@ -17,7 +17,10 @@ import {
     Search,
     Star,
     Zap,
-    Globe
+    Globe,
+    ShieldCheck,
+    TrendingUp,
+    Gavel
 } from "lucide-react";
 
 interface ServiceCategory {
@@ -28,7 +31,9 @@ interface ServiceCategory {
     items: {
         title: string;
         link: string;
+        slug: string;
         description: string;
+        icon: React.ElementType;
     }[];
 }
 
@@ -37,120 +42,108 @@ const serviceCategories: ServiceCategory[] = [
         id: "logistica",
         title: "Logística e transporte",
         icon: Truck,
-        description: "Escoamento de produção em grande escala e parcerias com transportadoras nacionais.",
+        description: "Soluções completas para o escoamento de produção em grande escala, garantindo pontualidade e segurança através de parcerias estratégicas com as maiores transportadoras nacionais e monitoramento de carga 24/7.",
         items: [
-            { title: "Transporte Terrestre", link: "/servicos/transporte", description: "Frota especializada para o transporte de produtos agrários em grandes quantidades." },
-            { title: "Logística Multimodal", link: "/servicos/transporte", description: "Integração eficiente entre transporte rodoviário e marítimo para exportação." },
-            { title: "Segurança de Carga", link: "/servicos/transporte", description: "Protocolos rigorosos de segurança e monitoramento em tempo real." },
-            { title: "Rastreio em Tempo Real", link: "/servicos/transporte", description: "Acompanhe a sua mercadoria desde a origem até ao destino final." }
+            { title: "Transporte Terrestre", link: "/servicos/transporte", slug: "transporte", description: "Frota especializada para o transporte de produtos agrários em grandes quantidades.", icon: Truck },
+            { title: "Logística Multimodal", link: "/servicos/transporte", slug: "multimodal", description: "Integração eficiente entre transporte rodoviário e marítimo para exportação.", icon: Globe },
+            { title: "Segurança de Carga", link: "/servicos/transporte", slug: "seguranca", description: "Protocolos rigorosos de segurança e monitoramento em tempo real.", icon: ShieldCheck },
+            { title: "Rastreio em Tempo Real", link: "/servicos/transporte", slug: "rastreio", description: "Acompanhe a sua mercadoria desde a origem até ao destino final.", icon: Search }
         ]
     },
     {
         id: "lojas",
         title: "Lojas e insumos",
         icon: Store,
-        description: "Empresas nacional de sementes, fertilizantes e maquinaria agrícola.",
+        description: "Acesso direto à rede nacional de fornecedores de sementes certificadas, fertilizantes de alta performance e maquinaria de última geração, integrando tudo o que o produtor precisa para uma colheita rentável.",
         items: [
-            { title: "Sementes Certificadas", link: "/servicos/insumos", description: "Alta produtividade para sua colheita com sementes verificadas." },
-            { title: "Fertilizantes e Adubos", link: "/servicos/insumos", description: "Nutrição vegetal completa para diversos tipos de culturas." },
-            { title: "Maquinaria Agrícola", link: "/servicos/insumos", description: "Tratores e equipamentos modernos para mecanização do campo." },
-            { title: "Registe a sua loja", link: "/registar", description: "Aumente a visibilidade do seu negócio e alcance mais produtores." }
+            { title: "Sementes Certificadas", link: "/servicos/insumos", slug: "sementes", description: "Alta produtividade para sua colheita com sementes verificadas.", icon: Zap },
+            { title: "Fertilizantes e Adubos", link: "/servicos/insumos", slug: "fertilizantes", description: "Nutrição vegetal completa para diversos tipos de culturas.", icon: Zap },
+            { title: "Maquinaria Agrícola", link: "/servicos/insumos", slug: "maquinaria", description: "Tratores e equipamentos modernos para mecanização do campo.", icon: Truck },
+            { title: "Registe a sua loja", link: "/registar", slug: "registo", description: "Aumente a visibilidade do seu negócio e alcance mais produtores.", icon: Store }
         ]
     },
     {
         id: "compra-venda",
         title: "Compra e venda",
         icon: ShoppingCart,
-        description: "Plataforma de comercialização directa entre produtores e grandes compradores.",
+        description: "Plataforma avançada de comercialização que conecta diretamente produtores, cooperativas e grandes compradores industriais, facilitando negociações transparentes com cotações e garantias de negócio em tempo real.",
         items: [
-            { title: "Cotações do Dia", link: "/servicos/mercado", description: "Acompanhe os preços médios nas principais praças nacionais." },
-            { title: "Ofertas de Venda", link: "/servicos/mercado", description: "Explore anúncios de produtores que procuram escoar produção." },
-            { title: "Leilões Agrários", link: "/servicos/mercado", description: "Participe em licitações para compra de grandes lotes de produção." },
-            { title: "Garantia de Negócio", link: "/servicos/mercado", description: "Transações seguras e monitoradas para evitar falhas." }
+            { title: "Cotações do Dia", link: "/servicos/mercado", slug: "cotacoes", description: "Acompanhe os preços médios nas principais praças nacionais.", icon: TrendingUp },
+            { title: "Ofertas de Venda", link: "/servicos/mercado", slug: "ofertas", description: "Explore anúncios de produtores que procuram escoar produção.", icon: ShoppingCart },
+            { title: "Leilões Agrários", link: "/servicos/mercado", slug: "leiloes", description: "Participe em licitações para compra de grandes lotes de produção.", icon: Gavel },
+            { title: "Garantia de Negócio", link: "/servicos/mercado", slug: "garantia", description: "Transações seguras e monitoradas para evitar falhas.", icon: ShieldCheck }
         ]
     },
     {
         id: "assistencia",
         title: "Assistência digital",
         icon: Smartphone,
-        description: "Suporte tecnológico e criação de portais para a modernização do agro-negócio.",
+        description: "Suporte tecnológico especializado no agro-negócio, desde a criação de portais institucionais robustos até o desenvolvimento de aplicações personalizadas para a gestão eficiente e digital do campo.",
         items: [
-            { title: "Criação de Portais", link: "/servicos/assistencia", description: "Desenvolvimento de sites institucionais e catálogos agrários." },
-            { title: "Apoio Técnico TI", link: "/servicos/assistencia", description: "Assistência para a modernização das suas ferramentas de gestão." },
-            { title: "Desenvolvimento App", link: "/servicos/assistencia", description: "Soluções móveis personalizadas para gestão de campo." },
-            { title: "Suporte Online", link: "/servicos/assistencia", description: "Equipa dedicada para garantir a operacionalidade das plataformas." }
+            { title: "Criação de Portais", link: "/servicos/assistencia", slug: "portais", description: "Desenvolvimento de sites institucionais e catálogos agrários.", icon: Globe },
+            { title: "Apoio Técnico TI", link: "/servicos/assistencia", slug: "tecnico", description: "Assistência para a modernização das suas ferramentas de gestão.", icon: Smartphone },
+            { title: "Desenvolvimento App", link: "/servicos/assistencia", slug: "apps", description: "Soluções móveis personalizadas para gestão de campo.", icon: Smartphone },
+            { title: "Suporte Online", link: "/servicos/assistencia", slug: "suporte", description: "Equipa dedicada para garantir a operacionalidade das plataformas.", icon: Users }
         ]
     },
     {
         id: "eventos",
         title: "Feiras e eventos",
         icon: Calendar,
-        description: "Promoção e organização de eventos corporativos e feiras do sector agrário.",
+        description: "Promoção estratégica e organização completa de eventos corporativos, feiras regionais e congressos do setor agrário, conectando a sua marca com os principais decisores e stakeholders do mercado.",
         items: [
-            { title: "Calendário Regional", link: "/servicos/eventos", description: "Acompanhe as principais feiras provinciais e nacionais." },
-            { title: "Promoção de Eventos", link: "/servicos/eventos", description: "Divulgue o seu evento para toda a nossa rede agrária." },
-            { title: "Bilheteira Online", link: "/servicos/eventos", description: "Gestão completa de acessos e venda de bilhetes para feiras." },
-            { title: "Patrocínio Digital", link: "/servicos/eventos", description: "Destaque a sua marca nos maiores eventos do sector." }
+            { title: "Calendário Regional", link: "/servicos/eventos", slug: "calendario", description: "Acompanhe as principais feiras provinciais e nacionais.", icon: Calendar },
+            { title: "Promoção de Eventos", link: "/servicos/eventos", slug: "promocao", description: "Divulgue o seu evento para toda a nossa rede agrária.", icon: Zap },
+            { title: "Bilheteira Online", link: "/servicos/eventos", slug: "bilheteira", description: "Gestão completa de acessos e venda de bilhetes para feiras.", icon: ShoppingCart },
+            { title: "Patrocínio Digital", link: "/servicos/eventos", slug: "patrocinio", description: "Destaque a sua marca nos maiores eventos do sector.", icon: Star }
         ]
     },
     {
         id: "gestao-conteudo",
         title: "Gestão de conteúdo",
         icon: FileText,
-        description: "Estratégia digital e produção de media exclusiva para o agro-negócio.",
+        description: "Estratégia de comunicação digital e produção de media exclusiva para o setor agro, incluindo gestão de redes sociais, vídeo marketing e newsletters técnicas para fortalecer a presença digital das empresas.",
         items: [
-            { title: "Escrita Técnica", link: "/servicos/conteudo", description: "Produção de artigos e posts especializados para o agro." },
-            { title: "Gestão de Redes", link: "/servicos/conteudo", description: "Presença digital estratégica para marcas do sector." },
-            { title: "Vídeo Marketing", link: "/servicos/conteudo", description: "Cobertura de eventos e produção de vídeos institucionais." },
-            { title: "Newsletter Agro", link: "/servicos/conteudo", description: "Comunicação directa com a sua base de clientes e parceiros." }
+            { title: "Escrita Técnica", link: "/servicos/conteudo", slug: "escrita", description: "Produção de artigos e posts especializados para o agro.", icon: FileText },
+            { title: "Gestão de Redes", link: "/servicos/conteudo", slug: "redes", description: "Presença digital estratégica para marcas do sector.", icon: Users },
+            { title: "Vídeo Marketing", link: "/servicos/conteudo", slug: "video", description: "Cobertura de eventos e produção de vídeos institucionais.", icon: FileText },
+            { title: "Newsletter Agro", link: "/servicos/conteudo", slug: "newsletter", description: "Comunicação directa com a sua base de clientes e parceiros.", icon: FileText }
         ]
     },
     {
         id: "vagas",
         title: "Vagas de emprego",
         icon: Briefcase,
-        description: "Oportunidades de carreira nas principais empresas do sector agrário.",
+        description: "Hub de talentos e oportunidades de carreira focado exclusivamente no setor agrário, conectando profissionais qualificados às melhores vagas nas maiores empresas de agronegócio de Moçambique.",
         items: [
-            { title: "Talento Agrário", link: "/servicos/emprego", description: "Candidate-se a vagas nas maiores empresas do país." },
-            { title: "Recrutamento Especializado", link: "/servicos/emprego", description: "Serviços de RH focados em perfis técnicos agrícolas." },
-            { title: "Estágios Profissionais", link: "/servicos/emprego", description: "Programas de entrada no mercado para jovens licenciados." },
-            { title: "Consultoria de Carreira", link: "/servicos/emprego", description: "Apoio na elaboração de CV e preparação para entrevistas." }
+            { title: "Talento Agrário", link: "/servicos/emprego", slug: "talento", description: "Candidate-se a vagas nas maiores empresas do país.", icon: Briefcase },
+            { title: "Recrutamento Especializado", link: "/servicos/emprego", slug: "recrutamento", description: "Serviços de RH focados em perfis técnicos agrícolas.", icon: Users },
+            { title: "Estágios Profissionais", link: "/servicos/emprego", slug: "estagios", description: "Programas de entrada no mercado para jovens licenciados.", icon: GraduationCap },
+            { title: "Consultoria de Carreira", link: "/servicos/emprego", slug: "carreira", description: "Apoio na elaboração de CV e preparação para entrevistas.", icon: FileText }
         ]
     },
     {
         id: "consultoria",
         title: "Consultoria digital",
         icon: Users,
-        description: "Assessoria especializada em transformação digital e estratégias tecnológicas.",
+        description: "Assessoria técnica especializada em transformação digital para o agro, auxiliando na implementação de novas tecnologias, análise de dados de produção e otimização de processos operacionais através da inovação.",
         items: [
-            { title: "Estratégia Digital", link: "/servicos/consultoria", description: "Planos estratégicos para transformação digital do agro-negócio." },
-            { title: "Otimização de Processos", link: "/servicos/consultoria", description: "Análise e melhoria de processos operacionais através de tecnologia." },
-            { title: "Análise de Dados", link: "/servicos/consultoria", description: "Insights baseados em dados para melhor tomada de decisão." },
-            { title: "Implementação Tecnológica", link: "/servicos/consultoria", description: "Suporte na adoção e integração de novas tecnologias." }
+            { title: "Estratégia Digital", link: "/servicos/consultoria", slug: "estrategia", description: "Planos estratégicos para transformação digital do agro-negócio.", icon: Globe },
+            { title: "Otimização de Processos", link: "/servicos/consultoria", slug: "otimizacao", description: "Análise e melhoria de processos operacionais através de tecnologia.", icon: Zap },
+            { title: "Análise de Dados", link: "/servicos/consultoria", slug: "dados", description: "Insights baseados em dados para melhor tomada de decisão.", icon: TrendingUp },
+            { title: "Implementação Tecnológica", link: "/servicos/consultoria", slug: "implementacao", description: "Suporte na adoção e integração de novas tecnologias.", icon: Smartphone }
         ]
     },
     {
         id: "formacoes",
         title: "Formações e capacitações",
         icon: GraduationCap,
-        description: "Workshops e programas de formação em tecnologias agrícolas e gestão.",
+        description: "Programas educativos e workshops práticos voltados para a capacitação técnica em novas tecnologias agrícolas, gestão de negócios rurais e certificações de qualidade reconhecidas internacionalmente.",
         items: [
-            { title: "Academia Agro", link: "/servicos/formacao", description: "Cursos certificados online para capacitação técnica." },
-            { title: "Capacitação Rural", link: "/servicos/formacao", description: "Treinos práticos de campo para melhoria de produtividade." },
-            { title: "Certificação ISO", link: "/servicos/formacao", description: "Preparação para certificações internacionais de qualidade." },
-            { title: "E-learning Corporativo", link: "/servicos/formacao", description: "Plataformas de treino personalizado para equipas de empresas." }
-        ]
-    },
-    {
-        id: "repositorio",
-        title: "Repositório agrário",
-        icon: Globe,
-        description: "Base de dados com documentos, artigos e perfis do sector.",
-        items: [
-            { title: "Artigos Científicos", link: "/repositorio", description: "Acesso a publicações e estudos técnicos actuais." },
-            { title: "Documentos Oficiais", link: "/repositorio", description: "Políticas, leis e regulamentos do sector em Moçambique." },
-            { title: "Base de Talentos", link: "/repositorio", description: "Pesquise por profissionais qualificados em diversas áreas." },
-            { title: "Mapa de Propriedades", link: "/repositorio", description: "Visualização geográfica de explorações e projectos agrários." }
+            { title: "Academia Agro", link: "/servicos/formacao", slug: "academia", description: "Cursos certificados online para capacitação técnica.", icon: GraduationCap },
+            { title: "Capacitação Rural", link: "/servicos/formacao", slug: "capacitacao", description: "Treinos práticos de campo para melhoria de produtividade.", icon: Truck },
+            { title: "Certificação ISO", link: "/servicos/formacao", slug: "certificacao", description: "Preparação para certificações internacionais de qualidade.", icon: ShieldCheck },
+            { title: "E-learning Corporativo", link: "/servicos/formacao", slug: "elearning", description: "Plataformas de treino personalizado para equipas de empresas.", icon: Smartphone }
         ]
     }
 ];
@@ -164,13 +157,8 @@ export function ServicesMegaMenu({ isOpen, onClose }: { isOpen: boolean; onClose
             <div className="absolute top-[-15px] left-0 w-full h-[15px] bg-transparent" />
             <div className="bg-white border-y border-slate-200 shadow-[0_40px_80px_rgba(0,0,0,0.12)] overflow-hidden">
                 <div className="container-site flex min-h-[500px]">
-                    {/* Left Sidebar - Categories */}
-                    <div className="w-[320px] bg-slate-50 border-r border-slate-100 py-6">
-                        <div className="px-6 mb-4">
-                            <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                <Search className="w-3 h-3" /> Categorias de Serviços
-                            </h3>
-                        </div>
+                    {/* Left Sidebar - Categories (Hover Activated) */}
+                    <div className="w-[300px] bg-slate-50/50 border-r border-slate-100 py-6">
                         <div className="space-y-0.5">
                             {serviceCategories.map((cat) => {
                                 const Icon = cat.icon;
@@ -178,17 +166,21 @@ export function ServicesMegaMenu({ isOpen, onClose }: { isOpen: boolean; onClose
                                 return (
                                     <button
                                         key={cat.id}
-                                        onClick={() => setActiveTab(cat.id)}
-                                        className={`w-full flex items-center justify-between px-6 py-2.5 text-left transition-all relative ${isActive
+                                        onMouseEnter={() => setActiveTab(cat.id)}
+                                        onClick={() => {
+                                            setActiveTab(cat.id);
+                                            onClose();
+                                        }}
+                                        className={`w-full flex items-center justify-between px-6 py-3 text-left transition-all relative group/tab ${isActive
                                             ? "bg-white text-[#f97316] font-bold shadow-sm"
-                                            : "text-slate-600 hover:bg-white/40 hover:text-[#f97316]"
+                                            : "text-slate-500 hover:bg-white/60 hover:text-[#f97316]"
                                             }`}
                                     >
                                         <div className="flex items-center gap-3">
-                                            <div className={`p-1 rounded-lg ${isActive ? "bg-orange-50" : "bg-transparent"}`}>
+                                            <div className={`p-1.5 rounded-lg transition-colors ${isActive ? "bg-orange-50" : "bg-transparent group-hover/tab:bg-orange-50/50"}`}>
                                                 <Icon className="w-4 h-4" />
                                             </div>
-                                            <span className="text-[13.5px] leading-tight">{cat.title}</span>
+                                            <span className="text-[13px] font-semibold leading-tight tracking-tight uppercase">{cat.title}</span>
                                         </div>
                                         {isActive && <ChevronRight className="w-4 h-4" />}
                                         {isActive && <div className="absolute right-0 top-0 h-full w-[3px] bg-[#f97316]" />}
@@ -198,45 +190,64 @@ export function ServicesMegaMenu({ isOpen, onClose }: { isOpen: boolean; onClose
                         </div>
                     </div>
 
-                    {/* Right Content Area */}
-                    <div className="flex-1 bg-white py-12 px-16 relative">
-                        <div className="max-w-4xl">
-                            {/* Conteúdo Ganhou mais espaço com a remoção do título redundante */}
-                            <div className="grid grid-cols-2 gap-x-12 gap-y-8">
-                                {activeData.items.map((item, idx) => (
-                                    <Link
-                                        key={idx}
-                                        href={item.link}
-                                        onClick={onClose}
-                                        className="group/item block p-4 -mx-4 rounded-2xl hover:bg-slate-50 transition-all border border-transparent hover:border-slate-100"
-                                    >
-                                        <div className="flex items-center justify-between mb-2">
-                                            <h4 className="font-bold text-slate-800 text-[17px] group-hover/item:text-[#f97316] transition-colors">
+                    {/* Right Content Area - Redesigned to Horizontal Layout */}
+                    <div className="flex-1 bg-white py-10 px-0 relative overflow-hidden">
+
+                        <div className="relative z-10">
+                            <div className="flex flex-col gap-1 pt-0 pb-8 px-12 border-b border-slate-200">
+                                <h3 className="text-2xl font-black text-slate-900/90 tracking-tighter uppercase">
+                                    {activeData.title}
+                                </h3>
+                                <p className="text-[14px] text-slate-500 font-medium leading-relaxed line-clamp-3 max-w-[800px]">
+                                    {activeData.description}
+                                </p>
+                            </div>
+
+                            {/* Sub-categories Grid - 2 Rows / 3 Columns */}
+                            <div className="pt-10 px-12">
+                                <div className="grid grid-cols-3 gap-x-12 gap-y-8">
+                                    {activeData.items.slice(0, 6).map((item, idx) => (
+                                        <Link
+                                            key={idx}
+                                            href={`/servicos/${activeData.id}/${item.slug}`}
+                                            onClick={onClose}
+                                            className="group/item flex flex-col gap-1.5"
+                                        >
+                                            <span className="text-[15px] font-bold text-slate-800 group-hover/item:text-[#f97316] transition-colors">
                                                 {item.title}
-                                            </h4>
-                                            <ArrowRight className="w-4 h-4 text-[#f97316] opacity-0 -translate-x-2 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all" />
-                                        </div>
-                                        <p className="text-[14px] text-slate-500 font-medium leading-snug">
-                                            {item.description}
-                                        </p>
-                                    </Link>
-                                ))}
+                                            </span>
+                                            <span className="text-[12px] text-slate-400 font-medium leading-tight line-clamp-2 group-hover/item:text-slate-500 transition-colors">
+                                                {item.description}
+                                            </span>
+                                        </Link>
+                                    ))}
+                                </div>
+
                             </div>
                         </div>
 
-                        {/* Bottom Bar Stats */}
-                        <div className="absolute bottom-8 left-16 right-16 pt-8 border-t border-slate-100 flex items-center justify-between">
-                            <div className="flex items-center gap-10 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                <span className="flex items-center gap-2"><Globe className="w-4 h-4 text-emerald-600/50" /> Suporte 24/7</span>
-                                <span className="flex items-center gap-2"><Star className="w-4 h-4 text-orange-600/50" /> Líder em Moçambique</span>
+                        {/* Bottom Footer Info */}
+                        <div className="absolute bottom-10 left-12 right-12 pt-6 border-t border-slate-100 flex items-center justify-between">
+                            <div className="flex items-center gap-8 text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                    <span>Sistema Operacional</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Users className="w-4 h-4 text-orange-500/50" />
+                                    <span>+500 Parceiros</span>
+                                </div>
                             </div>
-                            <Link
-                                href="/servicos"
-                                onClick={onClose}
-                                className="text-sm font-bold text-[#f97316] hover:text-emerald-600 transition-colors flex items-center gap-2"
-                            >
-                                Ver Todos Serviços <ArrowRight className="w-4 h-4" />
-                            </Link>
+                            <div className="flex items-center gap-6">
+                                <span className="text-[11px] font-bold text-slate-400">Dúvidas?</span>
+                                <Link
+                                    href="/contactos"
+                                    onClick={onClose}
+                                    className="flex items-center gap-2 text-[11px] font-black text-[#f97316] uppercase tracking-widest hover:text-emerald-600 transition-colors"
+                                >
+                                    Suporte Especializado <ArrowRight className="w-4 h-4" />
+                                </Link>
+                            </div>
                         </div>
                     </div>
                 </div>

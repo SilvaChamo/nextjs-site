@@ -164,17 +164,6 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                     {/* Universal Slide Layout: Title Top Left + Subtitle + 2 Columns (Photo | Text) */}
                                     <div className="w-full flex flex-col items-center text-center animate-in fade-in duration-700 gap-[15px] mx-auto">
 
-                                        {/* Header: Title & Subtitle */}
-                                        <div className="space-y-4 w-full text-center px-[70px] pb-[15px] mb-[15px] border-b border-white/20">
-                                            <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase leading-none">
-                                                {presentation.title}
-                                            </h1>
-                                            <div className="flex items-center gap-[15px] pt-[5px] justify-center">
-                                                <p className="text-orange-500 font-bold text-[18px]">
-                                                    {presentation.description || (index === 0 ? "introdução" : `slide ${index + 1}`)}
-                                                </p>
-                                            </div>
-                                        </div>
 
                                         {/* Conditional Layout: Image disabled = centered text only */}
                                         {slide.image_disabled ? (

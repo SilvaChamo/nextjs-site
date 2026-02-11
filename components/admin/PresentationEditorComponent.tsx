@@ -37,7 +37,7 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
         title: "",
         description: "",
         slides: [
-            { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", title_align: "center", cta_text: "", cta_link: "", animation_text: "fade-in", animation_image: "fade-in", title_size: 52 }
+            { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", title_align: "center", antetitulo_align: "center", cta_text: "", cta_link: "", cta_align: "center", animation_text: "fade-in", animation_image: "fade-in", title_size: 52 }
         ]
     });
 
@@ -60,9 +60,11 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                     image_disabled: s.image_disabled || false,
                     text_align: s.text_align || 'center',
                     title_align: s.title_align || 'center',
+                    antetitulo_align: s.antetitulo_align || 'center',
+                    cta_align: s.cta_align || 'center',
                     title_size: s.title_size || 52
                 })) : [
-                    { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", title_align: "center", cta_text: "", cta_link: "", animation_text: "fade-in", animation_image: "fade-in", title_size: 52 }
+                    { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", title_align: "center", antetitulo_align: "center", cta_text: "", cta_link: "", cta_align: "center", animation_text: "fade-in", animation_image: "fade-in", title_size: 52 }
                 ];
 
                 setPresentation({
@@ -83,7 +85,7 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
     const handleAddSlide = () => {
         setPresentation(prev => ({
             ...prev,
-            slides: [...prev.slides, { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", title_align: "center", cta_text: "", cta_link: "", animation_text: "fade-in", animation_image: "fade-in", title_size: 52 }]
+            slides: [...prev.slides, { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", title_align: "center", antetitulo_align: "center", cta_text: "", cta_link: "", cta_align: "center", animation_text: "fade-in", animation_image: "fade-in", title_size: 52 }]
         }));
     };
 
@@ -520,7 +522,41 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                                 <div className="flex flex-col md:flex-row gap-10 items-start shrink-0">
                                     <div className="flex-1 space-y-8 w-full">
                                         <div className="space-y-2">
-                                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Antetítulo</label>
+                                            <div className="flex items-center justify-between">
+                                                <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Antetítulo</label>
+                                                <div className="flex bg-white/50 rounded-md border border-slate-200 p-0.5 scale-75 origin-right">
+                                                    <button
+                                                        onClick={() => updateSlide(activeSlide.id, { antetitulo_align: 'left' })}
+                                                        className={cn(
+                                                            "p-1 rounded transition-colors",
+                                                            (activeSlide?.antetitulo_align || 'center') === 'left' ? "bg-emerald-600 text-white" : "text-slate-400 hover:bg-slate-100"
+                                                        )}
+                                                        title="Alinhar à Esquerda"
+                                                    >
+                                                        <AlignLeft className="w-3 h-3" />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => updateSlide(activeSlide.id, { antetitulo_align: 'center' })}
+                                                        className={cn(
+                                                            "p-1 rounded transition-colors",
+                                                            (activeSlide?.antetitulo_align || 'center') === 'center' ? "bg-emerald-600 text-white" : "text-slate-400 hover:bg-slate-100"
+                                                        )}
+                                                        title="Centralizar"
+                                                    >
+                                                        <AlignCenter className="w-3 h-3" />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => updateSlide(activeSlide.id, { antetitulo_align: 'right' })}
+                                                        className={cn(
+                                                            "p-1 rounded transition-colors",
+                                                            activeSlide?.antetitulo_align === 'right' ? "bg-emerald-600 text-white" : "text-slate-400 hover:bg-slate-100"
+                                                        )}
+                                                        title="Alinhar à Direita"
+                                                    >
+                                                        <AlignRight className="w-3 h-3" />
+                                                    </button>
+                                                </div>
+                                            </div>
                                             <Input
                                                 value={activeSlide?.antetitulo || ""}
                                                 onChange={(e) => updateSlide(activeSlide.id, { antetitulo: e.target.value })}
@@ -731,7 +767,7 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                                         className="font-bold bg-white border-slate-200 focus:ring-emerald-500 rounded-md shadow-sm"
                                     />
                                 </div>
-                                <div className="space-y-3 col-span-3">
+                                <div className="space-y-3 col-span-2">
                                     <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Link do Botão (URL)</label>
                                     <Input
                                         value={activeSlide?.cta_link || ""}
@@ -739,6 +775,38 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                                         placeholder="Ex: /sobre-nos"
                                         className="font-bold bg-white border-slate-200 focus:ring-emerald-500 rounded-md shadow-sm"
                                     />
+                                </div>
+                                <div className="space-y-3 col-span-1">
+                                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Alinhamento do Botão</label>
+                                    <div className="flex bg-white/50 rounded-md border border-slate-200 p-1 w-fit">
+                                        <button
+                                            onClick={() => updateSlide(activeSlide.id, { cta_align: 'left' })}
+                                            className={cn(
+                                                "px-3 py-1.5 rounded transition-colors text-[10px] font-black uppercase flex items-center gap-1",
+                                                (activeSlide?.cta_align || 'center') === 'left' ? "bg-emerald-600 text-white" : "text-slate-400 hover:bg-slate-100"
+                                            )}
+                                        >
+                                            <AlignLeft className="w-3 h-3" /> Esq
+                                        </button>
+                                        <button
+                                            onClick={() => updateSlide(activeSlide.id, { cta_align: 'center' })}
+                                            className={cn(
+                                                "px-3 py-1.5 rounded transition-colors text-[10px] font-black uppercase flex items-center gap-1",
+                                                (activeSlide?.cta_align || 'center') === 'center' ? "bg-emerald-600 text-white" : "text-slate-400 hover:bg-slate-100"
+                                            )}
+                                        >
+                                            <AlignCenter className="w-3 h-3" /> Centro
+                                        </button>
+                                        <button
+                                            onClick={() => updateSlide(activeSlide.id, { cta_align: 'right' })}
+                                            className={cn(
+                                                "px-3 py-1.5 rounded transition-colors text-[10px) font-black uppercase flex items-center gap-1",
+                                                activeSlide?.cta_align === 'right' ? "bg-emerald-600 text-white" : "text-slate-400 hover:bg-slate-100"
+                                            )}
+                                        >
+                                            <AlignRight className="w-3 h-3" /> Dir
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 

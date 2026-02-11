@@ -172,7 +172,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                     <div className="w-full h-full flex flex-col items-center text-center animate-in fade-in duration-700 gap-[10px] mx-auto">
 
                                         {/* Header: Title & Subtitle */}
-                                        <div className="space-y-1 w-full text-center px-[70px] py-[15px] mb-[15px] border-b border-white/20 bg-emerald-600/10 backdrop-blur-sm">
+                                        <div className="space-y-1 w-full text-center px-[40px] py-[15px] mb-[15px] border-b border-white/20 bg-emerald-600/10 backdrop-blur-sm">
                                             <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase leading-none">
                                                 {presentation.title}
                                             </h1>
@@ -190,16 +190,25 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                 <div
                                                     key={`text-centered-${index}-${currentIndex}`}
                                                     className={cn(
-                                                        "w-full max-w-4xl px-[70px] text-center mx-auto flex flex-col items-center",
+                                                        "w-full max-w-4xl px-[40px] text-center mx-auto flex flex-col items-center",
                                                         isActive && getAnimationClass(slide.animation_text)
                                                     )}>
                                                     {slide.antetitulo && (
-                                                        <div className="flex items-center justify-center gap-4 mb-[20px]">
-                                                            <div className="w-[45px] h-[2px] bg-orange-500/50"></div>
+                                                        <div
+                                                            className="flex items-center gap-4 mb-[20px]"
+                                                            style={{
+                                                                justifyContent: slide.antetitulo_align === 'left' ? 'flex-start' : slide.antetitulo_align === 'right' ? 'flex-end' : 'center'
+                                                            }}
+                                                        >
+                                                            {(slide.antetitulo_align === 'center' || (slide.antetitulo_align || 'center') === 'left') && (
+                                                                <div className="w-[45px] h-[2px] bg-orange-500/50"></div>
+                                                            )}
                                                             <span className="text-orange-500 font-bold uppercase tracking-widest text-[16px]">
                                                                 {slide.antetitulo}
                                                             </span>
-                                                            <div className="w-[45px] h-[2px] bg-orange-500/50"></div>
+                                                            {(slide.antetitulo_align === 'center' || slide.antetitulo_align === 'right') && (
+                                                                <div className="w-[45px] h-[2px] bg-orange-500/50"></div>
+                                                            )}
                                                         </div>
                                                     )}
                                                     {slide.title && (
@@ -223,9 +232,12 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                         dangerouslySetInnerHTML={{ __html: slide.content }}>
                                                     </div>
 
-                                                    {/* CTA Button - Centered */}
+                                                    {/* CTA Button */}
                                                     {slide.cta_text && slide.cta_link && (
-                                                        <div className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+                                                        <div
+                                                            className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300"
+                                                            style={{ textAlign: (slide.cta_align as any) || 'center' }}
+                                                        >
                                                             <a
                                                                 href={slide.cta_link}
                                                                 target="_blank"
@@ -241,7 +253,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                             ) : (
                                                 /* Two Column Layout - With Image */
                                                 <div className={cn(
-                                                    "w-full max-w-7xl mx-auto px-[70px] grid grid-cols-1 gap-[40px] items-center",
+                                                    "w-full max-w-7xl mx-auto px-[40px] grid grid-cols-1 gap-[40px] items-center",
                                                     slide.image_side === 'center' ? "lg:grid-cols-1" : (slide.image_side === 'right' ? "lg:grid-cols-[1fr_500px]" : "lg:grid-cols-[500px_1fr]")
                                                 )}>
 
@@ -301,12 +313,21 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                             isActive && getAnimationClass(slide.animation_text)
                                                         )}>
                                                         {slide.antetitulo && (
-                                                            <div className={cn("flex items-center gap-4 mb-[20px]", slide.image_side === 'center' && "justify-center")}>
-                                                                <div className="w-[45px] h-[2px] bg-orange-500/50"></div>
+                                                            <div
+                                                                className="flex items-center gap-4 mb-[20px]"
+                                                                style={{
+                                                                    justifyContent: slide.antetitulo_align === 'left' ? 'flex-start' : slide.antetitulo_align === 'right' ? 'flex-end' : 'center'
+                                                                }}
+                                                            >
+                                                                {(slide.antetitulo_align === 'center' || (slide.antetitulo_align || 'center') === 'left') && (
+                                                                    <div className="w-[45px] h-[2px] bg-orange-500/50"></div>
+                                                                )}
                                                                 <span className="text-orange-500 font-bold uppercase tracking-widest text-[16px]">
                                                                     {slide.antetitulo}
                                                                 </span>
-                                                                {slide.image_side === 'center' && <div className="w-[45px] h-[2px] bg-orange-500/50"></div>}
+                                                                {(slide.antetitulo_align === 'center' || slide.antetitulo_align === 'right') && (
+                                                                    <div className="w-[45px] h-[2px] bg-orange-500/50"></div>
+                                                                )}
                                                             </div>
                                                         )}
                                                         {slide.title && (
@@ -334,7 +355,10 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
 
                                                         {/* CTA Button */}
                                                         {slide.cta_text && slide.cta_link && (
-                                                            <div className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+                                                            <div
+                                                                className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300"
+                                                                style={{ textAlign: (slide.cta_align as any) || 'left' }}
+                                                            >
                                                                 <a
                                                                     href={slide.cta_link}
                                                                     target="_blank"

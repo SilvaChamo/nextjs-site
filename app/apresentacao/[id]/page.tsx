@@ -111,7 +111,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
     return (
         <div
             id="presentation-root"
-            className={`fixed inset-0 bg-slate-950 text-white overflow-hidden select-none transition-all duration-700`}
+            className={`fixed inset-0 bg-slate-950 text-white overflow-hidden transition-all duration-700`}
         >
             {/* Top Right: Actions & Timer */}
             <div className="absolute top-10 right-10 z-[100] flex items-center gap-4">
@@ -153,7 +153,14 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                 {/* Background */}
                                 {slide.image_url ? (
                                     <>
-                                        <img src={slide.image_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-30 scale-105 blur-[2px]" />
+                                        <img
+                                            src={slide.image_url}
+                                            alt=""
+                                            className={cn(
+                                                "absolute inset-0 w-full h-full object-cover scale-105 blur-[2px] transition-opacity duration-1000",
+                                                slide.image_disabled ? "opacity-40" : "opacity-30"
+                                            )}
+                                        />
                                         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-slate-950/80"></div>
                                     </>
                                 ) : (
@@ -162,152 +169,61 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
 
                                 <div className="relative z-10 max-w-full w-full h-full">
                                     {/* Universal Slide Layout: Title Top Left + Subtitle + 2 Columns (Photo | Text) */}
-                                    <div className="w-full flex flex-col items-center text-center animate-in fade-in duration-700 gap-[15px] mx-auto">
+                                    <div className="w-full h-full flex flex-col items-center text-center animate-in fade-in duration-700 gap-[10px] mx-auto">
 
-
-                                        {/* Conditional Layout: Image disabled = centered text only */}
-                                        {slide.image_disabled ? (
-                                            /* Centered Layout - No Image */
-                                            <div
-                                                key={`text-centered-${index}-${currentIndex}`}
-                                                className={cn(
-                                                    "w-full max-w-4xl px-[70px] text-center space-y-[30px]",
-                                                    isActive && getAnimationClass(slide.animation_text)
-                                                )}>
-                                                {slide.title && (
-                                                    <div className="flex items-center justify-center gap-4 mb-2">
-                                                        <div className="w-[45px] h-[2px] bg-orange-500/50"></div>
-                                                        <span className="text-orange-500 font-bold uppercase tracking-widest text-[20px]">
-                                                            {slide.title}
-                                                        </span>
-                                                        <div className="w-[45px] h-[2px] bg-orange-500/50"></div>
-                                                    </div>
-                                                )}
-                                                {slide.antetitulo && (
-                                                    <div className="mb-4">
-                                                        <span className="text-white font-bold first-letter:uppercase lowercase tracking-tight text-[50px] leading-tight block">
-                                                            {slide.antetitulo}
-                                                        </span>
-                                                    </div>
-                                                )}
-                                                <div className="prose prose-invert max-w-none text-center mx-auto
-                                                    prose-p:text-[22px] prose-p:leading-relaxed prose-p:text-slate-200 prose-p:font-medium
-                                                    prose-h5:text-[28px] prose-h5:font-normal prose-h5:text-white prose-h5:leading-[1.4]
-                                                    prose-strong:text-orange-500 prose-strong:font-black
-                                                    prose-ul:list-disc prose-ul:pl-10 prose-ul:space-y-4 prose-ul:text-left prose-ul:inline-block
-                                                    prose-ol:list-decimal prose-ol:pl-10 prose-ol:space-y-4 prose-ol:text-left prose-ol:inline-block
-                                                    prose-li:text-slate-300 prose-li:marker:text-orange-500
-                                                    prose-blockquote:border-l-4 prose-blockquote:border-orange-500 prose-blockquote:pl-6 prose-blockquote:italic"
-                                                    dangerouslySetInnerHTML={{ __html: slide.content }}>
-                                                </div>
-
-                                                {/* CTA Button - Centered */}
-                                                {slide.cta_text && slide.cta_link && (
-                                                    <div className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
-                                                        <a
-                                                            href={slide.cta_link}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="inline-flex items-center gap-2 px-8 py-[9px] bg-emerald-500 hover:bg-orange-500 text-white font-bold rounded-full transition-all hover:scale-105 hover:shadow-lg hover:shadow-orange-500/20 text-sm uppercase tracking-wider group/btn"
-                                                        >
-                                                            {slide.cta_text}
-                                                            <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                                                        </a>
-                                                    </div>
-                                                )}
+                                        {/* Header: Title & Subtitle */}
+                                        <div className="space-y-1 w-full text-center px-[70px] pb-[8px] mb-[10px] border-b border-white/20">
+                                            <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase leading-none">
+                                                {presentation.title}
+                                            </h1>
+                                            <div className="flex items-center gap-[15px] pt-[5px] justify-center">
+                                                <p className="text-orange-500 font-bold text-[18px]">
+                                                    {presentation.description || (index === 0 ? "introdução" : `slide ${index + 1}`)}
+                                                </p>
                                             </div>
-                                        ) : (
-                                            /* Two Column Layout - With Image */
-                                            <div className={cn(
-                                                "w-full max-w-7xl mx-auto px-[70px] grid grid-cols-1 gap-[40px] items-center",
-                                                slide.image_side === 'center' ? "lg:grid-cols-1" : (slide.image_side === 'right' ? "lg:grid-cols-[1fr_500px]" : "lg:grid-cols-[500px_1fr]")
-                                            )}>
+                                        </div>
 
-                                                {/* Column 1: Photo + Footer */}
-                                                <div className={cn(
-                                                    "flex flex-col items-center w-full",
-                                                    slide.image_side === 'center' ? "lg:items-center" : (slide.image_side === 'right' ? "lg:items-end lg:order-last" : "lg:items-start lg:order-first")
-                                                )}>
-                                                    <div className="relative group w-full">
-                                                        <div className="absolute -inset-4 bg-orange-500/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                                        {slide.image_url ? (
-                                                            <div
-                                                                key={`img-${index}-${currentIndex}`}
-                                                                className={cn(
-                                                                    "relative w-full rounded-[20px] overflow-hidden border border-white/10 shadow-2xl bg-slate-900/50",
-                                                                    slide.image_side === 'center' ? "h-auto aspect-video" : "h-[550px]",
-                                                                    isActive && getAnimationClass(slide.animation_image)
-                                                                )}>
-                                                                <img
-                                                                    src={slide.image_url}
-                                                                    alt=""
-                                                                    className={cn(
-                                                                        "w-full h-full",
-                                                                        slide.image_side === 'center' ? "object-contain" : "object-cover"
-                                                                    )}
-                                                                />
-                                                                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent flex items-end p-6 pointer-events-none">
-                                                                    <span className="text-[10px] font-bold uppercase tracking-wider text-white/40">recurso visual • slide {index + 1}</span>
-                                                                </div>
-                                                            </div>
-                                                        ) : (
-                                                            <div className="relative w-full h-[550px] rounded-[20px] bg-white/5 border border-dashed border-white/10 flex items-center justify-center">
-                                                                <div className="text-center">
-                                                                    <Loader2 className="w-8 h-8 text-white/10 animate-spin mx-auto mb-3" />
-                                                                    <p className="text-[10px] font-bold text-white/10 uppercase tracking-widest">Sem recurso visual</p>
-                                                                </div>
-                                                            </div>
-                                                        )}
-                                                    </div>
-
-                                                    {/* Footer line for the slide */}
-                                                    <div className="pt-4 flex items-center justify-center gap-4 w-full max-w-[500px] text-slate-300/60 lowercase font-medium text-[10px] tracking-tight">
-                                                        <span>baseagrodata</span>
-                                                        <span className="opacity-20">•</span>
-                                                        <span>estratégia digital</span>
-                                                        <span className="opacity-20">•</span>
-                                                        <span className="font-bold border border-white/5 px-2 py-0.5 rounded">acesso reservado</span>
-                                                    </div>
-                                                </div>
-
-                                                {/* Column 2: Description */}
+                                        {/* Content Area - centered vertically in remaining space */}
+                                        <div className="flex-1 w-full flex flex-col justify-center py-4">
+                                            {slide.image_disabled ? (
+                                                /* Centered Layout - No Image */
                                                 <div
-                                                    key={`text-${index}-${currentIndex}`}
+                                                    key={`text-centered-${index}-${currentIndex}`}
                                                     className={cn(
-                                                        "space-y-[30px]",
-                                                        slide.image_side === 'center' ? "text-center" : "lg:text-left",
+                                                        "w-full max-w-4xl px-[70px] text-center mx-auto flex flex-col items-center",
                                                         isActive && getAnimationClass(slide.animation_text)
                                                     )}>
-                                                    {slide.title && (
-                                                        <div className={cn("flex items-center gap-4 mb-2", slide.image_side === 'center' && "justify-center")}>
-                                                            <div className="w-[45px] h-[2px] bg-orange-500/50"></div>
-                                                            <span className="text-orange-500 font-bold uppercase tracking-widest text-[20px]">
-                                                                {slide.title}
-                                                            </span>
-                                                            {slide.image_side === 'center' && <div className="w-[45px] h-[2px] bg-orange-500/50"></div>}
-                                                        </div>
-                                                    )}
                                                     {slide.antetitulo && (
-                                                        <div className="mb-4">
-                                                            <span className="text-white font-bold first-letter:uppercase lowercase tracking-tight text-[50px] leading-tight block">
+                                                        <div className="flex items-center justify-center gap-4 mb-[20px]">
+                                                            <div className="w-[45px] h-[2px] bg-orange-500/50"></div>
+                                                            <span className="text-orange-500 font-bold uppercase tracking-widest text-[16px]">
                                                                 {slide.antetitulo}
                                                             </span>
+                                                            <div className="w-[45px] h-[2px] bg-orange-500/50"></div>
                                                         </div>
                                                     )}
-                                                    <div className="prose prose-invert max-w-none 
-                                                        prose-p:text-[22px] prose-p:leading-relaxed prose-p:text-slate-200 prose-p:font-medium
+                                                    {slide.title && (
+                                                        <div className="mb-[15px]">
+                                                            <span
+                                                                className="text-white font-bold first-letter:uppercase tracking-tight leading-[1.1] block"
+                                                                style={{ fontSize: `${slide.title_size || 52}px` }}
+                                                            >
+                                                                {slide.title}
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                    <div className="prose prose-invert max-w-none text-center mx-auto
+                                                        prose-p:text-[22px] prose-p:leading-snug prose-p:text-slate-200 prose-p:font-medium
                                                         prose-h5:text-[28px] prose-h5:font-normal prose-h5:text-white prose-h5:leading-[1.4]
                                                         prose-strong:text-orange-500 prose-strong:font-black
-                                                        prose-ul:list-disc prose-ul:pl-10 prose-ul:space-y-4
-                                                        prose-ol:list-decimal prose-ol:pl-10 prose-ol:space-y-4
+                                                        prose-ul:list-disc prose-ul:pl-10 prose-ul:space-y-4 prose-ul:text-left prose-ul:inline-block
+                                                        prose-ol:list-decimal prose-ol:pl-10 prose-ol:space-y-4 prose-ol:text-left prose-ol:inline-block
                                                         prose-li:text-slate-300 prose-li:marker:text-orange-500
-                                                        prose-blockquote:border-l-4 prose-blockquote:border-orange-500 prose-blockquote:pl-6 prose-blockquote:italic
-                                                        [&_img.content-image]:inline-block [&_img.content-image]:w-full lg:[&_img.content-image]:w-[48%] [&_img.content-image]:aspect-video [&_img.content-image]:object-cover [&_img.content-image]:m-[1%] [&_img.content-image]:rounded-xl [&_img.content-image]:shadow-lg
-                                                        [&_img[style*='width: 100%']]:w-full [&_img[style*='width: 100%']]:block [&_img[style*='width: 100%']]:m-[20px_0]"
+                                                    prose-blockquote:border-l-4 prose-blockquote:border-orange-500 prose-blockquote:pl-6 prose-blockquote:italic"
                                                         dangerouslySetInnerHTML={{ __html: slide.content }}>
                                                     </div>
 
-                                                    {/* CTA Button */}
+                                                    {/* CTA Button - Centered */}
                                                     {slide.cta_text && slide.cta_link && (
                                                         <div className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
                                                             <a
@@ -321,11 +237,121 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                             </a>
                                                         </div>
                                                     )}
+                                                </div>
+                                            ) : (
+                                                /* Two Column Layout - With Image */
+                                                <div className={cn(
+                                                    "w-full max-w-7xl mx-auto px-[70px] grid grid-cols-1 gap-[40px] items-center",
+                                                    slide.image_side === 'center' ? "lg:grid-cols-1" : (slide.image_side === 'right' ? "lg:grid-cols-[1fr_500px]" : "lg:grid-cols-[500px_1fr]")
+                                                )}>
+
+                                                    {/* Column 1: Photo + Footer */}
+                                                    <div className={cn(
+                                                        "flex flex-col items-center w-full",
+                                                        slide.image_side === 'center' ? "lg:items-center" : (slide.image_side === 'right' ? "lg:items-end lg:order-last" : "lg:items-start lg:order-first")
+                                                    )}>
+                                                        <div className="relative group w-full">
+                                                            <div className="absolute -inset-4 bg-orange-500/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                                            {slide.image_url ? (
+                                                                <div
+                                                                    key={`img-${index}-${currentIndex}`}
+                                                                    className={cn(
+                                                                        "relative w-full rounded-[20px] overflow-hidden border border-white/10 shadow-2xl bg-slate-900/50",
+                                                                        slide.image_side === 'center' ? "h-auto aspect-video" : "h-[550px]",
+                                                                        isActive && getAnimationClass(slide.animation_image)
+                                                                    )}>
+                                                                    <img
+                                                                        src={slide.image_url}
+                                                                        alt=""
+                                                                        className={cn(
+                                                                            "w-full h-full",
+                                                                            slide.image_side === 'center' ? "object-contain" : "object-cover"
+                                                                        )}
+                                                                    />
+                                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent flex items-end p-6 pointer-events-none">
+                                                                        <span className="text-[10px] font-bold uppercase tracking-wider text-white/40">recurso visual • slide {index + 1}</span>
+                                                                    </div>
+                                                                </div>
+                                                            ) : (
+                                                                <div className="relative w-full h-[550px] rounded-[20px] bg-white/5 border border-dashed border-white/10 flex items-center justify-center">
+                                                                    <div className="text-center">
+                                                                        <Loader2 className="w-8 h-8 text-white/10 animate-spin mx-auto mb-3" />
+                                                                        <p className="text-[10px] font-bold text-white/10 uppercase tracking-widest">Sem recurso visual</p>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </div>
+
+                                                        {/* Footer line for the slide */}
+                                                        <div className="pt-4 flex items-center justify-center gap-4 w-full max-w-[500px] text-slate-300/60 lowercase font-medium text-[10px] tracking-tight">
+                                                            <span>baseagrodata</span>
+                                                            <span className="opacity-20">•</span>
+                                                            <span>estratégia digital</span>
+                                                            <span className="opacity-20">•</span>
+                                                            <span className="font-bold border border-white/5 px-2 py-0.5 rounded">acesso reservado</span>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Column 2: Description */}
+                                                    <div
+                                                        key={`text-${index}-${currentIndex}`}
+                                                        className={cn(
+                                                            "flex flex-col",
+                                                            slide.image_side === 'center' ? "text-center items-center" : "lg:text-left items-start",
+                                                            isActive && getAnimationClass(slide.animation_text)
+                                                        )}>
+                                                        {slide.antetitulo && (
+                                                            <div className={cn("flex items-center gap-4 mb-[20px]", slide.image_side === 'center' && "justify-center")}>
+                                                                <div className="w-[45px] h-[2px] bg-orange-500/50"></div>
+                                                                <span className="text-orange-500 font-bold uppercase tracking-widest text-[16px]">
+                                                                    {slide.antetitulo}
+                                                                </span>
+                                                                {slide.image_side === 'center' && <div className="w-[45px] h-[2px] bg-orange-500/50"></div>}
+                                                            </div>
+                                                        )}
+                                                        {slide.title && (
+                                                            <div className="mb-[15px]">
+                                                                <span
+                                                                    className="text-white font-bold first-letter:uppercase tracking-tight leading-[1.1] block"
+                                                                    style={{ fontSize: `${slide.title_size || 52}px` }}
+                                                                >
+                                                                    {slide.title}
+                                                                </span>
+                                                            </div>
+                                                        )}
+                                                        <div className="prose prose-invert max-w-none
+                                                        prose-p:text-[22px] prose-p:leading-snug prose-p:text-slate-200 prose-p:font-medium
+                                                        prose-h5:text-[28px] prose-h5:font-normal prose-h5:text-white prose-h5:leading-[1.4]
+                                                        prose-strong:text-orange-500 prose-strong:font-black
+                                                        prose-ul:list-disc prose-ul:pl-10 prose-ul:space-y-4
+                                                        prose-ol:list-decimal prose-ol:pl-10 prose-ol:space-y-4
+                                                        prose-li:text-slate-300 prose-li:marker:text-orange-500
+                                                        prose-blockquote:border-l-4 prose-blockquote:border-orange-500 prose-blockquote:pl-6 prose-blockquote:italic
+                                                        [&_img.content-image]:inline-block [&_img.content-image]:w-full lg:[&_img.content-image]:w-[48%] [&_img.content-image]:aspect-video [&_img.content-image]:object-cover [&_img.content-image]:m-[1%] [&_img.content-image]:rounded-xl [&_img.content-image]:shadow-lg
+                                                        [&_img[style*='width: 100%']]:w-full [&_img[style*='width: 100%']]:block [&_img[style*='width: 100%']]:m-[20px_0]"
+                                                            dangerouslySetInnerHTML={{ __html: slide.content }}>
+                                                        </div>
+
+                                                        {/* CTA Button */}
+                                                        {slide.cta_text && slide.cta_link && (
+                                                            <div className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+                                                                <a
+                                                                    href={slide.cta_link}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="inline-flex items-center gap-2 px-8 py-[9px] bg-emerald-500 hover:bg-orange-500 text-white font-bold rounded-full transition-all hover:scale-105 hover:shadow-lg hover:shadow-orange-500/20 text-sm uppercase tracking-wider group/btn"
+                                                                >
+                                                                    {slide.cta_text}
+                                                                    <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                                                                </a>
+                                                            </div>
+                                                        )}
+
+                                                    </div>
 
                                                 </div>
-
-                                            </div>
-                                        )}
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>

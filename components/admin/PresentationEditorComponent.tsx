@@ -37,7 +37,7 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
         title: "",
         description: "",
         slides: [
-            { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", cta_text: "", cta_link: "", animation_text: "fade-in", animation_image: "fade-in" }
+            { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", cta_text: "", cta_link: "", animation_text: "fade-in", animation_image: "fade-in", title_size: 52 }
         ]
     });
 
@@ -58,9 +58,10 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                     id: s.id || `slide-${idx}-${Date.now()}`,
                     image_side: s.image_side || 'left',
                     image_disabled: s.image_disabled || false,
-                    text_align: s.text_align || 'center'
+                    text_align: s.text_align || 'center',
+                    title_size: s.title_size || 52
                 })) : [
-                    { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", cta_text: "", cta_link: "", animation_text: "fade-in", animation_image: "fade-in" }
+                    { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", cta_text: "", cta_link: "", animation_text: "fade-in", animation_image: "fade-in", title_size: 52 }
                 ];
 
                 setPresentation({
@@ -81,7 +82,7 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
     const handleAddSlide = () => {
         setPresentation(prev => ({
             ...prev,
-            slides: [...prev.slides, { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", cta_text: "", cta_link: "", animation_text: "fade-in", animation_image: "fade-in" }]
+            slides: [...prev.slides, { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", cta_text: "", cta_link: "", animation_text: "fade-in", animation_image: "fade-in", title_size: 52 }]
         }));
     };
 
@@ -160,11 +161,11 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
 
                 doc.setTextColor(255, 255, 255);
                 doc.setFontSize(40);
-                doc.text(slide.antetitulo || "Apresentação", 60, 100);
+                doc.text(slide.title || "Apresentação", 60, 100);
 
                 doc.setFontSize(24);
                 doc.setTextColor(16, 185, 129); // emerald-500
-                doc.text(slide.title || "", 60, 140);
+                doc.text(slide.antetitulo || "", 60, 140);
 
                 // Content (strip HTML)
                 const tempDiv = document.createElement("div");
@@ -204,11 +205,11 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
 
             doc.setTextColor(255, 255, 255);
             doc.setFontSize(40);
-            doc.text(slide.antetitulo || "Apresentação", 60, 100);
+            doc.text(slide.title || "Apresentação", 60, 100);
 
             doc.setFontSize(24);
             doc.setTextColor(16, 185, 129); // emerald-500
-            doc.text(slide.title || "", 60, 140);
+            doc.text(slide.antetitulo || "", 60, 140);
 
             // Content (strip HTML)
             const tempDiv = document.createElement("div");
@@ -520,8 +521,8 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Antetítulo</label>
                                             <Input
-                                                value={activeSlide?.title || ""}
-                                                onChange={(e) => updateSlide(activeSlide.id, { title: e.target.value })}
+                                                value={activeSlide?.antetitulo || ""}
+                                                onChange={(e) => updateSlide(activeSlide.id, { antetitulo: e.target.value })}
                                                 placeholder="Digite o Antetítulo..."
                                                 className="h-10 text-xl font-bold bg-white/50 border-slate-200 focus:ring-emerald-500 rounded-lg shadow-sm"
                                             />
@@ -530,11 +531,26 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Título</label>
                                             <Textarea
-                                                value={activeSlide?.antetitulo || ""}
-                                                onChange={(e) => updateSlide(activeSlide.id, { antetitulo: e.target.value })}
+                                                value={activeSlide?.title || ""}
+                                                onChange={(e) => updateSlide(activeSlide.id, { title: e.target.value })}
                                                 placeholder="Digite o Título principal..."
                                                 className="min-h-[130px] text-lg font-bold bg-white/50 border-slate-200 focus:ring-emerald-500 rounded-lg shadow-sm resize-none"
                                             />
+                                            <div className="flex items-center gap-2 pt-1">
+                                                <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter whitespace-nowrap">Aumentar o tamanho do título</label>
+                                                <div className="flex items-center gap-1">
+                                                    <Input
+                                                        type="number"
+                                                        value={activeSlide?.title_size ?? 52}
+                                                        onChange={(e) => {
+                                                            const val = e.target.value;
+                                                            updateSlide(activeSlide.id, { title_size: val === '' ? '' : parseInt(val) });
+                                                        }}
+                                                        className="w-24 h-7 text-[12px] font-bold bg-white/50 border-slate-200 rounded text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                    />
+                                                    <span className="text-[10px] font-bold text-slate-400 px-1">px</span>
+                                                </div>
+                                            </div>
                                         </div>
 
                                     </div>

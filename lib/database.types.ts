@@ -249,6 +249,119 @@ export type Database = {
                 }
                 Relationships: []
             }
+            forum_categories: {
+                Row: {
+                    id: string
+                    name: string
+                    slug: string
+                    description: string | null
+                    icon: string | null
+                    created_at: string
+                }
+                Insert: {
+                    id?: string
+                    name: string
+                    slug: string
+                    description?: string | null
+                    icon?: string | null
+                    created_at?: string
+                }
+                Update: {
+                    id?: string
+                    name?: string
+                    slug?: string
+                    description?: string | null
+                    icon?: string | null
+                    created_at?: string
+                }
+                Relationships: []
+            }
+            forum_topics: {
+                Row: {
+                    id: string
+                    category_id: string | null
+                    user_id: string | null
+                    title: string
+                    content: string
+                    views_count: number | null
+                    created_at: string
+                    updated_at: string | null
+                }
+                Insert: {
+                    id?: string
+                    category_id?: string | null
+                    user_id?: string | null
+                    title: string
+                    content: string
+                    views_count?: number | null
+                    created_at?: string
+                    updated_at?: string | null
+                }
+                Update: {
+                    id?: string
+                    category_id?: string | null
+                    user_id?: string | null
+                    title?: string
+                    content?: string
+                    views_count?: number | null
+                    created_at?: string
+                    updated_at?: string | null
+                }
+                Relationships: [
+                    {
+                        foreignKeyName: "forum_topics_category_id_fkey"
+                        columns: ["category_id"]
+                        referencedRelation: "forum_categories"
+                        referencedColumns: ["id"]
+                    },
+                    {
+                        foreignKeyName: "forum_topics_user_id_fkey"
+                        columns: ["user_id"]
+                        referencedRelation: "users"
+                        referencedColumns: ["id"]
+                    }
+                ]
+            }
+            forum_comments: {
+                Row: {
+                    id: string
+                    topic_id: string | null
+                    user_id: string | null
+                    content: string
+                    created_at: string
+                    updated_at: string | null
+                }
+                Insert: {
+                    id?: string
+                    topic_id?: string | null
+                    user_id?: string | null
+                    content: string
+                    created_at?: string
+                    updated_at?: string | null
+                }
+                Update: {
+                    id?: string
+                    topic_id?: string | null
+                    user_id?: string | null
+                    content?: string
+                    created_at?: string
+                    updated_at?: string | null
+                }
+                Relationships: [
+                    {
+                        foreignKeyName: "forum_comments_topic_id_fkey"
+                        columns: ["topic_id"]
+                        referencedRelation: "forum_topics"
+                        referencedColumns: ["id"]
+                    },
+                    {
+                        foreignKeyName: "forum_comments_user_id_fkey"
+                        columns: ["user_id"]
+                        referencedRelation: "users"
+                        referencedColumns: ["id"]
+                    }
+                ]
+            }
             presentations: {
                 Row: {
                     id: string

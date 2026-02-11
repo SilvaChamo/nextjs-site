@@ -81,7 +81,8 @@ export const translations = {
                     description: "Scanner inteligente para diagnóstico de pragas e doenças.",
                     link: "/inovacao/agrobotanica"
                 }
-            }
+            },
+            forum: "Fórum"
         },
         parceria: {
             header_title: "Seja nosso",
@@ -200,7 +201,8 @@ export const translations = {
                     description: "Intelligent scanner for diagnosing pests and diseases.",
                     link: "/inovacao/agrobotanica"
                 }
-            }
+            },
+            forum: "Forum"
         },
         parceria: {
             header_title: "Become our",

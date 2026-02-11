@@ -124,7 +124,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ s
             className={`fixed inset-0 bg-slate-950 text-white overflow-hidden transition-all duration-700 z-[9999]`}
         >
             {/* Top Right: Actions & Timer */}
-            <div className="absolute top-10 right-10 z-[100] flex items-center gap-4">
+            <div className="absolute top-10 right-10 z-[100] flex items-center gap-4 pointer-events-auto">
                 <div className="flex items-center gap-6 px-8 py-3 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl">
                     <div className="flex items-center gap-2 text-white/50">
                         <Maximize2
@@ -136,7 +136,11 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ s
                     <button
                         onClick={() => {
                             if (document.fullscreenElement) document.exitFullscreen();
-                            router.back();
+                            if (window.history.length > 1) {
+                                router.back();
+                            } else {
+                                router.push('/');
+                            }
                         }}
                         className="flex items-center gap-2 text-red-400 font-black uppercase tracking-[0.2em] text-[8px] hover:text-red-300 transition-colors group"
                     >

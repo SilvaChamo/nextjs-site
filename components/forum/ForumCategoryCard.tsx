@@ -1,4 +1,4 @@
-'use strict';
+'use client';
 
 import React from 'react';
 import Link from 'next/link';
@@ -25,7 +25,7 @@ interface ForumCategoryCardProps {
 
 export const ForumCategoryCard: React.FC<ForumCategoryCardProps> = ({ category }) => {
     // Use a fallback icon if not found
-    const IconComponent = (LucideIcons as any)[category.icon || 'MessageSquare'] || LucideIcons.MessageSquare;
+    const IconComponent = iconMap[category.icon || ''] || MessageSquare;
 
     return (
         <Link
@@ -45,7 +45,7 @@ export const ForumCategoryCard: React.FC<ForumCategoryCardProps> = ({ category }
             </p>
             <div className="mt-6 flex items-center text-emerald-600 font-medium text-sm">
                 Ver tópicos
-                <LucideIcons.ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
             </div>
         </Link>
     );

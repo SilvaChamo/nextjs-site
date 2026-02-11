@@ -101,7 +101,6 @@ export function Navbar() {
 
     const menuItems = [
         { label: t("navbar.services"), link: "/servicos" },
-        { label: t("navbar.forum"), link: "/forum" },
         { label: t("navbar.repository"), link: "/repositorio" },
         { label: t("navbar.innovation"), link: "/inovacao" },
         { label: t("navbar.market"), link: "/mercado" },

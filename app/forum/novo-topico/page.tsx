@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/utils/supabase/client';
 import { PageHeader } from '@/components/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, Send } from 'lucide-react';
 import { Database } from '@/lib/database.types';
 
-export default function NewTopicPage() {
+function NewTopicContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const categoryId = searchParams.get('category');
@@ -20,7 +20,7 @@ export default function NewTopicPage() {
     const [loading, setLoading] = useState(false);
     const [user, setUser] = useState<any>(null);
 
-    const supabase = createClientComponentClient<Database>();
+    const supabase = createClient();
 
     useEffect(() => {
         supabase.auth.getUser().then(({ data: { user } }) => {
@@ -59,10 +59,14 @@ export default function NewTopicPage() {
     };
 
     return (
-        <div className="min-h-screen bg-zinc-50 dark:bg-black pt-20">
+        <>
             <PageHeader
                 title="Novo Tópico"
-                subtitle="Inicie uma nova discussão com a comunidade."
+                breadcrumbs={[
+                    { label: "Home", href: "/" },
+                    { label: "Fórum", href: "/forum" },
+                    { label: "Novo Tópico" }
+                ]}
             />
 
             <div className="max-w-3xl mx-auto px-4 py-12">
@@ -110,6 +114,20 @@ export default function NewTopicPage() {
                     </Button>
                 </form>
             </div>
+        </>
+    );
+}
+
+export default function NewTopicPage() {
+    return (
+        <div className="min-h-screen bg-zinc-50 dark:bg-black pt-20">
+            <Suspense fallback={
+                <div className="flex items-center justify-center p-20">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-emerald-500" />
+                </div>
+            }>
+                <NewTopicContent />
+            </Suspense>
         </div>
     );
 }

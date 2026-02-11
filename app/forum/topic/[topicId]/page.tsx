@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/utils/supabase/client';
 import { PageHeader } from '@/components/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -21,7 +21,7 @@ export default function TopicPage() {
     const [sending, setSending] = useState(false);
     const [user, setUser] = useState<any>(null);
 
-    const supabase = createClientComponentClient<Database>();
+    const supabase = createClient();
 
     useEffect(() => {
         supabase.auth.getUser().then(({ data: { user } }) => setUser(user));
@@ -100,7 +100,12 @@ export default function TopicPage() {
         <div className="min-h-screen bg-zinc-50 dark:bg-black pt-20">
             <PageHeader
                 title={topic?.title}
-                subtitle={topic?.forum_categories?.name}
+                breadcrumbs={[
+                    { label: "Home", href: "/" },
+                    { label: "Fórum", href: "/forum" },
+                    { label: topic?.forum_categories?.name || 'Categoria', href: `/forum/${topic?.forum_categories?.slug}` },
+                    { label: "Tópico" }
+                ]}
             />
 
             <div className="max-w-4xl mx-auto px-4 py-12">

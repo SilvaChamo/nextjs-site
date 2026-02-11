@@ -514,7 +514,9 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                                     </Button>
 
                                     <div className="w-px h-4 bg-white/20 mx-1" />
-                                    <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded font-bold">{activeSlide?.id.split('-')[0]}</span>
+                                    <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded font-bold">
+                                        SL#{String(activeIndex + 1).padStart(3, '0')}{new Date().toLocaleDateString('pt-PT', { month: 'short', year: '2-digit' }).replace('.', '').replace(' ', '')}
+                                    </span>
                                 </div>
                             </div>
 
@@ -695,67 +697,6 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                                             </div>
                                         </div>
 
-                                        {/* Animation Options */}
-                                        <div className="flex flex-col gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-[10px] font-black uppercase text-slate-400">Altura da Imagem</span>
-                                                <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">{activeSlide?.image_height || 550}px</span>
-                                            </div>
-                                            <input
-                                                type="range"
-                                                min="300"
-                                                max="800"
-                                                step="10"
-                                                value={activeSlide?.image_height || 550}
-                                                onChange={(e) => updateSlide(activeSlide.id, { image_height: parseInt(e.target.value) })}
-                                                className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 transition-all hover:bg-slate-300"
-                                            />
-                                            <div className="flex justify-between text-[8px] font-bold text-slate-400 uppercase tracking-widest">
-                                                <span>Compacto</span>
-                                                <span>Impacto</span>
-                                            </div>
-                                        </div>
-
-                                        {/* Animation Options */}
-                                        <div className="flex flex-col gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
-                                            <span className="text-[10px] font-black uppercase text-slate-400">Animações de Entrada</span>
-                                            <div className="grid grid-cols-2 gap-2">
-                                                <div className="flex flex-col gap-1">
-                                                    <label className="text-[9px] font-bold text-slate-500">Texto</label>
-                                                    <select
-                                                        value={activeSlide?.animation_text || 'fade-in'}
-                                                        onChange={(e) => updateSlide(activeSlide.id, { animation_text: e.target.value })}
-                                                        className="text-[10px] px-2 py-1.5 rounded-md border border-slate-200 bg-white font-semibold text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                                                    >
-                                                        <option value="none">Sem animação</option>
-                                                        <option value="fade-in">Fade In</option>
-                                                        <option value="slide-left">Deslizar da Esquerda</option>
-                                                        <option value="slide-right">Deslizar da Direita</option>
-                                                        <option value="slide-up">Deslizar de Baixo</option>
-                                                        <option value="slide-down">Deslizar de Cima</option>
-                                                        <option value="zoom-in">Zoom In</option>
-                                                        <option value="bounce">Bounce</option>
-                                                    </select>
-                                                </div>
-                                                <div className="flex flex-col gap-1">
-                                                    <label className="text-[9px] font-bold text-slate-500">Imagem</label>
-                                                    <select
-                                                        value={activeSlide?.animation_image || 'fade-in'}
-                                                        onChange={(e) => updateSlide(activeSlide.id, { animation_image: e.target.value })}
-                                                        className="text-[10px] px-2 py-1.5 rounded-md border border-slate-200 bg-white font-semibold text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                                                    >
-                                                        <option value="none">Sem animação</option>
-                                                        <option value="fade-in">Fade In</option>
-                                                        <option value="slide-left">Deslizar da Esquerda</option>
-                                                        <option value="slide-right">Deslizar da Direita</option>
-                                                        <option value="slide-up">Deslizar de Baixo</option>
-                                                        <option value="slide-down">Deslizar de Cima</option>
-                                                        <option value="zoom-in">Zoom In</option>
-                                                        <option value="bounce">Bounce</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
 
@@ -774,6 +715,79 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                                             placeholder="Descreva sua visão para este slide de forma detalhada..."
                                             className="bg-transparent"
                                         />
+                                    </div>
+                                </div>
+
+                                {/* Layout & Animation Controls */}
+                                <div className="grid grid-cols-2 gap-6 bg-slate-50 border border-slate-200 rounded-xl p-6 mb-10">
+                                    {/* Image Height Control */}
+                                    <div className="space-y-3">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Altura da Imagem</span>
+                                            <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
+                                                {Math.round(((activeSlide?.image_height || 550) - 300) / 5)}%
+                                            </span>
+                                        </div>
+                                        <div className="relative pt-1">
+                                            <input
+                                                type="range"
+                                                min="0"
+                                                max="100"
+                                                step="25"
+                                                value={((activeSlide?.image_height || 550) - 300) / 5}
+                                                onChange={(e) => updateSlide(activeSlide.id, { image_height: 300 + (parseInt(e.target.value) * 5) })}
+                                                className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 transition-all hover:bg-slate-300"
+                                            />
+                                            <div className="flex justify-between mt-2">
+                                                {[0, 25, 50, 75, 100].map((step) => (
+                                                    <div key={step} className="flex flex-col items-center gap-1">
+                                                        <div className={cn("w-1 h-1 rounded-full", ((activeSlide?.image_height || 550) - 300) / 5 >= step ? "bg-emerald-500" : "bg-slate-300")} />
+                                                        <span className="text-[8px] font-bold text-slate-400">{step}%</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Animation Controls */}
+                                    <div className="space-y-3">
+                                        <span className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Animações de Entrada</span>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-1">
+                                                <label className="text-[9px] font-bold text-slate-500 uppercase">Texto</label>
+                                                <select
+                                                    value={activeSlide?.animation_text || 'fade-in'}
+                                                    onChange={(e) => updateSlide(activeSlide.id, { animation_text: e.target.value })}
+                                                    className="w-full h-9 text-[10px] px-2 rounded-lg border border-slate-200 bg-white font-bold text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none focus:border-emerald-500 transition-all"
+                                                >
+                                                    <option value="none">Sem animação</option>
+                                                    <option value="fade-in">Fade In</option>
+                                                    <option value="slide-left">Deslizar da Esquerda</option>
+                                                    <option value="slide-right">Deslizar da Direita</option>
+                                                    <option value="slide-up">Deslizar de Baixo</option>
+                                                    <option value="slide-down">Deslizar de Cima</option>
+                                                    <option value="zoom-in">Zoom In</option>
+                                                    <option value="bounce">Bounce</option>
+                                                </select>
+                                            </div>
+                                            <div className="space-y-1">
+                                                <label className="text-[9px] font-bold text-slate-500 uppercase">Imagem</label>
+                                                <select
+                                                    value={activeSlide?.animation_image || 'fade-in'}
+                                                    onChange={(e) => updateSlide(activeSlide.id, { animation_image: e.target.value })}
+                                                    className="w-full h-9 text-[10px] px-2 rounded-lg border border-slate-200 bg-white font-bold text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none focus:border-emerald-500 transition-all"
+                                                >
+                                                    <option value="none">Sem animação</option>
+                                                    <option value="fade-in">Fade In</option>
+                                                    <option value="slide-left">Deslizar da Esquerda</option>
+                                                    <option value="slide-right">Deslizar da Direita</option>
+                                                    <option value="slide-up">Deslizar de Baixo</option>
+                                                    <option value="slide-down">Deslizar de Cima</option>
+                                                    <option value="zoom-in">Zoom In</option>
+                                                    <option value="bounce">Bounce</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

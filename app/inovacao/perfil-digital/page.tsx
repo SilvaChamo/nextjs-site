@@ -51,13 +51,13 @@ export default function DigitalProfilePage() {
                                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Digital Card</p>
                                     </div>
 
-                                    <div className="mt-4 flex gap-2 justify-center">
-                                        <div className="w-9 h-9 bg-emerald-600 rounded-full flex items-center justify-center text-white">
-                                            <Share2 className="w-4 h-4" />
-                                        </div>
-                                        <div className="w-9 h-9 bg-blue-600 rounded-full flex items-center justify-center text-white">
-                                            <Facebook className="w-4 h-4" />
-                                        </div>
+                                    <div className="mt-6 flex gap-3 justify-center">
+                                        <button className="w-10 h-10 bg-emerald-600 hover:bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-emerald-600/20 hover:shadow-emerald-600/40 transition-all hover:scale-110 active:scale-95">
+                                            <Share2 className="w-5 h-5" />
+                                        </button>
+                                        <button className="w-10 h-10 bg-blue-600 hover:bg-blue-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-blue-600/20 hover:shadow-blue-600/40 transition-all hover:scale-110 active:scale-95">
+                                            <Facebook className="w-5 h-5" />
+                                        </button>
                                     </div>
                                 </div>
                             </div>

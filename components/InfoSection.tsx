@@ -7,13 +7,13 @@ import {
     Cpu, Leaf, BookOpen,
     ArrowRight,
     Scale, TreePalm, Coins,
-    ChevronLeft, ChevronRight
+    ChevronLeft, ChevronRight,
+    ScanLine, QrCode, MessageSquare, Presentation
 } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
-import { AgroCastSection } from "@/components/AgroCastSection";
 
 const EXEMPLARY_CATEGORIES: CategoryCard[] = [
     {
@@ -63,6 +63,41 @@ const EXEMPLARY_CATEGORIES: CategoryCard[] = [
         dark: true,
         iconColor: "text-white",
         href: "/artigos"
+    }
+];
+
+const RESOURCE_CARDS: CategoryCard[] = [
+    {
+        title: "Comunicação Massiva",
+        description: "Active o sistema de alertas SMS e E-mail para alcançar seus clientes imediatamente.",
+        icon: MessageSquare,
+        iconBg: "bg-orange-50",
+        iconColor: "text-[#f97316]",
+        href: "/inovacao/comunicacao-sms"
+    },
+    {
+        title: "Apresentações Visuais",
+        description: "Aceda ao editor de slide show para criar catálogos e relatórios profissionais.",
+        icon: Presentation,
+        dark: true,
+        iconColor: "text-white",
+        href: "/inovacao/apresentacoes"
+    },
+    {
+        title: "Identidade Digital",
+        description: "Crie perfis profissionais e cartões de visita digitais com QR Code integrado.",
+        icon: QrCode,
+        iconBg: "bg-blue-50",
+        iconColor: "text-blue-500",
+        href: "/inovacao/perfil-digital"
+    },
+    {
+        title: "AgroBotanica AI",
+        description: "Diagnostique pragas e doenças em segundos com nosso scanner inteligente.",
+        icon: ScanLine,
+        dark: true,
+        iconColor: "text-white",
+        href: "/inovacao/agrobotanica"
     }
 ];
 
@@ -229,13 +264,13 @@ export function InfoSection() {
                             Informações
                         </button>
                         <button
-                            onClick={() => setActiveTab("agrocast")}
-                            className={`px-8 py-[8.5px] rounded-[7px] text-sm font-medium transition-all backdrop-blur-md border transition-all duration-300 ${activeTab === "agrocast"
+                            onClick={() => setActiveTab("recursos")}
+                            className={`px-8 py-[8.5px] rounded-[7px] text-sm font-medium transition-all backdrop-blur-md border transition-all duration-300 ${activeTab === "recursos"
                                 ? "bg-[#f97316] border-[#f97316] text-white shadow-[0_0_20px_rgba(249,115,22,0.4)]"
                                 : "bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-[#f97316]"
                                 }`}
                         >
-                            AgroCast
+                            Recursos
                         </button>
                         <button
                             onClick={() => setActiveTab("categorias")}
@@ -295,8 +330,35 @@ export function InfoSection() {
                                 </div>
                             )}
 
-                            {activeTab === "agrocast" && (
-                                <AgroCastSection embedded />
+                            {activeTab === "recursos" && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-agro px-[20px]">
+                                    {RESOURCE_CARDS.map((card, idx) => (
+                                        <Link
+                                            key={idx}
+                                            href={card.href || "#"}
+                                            className={`p-[20px] rounded-agro text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col gap-[15px] group cursor-pointer border h-full ${card.dark
+                                                ? "bg-[#374151] text-white border-slate-600 shadow-xl shadow-slate-900/20"
+                                                : "bg-white text-[#3a3f47] border-slate-200 shadow-lg shadow-slate-200/50"
+                                                }`}
+                                        >
+                                            <div className={`w-14 h-14 rounded-[8px] flex items-center justify-center shrink-0 ${card.dark ? "bg-emerald-600/20 border border-white/10" : "bg-slate-100 border border-slate-200"} ${card.iconBg || ""}`}>
+                                                <card.icon className={`h-7 w-7 ${card.dark ? card.iconColor : "text-slate-600"} ${card.iconColor || ""}`} />
+                                            </div>
+                                            <div className="flex flex-col gap-1 h-full">
+                                                <h3 className={`text-lg font-black leading-tight ${card.dark ? "text-white" : "text-slate-800"}`}>
+                                                    {card.title}
+                                                </h3>
+                                                <p className={`text-xs leading-snug ${card.dark ? "text-slate-300" : "text-slate-500"}`}>
+                                                    {card.description}
+                                                </p>
+                                                <div className={`mt-auto pt-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-wider ${card.dark ? "text-white/60" : "text-slate-400"} group-hover:text-[#f97316] transition-colors`}>
+                                                    Aceder agora
+                                                    <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    ))}
+                                </div>
                             )}
 
                             {activeTab === "informacoes" && (

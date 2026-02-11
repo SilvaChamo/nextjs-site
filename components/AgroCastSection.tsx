@@ -68,7 +68,7 @@ export function AgroCastSection({ embedded = false }: AgroCastSectionProps) {
                     </Link>
                 </div>
 
-                <div className="grid lg:grid-cols-[1fr_400px] gap-agro items-stretch">
+                <div className="grid lg:grid-cols-[68fr_32fr] gap-agro items-stretch">
                     {/* TV SCREEN FRAME - Main Video */}
                     <div className="relative group p-3 bg-slate-800 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] rounded-[15px] border border-slate-700">
                         {/* Physical Bezels - Height Reduced */}

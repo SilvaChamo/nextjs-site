@@ -45,7 +45,6 @@ const serviceCategories: ServiceCategory[] = [
         description: "Soluções completas para o escoamento de produção em grande escala, garantindo pontualidade e segurança através de parcerias estratégicas com as maiores transportadoras nacionais e monitoramento de carga 24/7.",
         items: [
             { title: "Transporte Terrestre", link: "/servicos/transporte", slug: "transporte", description: "Frota especializada para o transporte de produtos agrários em grandes quantidades.", icon: Truck },
-            { title: "Logística Multimodal", link: "/servicos/transporte", slug: "multimodal", description: "Integração eficiente entre transporte rodoviário e marítimo para exportação.", icon: Globe },
             { title: "Segurança de Carga", link: "/servicos/transporte", slug: "seguranca", description: "Protocolos rigorosos de segurança e monitoramento em tempo real.", icon: ShieldCheck },
             { title: "Rastreio em Tempo Real", link: "/servicos/transporte", slug: "rastreio", description: "Acompanhe a sua mercadoria desde a origem até ao destino final.", icon: Search }
         ]
@@ -59,6 +58,8 @@ const serviceCategories: ServiceCategory[] = [
             { title: "Sementes Certificadas", link: "/servicos/insumos", slug: "sementes", description: "Alta produtividade para sua colheita com sementes verificadas.", icon: Zap },
             { title: "Fertilizantes e Adubos", link: "/servicos/insumos", slug: "fertilizantes", description: "Nutrição vegetal completa para diversos tipos de culturas.", icon: Zap },
             { title: "Maquinaria Agrícola", link: "/servicos/insumos", slug: "maquinaria", description: "Tratores e equipamentos modernos para mecanização do campo.", icon: Truck },
+            { title: "Sistemas de Rega", link: "/servicos/insumos", slug: "rega", description: "Tecnologia de irrigação para optimização do uso da água.", icon: Zap },
+            { title: "Protecção de Culturas", link: "/servicos/insumos", slug: "proteccao", description: "Soluções integradas para o controlo de pragas e doenças.", icon: ShieldCheck },
             { title: "Registe a sua loja", link: "/registar", slug: "registo", description: "Aumente a visibilidade do seu negócio e alcance mais produtores.", icon: Store }
         ]
     },
@@ -106,8 +107,7 @@ const serviceCategories: ServiceCategory[] = [
         items: [
             { title: "Escrita Técnica", link: "/servicos/conteudo", slug: "escrita", description: "Produção de artigos e posts especializados para o agro.", icon: FileText },
             { title: "Gestão de Redes", link: "/servicos/conteudo", slug: "redes", description: "Presença digital estratégica para marcas do sector.", icon: Users },
-            { title: "Vídeo Marketing", link: "/servicos/conteudo", slug: "video", description: "Cobertura de eventos e produção de vídeos institucionais.", icon: FileText },
-            { title: "Newsletter Agro", link: "/servicos/conteudo", slug: "newsletter", description: "Comunicação directa com a sua base de clientes e parceiros.", icon: FileText }
+            { title: "Vídeo Marketing", link: "/servicos/conteudo", slug: "video", description: "Cobertura de eventos e produção de vídeos institucionais.", icon: FileText }
         ]
     },
     {
@@ -141,9 +141,7 @@ const serviceCategories: ServiceCategory[] = [
         description: "Programas educativos e workshops práticos voltados para a capacitação técnica em novas tecnologias agrícolas, gestão de negócios rurais e certificações de qualidade reconhecidas internacionalmente.",
         items: [
             { title: "Academia Agro", link: "/servicos/formacao", slug: "academia", description: "Cursos certificados online para capacitação técnica.", icon: GraduationCap },
-            { title: "Capacitação Rural", link: "/servicos/formacao", slug: "capacitacao", description: "Treinos práticos de campo para melhoria de produtividade.", icon: Truck },
-            { title: "Certificação ISO", link: "/servicos/formacao", slug: "certificacao", description: "Preparação para certificações internacionais de qualidade.", icon: ShieldCheck },
-            { title: "E-learning Corporativo", link: "/servicos/formacao", slug: "elearning", description: "Plataformas de treino personalizado para equipas de empresas.", icon: Smartphone }
+            { title: "Capacitação Rural", link: "/servicos/formacao", slug: "capacitacao", description: "Treinos práticos de campo para melhoria de produtividade.", icon: Truck }
         ]
     }
 ];
@@ -171,7 +169,7 @@ export function ServicesMegaMenu({ isOpen, onClose }: { isOpen: boolean; onClose
                                             setActiveTab(cat.id);
                                             onClose();
                                         }}
-                                        className={`w-full flex items-center justify-between px-6 py-3 text-left transition-all relative group/tab ${isActive
+                                        className={`w-full flex items-center justify-between px-5 py-2 text-left transition-all relative group/tab ${isActive
                                             ? "bg-white text-[#f97316] font-bold shadow-sm"
                                             : "text-slate-500 hover:bg-white/60 hover:text-[#f97316]"
                                             }`}
@@ -180,7 +178,7 @@ export function ServicesMegaMenu({ isOpen, onClose }: { isOpen: boolean; onClose
                                             <div className={`p-1.5 rounded-lg transition-colors ${isActive ? "bg-orange-50" : "bg-transparent group-hover/tab:bg-orange-50/50"}`}>
                                                 <Icon className="w-4 h-4" />
                                             </div>
-                                            <span className="text-[13px] font-semibold leading-tight tracking-tight uppercase">{cat.title}</span>
+                                            <span className="text-[13px] font-semibold leading-tight tracking-tight">{cat.title}</span>
                                         </div>
                                         {isActive && <ChevronRight className="w-4 h-4" />}
                                         {isActive && <div className="absolute right-0 top-0 h-full w-[3px] bg-[#f97316]" />}
@@ -195,7 +193,7 @@ export function ServicesMegaMenu({ isOpen, onClose }: { isOpen: boolean; onClose
 
                         <div className="relative z-10">
                             <div className="flex flex-col gap-1 pt-0 pb-8 px-12 border-b border-slate-200">
-                                <h3 className="text-2xl font-black text-slate-900/90 tracking-tighter uppercase">
+                                <h3 className="text-2xl font-black text-slate-900/90 tracking-tighter">
                                     {activeData.title}
                                 </h3>
                                 <p className="text-[14px] text-slate-500 font-medium leading-relaxed line-clamp-3 max-w-[800px]">

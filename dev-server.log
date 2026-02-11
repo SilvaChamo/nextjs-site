@@ -450,3 +450,255 @@ Import trace for requested module:
  ✓ Compiled in 9.3s (4258 modules)
  GET /servicos/eventos/bilheteira 200 in 216ms
  GET / 200 in 207ms
+ ✓ Compiled in 4.4s (4258 modules)
+ GET / 200 in 353ms
+ GET /servicos/eventos/bilheteira 200 in 338ms
+ ✓ Compiled in 1137ms (4258 modules)
+ GET / 200 in 384ms
+ GET /servicos/eventos/bilheteira 200 in 376ms
+ ✓ Compiled in 1082ms (4258 modules)
+ GET / 200 in 303ms
+ GET /servicos/eventos/bilheteira 200 in 285ms
+ GET /servicos/logistica/transporte 200 in 75ms
+ ✓ Compiled in 4.1s (4258 modules)
+ GET / 200 in 351ms
+ GET /servicos/logistica/transporte 200 in 331ms
+ ✓ Compiled in 1366ms (4258 modules)
+ GET / 200 in 302ms
+ GET /servicos/logistica/transporte 200 in 287ms
+ ✓ Compiled in 4.1s (4258 modules)
+ GET / 200 in 238ms
+ GET /servicos/logistica/transporte 200 in 223ms
+ ✓ Compiled in 1038ms (4258 modules)
+ GET /servicos/logistica/transporte 200 in 444ms
+ GET / 200 in 450ms
+ ✓ Compiled in 4.4s (4258 modules)
+ GET / 200 in 244ms
+ GET /servicos/logistica/transporte 200 in 228ms
+ ✓ Compiled in 4.6s (4258 modules)
+ GET / 200 in 255ms
+ GET /servicos/logistica/transporte 200 in 234ms
+ GET /servicos/compra-venda/ofertas 200 in 56ms
+ GET /servicos/vagas/estagios 200 in 74ms
+ GET /servicos/vagas/talento 200 in 70ms
+ GET /servicos/vagas/talento 200 in 59ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 5.5s (4258 modules)
+ ⨯ ReferenceError: UserPlus is not defined
+    at ServiceSubCategoryPage (app/servicos/[category]/[slug]/page.tsx:92:42)
+  90 |                                         className="flex-1 flex items-center justify-center gap-3 py-4 bg-slate-900 text-white rounded-lg font-black text-[13px] uppercase tracking-widest hover:bg-slate-800 transition-all shadow-lg"
+  91 |                                     >
+> 92 |                                         <UserPlus className="w-4 h-4 text-orange-500" />
+     |                                          ^
+  93 |                                         1. Registo de Conta
+  94 |                                     </Link>
+  95 |                                     <Link {
+  digest: '1716822513'
+}
+ GET /servicos/vagas/talento 500 in 2207ms
+ GET / 200 in 163ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 4.7s (4258 modules)
+ ✓ Compiled in 1ms (2222 modules)
+ ✓ Compiled in 0ms (2222 modules)
+ ✓ Compiled in 0ms (2222 modules)
+ GET /servicos/vagas/talento 200 in 3860ms
+ GET / 200 in 2643ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 6s (4258 modules)
+ GET /servicos/vagas/talento 200 in 2938ms
+ GET / 200 in 188ms
+ ✓ Compiled in 4.6s (4258 modules)
+ GET / 200 in 383ms
+ GET /servicos/vagas/talento 200 in 363ms
+ ✓ Compiled in 4s (4258 modules)
+ GET / 200 in 256ms
+ GET /servicos/vagas/talento 200 in 241ms
+ GET /servicos/lojas/sementes 200 in 53ms
+ ✓ Compiled in 3.7s (4244 modules)
+ ✓ Compiled in 1094ms (4244 modules)
+ ✓ Compiled in 984ms (4244 modules)
+ ✓ Compiled in 4s (4244 modules)
+ ⨯ ./lib/services-data.ts
+Error:   [31mx[0m Unexpected token `string literal (gestao-conteudo, "gestao-conteudo")`. Expected yield, an identifier, [ or {
+     ,-[[36;1;4m/Users/macbook/Desktop/APP/baseagrodata.com/lib/services-data.ts[0m:320:1]
+ [2m317[0m |         }
+ [2m318[0m |     }
+ [2m319[0m | },
+ [2m320[0m | "gestao-conteudo": {
+     : [35;1m^^^^^^^^^^^^^^^^^[0m
+ [2m321[0m |     id: "gestao-conteudo",
+ [2m322[0m |         title: "Gestão de conteúdo",
+ [2m323[0m |             subCategories: {
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./lib/services-data.ts
+./app/servicos/[category]/[slug]/page.tsx
+ ✓ Compiled in 5s (4244 modules)
+ ✓ Compiled in 908ms (4244 modules)
+ ✓ Compiled in 771ms (4244 modules)
+ ✓ Compiled in 8.3s (4258 modules)
+ GET /servicos/lojas/sementes 200 in 272ms
+ GET / 200 in 300ms
+ ✓ Compiled in 1065ms (4244 modules)
+ ✓ Compiled in 4.3s (4244 modules)
+ ✓ Compiled in 781ms (4244 modules)
+ ✓ Compiled in 792ms (4244 modules)
+ ✓ Compiled in 9s (4258 modules)
+ GET / 200 in 418ms
+ GET /servicos/lojas/sementes 200 in 403ms
+ ✓ Compiled in 6s (4258 modules)
+ GET /servicos/lojas/sementes 200 in 183ms
+ GET / 200 in 184ms
+ ✓ Compiled in 4.2s (4258 modules)
+ GET /servicos/lojas/sementes 200 in 132ms
+ GET /servicos/compra-venda/cotacoes 200 in 69ms
+ GET /servicos/logistica/multimodal 200 in 56ms
+ ✓ Compiled in 4.6s (4258 modules)
+ GET /servicos/logistica/multimodal 200 in 128ms
+ ✓ Compiled in 3.9s (4244 modules)
+ GET /servicos/lojas/registo 200 in 120ms
+ GET /servicos/assistencia/suporte 200 in 94ms
+ GET /servicos/consultoria/otimizacao 200 in 60ms
+ GET /servicos/gestao-conteudo/redes 200 in 65ms
+ ✓ Compiled in 4.2s (4244 modules)
+ ✓ Compiled in 808ms (4244 modules)
+ ⨯ ./app/servicos/[category]/[slug]/page.tsx
+Error:   [31mx[0m Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+    ,-[[36;1;4m/Users/macbook/Desktop/APP/baseagrodata.com/app/servicos/[category]/[slug]/page.tsx[0m:60:1]
+ [2m57[0m |                             <div>
+ [2m58[0m |                                 <h2 className="text-3xl font-black text-slate-900 mb-6 tracking-tight">Visão Geral</h2>
+ [2m59[0m |                                 <div className="space-y-4">
+ [2m60[0m |                                     ))}
+    : [35;1m                                      ^[0m
+ [2m61[0m |                                 </div>
+ [2m62[0m |                                 {slug === 'registo' && (
+ [2m63[0m |                                     <div className="pt-8">
+    `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/servicos/[category]/[slug]/page.tsx
+ ○ Compiling /_error ...
+ ⨯ ./app/servicos/[category]/[slug]/page.tsx
+Error:   [31mx[0m Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+    ,-[[36;1;4m/Users/macbook/Desktop/APP/baseagrodata.com/app/servicos/[category]/[slug]/page.tsx[0m:60:1]
+ [2m57[0m |                             <div>
+ [2m58[0m |                                 <h2 className="text-3xl font-black text-slate-900 mb-6 tracking-tight">Visão Geral</h2>
+ [2m59[0m |                                 <div className="space-y-4">
+ [2m60[0m |                                     ))}
+    : [35;1m                                      ^[0m
+ [2m61[0m |                                 </div>
+ [2m62[0m |                                 {slug === 'registo' && (
+ [2m63[0m |                                     <div className="pt-8">
+    `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/servicos/[category]/[slug]/page.tsx
+ GET /servicos/gestao-conteudo/redes 500 in 10286ms
+ GET /servicos/gestao-conteudo/redes 500 in 45ms
+ GET /servicos/gestao-conteudo/redes 500 in 39ms
+ GET /servicos/gestao-conteudo/redes 500 in 41ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled /_not-found in 16.6s (4595 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /servicos/gestao-conteudo/redes 200 in 273ms
+ GET / 200 in 1606ms
+ GET /servicos/assistencia/portais 200 in 75ms
+ ✓ Compiled in 6.9s (4595 modules)
+ ✓ Compiled in 836ms (4590 modules)
+ ✓ Compiled in 4.8s (4590 modules)
+ ✓ Compiled in 15.2s (4604 modules)
+ GET /servicos/assistencia/portais 200 in 322ms
+ ✓ Compiled in 1677ms (4604 modules)
+ GET /servicos/assistencia/portais 200 in 397ms
+ ✓ Compiled in 5.1s (4604 modules)
+ GET /servicos/assistencia/portais 200 in 132ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 1277ms (4604 modules)
+ ⨯ ReferenceError: PageHeader is not defined
+    at ServiceSubCategoryPage (app/servicos/[category]/[slug]/page.tsx:37:14)
+  35 |     return (
+  36 |         <main className="min-h-screen bg-slate-50">
+> 37 |             <PageHeader
+     |              ^
+  38 |                 title={service.title}
+  39 |                 icon={Icon}
+  40 |                 backgroundImage="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=2000&auto=format&fit=crop" {
+  digest: '3689913557'
+}
+ GET /servicos/assistencia/portais 500 in 1024ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 1868ms (4604 modules)
+ GET / 200 in 3525ms
+ GET /servicos/lojas/registo 200 in 91ms
+ GET /servicos/lojas/fertilizantes 200 in 71ms
+ GET /servicos/lojas/fertilizantes 200 in 64ms
+ ✓ Compiled in 4.4s (4604 modules)
+ GET /servicos/lojas/fertilizantes 200 in 136ms
+ GET /servicos/lojas/proteccao 200 in 55ms
+ GET /servicos/eventos/calendario 200 in 57ms
+ GET /servicos/eventos/patrocinio 200 in 56ms
+ GET /servicos/eventos/promocao 200 in 52ms
+ ✓ Compiled in 5.1s (4604 modules)
+ GET /servicos/eventos/promocao 200 in 119ms
+ ✓ Compiled in 1404ms (4604 modules)
+ GET /servicos/eventos/promocao 200 in 344ms
+ ✓ Compiled in 5.4s (4604 modules)
+ GET /servicos/eventos/promocao 200 in 134ms
+ ✓ Compiled in 5.8s (4604 modules)
+ GET /servicos/eventos/promocao 200 in 136ms
+ GET /servicos/eventos/promocao 200 in 651ms
+ ✓ Compiled in 11.3s (4604 modules)
+ GET /servicos/eventos/promocao 200 in 359ms
+ GET /servicos/eventos/promocao 200 in 569ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/macbook/Desktop/APP/baseagrodata.com/.next/server/app-paths-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/macbook/Desktop/APP/baseagrodata.com/.next/server/app-paths-manifest.json',
+  page: '/servicos/eventos/promocao'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/macbook/Desktop/APP/baseagrodata.com/.next/server/pages-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/macbook/Desktop/APP/baseagrodata.com/.next/server/pages-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open '/Users/macbook/Desktop/APP/baseagrodata.com/.next/server/app-paths-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/macbook/Desktop/APP/baseagrodata.com/.next/server/app-paths-manifest.json',
+  page: '/servicos/eventos/promocao'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/macbook/Desktop/APP/baseagrodata.com/.next/server/pages-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/macbook/Desktop/APP/baseagrodata.com/.next/server/pages-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open '/Users/macbook/Desktop/APP/baseagrodata.com/.next/routes-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/macbook/Desktop/APP/baseagrodata.com/.next/routes-manifest.json'
+}
+ GET /servicos/eventos/promocao 500 in 235ms
+ GET /servicos/eventos/promocao 500 in 59ms

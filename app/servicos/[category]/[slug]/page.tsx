@@ -2,7 +2,7 @@
 
 import { useParams, notFound } from "next/navigation";
 import { PageHeader } from "@/components/PageHeader";
-import { ContactCTA } from "@/components/ContactCTA";
+import { ContactForm } from "@/components/ContactForm";
 import { servicesData } from "@/lib/services-data";
 import {
     CheckCircle2,
@@ -29,6 +29,9 @@ export default function ServiceSubCategoryPage() {
     }
 
     const Icon = service.icon;
+    const isTalentoAgrario = slug === 'talento';
+    const contactHref = isTalentoAgrario ? "/servicos/registo-talento" : "/contactos";
+    const contactText = isTalentoAgrario ? "Registar Profissional" : "Conectar Agora";
 
     return (
         <main className="min-h-screen bg-slate-50">
@@ -45,46 +48,64 @@ export default function ServiceSubCategoryPage() {
             />
 
             <div className="container-site relative z-20 mt-[60px] pb-24">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
 
                     {/* Main Content */}
-                    <div className="lg:col-span-8 space-y-12">
-                        {/* Overview Section */}
-                        <section className="bg-white p-8 md:p-12 rounded-xl border border-slate-200 shadow-sm">
-                            <h2 className="text-2xl font-black text-slate-900 mb-6 tracking-tight uppercase">Visão Geral</h2>
-                            <p className="text-lg text-slate-600 leading-relaxed font-medium">
-                                {service.fullDescription}
-                            </p>
-                        </section>
-
-                        {/* Sub-services Section */}
-                        <section className="space-y-10">
-                            <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-3 uppercase">
-                                <span className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
-                                    <Zap className="w-5 h-5 text-[#f97316]" />
-                                </span>
-                                Soluções Especializadas
-                            </h2>
-                            <div className="space-y-12">
-                                {service.subServices.map((sub, i) => (
-                                    <div key={i} className="flex flex-col gap-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-2 h-2 rounded-full bg-[#f97316]" />
-                                            <h4 className="text-lg font-black text-slate-800 uppercase tracking-tight">
-                                                {sub.title}
-                                            </h4>
-                                        </div>
-                                        <p className="text-[16px] text-slate-500 font-medium leading-[1.6] pl-5 border-l-2 border-slate-100">
-                                            {sub.description}
+                    <div className="lg:col-span-8 space-y-5">
+                        {/* Integrated Overview & Sub-services Card */}
+                        <section className="bg-white p-[40px] rounded-xl border border-slate-200 shadow-sm space-y-8">
+                            <div>
+                                <h2 className="text-3xl font-black text-slate-900 mb-6 tracking-tight">Visão Geral</h2>
+                                <div className="space-y-4">
+                                    {service.fullDescription.split('\n').filter(p => p.trim() !== '').map((paragraph, index) => (
+                                        <p key={index} className="text-base text-slate-600 leading-relaxed font-medium">
+                                            {paragraph.trim()}
                                         </p>
+                                    ))}
+                                </div>
+                                {slug === 'registo' && (
+                                    <div className="pt-6">
+                                        <div className="relative z-50">
+                                            <Link
+                                                href="/registar"
+                                                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-md font-bold text-[13px] hover:bg-[#f97316] !important transition-all group shadow-md shadow-emerald-500/10 hover:shadow-orange-500/20 cursor-pointer"
+                                            >
+                                                Registe a sua Empresa Agora
+                                                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                            </Link>
+                                        </div>
                                     </div>
-                                ))}
+                                )}
+                            </div>
+
+                            <div className="pt-6 border-t border-slate-100 space-y-6">
+                                <div className="flex items-center gap-3 py-1">
+                                    <div className="w-4 h-[2.5px] bg-[#f97316]" />
+                                    <h3 className="text-[13px] font-black text-slate-400 tracking-[0.2em] uppercase">
+                                        Soluções Especializadas
+                                    </h3>
+                                </div>
+                                <div className="space-y-6">
+                                    {service.subServices.map((sub, i) => (
+                                        <div key={i} className="flex flex-col gap-0.5">
+                                            <div className="flex items-center gap-2.5">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-[#f97316]" />
+                                                <h4 className="text-[15px] font-black text-slate-800 tracking-tight">
+                                                    {sub.title}
+                                                </h4>
+                                            </div>
+                                            <p className="text-[14px] text-slate-500 font-medium leading-[1.5] pl-4 border-l border-slate-100">
+                                                {sub.description}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </section>
                     </div>
 
                     {/* Sidebar / Features */}
-                    <div className="lg:col-span-4 space-y-8">
+                    <div className="lg:col-span-4 space-y-5">
                         {/* Benefits Card */}
                         <div className="bg-slate-900 p-8 rounded-xl text-white shadow-xl relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 blur-[60px]" />
@@ -108,28 +129,26 @@ export default function ServiceSubCategoryPage() {
 
                         {/* Quick Contact Card */}
                         <div className="bg-white p-8 rounded-xl border border-slate-200 shadow-sm space-y-6">
-                            <h4 className="text-lg font-black text-slate-900 uppercase tracking-tight">Precisa de Suporte?</h4>
-                            <p className="text-[14px] text-slate-500 font-medium">
-                                Fale com um dos nossos consultores técnicos para entender como podemos ajudar no seu caso específico.
+                            <h4 className="text-lg font-black text-slate-900 tracking-tight truncate">
+                                {isTalentoAgrario ? "Seja parceiro" : "Precisa de suporte?"}
+                            </h4>
+                            <p className="text-[14px] text-slate-500 font-medium line-clamp-2">
+                                {isTalentoAgrario
+                                    ? "Registe-se como profissional especializado para aceder a oportunidades exclusivas e gerir o seu perfil."
+                                    : "Fale com um dos nossos consultores técnicos para entender como podemos ajudar no seu caso específico."}
                             </p>
-                            <Link
-                                href="/contactos"
-                                className="flex items-center justify-center w-full py-4 bg-[#f97316] text-white rounded-lg font-bold text-[14px] hover:scale-[1.02] shadow-lg shadow-orange-500/20 transition-all"
-                            >
-                                Contactar Agora
-                            </Link>
+                            <div className="relative z-50">
+                                <Link
+                                    href={contactHref}
+                                    className="inline-flex items-center justify-center w-fit px-4 py-2 bg-emerald-600 text-white rounded-md font-bold text-[13px] hover:bg-[#f97316] !important transition-all shadow-md shadow-emerald-500/10 hover:shadow-orange-500/20 cursor-pointer"
+                                >
+                                    {contactText}
+                                </Link>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Main CTA */}
-                <div className="mt-24">
-                    <ContactCTA
-                        title={`Pronto para começar com ${service.title}?`}
-                        description="Nossa equipe está preparada para oferecer soluções integradas e personalizadas para as necessidades da sua empresa no agronegócio."
-                        buttonText="Contate-nos já"
-                    />
-                </div>
             </div>
         </main>
     );

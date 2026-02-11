@@ -195,7 +195,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                     )}>
                                                     {slide.antetitulo && (
                                                         <div
-                                                            className="flex items-center gap-4 mb-[20px]"
+                                                            className="flex items-center gap-4 mb-[20px] w-full"
                                                             style={{
                                                                 justifyContent: slide.antetitulo_align === 'left' ? 'flex-start' : slide.antetitulo_align === 'right' ? 'flex-end' : 'center'
                                                             }}
@@ -212,7 +212,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                         </div>
                                                     )}
                                                     {slide.title && (
-                                                        <div className="mb-[15px]" style={{ textAlign: (slide.title_align as any) || 'center' }}>
+                                                        <div className="mb-[15px] w-full" style={{ textAlign: (slide.title_align as any) || 'center' }}>
                                                             <span
                                                                 className="text-white font-bold first-letter:uppercase tracking-tight leading-[1.1] block"
                                                                 style={{ fontSize: `${slide.title_size || 52}px` }}
@@ -235,7 +235,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                     {/* CTA Button */}
                                                     {slide.cta_text && slide.cta_link && (
                                                         <div
-                                                            className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300"
+                                                            className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 w-full"
                                                             style={{ textAlign: (slide.cta_align as any) || 'center' }}
                                                         >
                                                             <a
@@ -314,7 +314,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                         )}>
                                                         {slide.antetitulo && (
                                                             <div
-                                                                className="flex items-center gap-4 mb-[20px]"
+                                                                className="flex items-center gap-4 mb-[20px] w-full"
                                                                 style={{
                                                                     justifyContent: slide.antetitulo_align === 'left' ? 'flex-start' : slide.antetitulo_align === 'right' ? 'flex-end' : 'center'
                                                                 }}
@@ -331,7 +331,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                             </div>
                                                         )}
                                                         {slide.title && (
-                                                            <div className="mb-[15px]" style={{ textAlign: (slide.title_align as any) || (slide.image_side === 'center' ? 'center' : 'left') }}>
+                                                            <div className="mb-[15px] w-full" style={{ textAlign: (slide.title_align as any) || (slide.image_side === 'center' ? 'center' : 'left') }}>
                                                                 <span
                                                                     className="text-white font-bold first-letter:uppercase tracking-tight leading-[1.1] block"
                                                                     style={{ fontSize: `${slide.title_size || 52}px` }}
@@ -356,7 +356,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ i
                                                         {/* CTA Button */}
                                                         {slide.cta_text && slide.cta_link && (
                                                             <div
-                                                                className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300"
+                                                                className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 w-full"
                                                                 style={{ textAlign: (slide.cta_align as any) || 'left' }}
                                                             >
                                                                 <a

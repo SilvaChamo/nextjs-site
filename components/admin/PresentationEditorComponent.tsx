@@ -800,7 +800,7 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                                         <button
                                             onClick={() => updateSlide(activeSlide.id, { cta_align: 'right' })}
                                             className={cn(
-                                                "px-3 py-1.5 rounded transition-colors text-[10px) font-black uppercase flex items-center gap-1",
+                                                "px-3 py-1.5 rounded transition-colors text-[10px] font-black uppercase flex items-center gap-1",
                                                 activeSlide?.cta_align === 'right' ? "bg-emerald-600 text-white" : "text-slate-400 hover:bg-slate-100"
                                             )}
                                         >

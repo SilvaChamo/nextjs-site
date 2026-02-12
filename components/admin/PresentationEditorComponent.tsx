@@ -38,7 +38,7 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
         description: "",
         slug: "",
         slides: [
-            { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", title_align: "center", antetitulo_align: "center", cta_text: "", cta_link: "", cta_align: "center", animation_text: "fade-in", animation_image: "fade-in", title_size: 52, image_height: 550, line_height: 1.6 }
+            { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", title_align: "center", antetitulo_align: "center", cta_text: "", cta_link: "", cta_align: "center", animation_text: "fade-in", animation_image: "fade-in", title_size: 50, image_height: 550, line_height: 1.6, antetitulo_color: "#10b981", title_color: "#ffffff" }
         ]
     });
 
@@ -63,11 +63,13 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                     title_align: s.title_align || 'center',
                     antetitulo_align: s.antetitulo_align || 'center',
                     cta_align: s.cta_align || 'center',
-                    title_size: s.title_size || 52,
+                    title_size: s.title_size || 50,
                     image_height: s.image_height || 550,
-                    line_height: s.line_height || 1.6
+                    line_height: s.line_height || 1.6,
+                    antetitulo_color: s.antetitulo_color || "#10b981",
+                    title_color: s.title_color || "#ffffff"
                 })) : [
-                    { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", title_align: "center", antetitulo_align: "center", cta_text: "", cta_link: "", cta_align: "center", animation_text: "fade-in", animation_image: "fade-in", title_size: 52, image_height: 550, line_height: 1.6 }
+                    { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", title_align: "center", antetitulo_align: "center", cta_text: "", cta_link: "", cta_align: "center", animation_text: "fade-in", animation_image: "fade-in", title_size: 52, image_height: 550, line_height: 1.6, antetitulo_color: "#10b981", title_color: "#ffffff" }
                 ];
 
                 setPresentation({
@@ -89,7 +91,7 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
     const handleAddSlide = () => {
         setPresentation(prev => ({
             ...prev,
-            slides: [...prev.slides, { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", title_align: "center", antetitulo_align: "center", cta_text: "", cta_link: "", cta_align: "center", animation_text: "fade-in", animation_image: "fade-in", title_size: 52, image_height: 550, line_height: 1.6 }]
+            slides: [...prev.slides, { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", title_align: "center", antetitulo_align: "center", cta_text: "", cta_link: "", cta_align: "center", animation_text: "fade-in", animation_image: "fade-in", title_size: 52, image_height: 550, line_height: 1.6, antetitulo_color: "#10b981", title_color: "#ffffff" }]
         }));
     };
 
@@ -167,12 +169,23 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                 doc.setFillColor(15, 23, 42); // slate-900
                 doc.rect(0, 0, 1280, 720, 'F');
 
-                doc.setTextColor(255, 255, 255);
+                const hexToRgb = (hex: string) => {
+                    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                    return result ? {
+                        r: parseInt(result[1], 16),
+                        g: parseInt(result[2], 16),
+                        b: parseInt(result[3], 16)
+                    } : { r: 255, g: 255, b: 255 };
+                };
+
+                const titleColor = hexToRgb(slide.title_color || "#ffffff");
+                doc.setTextColor(titleColor.r, titleColor.g, titleColor.b);
                 doc.setFontSize(40);
                 doc.text(slide.title || "Apresentação", 60, 100);
 
                 doc.setFontSize(24);
-                doc.setTextColor(16, 185, 129); // emerald-500
+                const anteColor = hexToRgb(slide.antetitulo_color || "#10b981");
+                doc.setTextColor(anteColor.r, anteColor.g, anteColor.b); // emerald-500
                 doc.text(slide.antetitulo || "", 60, 140);
 
                 // Content (strip HTML)
@@ -211,12 +224,27 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
             doc.setFillColor(15, 23, 42); // slate-900
             doc.rect(0, 0, 1280, 720, 'F');
 
-            doc.setTextColor(255, 255, 255);
+            doc.setTextColor(255, 255, 255); // Only for fallback background?
+            // Actually, we filled background with slate-900, so white text is good default.
+
+            // Allow custom text colors in PDF (converting hex to RGB)
+            const hexToRgb = (hex: string) => {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                } : { r: 255, g: 255, b: 255 };
+            };
+
+            const titleColor = hexToRgb(slide.title_color || "#ffffff");
+            doc.setTextColor(titleColor.r, titleColor.g, titleColor.b);
             doc.setFontSize(40);
             doc.text(slide.title || "Apresentação", 60, 100);
 
             doc.setFontSize(24);
-            doc.setTextColor(16, 185, 129); // emerald-500
+            const anteColor = hexToRgb(slide.antetitulo_color || "#10b981");
+            doc.setTextColor(anteColor.r, anteColor.g, anteColor.b); // emerald-500 default
             doc.text(slide.antetitulo || "", 60, 140);
 
             // Content (strip HTML)
@@ -583,37 +611,43 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                                         <div className="space-y-2">
                                             <div className="flex items-center justify-between">
                                                 <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Antetítulo</label>
-                                                <div className="flex bg-white/50 rounded-md border border-slate-200 p-0.5 scale-75 origin-right">
-                                                    <button
-                                                        onClick={() => updateSlide(activeSlide.id, { antetitulo_align: 'left' })}
-                                                        className={cn(
-                                                            "p-1 rounded transition-colors",
-                                                            (activeSlide?.antetitulo_align || 'center') === 'left' ? "bg-emerald-600 text-white" : "text-slate-400 hover:bg-slate-100"
-                                                        )}
-                                                        title="Alinhar à Esquerda"
-                                                    >
-                                                        <AlignLeft className="w-3 h-3" />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => updateSlide(activeSlide.id, { antetitulo_align: 'center' })}
-                                                        className={cn(
-                                                            "p-1 rounded transition-colors",
-                                                            (activeSlide?.antetitulo_align || 'center') === 'center' ? "bg-emerald-600 text-white" : "text-slate-400 hover:bg-slate-100"
-                                                        )}
-                                                        title="Centralizar"
-                                                    >
-                                                        <AlignCenter className="w-3 h-3" />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => updateSlide(activeSlide.id, { antetitulo_align: 'right' })}
-                                                        className={cn(
-                                                            "p-1 rounded transition-colors",
-                                                            activeSlide?.antetitulo_align === 'right' ? "bg-emerald-600 text-white" : "text-slate-400 hover:bg-slate-100"
-                                                        )}
-                                                        title="Alinhar à Direita"
-                                                    >
-                                                        <AlignRight className="w-3 h-3" />
-                                                    </button>
+                                                <div className="flex items-center gap-2">
+                                                    <ColorPicker
+                                                        color={activeSlide?.antetitulo_color || "#10b981"} // Default emerald-500
+                                                        onChange={(c) => updateSlide(activeSlide.id, { antetitulo_color: c })}
+                                                    />
+                                                    <div className="flex bg-white/50 rounded-md border border-slate-200 p-0.5 scale-75 origin-right">
+                                                        <button
+                                                            onClick={() => updateSlide(activeSlide.id, { antetitulo_align: 'left' })}
+                                                            className={cn(
+                                                                "p-1 rounded transition-colors",
+                                                                (activeSlide?.antetitulo_align || 'center') === 'left' ? "bg-emerald-600 text-white" : "text-slate-400 hover:bg-slate-100"
+                                                            )}
+                                                            title="Alinhar à Esquerda"
+                                                        >
+                                                            <AlignLeft className="w-3 h-3" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => updateSlide(activeSlide.id, { antetitulo_align: 'center' })}
+                                                            className={cn(
+                                                                "p-1 rounded transition-colors",
+                                                                (activeSlide?.antetitulo_align || 'center') === 'center' ? "bg-emerald-600 text-white" : "text-slate-400 hover:bg-slate-100"
+                                                            )}
+                                                            title="Centralizar"
+                                                        >
+                                                            <AlignCenter className="w-3 h-3" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => updateSlide(activeSlide.id, { antetitulo_align: 'right' })}
+                                                            className={cn(
+                                                                "p-1 rounded transition-colors",
+                                                                activeSlide?.antetitulo_align === 'right' ? "bg-emerald-600 text-white" : "text-slate-400 hover:bg-slate-100"
+                                                            )}
+                                                            title="Alinhar à Direita"
+                                                        >
+                                                            <AlignRight className="w-3 h-3" />
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <Input
@@ -625,12 +659,19 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                                         </div>
 
                                         <div className="space-y-2">
-                                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Título</label>
+                                            <div className="flex items-center justify-between">
+                                                <label className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Título</label>
+                                                <ColorPicker
+                                                    color={activeSlide?.title_color || "#ffffff"}
+                                                    onChange={(c) => updateSlide(activeSlide.id, { title_color: c })}
+                                                />
+                                            </div>
                                             <Textarea
                                                 value={activeSlide?.title || ""}
                                                 onChange={(e) => updateSlide(activeSlide.id, { title: e.target.value })}
                                                 placeholder="Digite o Título principal..."
                                                 className="min-h-[130px] text-lg font-bold bg-white/50 border-slate-200 focus:ring-emerald-500 rounded-lg shadow-sm resize-none"
+                                                style={{ color: activeSlide?.title_color || "#ffffff", fontSize: activeSlide?.title_size ? `${activeSlide.title_size}px` : '52px', lineHeight: 1.1 }}
                                             />
                                             <div className="flex flex-wrap items-center gap-4 pt-1">
                                                 <div className="flex items-center gap-2">
@@ -941,6 +982,76 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                     </div>
                 </main>
             </div>
+        </div>
+    );
+}
+
+// Helper for Color Picker
+function ColorPicker({ color, onChange }: { color: string; onChange: (color: string) => void }) {
+    const [isOpen, setIsOpen] = useState(false);
+
+    // Default colors
+    const colors = [
+        { color: "#000000", title: "Preto" },
+        { color: "#475569", title: "Cinza" },
+        { color: "#2563eb", title: "Azul" },
+        { color: "#dc2626", title: "Vermelho" },
+        { color: "#059669", title: "Verde (Site)" },
+        { color: "#ea580c", title: "Laranja (Site)" },
+        { color: "#ffffff", title: "Branco", border: true },
+        // Add a few more for slides
+        { color: "#10b981", title: "Esmeralda" },
+        { color: "#f59e0b", title: "Amarelo" }
+    ];
+
+    // Close on click outside
+    useEffect(() => {
+        if (!isOpen) return;
+        const handleClick = () => setIsOpen(false);
+        // Delay adding listener to avoid immediate close
+        const timeout = setTimeout(() => document.addEventListener('click', handleClick), 0);
+        return () => {
+            clearTimeout(timeout);
+            document.removeEventListener('click', handleClick);
+        };
+    }, [isOpen]);
+
+    return (
+        <div className="relative">
+            <button
+                onClick={(e) => { e.stopPropagation(); setIsOpen(!isOpen); }}
+                className="flex items-center gap-1.5 px-2 py-1 bg-white border border-slate-200 rounded-md hover:bg-slate-50 transition-colors shadow-sm"
+                title="Cor do Texto"
+            >
+                <div
+                    className="w-4 h-4 rounded-full border border-slate-200 ring-1 ring-black/5"
+                    style={{ backgroundColor: color }}
+                />
+                <span className="text-[10px] font-bold text-slate-500 uppercase">Cor</span>
+            </button>
+
+            {isOpen && (
+                <div
+                    className="absolute top-full left-0 mt-1 p-2 bg-white border border-slate-200 rounded-lg shadow-xl grid grid-cols-5 gap-1.5 z-50 w-[160px]"
+                    onClick={(e) => e.stopPropagation()} // Prevent close on palette click
+                >
+                    {colors.map((c) => (
+                        <button
+                            key={c.color}
+                            className={cn(
+                                "w-6 h-6 rounded-full hover:scale-110 transition-transform ring-offset-1 focus:ring-2 focus:ring-emerald-500 outline-none",
+                                c.border && "border border-slate-200"
+                            )}
+                            style={{ backgroundColor: c.color }}
+                            onClick={() => {
+                                onChange(c.color);
+                                setIsOpen(false);
+                            }}
+                            title={c.title}
+                        />
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

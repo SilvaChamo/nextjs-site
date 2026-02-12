@@ -5,6 +5,7 @@ import { Bold, Italic, List, ListOrdered, Indent, Outdent, Image as ImageIcon, L
 import { cn } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
 
 interface RichTextEditorProps {
     value: string;
@@ -23,8 +24,10 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
         justifyCenter: false,
         justifyRight: false,
         fontSize: "",
+        color: "#000000",
     });
     const [isFocused, setIsFocused] = useState(false);
+    const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [selectedImage, setSelectedImage] = useState<HTMLImageElement | null>(null);
     const supabase = createClient();
@@ -76,6 +79,8 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
                 justifyLeft: document.queryCommandState("justifyLeft"),
                 justifyCenter: document.queryCommandState("justifyCenter"),
                 justifyRight: document.queryCommandState("justifyRight"),
+                // Detect current color (approximate)
+                color: document.queryCommandValue("foreColor"),
                 // Only update font size if input is NOT focused
                 fontSize: isInputFocused ? prev.fontSize : getComputedFontSize(),
             }));
@@ -85,10 +90,19 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
     const getComputedFontSize = () => {
         const selection = window.getSelection();
         if (selection && selection.rangeCount > 0) {
-            const parent = selection.anchorNode?.parentElement;
-            if (parent) {
-                const size = window.getComputedStyle(parent).fontSize;
-                return size ? size.replace("px", "") : "";
+            let node = selection.anchorNode;
+            // If it's a text node, use parent. If it's an element, use itself.
+            if (node?.nodeType === 3 && node.parentElement) {
+                node = node.parentElement;
+            } else if (node?.nodeType !== 1 && node?.parentElement) {
+                // Fallback for other node types
+                node = node.parentElement;
+            }
+
+            if (node && node instanceof Element) {
+                const size = window.getComputedStyle(node).fontSize;
+                // Return integer part
+                return size ? Math.round(parseFloat(size.replace("px", ""))).toString() : "";
             }
         }
         return "";
@@ -101,7 +115,7 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
         return () => document.removeEventListener("selectionchange", handler);
     }, []);
 
-    // Clear selected image when clicking outside
+    // Clear selected image or color picker when clicking outside
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
             if (selectedImage && !selectedImage.contains(e.target as Node)) {
@@ -111,10 +125,15 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
                     img.classList.remove('rich-text-image-selected');
                 });
             }
+
+            // Close color picker if clicking outside
+            if (isColorPickerOpen && !(e.target as Element).closest('.relative.group')) {
+                setIsColorPickerOpen(false);
+            }
         };
         document.addEventListener('click', handleClickOutside);
         return () => document.removeEventListener('click', handleClickOutside);
-    }, [selectedImage]);
+    }, [selectedImage, isColorPickerOpen]);
 
     const handleInput = () => {
         if (editorRef.current) {
@@ -373,31 +392,35 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
                 {/* Font Size Input */}
                 <div className="flex items-center gap-1 border border-slate-200 rounded px-1 bg-white h-7 hover:border-emerald-500 transition-colors">
                     <span className="text-[10px] font-bold text-slate-400">PX</span>
-                    <input
-                        type="text"
+                    <Input
+                        type="number"
                         placeholder="--"
                         value={localFontSize}
-                        className="w-8 text-xs text-slate-600 bg-white outline-none text-center"
+                        className="w-12 h-6 text-xs text-slate-600 bg-white border-none shadow-none focus-visible:ring-0 text-center p-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         onChange={(e) => {
                             const val = e.target.value;
-                            if (!/^\d*$/.test(val)) return;
                             setLocalFontSize(val);
+                        }}
+                        onMouseDown={(e) => {
+                            // Capture selection before input gets focus
+                            saveSelection();
                         }}
                         onFocus={() => {
                             setIsInputFocused(true);
-                            saveSelection();
                         }}
                         onBlur={() => {
                             setIsInputFocused(false);
                             if (localFontSize) {
                                 restoreSelection();
                                 document.execCommand('fontSize', false, '7');
-                                const fontElements = document.getElementsByTagName("font");
-                                for (let i = 0; i < fontElements.length; i++) {
-                                    if (fontElements[i].size === "7") {
-                                        fontElements[i].removeAttribute("size");
-                                        fontElements[i].style.fontSize = `${localFontSize}px`;
-                                    }
+                                if (editorRef.current) {
+                                    const fontElements = editorRef.current.getElementsByTagName("font");
+                                    Array.from(fontElements).forEach(el => {
+                                        if (el.size === "7") {
+                                            el.removeAttribute("size");
+                                            el.style.fontSize = `${localFontSize}px`;
+                                        }
+                                    });
                                 }
                                 checkStyles();
                                 handleInput();
@@ -406,7 +429,7 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
                                 e.preventDefault();
-                                e.currentTarget.blur();
+                                e.currentTarget.blur(); // Trigger onBlur to apply
                             }
                         }}
                     />
@@ -425,18 +448,51 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
                 <div className="w-px h-4 bg-slate-300 mx-1" />
 
                 {/* Text Color Picker */}
-                <div className="flex items-center gap-1 border border-slate-200 rounded px-1 bg-white h-7 hover:border-emerald-500 transition-colors relative group">
-                    <span className="text-[10px] font-bold text-slate-400">COR</span>
-                    <div className="w-4 h-4 rounded-full border border-slate-200 cursor-pointer overflow-hidden relative">
-                        <input
-                            type="color"
-                            className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] cursor-pointer p-0 border-0"
-                            onChange={(e) => {
-                                execCommand("foreColor", e.target.value);
-                            }}
-                            title="Cor do Texto"
-                        />
-                    </div>
+                <div className="relative group">
+                    <ToolbarButton
+                        onClick={() => setIsColorPickerOpen(!isColorPickerOpen)} // Toggle
+                        isActive={isColorPickerOpen}
+                        icon={
+                            <div className="flex items-center gap-1">
+                                <span className="font-bold text-[10px] text-slate-400">COR</span>
+                                <div
+                                    className="w-4 h-4 rounded-full border border-slate-200"
+                                    style={{ backgroundColor: activeStyles.color || "#000000" }}
+                                />
+                            </div>
+                        }
+                        title="Cor do Texto"
+                    />
+                    {/* Palette */}
+                    {isColorPickerOpen && (
+                        <div className="absolute top-full left-0 mt-1 p-2 bg-white border border-slate-200 rounded-lg shadow-xl grid grid-cols-4 gap-1 z-50 w-[140px]">
+                            {[
+                                { color: "#000000", title: "Preto" },
+                                { color: "#475569", title: "Cinza" },
+                                { color: "#2563eb", title: "Azul" },
+                                { color: "#dc2626", title: "Vermelho" },
+                                { color: "#059669", title: "Verde (Site)" }, // Site Green
+                                { color: "#ea580c", title: "Laranja (Site)" }, // Site Orange
+                                { color: "#ffffff", title: "Branco", border: true },
+                            ].map((c) => (
+                                <button
+                                    key={c.color}
+                                    className={cn(
+                                        "w-6 h-6 rounded-full hover:scale-110 transition-transform",
+                                        c.border && "border border-slate-200"
+                                    )}
+                                    style={{ backgroundColor: c.color }}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        execCommand("foreColor", c.color);
+                                        setIsColorPickerOpen(false); // Close on selection
+                                    }}
+                                    title={c.title}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 <div className="w-px h-4 bg-slate-300 mx-1" />

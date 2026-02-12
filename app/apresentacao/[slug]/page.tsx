@@ -121,7 +121,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ s
     return (
         <div
             id="presentation-root"
-            className={`fixed inset-0 bg-slate-950 text-white overflow-hidden transition-all duration-700 z-[9999]`}
+            className={`fixed inset-0 bg-slate-950 text-white overflow-hidden transition-all duration-700 z-[9999] font-sans`}
         >
             {/* Top Right: Actions & Timer */}
             <div className="absolute top-10 right-10 z-[100] flex items-center gap-4 pointer-events-auto">
@@ -379,12 +379,12 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ s
                                                             </div>
                                                         )}
                                                         <div className="prose prose-invert max-w-none
-                                                        prose-p:text-[22px] prose-p:text-slate-200 prose-p:font-medium
+                                                        prose-p:text-[22px] prose-p:text-white prose-p:font-medium
                                                         prose-h5:text-[28px] prose-h5:font-normal prose-h5:text-white prose-h5:leading-[1.4]
                                                         prose-strong:text-orange-500 prose-strong:font-black
                                                         prose-ul:list-disc prose-ul:pl-10 prose-ul:space-y-4
                                                         prose-ol:list-decimal prose-ol:pl-10 prose-ol:space-y-4
-                                                        prose-li:text-slate-300 prose-li:marker:text-orange-500
+                                                        prose-li:text-white prose-li:marker:text-orange-500
                                                         prose-blockquote:border-l-4 prose-blockquote:border-orange-500 prose-blockquote:pl-6 prose-blockquote:italic
                                                         [&_img.content-image]:inline-block [&_img.content-image]:w-full lg:[&_img.content-image]:w-[48%] [&_img.content-image]:aspect-video [&_img.content-image]:object-cover [&_img.content-image]:m-[1%] [&_img.content-image]:rounded-xl [&_img.content-image]:shadow-lg
                                                         [&_img[style*='width: 100%']]:w-full [&_img[style*='width: 100%']]:block [&_img[style*='width: 100%']]:m-[20px_0]"

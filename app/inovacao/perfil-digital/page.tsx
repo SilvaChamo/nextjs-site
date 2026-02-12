@@ -131,7 +131,7 @@ export default function DigitalProfilePage() {
                             Registar Agora
                         </Button>
                     </Link>
-                    <Link href="/modelos">
+                    <Link href="/empresas">
                         <Button variant="outline" className="border-slate-200 text-slate-600 hover:bg-slate-50 font-bold px-8 h-12 rounded-xl">
                             Ver Exemplos reais
                         </Button>

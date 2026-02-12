@@ -421,7 +421,7 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                         <div className="flex items-center gap-1">
                             <Button
                                 variant="outline"
-                                onClick={() => window.open(`/apresentacao/${(presentation as any).slug || id}`, '_blank')}
+                                onClick={() => window.open(`/apresentacao/${(presentation as any).slug || id}?fullscreen=true`, '_blank')}
                                 className="bg-white text-slate-600 font-bold border-slate-200 h-9 gap-2 text-xs"
                             >
                                 <Play className="w-3.5 h-3.5 fill-slate-600" />
@@ -812,6 +812,13 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                                             placeholder="Descreva sua visão para este slide de forma detalhada..."
                                             className="bg-transparent"
                                         />
+                                        <a
+                                            href={`/apresentacao/${presentation?.slug || id}?fullscreen=true`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors"
+                                        >
+                                        </a>
                                     </div>
                                 </div>
 

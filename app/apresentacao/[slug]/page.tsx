@@ -43,6 +43,9 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ s
         return () => { isMounted = false; };
     }, [slug, supabase]);
 
+
+
+
     const toggleFullscreen = useCallback(async () => {
         const element = document.getElementById("presentation-root");
         if (!element) return;
@@ -61,6 +64,21 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ s
             console.error(`Error attempting to toggle full-screen mode: ${err}`);
         }
     }, []);
+
+    // Auto-fullscreen logic
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('fullscreen') === 'true') {
+            const timer = setTimeout(() => {
+                toggleFullscreen().catch(() => {
+                    // Auto-fullscreen failed (likely due to no user gesture). 
+                    // We can show a UI hint or just let the user click the maximize button.
+                    console.log("Auto-fullscreen blocked by browser policy");
+                });
+            }, 500); // Small delay to ensure render
+            return () => clearTimeout(timer);
+        }
+    }, [toggleFullscreen]);
 
     // Navigation logic
     const nextSlide = useCallback(() => {

@@ -421,6 +421,22 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                         <div className="flex items-center gap-1">
                             <Button
                                 variant="outline"
+                                onClick={() => {
+                                    const baseUrl = window.location.origin;
+                                    const slug = (presentation as any).slug || id;
+                                    const url = `${baseUrl}/apresentacao/${slug}`;
+                                    navigator.clipboard.writeText(url);
+                                    toast.success("Link copiado para a área de transferência!");
+                                }}
+                                className="bg-white text-slate-600 font-bold border-slate-200 h-9 gap-2 text-xs"
+                                title="Copiar Link Público"
+                            >
+                                <Copy className="w-3.5 h-3.5 text-slate-400" />
+                                Link
+                            </Button>
+
+                            <Button
+                                variant="outline"
                                 onClick={() => window.open(`/apresentacao/${(presentation as any).slug || id}?fullscreen=true`, '_blank')}
                                 className="bg-white text-slate-600 font-bold border-slate-200 h-9 gap-2 text-xs"
                             >

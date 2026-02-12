@@ -204,11 +204,11 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ s
                                     <div className="w-full h-full flex flex-col items-center text-center animate-in fade-in duration-700 gap-[10px] mx-auto">
 
                                         {/* Header: Title & Subtitle */}
-                                        <div className="space-y-1 w-full text-center px-[40px] py-[15px] mb-[15px] border-b border-white/20 bg-emerald-600/10 backdrop-blur-sm">
-                                            <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase leading-none">
+                                        <div className="w-full text-center px-[40px] py-[35px] mb-[30px] border-b border-white/20 bg-emerald-600/10 backdrop-blur-sm">
+                                            <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase leading-none mb-1">
                                                 {presentation.title}
                                             </h1>
-                                            <div className="flex items-center gap-[15px] pt-[5px] justify-center">
+                                            <div className="flex items-center gap-[15px] justify-center">
                                                 <p className="text-orange-500 font-bold text-[18px]">
                                                     {presentation.description || (index === 0 ? "introdução" : `slide ${index + 1}`)}
                                                 </p>

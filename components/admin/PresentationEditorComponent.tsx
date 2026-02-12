@@ -722,6 +722,32 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
 
                                 {/* Layout & Animation Controls */}
                                 <div className="grid grid-cols-2 gap-6 bg-slate-50 border border-slate-200 rounded-xl p-6 mb-10">
+                                    {/* Line Height Control (NEW) - Moved to top for visibility check */}
+                                    <div className="space-y-3">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Espaçamento de Texto</span>
+                                            <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
+                                                {activeSlide?.line_height || 1.6}
+                                            </span>
+                                        </div>
+                                        <div className="relative pt-1">
+                                            <input
+                                                type="range"
+                                                min="1.0"
+                                                max="2.5"
+                                                step="0.1"
+                                                value={activeSlide?.line_height || 1.6}
+                                                onChange={(e) => updateSlide(activeSlide.id, { line_height: parseFloat(e.target.value) })}
+                                                className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 transition-all hover:bg-slate-300"
+                                            />
+                                            <div className="flex justify-between mt-2 px-1">
+                                                <span className="text-[8px] font-bold text-slate-400">Compacto</span>
+                                                <span className="text-[8px] font-bold text-slate-400">Normal</span>
+                                                <span className="text-[8px] font-bold text-slate-400">Relaxado</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     {/* Image Height Control */}
                                     <div className="space-y-3">
                                         <div className="flex items-center justify-between">
@@ -747,32 +773,6 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                                                         <span className="text-[8px] font-bold text-slate-400">{step}%</span>
                                                     </div>
                                                 ))}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Line Height Control (NEW) */}
-                                    <div className="space-y-3">
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Espaçamento de Texto</span>
-                                            <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
-                                                {activeSlide?.line_height || 1.6}
-                                            </span>
-                                        </div>
-                                        <div className="relative pt-1">
-                                            <input
-                                                type="range"
-                                                min="1.0"
-                                                max="2.5"
-                                                step="0.1"
-                                                value={activeSlide?.line_height || 1.6}
-                                                onChange={(e) => updateSlide(activeSlide.id, { line_height: parseFloat(e.target.value) })}
-                                                className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 transition-all hover:bg-slate-300"
-                                            />
-                                            <div className="flex justify-between mt-2 px-1">
-                                                <span className="text-[8px] font-bold text-slate-400">Compacto</span>
-                                                <span className="text-[8px] font-bold text-slate-400">Normal</span>
-                                                <span className="text-[8px] font-bold text-slate-400">Relaxado</span>
                                             </div>
                                         </div>
                                     </div>

@@ -326,6 +326,36 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
 
                 <div className="w-px h-4 bg-slate-300 mx-1" />
 
+                {/* Font Size Input */}
+                <div className="flex items-center gap-1 border border-slate-200 rounded px-1 bg-white h-7 hover:border-emerald-500 transition-colors">
+                    <span className="text-[10px] font-bold text-slate-400">PX</span>
+                    <input
+                        type="number"
+                        min="8"
+                        max="120"
+                        placeholder="--"
+                        className="w-8 text-xs text-slate-600 outline-none text-center appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        onChange={(e) => {
+                            const val = e.target.value;
+                            if (val) {
+                                // Hack: use font size 7 as a marker
+                                document.execCommand('fontSize', false, '7');
+                                const fontElements = document.getElementsByTagName("font");
+                                for (let i = 0; i < fontElements.length; i++) {
+                                    if (fontElements[i].size === "7") {
+                                        fontElements[i].removeAttribute("size");
+                                        fontElements[i].style.fontSize = `${val}px`;
+                                    }
+                                }
+                                checkStyles();
+                                handleInput();
+                            }
+                        }}
+                    />
+                </div>
+
+                <div className="w-px h-4 bg-slate-300 mx-1" />
+
                 <ToolbarButton onClick={() => execCommand("insertUnorderedList")} icon={<List className="w-4 h-4" />} title="Bullet List" />
                 <ToolbarButton onClick={() => execCommand("insertOrderedList")} icon={<ListOrdered className="w-4 h-4" />} title="Numbered List" />
 

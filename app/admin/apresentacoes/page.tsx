@@ -371,7 +371,7 @@ export default function AdminApresentacoesPage() {
                                             <div className="flex items-center justify-end gap-1">
                                                 {/* Play */}
                                                 <button
-                                                    onClick={() => router.push(`/apresentacao/${item.id}`)}
+                                                    onClick={() => router.push(`/apresentacao/${item.slug || item.id}`)}
                                                     className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all"
                                                     title="Reproduzir"
                                                 >
@@ -485,7 +485,7 @@ export default function AdminApresentacoesPage() {
                                                 </>
                                             )}
                                             <button
-                                                onClick={() => router.push(`/apresentacao/${item.id}`)}
+                                                onClick={() => router.push(`/apresentacao/${item.slug || item.id}`)}
                                                 className="w-9 h-9 rounded-full border-2 border-white/40 flex items-center justify-center text-white/80 hover:border-white hover:text-white transition-all"
                                                 title="Reproduzir"
                                             >

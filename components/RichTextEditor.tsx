@@ -22,6 +22,7 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
         justifyLeft: false,
         justifyCenter: false,
         justifyRight: false,
+        fontSize: "",
     });
     const [isFocused, setIsFocused] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
@@ -38,18 +39,61 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
         }
     }, []);
 
+    const [isInputFocused, setIsInputFocused] = useState(false); // Track input focus
+    const [localFontSize, setLocalFontSize] = useState("");
+    const selectionRangeRef = useRef<Range | null>(null);
+
+    // Sync active style to local state when not focused
+    useEffect(() => {
+        if (!isInputFocused) {
+            setLocalFontSize(activeStyles.fontSize);
+        }
+    }, [activeStyles.fontSize, isInputFocused]);
+
+    const saveSelection = () => {
+        if (typeof window === 'undefined') return;
+        const selection = window.getSelection();
+        if (selection && selection.rangeCount > 0) {
+            selectionRangeRef.current = selection.getRangeAt(0).cloneRange();
+        }
+    };
+
+    const restoreSelection = () => {
+        if (typeof window === 'undefined') return;
+        const selection = window.getSelection();
+        if (selection && selectionRangeRef.current) {
+            selection.removeAllRanges();
+            selection.addRange(selectionRangeRef.current);
+        }
+    };
+
     // Check current styles based on selection
     const checkStyles = () => {
         if (typeof document !== 'undefined') {
-            setActiveStyles({
+            setActiveStyles(prev => ({
                 bold: document.queryCommandState("bold"),
                 italic: document.queryCommandState("italic"),
                 justifyLeft: document.queryCommandState("justifyLeft"),
                 justifyCenter: document.queryCommandState("justifyCenter"),
                 justifyRight: document.queryCommandState("justifyRight"),
-            });
+                // Only update font size if input is NOT focused
+                fontSize: isInputFocused ? prev.fontSize : getComputedFontSize(),
+            }));
         }
     };
+
+    const getComputedFontSize = () => {
+        const selection = window.getSelection();
+        if (selection && selection.rangeCount > 0) {
+            const parent = selection.anchorNode?.parentElement;
+            if (parent) {
+                const size = window.getComputedStyle(parent).fontSize;
+                return size ? size.replace("px", "") : "";
+            }
+        }
+        return "";
+    }
+
 
     useEffect(() => {
         const handler = () => checkStyles();
@@ -330,25 +374,39 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
                 <div className="flex items-center gap-1 border border-slate-200 rounded px-1 bg-white h-7 hover:border-emerald-500 transition-colors">
                     <span className="text-[10px] font-bold text-slate-400">PX</span>
                     <input
-                        type="number"
-                        min="8"
-                        max="120"
+                        type="text"
                         placeholder="--"
-                        className="w-8 text-xs text-slate-600 outline-none text-center appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        value={localFontSize}
+                        className="w-8 text-xs text-slate-600 bg-white outline-none text-center"
                         onChange={(e) => {
                             const val = e.target.value;
-                            if (val) {
-                                // Hack: use font size 7 as a marker
+                            if (!/^\d*$/.test(val)) return;
+                            setLocalFontSize(val);
+                        }}
+                        onFocus={() => {
+                            setIsInputFocused(true);
+                            saveSelection();
+                        }}
+                        onBlur={() => {
+                            setIsInputFocused(false);
+                            if (localFontSize) {
+                                restoreSelection();
                                 document.execCommand('fontSize', false, '7');
                                 const fontElements = document.getElementsByTagName("font");
                                 for (let i = 0; i < fontElements.length; i++) {
                                     if (fontElements[i].size === "7") {
                                         fontElements[i].removeAttribute("size");
-                                        fontElements[i].style.fontSize = `${val}px`;
+                                        fontElements[i].style.fontSize = `${localFontSize}px`;
                                     }
                                 }
                                 checkStyles();
                                 handleInput();
+                            }
+                        }}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                e.currentTarget.blur();
                             }
                         }}
                     />
@@ -363,6 +421,23 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
 
                 <ToolbarButton onClick={() => execCommand("outdent")} icon={<Outdent className="w-4 h-4" />} title="Diminuir Recuo (Tab)" />
                 <ToolbarButton onClick={() => execCommand("indent")} icon={<Indent className="w-4 h-4" />} title="Aumentar Recuo (Tab)" />
+
+                <div className="w-px h-4 bg-slate-300 mx-1" />
+
+                {/* Text Color Picker */}
+                <div className="flex items-center gap-1 border border-slate-200 rounded px-1 bg-white h-7 hover:border-emerald-500 transition-colors relative group">
+                    <span className="text-[10px] font-bold text-slate-400">COR</span>
+                    <div className="w-4 h-4 rounded-full border border-slate-200 cursor-pointer overflow-hidden relative">
+                        <input
+                            type="color"
+                            className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] cursor-pointer p-0 border-0"
+                            onChange={(e) => {
+                                execCommand("foreColor", e.target.value);
+                            }}
+                            title="Cor do Texto"
+                        />
+                    </div>
+                </div>
 
                 <div className="w-px h-4 bg-slate-300 mx-1" />
 

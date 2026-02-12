@@ -36,6 +36,7 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
     const [presentation, setPresentation] = useState({
         title: "",
         description: "",
+        slug: "",
         slides: [
             { id: generateId(), title: "", antetitulo: "", content: "", image_url: "", image_side: "left", image_disabled: false, text_align: "center", title_align: "center", antetitulo_align: "center", cta_text: "", cta_link: "", cta_align: "center", animation_text: "fade-in", animation_image: "fade-in", title_size: 52, image_height: 550, line_height: 1.6 }
         ]
@@ -72,6 +73,7 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                 setPresentation({
                     title: data.title,
                     description: data.description || "",
+                    slug: data.slug,
                     slides
                 });
                 setLoading(false);
@@ -241,6 +243,19 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
 
 
 
+    const slugify = (text: string) => {
+        return text
+            .toString()
+            .toLowerCase()
+            .normalize("NFD") // decompose diacritics
+            .replace(/[\u0300-\u036f]/g, "") // remove diacritics
+            .replace(/\s+/g, "-") // spaces to dashes
+            .replace(/[^\w\-]+/g, "") // remove non-words
+            .replace(/\-\-+/g, "-") // collapse dashes
+            .replace(/^-+/, "") // trim start
+            .replace(/-+$/, ""); // trim end
+    };
+
     const handleSave = async () => {
         if (!presentation.title) {
             toast.error("A apresentação precisa de um título.");
@@ -250,37 +265,76 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
         setSaving(true);
         const { data: userData } = await supabase.auth.getUser();
 
-        const payload = {
+        // Generate slug from title
+        let slug = slugify(presentation.title);
+
+        // Append a short random string to ensure uniqueness if needed, 
+        // or we could rely on the user to make unique titles. 
+        // For better UX, let's append a short hash if it's not a new presentation 
+        // effectively keeping the same slug if title doesn't change much, 
+        // but actually, simpler is to just use the title. 
+        // If it exists, we might get an error if there's a unique constraint.
+        // Let's assume for now we want friendly URLs.
+
+        // Better: append the first 4 chars of the ID to the slug to ensure uniqueness
+        // But the ID might not be generated yet for new ones...
+
+        // Let's just use title-randomString for now to be safe.
+        // Actually, looking at the user request "deixar ate apresentação o resto tirar", 
+        // they want `apresentacao/titulo-da-apresentacao`.
+        // If we want it to be truly clean, we should try to save just the slugified title.
+        // If it fails (duplicate), Supabase will throw error if there's a constraint.
+        // Let's try to just save the slugified title first.
+
+        // NOTE: If the user changes title, the slug changes -> cool.
+
+        const payload: any = {
             title: presentation.title,
             description: presentation.description,
             slides: presentation.slides,
             user_id: userData.user?.id,
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
+            slug: slug
         };
 
         let res;
         if (isNew) {
             res = await supabase.from('presentations').insert([payload]).select().single();
         } else {
-            res = await supabase.from('presentations').update(payload).eq('id', id);
+            res = await supabase.from('presentations').update(payload).eq('id', id).select().single();
         }
 
         if (res.error) {
-            toast.error("Erro ao guardar: " + res.error.message);
-        } else {
-            toast.success("Apresentação guardada!");
-            if (isNew && res.data) {
-                // If backPath is provided, we might want to redirect, but for 'new' we typically replace to the editor with ID.
-                // However, the component is mounted with ID 'novo'. 
-                // We should probably redirect to the editor with the new ID on the SAME route prefix.
-                // Let's assume the router replaces part of the URL or we just reload.
-                // Actually, best is to redirect to the edit page with the new ID.
-                const currentPath = window.location.pathname;
-                const newPath = currentPath.replace('/novo', `/${res.data.id}`);
-                router.replace(newPath);
+            // If error is uniqueness violation, try appending random suffix
+            if (res.error.code === '23505') { // unique_violation
+                slug = `${slug}-${Math.floor(Math.random() * 1000)}`;
+                payload.slug = slug;
+                if (isNew) {
+                    res = await supabase.from('presentations').insert([payload]).select().single();
+                } else {
+                    res = await supabase.from('presentations').update(payload).eq('id', id).select().single();
+                }
             }
+
+            if (res.error) {
+                toast.error("Erro ao guardar: " + res.error.message);
+            } else {
+                handleSuccess(res.data);
+            }
+        } else {
+            handleSuccess(res.data);
         }
+
         setSaving(false);
+    };
+
+    const handleSuccess = (data: any) => {
+        toast.success("Apresentação guardada!");
+        if (isNew && data) {
+            const currentPath = window.location.pathname;
+            const newPath = currentPath.replace('/novo', `/${data.id}`);
+            router.replace(newPath);
+        }
     };
 
     const activeSlide = presentation.slides[activeIndex] || presentation.slides[0];
@@ -339,7 +393,7 @@ export function PresentationEditorComponent({ id, backPath }: PresentationEditor
                         <div className="flex items-center gap-1">
                             <Button
                                 variant="outline"
-                                onClick={() => window.open(`/apresentacao/${id}`, '_blank')}
+                                onClick={() => window.open(`/apresentacao/${(presentation as any).slug || id}`, '_blank')}
                                 className="bg-white text-slate-600 font-bold border-slate-200 h-9 gap-2 text-xs"
                             >
                                 <Play className="w-3.5 h-3.5 fill-slate-600" />

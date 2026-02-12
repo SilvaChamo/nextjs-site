@@ -247,8 +247,8 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ s
                                                         dangerouslySetInnerHTML={{ __html: slide.content }}>
                                                     </div>
 
-                                                    {/* CTA Button */}
-                                                    {slide.cta_text && slide.cta_link && (
+                                                    {/* CTA Button (Only if NOT centered image) */}
+                                                    {slide.image_side !== 'center' && slide.cta_text && slide.cta_link && (
                                                         <div
                                                             className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 w-full"
                                                             style={{ textAlign: (slide.cta_align as any) || 'center' }}
@@ -310,6 +310,24 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ s
                                                                         <Loader2 className="w-8 h-8 text-white/10 animate-spin mx-auto mb-3" />
                                                                         <p className="text-[10px] font-bold text-white/10 uppercase tracking-widest">Sem recurso visual</p>
                                                                     </div>
+                                                                </div>
+                                                            )}
+
+                                                            {/* OVERLAY CTA for Centered Image */}
+                                                            {slide.image_side === 'center' && slide.cta_text && slide.cta_link && (
+                                                                <div
+                                                                    className="absolute bottom-10 left-0 right-0 z-20 flex px-10 pointer-events-none animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500"
+                                                                    style={{ justifyContent: (slide.cta_align === 'left' ? 'flex-start' : slide.cta_align === 'right' ? 'flex-end' : 'center') }}
+                                                                >
+                                                                    <a
+                                                                        href={slide.cta_link}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        className="pointer-events-auto inline-flex items-center gap-2 px-8 py-[9px] bg-emerald-500 hover:bg-orange-500 text-white font-bold rounded-full transition-all hover:scale-105 hover:shadow-lg hover:shadow-orange-500/20 text-sm uppercase tracking-wider group/btn shadow-xl shadow-black/20 backdrop-blur-md border border-white/10"
+                                                                    >
+                                                                        {slide.cta_text}
+                                                                        <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                                                                    </a>
                                                                 </div>
                                                             )}
                                                         </div>
@@ -375,7 +393,7 @@ export default function PresentationViewerPage({ params }: { params: Promise<{ s
                                                         </div>
 
                                                         {/* CTA Button */}
-                                                        {slide.cta_text && slide.cta_link && (
+                                                        {slide.image_side !== 'center' && slide.cta_text && slide.cta_link && (
                                                             <div
                                                                 className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 w-full"
                                                                 style={{ textAlign: (slide.cta_align as any) || 'left' }}

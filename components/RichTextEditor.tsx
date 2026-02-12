@@ -248,7 +248,7 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
                 const img = document.createElement('img');
                 img.src = imageUrl;
                 img.alt = 'Imagem';
-                img.style.cssText = 'width: 48%; height: auto; aspect-ratio: 16/9; cursor: pointer; border-radius: 8px; margin: 1%; display: inline-block; object-cover: cover;';
+                img.style.cssText = 'width: 100%; height: auto; aspect-ratio: 16/9; cursor: pointer; border-radius: 8px; margin: 10px 0; display: block; object-cover: cover;';
                 img.className = 'content-image';
                 img.setAttribute('data-resizable', 'true');
 

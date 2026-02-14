@@ -29,7 +29,8 @@ import {
     LandPlot,
     Database,
     Presentation,
-    Share2
+    Share2,
+    ChevronRight,
 } from "lucide-react";
 
 interface AdminShellProps {
@@ -47,11 +48,11 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
     const [isSyncing, setIsSyncing] = useState(false);
     const [isSigningOut, setIsSigningOut] = useState(false);
     const [pendingCount, setPendingCount] = useState(0);
-    const [openSubmenus, setOpenSubmenus] = useState<string[]>([]);
+    const [openSubmenus, setOpenSubmenus] = useState<string[]>(['gestao']);
 
     const toggleSubmenu = useCallback((menu: string) => {
         setOpenSubmenus(prev =>
-            prev.includes(menu) ? prev.filter(m => m !== menu) : [...prev, menu]
+            prev.includes(menu) ? [] : [menu]
         );
     }, []);
 
@@ -186,72 +187,128 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
 
                         <div className={`my-2 border-b border-slate-700 ${isCollapsed ? "mx-2" : "mx-4"}`}></div>
 
-                        {/* Section 2: Management & Content */}
-                        <div className="flex flex-col gap-0">
-                            <LinkItem href="/admin/empresas" icon={Building2} label="Empresas" />
-                            <LinkItem href="/admin/propriedades" icon={LandPlot} label="Propriedades" />
-                            <LinkItem href="/admin/profissionais" icon={Users} label="Profissionais" />
-                            <LinkItem href="/admin/produtos" icon={ShoppingCart} label="Produtos" />
-                            <LinkItem href="/admin/noticias" icon={Newspaper} label="Notícias" />
-                            <LinkItem href="/admin/artigos" icon={FileText} label="Artigos" />
-                            <LinkItem href="/admin/formacao" icon={GraduationCap} label="Formação" />
-                            <LinkItem href="/admin/documentos" icon={FileText} label="Documentos" />
-                            <LinkItem href="/admin/apresentacoes" icon={Presentation} label="Apresentações" />
+                        {/* GROUP: GESTÃO */}
+                        <div className="flex flex-col gap-1">
+                            {!isCollapsed && (
+                                <button
+                                    onClick={() => toggleSubmenu('gestao')}
+                                    className="flex items-center justify-between px-4 py-3 text-[10px] uppercase font-bold text-slate-500 hover:text-white transition-colors group w-full text-left"
+                                >
+                                    <span>Gestão</span>
+                                    <ChevronRight className={`w-3 h-3 transition-transform ${openSubmenus.includes('gestao') ? 'rotate-90' : ''}`} />
+                                </button>
+                            )}
+                            {openSubmenus.includes('gestao') && (
+                                <div className="flex flex-col gap-0 animate-in slide-in-from-top-1 duration-200">
+                                    <LinkItem href="/admin/empresas" icon={Building2} label="Empresas" />
+                                    <LinkItem href="/admin/produtos" icon={ShoppingCart} label="Produtos" />
+                                    <LinkItem href="/admin/propriedades" icon={LandPlot} label="Propriedades" />
+                                    <LinkItem href="/admin/profissionais" icon={Users} label="Profissionais" />
+                                    <LinkItem href="/admin/artigos" icon={Newspaper} label="Artigos" />
+                                    <LinkItem href="/admin/noticias" icon={FileText} label="Notícias" />
+                                    <LinkItem href="/admin/documentos" icon={FileText} label="Documentos" />
+                                    <LinkItem href="/admin/formacao" icon={GraduationCap} label="Formação" />
+                                    <LinkItem href="/admin/apresentacoes" icon={Presentation} label="Apresentações" />
+                                </div>
+                            )}
                         </div>
 
-                        <div className={`my-2 border-b border-slate-700 ${isCollapsed ? "mx-2" : "mx-4"}`}></div>
+                        <div className={`my-2 border-b border-slate-700/50 ${isCollapsed ? "mx-2" : "mx-4"}`}></div>
 
-                        {/* Section 3: Analysis & Interaction */}
-                        <div className="flex flex-col gap-0">
-                            <LinkItem href="/admin/estatisticas" icon={BarChart3} label="Estatísticas" />
-
-                            {/* Mensagem Dropdown (formerly Interacções) */}
-                            <div className="flex flex-col gap-1">
+                        {/* GROUP: INTERAÇÕES */}
+                        <div className="flex flex-col gap-1">
+                            {!isCollapsed && (
                                 <button
                                     onClick={() => toggleSubmenu('interactions')}
-                                    className={`flex items-center gap-3 px-4 py-2 text-sm font-semibold rounded-xl transition-all group whitespace-nowrap w-full text-left
-                                        ${pathname.startsWith('/admin/mensagens') ? "text-orange-500" : "text-slate-400 hover:text-orange-500"} 
-                                        ${isCollapsed ? "justify-center px-2" : ""}
-                                    `}
-                                    title="Mensagem"
+                                    className="flex items-center justify-between px-4 py-3 text-[10px] uppercase font-bold text-slate-500 hover:text-white transition-colors group w-full text-left"
                                 >
-                                    <MessageSquare className={`w-5 h-5 min-w-[20px] transition-colors ${pathname.startsWith('/admin/mensagens') ? "text-orange-500" : "text-slate-500 group-hover:text-orange-500"}`} />
-                                    {!isCollapsed && (
-                                        <>
-                                            <span className="flex-1">Mensagem</span>
-                                            {openSubmenus.includes('interactions') ? (
-                                                <div className="w-1.5 h-1.5 rounded-full bg-orange-500"></div>
-                                            ) : (
-                                                <div className="w-1.5 h-1.5 rounded-full bg-slate-700"></div>
-                                            )}
-                                        </>
-                                    )}
+                                    <span>Interações</span>
+                                    <ChevronRight className={`w-3 h-3 transition-transform ${openSubmenus.includes('interactions') ? 'rotate-90' : ''}`} />
                                 </button>
+                            )}
+                            {openSubmenus.includes('interactions') && (
+                                <div className="flex flex-col gap-0 animate-in slide-in-from-top-1 duration-200">
+                                    <LinkItem href="/admin/estatisticas" icon={BarChart3} label="Estatísticas" />
+                                    <LinkItem href="/admin/indicadores" icon={Target} label="Indicadores" />
 
-                                {openSubmenus.includes('interactions') && !isCollapsed && (
-                                    <div className="flex flex-col gap-1 pl-12 pr-2 animate-in slide-in-from-left-2 fade-in duration-200">
-                                        <Link href="/admin/mensagens" className={`text-xs py-1.5 hover:text-orange-500 transition-colors ${pathname === '/admin/mensagens' ? "text-orange-500 font-bold" : "text-slate-500"}`}>
-                                            Email
-                                        </Link>
-                                        <Link href="/admin/mensagens/newsletter" className={`text-xs py-1.5 hover:text-orange-500 transition-colors ${pathname === '/admin/mensagens/newsletter' ? "text-orange-500 font-bold" : "text-slate-500"}`}>
-                                            Newsletter
-                                        </Link>
+                                    {/* Mensagem Dropdown (nested in interactions) */}
+                                    <div className="flex flex-col gap-1">
+                                        <button
+                                            onClick={() => { }} // Nested submenus can stay for now or be flattend
+                                            className={`flex items-center gap-3 px-4 py-2 text-sm font-semibold rounded-xl transition-all group whitespace-nowrap w-full text-left
+                                                ${pathname.startsWith('/admin/mensagens') ? "text-orange-500" : "text-slate-400 hover:text-orange-500"} 
+                                                ${isCollapsed ? "justify-center px-2" : ""}
+                                            `}
+                                            title="Mensagem"
+                                        >
+                                            <MessageSquare className={`w-5 h-5 min-w-[20px] transition-colors ${pathname.startsWith('/admin/mensagens') ? "text-orange-500" : "text-slate-500 group-hover:text-orange-500"}`} />
+                                            {!isCollapsed && (
+                                                <>
+                                                    <span className="flex-1">Mensagem</span>
+                                                    <div className="w-1.5 h-1.5 rounded-full bg-slate-700"></div>
+                                                </>
+                                            )}
+                                        </button>
+
+                                        {!isCollapsed && (
+                                            <div className="flex flex-col gap-1 pl-12 pr-2">
+                                                <Link href="/admin/mensagens" className={`text-xs py-1.5 hover:text-orange-500 transition-colors ${pathname === '/admin/mensagens' ? "text-orange-500 font-bold" : "text-slate-500"}`}>
+                                                    Email
+                                                </Link>
+                                                <Link href="/admin/mensagens/newsletter" className={`text-xs py-1.5 hover:text-orange-500 transition-colors ${pathname === '/admin/mensagens/newsletter' ? "text-orange-500 font-bold" : "text-slate-500"}`}>
+                                                    Newsletter
+                                                </Link>
+                                            </div>
+                                        )}
                                     </div>
-                                )}
-                            </div>
 
-                            <LinkItem href="/admin/contactos" icon={Contact} label="Contactos" />
+                                    <LinkItem href="/admin/contactos" icon={Contact} label="Contactos" />
+                                </div>
+                            )}
                         </div>
 
-                        <div className={`my-2 border-b border-slate-700 ${isCollapsed ? "mx-2" : "mx-4"}`}></div>
+                        <div className={`my-2 border-b border-slate-700/50 ${isCollapsed ? "mx-2" : "mx-4"}`}></div>
 
-                        {/* Section 4: Configuration */}
-                        <div className="flex flex-col gap-0 mt-auto">
-                            <LinkItem href="/admin/indicadores" icon={Target} label="Indicadores" />
-                            <LinkItem href="/admin/configuracoes" icon={Grid2X2} label="Configurações" />
-                            <LinkItem href="/admin/integracoes" icon={Share2} label="Integrações" />
+                        {/* GROUP: MÓDULOS ESPECIAIS */}
+                        <div className="flex flex-col gap-1">
+                            {!isCollapsed && (
+                                <button
+                                    onClick={() => toggleSubmenu('modules')}
+                                    className="flex items-center justify-between px-4 py-3 text-[10px] uppercase font-bold text-slate-500 hover:text-white transition-colors group w-full text-left"
+                                >
+                                    <span>Módulos</span>
+                                    <ChevronRight className={`w-3 h-3 transition-transform ${openSubmenus.includes('modules') ? 'rotate-90' : ''}`} />
+                                </button>
+                            )}
+                            {openSubmenus.includes('modules') && (
+                                <div className="flex flex-col gap-0 animate-in slide-in-from-top-1 duration-200">
+                                    <LinkItem href="/admin/podcast" icon={Wifi} label="Podcast" />
+                                    <LinkItem href="/admin/actividades" icon={LayoutDashboard} label="Actividades" />
+                                    <LinkItem href="/admin/servicos" icon={Grid2X2} label="Serviços" />
+                                </div>
+                            )}
+                        </div>
 
-                            <LinkItem href="/admin/utilizadores" icon={Users} label="Utilizadores" />
+                        <div className={`my-2 border-b border-slate-700/50 ${isCollapsed ? "mx-2" : "mx-4"}`}></div>
+
+                        {/* GROUP: OPÇÕES */}
+                        <div className="flex flex-col gap-1 pb-4">
+                            {!isCollapsed && (
+                                <button
+                                    onClick={() => toggleSubmenu('options')}
+                                    className="flex items-center justify-between px-4 py-3 text-[10px] uppercase font-bold text-slate-500 hover:text-white transition-colors group w-full text-left"
+                                >
+                                    <span>Opções</span>
+                                    <ChevronRight className={`w-3 h-3 transition-transform ${openSubmenus.includes('options') ? 'rotate-90' : ''}`} />
+                                </button>
+                            )}
+                            {openSubmenus.includes('options') && (
+                                <div className="flex flex-col gap-0 animate-in slide-in-from-top-1 duration-200">
+                                    <LinkItem href="/admin/utilizadores" icon={Users} label="Utilizadores" />
+                                    <LinkItem href="/admin/configuracoes" icon={Target} label="Configurações" />
+                                    <LinkItem href="/admin/integracoes" icon={Share2} label="Integrações" />
+                                </div>
+                            )}
                         </div>
                     </nav>
 

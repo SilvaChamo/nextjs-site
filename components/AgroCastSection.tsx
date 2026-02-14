@@ -1,50 +1,77 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Play, Mic, Users, ArrowRight, PlayCircle, Star, Clock } from "lucide-react";
+import { createClient } from "@/utils/supabase/client";
 
-const episodes = [
-    {
-        id: 1,
-        title: "O Futuro do Agronegócio em Moçambique: Desafios e Oportunidades",
-        specialist: "Eng. Armindo de Castro",
-        duration: "45 min",
-        type: "Entrevista",
-        category: "Estratégia",
-        image: "/assets/podcast_featured.png"
-    },
-    {
-        id: 2,
-        title: "Dicas Práticas para Aumentar a Produtividade da Macadâmia",
-        specialist: "Dra. Maria Chilaule",
-        duration: "15 min",
-        type: "Dicas Técnicas",
-        category: "Produção",
-        image: "/assets/podcast_tips.png"
-    },
-    {
-        id: 3,
-        title: "Tendências do Mercado de Preços: O que esperar da próxima colheita?",
-        specialist: "Dr. João Munguambe",
-        duration: "30 min",
-        type: "Mercado",
-        category: "Economia",
-        image: "/assets/agro_market_podcast_thumb_1769508227034.png"
-    }
-];
+interface PodcastEpisode {
+    id: string;
+    title: string;
+    specialist_name: string;
+    duration: string;
+    category: string;
+    thumbnail_url: string;
+    video_url: string;
+    description?: string;
+}
 
 interface AgroCastSectionProps {
     embedded?: boolean;
 }
 
 export function AgroCastSection({ embedded = false }: AgroCastSectionProps) {
-    const [activeEpisode, setActiveEpisode] = useState(episodes[0]);
+    const [episodes, setEpisodes] = useState<PodcastEpisode[]>([]);
+    const [activeEpisode, setActiveEpisode] = useState<PodcastEpisode | null>(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchPodcasts = async () => {
+            const supabase = createClient();
+            const { data, error } = await supabase
+                .from('podcasts')
+                .select('*')
+                .eq('is_active', true)
+                .order('is_featured', { ascending: false })
+                .order('created_at', { ascending: false })
+                .limit(3);
+
+            if (error) {
+                console.error('Error fetching podcasts:', error);
+            } else if (data && data.length > 0) {
+                setEpisodes(data);
+                setActiveEpisode(data[0]);
+            }
+            setLoading(false);
+        };
+
+        fetchPodcasts();
+    }, []);
 
     const Wrapper = embedded ? "div" : "section";
     const wrapperClass = embedded ? "w-full" : "section-agro bg-[#F8FAFC] relative overflow-hidden";
     const containerClass = embedded ? "w-full relative z-10" : "container-site relative z-10";
+
+    const handlePlay = () => {
+        if (activeEpisode?.video_url) {
+            setIsPlaying(true);
+        }
+    };
+
+    if (loading) {
+        return <div className="py-20 text-center">Carregando episódios...</div>;
+    }
+
+    if (!activeEpisode) {
+        return null;
+    }
+
+    // Prepare next episode (the second one in the list, or the first if only one exists but that would be the active one)
+    // Actually the design shows a "Next Video" card.
+    // If we have at least 2 episodes, use the second one. If not, maybe hide the sidebar or show something else.
+    const nextEpisode = episodes.length > 1 ? episodes[1] : null;
 
     return (
         <Wrapper className={wrapperClass} id="agrocast">
@@ -73,86 +100,122 @@ export function AgroCastSection({ embedded = false }: AgroCastSectionProps) {
                     <div className="relative group p-3 bg-slate-800 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] rounded-[15px] border border-slate-700">
                         {/* Physical Bezels - Height Reduced */}
                         <div className="relative overflow-hidden bg-slate-900 h-[500px] border-[10px] border-slate-900 rounded-[10px] shadow-inner">
-                            <Image
-                                src={activeEpisode.image}
-                                alt={activeEpisode.title || "Episódio AgroCast"}
-                                fill
-                                className="object-cover opacity-90 transition-transform duration-700 group-hover:scale-105"
-                            />
-                            {/* Inner Screen Shadow effect */}
-                            <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.5)] pointer-events-none" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent opacity-100" />
+                            {isPlaying && activeEpisode.video_url ? (
+                                <iframe
+                                    src={`${activeEpisode.video_url}${activeEpisode.video_url.includes('?') ? '&' : '?'}autoplay=1`}
+                                    title={activeEpisode.title}
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <>
+                                    {activeEpisode.thumbnail_url ? (
+                                        <Image
+                                            src={activeEpisode.thumbnail_url}
+                                            alt={activeEpisode.title || "Episódio AgroCast"}
+                                            fill
+                                            className="object-cover opacity-90 transition-transform duration-700 group-hover:scale-105"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full bg-slate-800 flex items-center justify-center">
+                                            <Mic className="w-20 h-20 text-slate-700" />
+                                        </div>
+                                    )}
 
-                            {/* Play Button Overlay - ORANGE -> GREEN with ORANGE Hover */}
-                            <div className="absolute inset-0 flex items-center justify-center mb-10">
-                                <button className="group/button w-20 h-20 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 hover:scale-110 active:scale-90 transition-all duration-500 cursor-pointer hover:bg-white/30">
-                                    <div className="w-14 h-14 bg-emerald-600 group-hover/button:bg-[#f97316] transition-colors duration-300 rounded-full flex items-center justify-center shadow-lg shadow-black/20">
-                                        <Play className="w-6 h-6 text-white fill-white ml-1" />
-                                    </div>
-                                </button>
-                            </div>
+                                    {/* Inner Screen Shadow effect */}
+                                    <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.5)] pointer-events-none" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent opacity-100" />
 
-                            {/* THEME LABEL & CONTENT Overlay */}
-                            <div className="absolute bottom-0 left-0 w-full pl-8 py-8 pr-[50px] z-20 flex flex-col items-start gap-4">
-                                <div className="flex items-center gap-3">
-                                    <span className="bg-emerald-600 text-white text-[11px] font-black uppercase px-3 py-0.5 rounded-[50px] shadow-sm">
-                                        {activeEpisode.category}
-                                    </span>
-                                    <div className="flex items-center gap-2 text-white/90 bg-slate-900/40 px-3 py-0.5 rounded-[50px] backdrop-blur-sm border border-white/10">
-                                        <Mic className="w-3.5 h-3.5 text-[#f97316]" />
-                                        <span className="text-[10px] font-bold uppercase tracking-wider">Podcast</span>
+                                    {/* Play Button Overlay - ORANGE -> GREEN with ORANGE Hover */}
+                                    <div className="absolute inset-0 flex items-center justify-center mb-10">
+                                        <button
+                                            onClick={handlePlay}
+                                            className="group/button w-20 h-20 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 hover:scale-110 active:scale-90 transition-all duration-500 cursor-pointer hover:bg-white/30"
+                                        >
+                                            <div className="w-14 h-14 bg-emerald-600 group-hover/button:bg-[#f97316] transition-colors duration-300 rounded-full flex items-center justify-center shadow-lg shadow-black/20">
+                                                <Play className="w-6 h-6 text-white fill-white ml-1" />
+                                            </div>
+                                        </button>
                                     </div>
-                                    <div className="flex items-center gap-2 text-white/90 bg-slate-900/40 px-3 py-0.5 rounded-[50px] backdrop-blur-sm border border-white/10">
-                                        <Clock className="w-3.5 h-3.5 text-[#f97316]" />
-                                        <span className="text-[10px] font-bold uppercase tracking-wider">{activeEpisode.duration}</span>
-                                    </div>
-                                </div>
 
-                                <div className="space-y-1">
-                                    <h3 className="text-xl md:text-[26px] font-black text-white leading-tight max-w-2xl m-0 drop-shadow-lg">
-                                        O Futuro do Agronegócio: <span className="text-[#f97316]">Inovação e sistemas do mercado agrário</span>
-                                    </h3>
-                                    <p className="text-white/80 text-[11px] md:text-[13px] font-medium leading-relaxed max-w-xl mt-2 line-clamp-2">
-                                        Descubra como as novas tecnologias e sistemas de mercado estão transformando a cadeia de valor agrícola, criando oportunidades sustentáveis para produtores e investidores em Moçambique.
-                                    </p>
-                                    <div className="flex items-center gap-2 pt-1">
-                                        <span className="text-white/60 text-[12px] font-bold">Com:</span>
-                                        <span className="text-white text-[13px] font-bold">{activeEpisode.specialist}</span>
+                                    {/* THEME LABEL & CONTENT Overlay */}
+                                    <div className="absolute bottom-0 left-0 w-full pl-8 py-8 pr-[50px] z-20 flex flex-col items-start gap-4">
+                                        <div className="flex items-center gap-3">
+                                            <span className="bg-emerald-600 text-white text-[11px] font-black uppercase px-3 py-0.5 rounded-[50px] shadow-sm">
+                                                {activeEpisode.category}
+                                            </span>
+                                            <div className="flex items-center gap-2 text-white/90 bg-slate-900/40 px-3 py-0.5 rounded-[50px] backdrop-blur-sm border border-white/10">
+                                                <Mic className="w-3.5 h-3.5 text-[#f97316]" />
+                                                <span className="text-[10px] font-bold uppercase tracking-wider">Podcast</span>
+                                            </div>
+                                            <div className="flex items-center gap-2 text-white/90 bg-slate-900/40 px-3 py-0.5 rounded-[50px] backdrop-blur-sm border border-white/10">
+                                                <Clock className="w-3.5 h-3.5 text-[#f97316]" />
+                                                <span className="text-[10px] font-bold uppercase tracking-wider">{activeEpisode.duration}</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-1">
+                                            <h3 className="text-xl md:text-[26px] font-black text-white leading-tight max-w-2xl m-0 drop-shadow-lg">
+                                                {activeEpisode.title}
+                                            </h3>
+                                            <p className="text-white/80 text-[11px] md:text-[13px] font-medium leading-relaxed max-w-xl mt-2 line-clamp-2">
+                                                {activeEpisode.description || "Descubra como as novas tecnologias e sistemas de mercado estão transformando a cadeia de valor agrícola."}
+                                            </p>
+                                            <div className="flex items-center gap-2 pt-1">
+                                                <span className="text-white/60 text-[12px] font-bold">Com:</span>
+                                                <span className="text-white text-[13px] font-bold">{activeEpisode.specialist_name}</span>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
+                                </>
+                            )}
                         </div>
                     </div>
 
                     {/* Sidebar section - 5px rounding */}
                     <div className="flex flex-col gap-0 h-full">
                         {/* 1. NEXT VIDEO CARD */}
-                        <div className="relative group cursor-pointer overflow-hidden shadow-xl flex-1 border-[6px] border-slate-800 rounded-t-[15px] bg-slate-900 border-b-0 active:scale-[0.99] transition-transform">
-                            <Image
-                                src={episodes[1].image}
-                                alt={episodes[1].title || "Próximo Episódio"}
-                                fill
-                                className="object-cover transition-transform duration-1000 group-hover:scale-110"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent opacity-90" />
+                        {nextEpisode ? (
+                            <div
+                                onClick={() => {
+                                    setActiveEpisode(nextEpisode);
+                                    setIsPlaying(false);
+                                }}
+                                className="relative group cursor-pointer overflow-hidden shadow-xl flex-1 border-[6px] border-slate-800 rounded-t-[15px] bg-slate-900 border-b-0 active:scale-[0.99] transition-transform"
+                            >
+                                {nextEpisode.thumbnail_url && (
+                                    <Image
+                                        src={nextEpisode.thumbnail_url}
+                                        alt={nextEpisode.title || "Próximo Episódio"}
+                                        fill
+                                        className="object-cover transition-transform duration-1000 group-hover:scale-110"
+                                    />
+                                )}
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent opacity-90" />
 
-                            <div className="absolute inset-0 flex flex-col justify-end p-6 space-y-3">
-                                <div className="flex items-center gap-2">
-                                    <span className="bg-[#f97316] text-white text-[10px] font-black uppercase px-2 py-0.5">PRÓXIMO VÍDEO</span>
-                                    <span className="text-white/80 text-[10px] font-bold uppercase tracking-widest">{episodes[1].category}</span>
-                                </div>
-                                <h3 className="text-[15px] font-black text-white leading-tight m-0 transition-colors line-clamp-2">
-                                    {episodes[1].title}
-                                </h3>
-                                <p className="text-white/70 text-[10px] leading-snug mt-1 line-clamp-2">
-                                    Aprenda técnicas essenciais de maneio, poda e fertilização para maximizar a sua produção de macadâmia com qualidade de exportação.
-                                </p>
-                                <div className="pt-2 flex items-center gap-2 text-white/90 group-hover:text-white transition-all text-[10px] font-bold uppercase tracking-widest">
-                                    <PlayCircle className="w-4 h-4 text-[#f97316]" />
-                                    <span>Ver Teaser</span>
+                                <div className="absolute inset-0 flex flex-col justify-end p-6 space-y-3">
+                                    <div className="flex items-center gap-2">
+                                        <span className="bg-[#f97316] text-white text-[10px] font-black uppercase px-2 py-0.5">PRÓXIMO VÍDEO</span>
+                                        <span className="text-white/80 text-[10px] font-bold uppercase tracking-widest">{nextEpisode.category}</span>
+                                    </div>
+                                    <h3 className="text-[15px] font-black text-white leading-tight m-0 transition-colors line-clamp-2">
+                                        {nextEpisode.title}
+                                    </h3>
+                                    <p className="text-white/70 text-[10px] leading-snug mt-1 line-clamp-2">
+                                        {nextEpisode.description || "Assista ao próximo episódio para mais insights sobre o agronegócio."}
+                                    </p>
+                                    <div className="pt-2 flex items-center gap-2 text-white/90 group-hover:text-white transition-all text-[10px] font-bold uppercase tracking-widest">
+                                        <PlayCircle className="w-4 h-4 text-[#f97316]" />
+                                        <span>Ver Teaser</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        ) : (
+                            <div className="flex-1 bg-slate-900 border-[6px] border-slate-800 border-b-0 rounded-t-[15px] flex items-center justify-center">
+                                <span className="text-slate-500 text-xs">Sem mais episódios</span>
+                            </div>
+                        )}
 
 
                         <div className="bg-emerald-600 p-6 text-white relative overflow-hidden group cursor-pointer rounded-b-[15px] shadow-lg shadow-emerald-500/10">

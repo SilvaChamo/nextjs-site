@@ -32,6 +32,7 @@ interface ImageUploadProps {
     className?: string; // Container class override
     useBackgroundImage?: boolean; // If true, use background-image instead of img element
     backgroundSize?: "cover" | "contain"; // Background size mode when useBackgroundImage is true
+    disabled?: boolean;
 }
 
 export function ImageUpload({
@@ -50,7 +51,8 @@ export function ImageUpload({
     maxHeight,
     className,
     useBackgroundImage = false,
-    backgroundSize = "cover"
+    backgroundSize = "cover",
+    disabled = false
 }: ImageUploadProps) {
     const supabase = createClient();
     const [uploading, setUploading] = useState(false);

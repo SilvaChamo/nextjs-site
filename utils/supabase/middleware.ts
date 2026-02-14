@@ -12,8 +12,14 @@ export async function updateSession(request: NextRequest) {
         request,
     })
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key';
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+        // middleware cannot easily proxy everything as it needs to return a response
+        // but it should at least not hit a fake domain
+        return supabaseResponse;
+    }
 
     const supabase = createServerClient(
         supabaseUrl,

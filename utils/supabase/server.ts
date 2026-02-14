@@ -30,8 +30,18 @@ export async function createClient() {
 
     if (!isValidUrl(url) || !key) {
         if (process.env.NODE_ENV !== 'production') {
-            console.warn('⚠️ Warning: Using placeholder Supabase credentials in utils/supabase/server.ts during build.')
+            console.warn('⚠️ Warning: Supabase credentials missing in utils/supabase/server.ts during build.')
         }
+
+        // In server context, throw or return a proxy
+        return new Proxy({} as any, {
+            get: (_, prop) => {
+                return () => {
+                    console.error(`🔴 Supabase method "${String(prop)}" called via server client without configuration.`)
+                    throw new Error(`Supabase server client is not configured.`)
+                }
+            }
+        })
     }
 
     return createServerClient(

@@ -1,27 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
-    Truck,
-    Store,
-    ShoppingCart,
-    Smartphone,
-    Calendar,
-    FileText,
-    Briefcase,
-    Users,
-    GraduationCap,
-    ArrowRight,
-    ChevronRight,
-    Search,
-    Star,
-    Zap,
-    Globe,
-    ShieldCheck,
-    TrendingUp,
-    Gavel
+    Truck, Store, ShoppingCart, Smartphone, Calendar, FileText,
+    Briefcase, Users, GraduationCap, ShieldCheck, Search, Zap,
+    TrendingUp, Gavel, Globe, Star, ChevronRight, ArrowRight, Lightbulb, Monitor
 } from "lucide-react";
+import { IconMap } from "@/lib/icons";
+import { createClient } from "@/utils/supabase/client";
+
+// Icon mapping helper
+// IconMap is now imported from @/lib/icons
 
 interface ServiceCategory {
     id: string;
@@ -143,12 +133,71 @@ const serviceCategories: ServiceCategory[] = [
             { title: "Academia Agro", link: "/servicos/formacao", slug: "academia", description: "Cursos certificados online para capacitação técnica.", icon: GraduationCap },
             { title: "Capacitação Rural", link: "/servicos/formacao", slug: "capacitacao", description: "Treinos práticos de campo para melhoria de produtividade.", icon: Truck }
         ]
+    },
+    {
+        id: "inovacao",
+        title: "Inovação",
+        icon: Lightbulb,
+        description: "Explore o futuro do agronegócio com ferramentas de inteligência artificial, apresentações interativas e repositórios de conhecimento que transformam dados em progresso.",
+        items: [
+            { title: "Apresentações Visuais", link: "/inovacao/apresentacoes", slug: "apresentacoes", description: "Editor de slides interativos para catálogos e relatórios.", icon: Monitor },
+            { title: "Repositório Científico", link: "/inovacao/repositorio-cientifico", slug: "repositorio-cientifico", description: "Pesquisa dinâmica e semântica de artigos académicos.", icon: Search },
+            { title: "AgroBotanica AI", link: "/inovacao/agrobotanica", slug: "agrobotanica", description: "Scanner inteligente para diagnóstico de pragas e doenças.", icon: Zap },
+            { title: "Identidade Digital", link: "/inovacao/perfil-digital", slug: "perfil-digital", description: "Perfis profissionais e cartões de visita com QR Code.", icon: Users }
+        ]
     }
 ];
 
 export function ServicesMegaMenu({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+    const supabase = createClient();
+    const [services, setServices] = useState<any[]>([]);
     const [activeTab, setActiveTab] = useState(serviceCategories[0].id);
-    const activeData = serviceCategories.find(c => c.id === activeTab) || serviceCategories[0];
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchServices = async () => {
+            const { data, error } = await supabase
+                .from('services')
+                .select('*')
+                .eq('is_active', true)
+                .order('title', { ascending: true });
+
+            if (error) {
+                console.error('Error fetching services:', error);
+            } else {
+                setServices(data || []);
+            }
+            setLoading(false);
+        };
+
+        if (isOpen) {
+            fetchServices();
+        }
+    }, [isOpen]);
+
+    // Group services by category
+    const getItemsForCategory = (catId: string) => {
+        const targetCategory = serviceCategories.find(c => c.id === catId);
+        if (!targetCategory) return [];
+
+        const dynamicItems = services.filter(s => s.category === targetCategory.title);
+
+        // If we have dynamic items for this category, use them
+        if (dynamicItems.length > 0) {
+            return dynamicItems.map(s => ({
+                title: s.title,
+                slug: s.slug || s.id,
+                description: s.description || "",
+                icon: IconMap[s.icon as keyof typeof IconMap] || Briefcase
+            }));
+        }
+
+        // Fallback to static items if no dynamic ones exist for this category yet
+        return targetCategory.items || [];
+    };
+
+    const activeCategory = serviceCategories.find(c => c.id === activeTab) || serviceCategories[0];
+    const activeItems = getItemsForCategory(activeTab);
 
     return (
         <div className={`absolute left-0 w-full top-full transition-all duration-300 z-50 ${isOpen ? 'opacity-100 visible pointer-events-auto' : 'opacity-0 invisible pointer-events-none'}`}>
@@ -192,26 +241,29 @@ export function ServicesMegaMenu({ isOpen, onClose }: { isOpen: boolean; onClose
                         <div className="relative z-10">
                             <div className="flex flex-col gap-1 pt-0 pb-8 px-12 border-b border-slate-200">
                                 <h3 className="text-2xl font-black text-slate-900/90 tracking-tighter">
-                                    {activeData.title}
+                                    {activeCategory.title}
                                 </h3>
                                 <p className="text-[14px] text-slate-500 font-medium leading-relaxed line-clamp-3 max-w-[800px]">
-                                    {activeData.description}
+                                    {activeCategory.description}
                                 </p>
                             </div>
 
                             {/* Sub-categories Grid - 2 Rows / 3 Columns */}
                             <div className="pt-10 px-12">
                                 <div className="grid grid-cols-3 gap-x-12 gap-y-8">
-                                    {activeData.items.slice(0, 6).map((item, idx) => (
+                                    {activeItems.slice(0, 9).map((item, idx) => (
                                         <Link
                                             key={idx}
-                                            href={`/servicos/${activeData.id}/${item.slug}`}
+                                            href={`/servicos/${activeTab}/${item.slug}`}
                                             onClick={onClose}
                                             className="group/item flex flex-col gap-1.5"
                                         >
-                                            <span className="text-[15px] font-bold text-slate-800 group-hover/item:text-[#f97316] transition-colors">
-                                                {item.title}
-                                            </span>
+                                            <div className="flex items-center gap-2">
+                                                {typeof item.icon === 'string' ? null : <item.icon className="w-4 h-4 text-slate-300 group-hover/item:text-[#f97316] transition-colors" />}
+                                                <span className="text-[15px] font-bold text-slate-800 group-hover/item:text-[#f97316] transition-colors">
+                                                    {item.title}
+                                                </span>
+                                            </div>
                                             <span className="text-[12px] text-slate-400 font-medium leading-tight line-clamp-2 group-hover/item:text-slate-500 transition-colors">
                                                 {item.description}
                                             </span>

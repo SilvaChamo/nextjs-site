@@ -16,12 +16,20 @@ export function createClient() {
 
     if (!isValidUrl(url) || !key) {
         if (typeof window === 'undefined' && process.env.NODE_ENV !== 'production') {
-            console.warn('⚠️ Warning: Using placeholder Supabase credentials in utils/supabase/client.ts during build.')
+            console.warn('⚠️ Warning: Supabase credentials missing in utils/supabase/client.ts during build.')
+        } else if (typeof window !== 'undefined') {
+            console.error('❌ Error: Supabase URL or Anon Key is missing. Check your .env.local file.')
         }
-        return createBrowserClient(
-            'https://placeholder.supabase.co',
-            'placeholder-key'
-        )
+
+        // Return a proxy that logs errors instead of fetching from a fake domain
+        return new Proxy({} as any, {
+            get: (_, prop) => {
+                return () => {
+                    console.error(`🔴 Supabase method "${String(prop)}" called without valid configuration.`)
+                    throw new Error(`Supabase client is not configured. Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY.`)
+                }
+            }
+        })
     }
 
     return createBrowserClient(url, key)
